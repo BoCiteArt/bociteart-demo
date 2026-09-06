@@ -1,833 +1,1671 @@
 /* =========================================================
-   BO'CITÉART — PORTE D'ENTRÉE
-   CHEF D'ORCHESTRE UNIQUE DU PARCOURS
+   ÇA COMMENCE ICI
+   BO'CITÉART — CONTRÔLEUR CENTRAL D'ACCÈS
+   VERSION 06/09/2026
 
-   1. INFORMATIONS LÉGALES
-   2. INTRODUCTION
-   3. CRÉATION DU COMPTE
-   4. SYNOPTIQUE
-   5. APPLICATION OFFICIELLE
-
-   RÈGLE ESSENTIELLE :
-   → seul ce fichier décide de l'étape suivante ;
-   → aucun écran ne doit ouvrir directement un autre écran ;
-   → aucun onglet existant de l'application n'est modifié.
+   RÔLE :
+   - laisser libres les contenus publics ;
+   - demander l'identification seulement au moment utile ;
+   - mémoriser la fonction demandée ;
+   - reprendre cette fonction après identification ;
+   - donner un accès permanent à « Mon profil » ;
+   - rappeler après inscription :
+     Compte + aide → Mon profil.
    ========================================================= */
 
-(function initBociteartStart(){
+(function installBociteartAccess(){
 
   "use strict";
 
-  if(window.BociteStart){
-    return;
-  }
 
-  /* =====================================================
-     VERSION DU PARCOURS
-     ===================================================== */
-
-  const JOURNEY_VERSION =
-    "8";
-
-  /* =====================================================
-     MODE PRÉSENTATION
-
-     Avec ?presentation=1 dans l'adresse :
-     le parcours complet recommence à chaque ouverture.
-
-     Sans ce paramètre :
-     le parcours apparaît seulement à la première utilisation.
-     ===================================================== */
-
-  const PRESENTATION_MODE =
-    new URLSearchParams(
-      window.location.search
-    ).get("presentation") === "1";
-   
-  const STORAGE = {
-    session:
-      "bociteart_entry_session_v8",
-
-    completed:
-      "bociteart_entry_completed_v8"
-  };
-
-  const STEPS = {
-    legal:
-      "legal",
-
-    introduction:
-      "introduction",
-
-    registration:
-      "registration",
-
-    synoptique:
-      "synoptique",
-
-    application:
-      "application"
-  };
-
-  let currentStep =
-    "";
-
-  let transitionLocked =
-    false;
-
-  /* =====================================================
-     STOCKAGE
-     ===================================================== */
-
-  function safeParse(
-    value,
-    fallback
+  if(
+    window.BociteAccess
   ){
 
-    try{
+    return;
 
-      return JSON.parse(value);
-
-    }catch(error){
-
-      return fallback;
-    }
   }
 
-  function getStorageItem(key){
 
-    try{
+  const OVERLAY_ID =
+    "bociteAccessOverlay";
 
-      return localStorage.getItem(key);
 
-    }catch(error){
+  const PROFILE_CARD_ID =
+    "bociteCompteAideProfileCard";
 
-      return null;
-    }
-  }
 
-  function setStorageItem(
-    key,
+  let pendingRequest =
+    null;
+
+
+  /* =====================================================
+     OUTILS
+     ===================================================== */
+
+  function esc(
     value
   ){
 
-    try{
+    return String(
+      value == null
+        ? ""
+        : value
+    )
 
-      localStorage.setItem(
-        key,
-        value
-      );
+    .replace(
+      /&/g,
+      "&amp;"
+    )
 
-      return true;
+    .replace(
+      /</g,
+      "&lt;"
+    )
 
-    }catch(error){
+    .replace(
+      />/g,
+      "&gt;"
+    )
 
-      console.warn(
-        "Bo'CitéArt : stockage du parcours indisponible.",
-        error
-      );
+    .replace(
+      /"/g,
+      "&quot;"
+    )
+
+    .replace(
+      /'/g,
+      "&#039;"
+    );
+
+  }
+
+
+  function registrationApi(){
+
+    return (
+      window.BoCiteArtRegistration ||
+      null
+    );
+
+  }
+
+
+  function getAccount(){
+
+    const api =
+      registrationApi();
+
+
+    if(
+      !api ||
+      typeof api.getAccount !==
+        "function"
+    ){
+
+      return null;
+
+    }
+
+
+    return api.getAccount();
+
+  }
+
+
+  function hasIdentity(){
+
+    const api =
+      registrationApi();
+
+
+    if(
+      !api
+    ){
 
       return false;
+
     }
-  }
 
-  function removeStorageItem(key){
 
-    try{
+    const account =
+      getAccount();
 
-      localStorage.removeItem(key);
 
-      return true;
-
-    }catch(error){
+    if(
+      !account ||
+      !account.accountId
+    ){
 
       return false;
+
     }
-  }
 
-  /* =====================================================
-     ÉTAT DU PARCOURS
-     ===================================================== */
 
-  function getSession(){
+    if(
+      typeof api.registrationCompleted ===
+        "function"
+    ){
 
-    const saved =
-      getStorageItem(
-        STORAGE.session
+      return (
+        api.registrationCompleted() ===
+        true
       );
 
-    return saved
-      ? safeParse(saved, null)
-      : null;
+    }
+
+
+    return true;
+
   }
 
-  function saveSession(step){
 
-    const session = {
-      version:
-        JOURNEY_VERSION,
+  function closeOverlay(){
 
-      step:
-        step,
-
-      updatedAt:
-        new Date().toISOString()
-    };
-
-    setStorageItem(
-      STORAGE.session,
-      JSON.stringify(session)
-    );
-
-    currentStep =
-      step;
-
-    return session;
-  }
-
-  function getCompletion(){
-
-    const saved =
-      getStorageItem(
-        STORAGE.completed
+    const old =
+      document.getElementById(
+        OVERLAY_ID
       );
 
-    return saved
-      ? safeParse(saved, null)
-      : null;
+
+    if(
+      old
+    ){
+
+      old.remove();
+
+    }
+
   }
 
-  function journeyCompleted(){
-
-    const completion =
-      getCompletion();
-
-    return Boolean(
-      completion &&
-      completion.completed === true &&
-      completion.version ===
-        JOURNEY_VERSION
-    );
-  }
-
-  function saveCompletion(){
-
-    const completion = {
-      completed:true,
-
-      version:
-        JOURNEY_VERSION,
-
-      completedAt:
-        new Date().toISOString()
-    };
-
-    setStorageItem(
-      STORAGE.completed,
-      JSON.stringify(completion)
-    );
-
-    saveSession(
-      STEPS.application
-    );
-
-    return completion;
-  }
 
   /* =====================================================
-     FERMETURE DES ÉCRANS DU NOUVEAU PARCOURS
+     PRÉSENTATION
      ===================================================== */
 
-  function closeKnownOverlay(id){
-
-    const element =
-      document.getElementById(id);
-
-    if(element){
-      element.remove();
-    }
-  }
-
-  function closeAllEntryScreens(){
+  function ensureStyles(){
 
     if(
-      window.BociteLegal &&
-      typeof window.BociteLegal.close ===
-        "function"
+      document.getElementById(
+        "bociteAccessStyles"
+      )
     ){
 
-      window.BociteLegal.close();
-    }
-
-    if(
-      window.BociteIntroduction &&
-      typeof window.BociteIntroduction.close ===
-        "function"
-    ){
-
-      window.BociteIntroduction.close();
-    }
-
-    if(
-      window.BoCiteArtRegistration &&
-      typeof window.BoCiteArtRegistration.close ===
-        "function"
-    ){
-
-      window.BoCiteArtRegistration.close();
-    }
-
-    if(
-      window.BociteSynoptique &&
-      typeof window.BociteSynoptique.close ===
-        "function"
-    ){
-
-      window.BociteSynoptique.close();
-    }
-
-    closeKnownOverlay(
-      "bociteLegalOverlay"
-    );
-
-    closeKnownOverlay(
-      "bociteIntroductionOverlay"
-    );
-
-    closeKnownOverlay(
-      "bociteRegistrationOverlay"
-    );
-
-    closeKnownOverlay(
-      "bociteSynoptiqueOverlay"
-    );
-  }
-
-  /* =====================================================
-     VERROU DE TRANSITION
-     Empêche un double clic d'ouvrir deux étapes.
-     ===================================================== */
-
-  function runTransition(callback){
-
-    if(transitionLocked){
       return;
+
     }
 
-    transitionLocked =
-      true;
 
-    try{
-
-      callback();
-
-    }finally{
-
-      window.setTimeout(
-        function(){
-
-          transitionLocked =
-            false;
-        },
-        250
+    const style =
+      document.createElement(
+        "style"
       );
+
+
+    style.id =
+      "bociteAccessStyles";
+
+
+    style.textContent = `
+
+      #${OVERLAY_ID}{
+
+        position:fixed;
+        inset:0;
+
+        z-index:2147483000;
+
+        overflow:auto;
+
+        background:
+          rgba(0,0,0,.42);
+
+        padding:
+          18px 10px 34px;
+
+        box-sizing:
+          border-box;
+
+        color:#111;
+
+        font-size:14px;
+
+        font-weight:400;
+
+        line-height:1.55;
+
+      }
+
+
+      #${OVERLAY_ID}
+      .bociteAccessCard{
+
+        width:
+          min(620px,100%);
+
+        margin:
+          30px auto;
+
+        background:#fff;
+
+        border:
+          1px solid #d9d9d9;
+
+        border-radius:14px;
+
+        padding:18px;
+
+        box-sizing:
+          border-box;
+
+        box-shadow:
+          0 12px 34px
+          rgba(0,0,0,.18);
+
+      }
+
+
+      #${OVERLAY_ID}
+      .bociteAccessTitle,
+
+      #${PROFILE_CARD_ID}
+      .bociteAccessTitle{
+
+        margin:
+          0 0 12px;
+
+        color:#2f5d46;
+
+        font-size:17px;
+
+        font-weight:700;
+
+        line-height:1.35;
+
+      }
+
+
+      #${OVERLAY_ID} p,
+
+      #${PROFILE_CARD_ID} p{
+
+        margin:
+          0 0 12px;
+
+        color:#111;
+
+        font-size:14px;
+
+        font-weight:400;
+
+        line-height:1.55;
+
+      }
+
+
+      #${OVERLAY_ID}
+      .bociteAccessPath{
+
+        margin:
+          14px 0;
+
+        padding:12px;
+
+        border:
+          1px solid
+          rgba(47,93,70,.30);
+
+        border-radius:10px;
+
+        background:#fff;
+
+        text-align:center;
+
+        font-weight:700;
+
+      }
+
+
+      #${OVERLAY_ID}
+      .bociteAccessActions{
+
+        display:grid;
+
+        gap:10px;
+
+        margin-top:16px;
+
+      }
+
+
+      #${OVERLAY_ID} button,
+
+      #${PROFILE_CARD_ID} button{
+
+        width:100%;
+
+        padding:
+          12px 14px;
+
+        border:
+          2px solid #2f5d46;
+
+        border-radius:10px;
+
+        background:#fff;
+
+        color:#111;
+
+        font-size:14px;
+
+        font-weight:700;
+
+        cursor:pointer;
+
+      }
+
+
+      #${OVERLAY_ID}
+      .bociteAccessSecondary{
+
+        border-width:1px;
+
+        font-weight:400;
+
+      }
+
+
+      #${OVERLAY_ID}
+      .bociteAccessField{
+
+        margin:
+          0 0 14px;
+
+      }
+
+
+      #${OVERLAY_ID}
+      .bociteAccessField label{
+
+        display:block;
+
+        margin:
+          0 0 5px;
+
+        color:#2f5d46;
+
+        font-size:14px;
+
+        font-weight:700;
+
+      }
+
+
+      #${OVERLAY_ID}
+      .bociteAccessField input{
+
+        width:100%;
+
+        box-sizing:
+          border-box;
+
+        padding:
+          11px 10px;
+
+        border:
+          1px solid #bdbdbd;
+
+        border-radius:8px;
+
+        background:#fff;
+
+        color:#111;
+
+        font-size:14px;
+
+        font-weight:400;
+
+      }
+
+
+      #${OVERLAY_ID}
+      .bociteAccessReadOnly{
+
+        padding:
+          11px 10px;
+
+        border:
+          1px solid #d7d7d7;
+
+        border-radius:8px;
+
+        background:#f7f7f7;
+
+      }
+
+
+      #${OVERLAY_ID}
+      .bociteAccessMessage{
+
+        display:none;
+
+        margin:
+          12px 0 0;
+
+        padding:10px;
+
+        border-radius:8px;
+
+        background:#f6f2e9;
+
+      }
+
+
+      #${PROFILE_CARD_ID}{
+
+        margin:
+          0 0 18px;
+
+        padding:16px;
+
+        border:
+          1px solid #dedede;
+
+        border-radius:12px;
+
+        background:#fff;
+
+        color:#111;
+
+        font-size:14px;
+
+        font-weight:400;
+
+      }
+
+    `;
+
+
+    document.head.appendChild(
+      style
+    );
+
+  }
+
+
+  function brandHtml(){
+
+    return (
+
+      '<strong>' +
+
+      '<span style="color:#2f5d46">' +
+      'Bo’Cité' +
+      '</span>' +
+
+      '<span style="color:#b3282d">' +
+      'Art' +
+      '</span>' +
+
+      '</strong>'
+
+    );
+
+  }
+
+
+  function showCard(
+    html
+  ){
+
+    ensureStyles();
+
+    closeOverlay();
+
+
+    const overlay =
+      document.createElement(
+        "div"
+      );
+
+
+    overlay.id =
+      OVERLAY_ID;
+
+
+    overlay.innerHTML =
+
+      '<div class="bociteAccessCard">' +
+
+      html +
+
+      '</div>';
+
+
+    document.body.appendChild(
+      overlay
+    );
+
+
+    overlay.scrollTop =
+      0;
+
+
+    return overlay;
+
+  }
+
+
+  /* =====================================================
+     DEMANDE D'IDENTIFICATION
+     ===================================================== */
+
+  function openIdentificationMessage(){
+
+    const overlay =
+      showCard(`
+
+        <div class="bociteAccessTitle">
+          Identifiez-vous pour accéder à ce service
+        </div>
+
+        <p>
+          Votre identification permet de rattacher
+          vos services, vos accès et vos opérations
+          au bon profil et de protéger leur utilisation.
+        </p>
+
+        <p>
+          Les parties publiques de
+          ${brandHtml()}
+          restent accessibles sans créer de profil.
+        </p>
+
+        <div class="bociteAccessActions">
+
+          <button
+            id="bociteAccessIdentifyBtn"
+            type="button">
+
+            M’identifier / créer mon profil
+
+          </button>
+
+          <button
+            id="bociteAccessCancelBtn"
+            class="bociteAccessSecondary"
+            type="button">
+
+            Retour
+
+          </button>
+
+        </div>
+
+      `);
+
+
+    const identify =
+      overlay.querySelector(
+        "#bociteAccessIdentifyBtn"
+      );
+
+
+    const cancel =
+      overlay.querySelector(
+        "#bociteAccessCancelBtn"
+      );
+
+
+    identify.onclick =
+      function(){
+
+        closeOverlay();
+
+
+        const api =
+          registrationApi();
+
+
+        if(
+          api &&
+          typeof api.open ===
+            "function"
+        ){
+
+          api.open();
+
+          return;
+
+        }
+
+
+        console.error(
+          "Bo'CitéArt : module d'identification indisponible."
+        );
+
+      };
+
+
+    cancel.onclick =
+      function(){
+
+        pendingRequest =
+          null;
+
+        closeOverlay();
+
+      };
+
+  }
+
+
+  /* =====================================================
+     CONTRÔLE DES DROITS
+     ===================================================== */
+
+  function permissionAllowed(
+    permission
+  ){
+
+    if(
+      !permission
+    ){
+
+      return true;
+
     }
+
+
+    const api =
+      registrationApi();
+
+
+    if(
+      !api ||
+      typeof api.canAccess !==
+        "function"
+    ){
+
+      return false;
+
+    }
+
+
+    return (
+      api.canAccess(
+        permission
+      ) === true
+    );
+
   }
 
-  /* =====================================================
-     ÉTAPE 1 — INFORMATIONS LÉGALES
-     ===================================================== */
 
-  function openLegal(){
+  function showAccessDenied(){
 
-    runTransition(
-      function(){
+    const overlay =
+      showCard(`
 
-        closeAllEntryScreens();
+        <div class="bociteAccessTitle">
+          Accès réservé
+        </div>
 
-        saveSession(
-          STEPS.legal
-        );
+        <p>
+          Votre profil est bien identifié,
+          mais il ne possède pas l’autorisation
+          nécessaire pour cette fonction.
+        </p>
 
-        if(
-          window.BociteLegal &&
-          typeof window.BociteLegal.open ===
-            "function"
-        ){
+        <div class="bociteAccessActions">
 
-          window.BociteLegal.open();
-          return;
-        }
+          <button
+            id="bociteAccessDeniedClose"
+            type="button">
 
-        console.error(
-          "Bo'CitéArt : le module bociteart-legal.js n'est pas disponible."
-        );
-      }
-    );
+            Retour dans Bo’CitéArt
+
+          </button>
+
+        </div>
+
+      `);
+
+
+    overlay
+      .querySelector(
+        "#bociteAccessDeniedClose"
+      )
+      .onclick =
+        closeOverlay;
+
   }
 
-  /* =====================================================
-     ÉTAPE 2 — INTRODUCTION
-     ===================================================== */
 
-  function openIntroduction(){
+  function executeRequest(
+    request
+  ){
 
-    runTransition(
-      function(){
+    if(
+      !request ||
+      typeof request.open !==
+        "function"
+    ){
 
-        closeAllEntryScreens();
+      return false;
 
-        saveSession(
-          STEPS.introduction
-        );
+    }
 
-        if(
-          window.BociteIntroduction &&
-          typeof window.BociteIntroduction.open ===
-            "function"
-        ){
 
-          window.BociteIntroduction.open();
-          return;
-        }
+    if(
+      request.permission &&
+      !permissionAllowed(
+        request.permission
+      )
+    ){
 
-        console.error(
-          "Bo'CitéArt : le module bociteart-introduction.js n'est pas disponible."
-        );
-      }
-    );
+      showAccessDenied();
+
+      return false;
+
+    }
+
+
+    request.open();
+
+
+    return true;
+
   }
 
-  /* =====================================================
-     ÉTAPE 3 — CRÉATION DU COMPTE
-     ===================================================== */
 
-  function openRegistration(){
+  function requestAccess(
+    options
+  ){
 
-    runTransition(
-      function(){
+    const request =
 
-        closeAllEntryScreens();
+      options &&
+      typeof options ===
+        "object"
 
-        saveSession(
-          STEPS.registration
-        );
+        ? options
 
-        if(
-          window.BoCiteArtRegistration &&
-          typeof window.BoCiteArtRegistration.open ===
-            "function"
-        ){
+        : {};
 
-          window.BoCiteArtRegistration.open();
-          return;
-        }
-
-        console.error(
-          "Bo'CitéArt : le module bociteart-registration.js n'est pas disponible."
-        );
-      }
-    );
-  }
-
-  /* =====================================================
-     ÉTAPE 4 — SYNOPTIQUE
-     ===================================================== */
-
-  function openSynoptique(){
-
-    runTransition(
-      function(){
-
-        closeAllEntryScreens();
-
-        saveSession(
-          STEPS.synoptique
-        );
-
-        if(
-          window.BociteSynoptique &&
-          typeof window.BociteSynoptique.open ===
-            "function"
-        ){
-
-          window.BociteSynoptique.open();
-          return;
-        }
-
-        console.error(
-          "Bo'CitéArt : le module bociteart-synoptique.js n'est pas disponible."
-        );
-      }
-    );
-  }
-
-  /* =====================================================
-     ÉTAPE 5 — APPLICATION OFFICIELLE
-     ===================================================== */
-
-  function openApplication(){
-
-    closeAllEntryScreens();
-
-    saveCompletion();
-
-    document.documentElement.style
-      .removeProperty("overflow");
-
-    document.body.style
-      .removeProperty("overflow");
-
-    window.scrollTo(
-      0,
-      0
-    );
 
     /*
-      Aucun espace particulier n'est ouvert ici.
-
-      L'application officielle déjà présente
-      dans index.html reste affichée sous les écrans
-      de la porte d'entrée.
-
-      Le parcours n'envoie donc pas l'utilisateur
-      directement vers Entreprise, Commerce
-      ou un autre onglet.
+      PUBLIC :
+      aucune identification.
     */
 
-    document.dispatchEvent(
-      new CustomEvent(
-        "bociteart:application-ready",
-        {
-          detail:{
-            journeyVersion:
-              JOURNEY_VERSION,
-
-            completedAt:
-              new Date().toISOString()
-          }
-        }
-      )
-    );
-
-    console.log(
-      "✅ Parcours terminé — application officielle affichée"
-    );
-  }
-
-  /* =====================================================
-     RÉCEPTION DES VALIDATIONS
-     ===================================================== */
-
-  function handleLegalCompleted(){
-
     if(
-      currentStep !==
-      STEPS.legal
+      request.public ===
+        true
     ){
-      return;
-    }
 
-    openIntroduction();
-  }
-
-  function handleIntroductionCompleted(){
-
-    if(
-      currentStep !==
-      STEPS.introduction
-    ){
-      return;
-    }
-
-    openRegistration();
-  }
-
-/* =========================================================
-   ÇA COMMENCE ICI
-   VALIDATION FICHE → INTRODUCTION DU PROFIL → SYNOPTIQUE
-   ========================================================= */
-
-/* =========================================================
-   ÇA COMMENCE ICI
-   FICHE → INTRODUCTION PROFIL → SYNOPTIQUE
-   AUCUN BLOCAGE PARENTAL À L'ENTRÉE
-   ========================================================= */
-
-function handleRegistrationCompleted(event){
-
-  if(
-    currentStep !==
-    STEPS.registration
-  ){
-    return;
-  }
-
-
-  const detail =
-    event &&
-    event.detail
-      ? event.detail
-      : null;
-
-
-  const category =
-    detail &&
-    detail.category
-      ? detail.category
-      : "";
-
-
-  if(
-    window.BociteRoleIntroductions &&
-    typeof window.BociteRoleIntroductions
-      .openForCategory ===
-        "function"
-  ){
-
-    window.BociteRoleIntroductions
-      .openForCategory(
-        category,
-        function(){
-
-          openSynoptique();
-
-        }
+      return executeRequest(
+        request
       );
 
-    return;
-
-  }
-
-
-  openSynoptique();
-
-}
-
-/* =========================================================
-   ÇA FINIT ICI
-   ========================================================= */
-   
-  function handleSynoptiqueCompleted(){
-
-    if(
-      currentStep !==
-      STEPS.synoptique
-    ){
-      return;
     }
 
-    openApplication();
+
+    /*
+      PRIVÉ :
+      aucune identité enregistrée.
+    */
+
+    if(
+      !hasIdentity()
+    ){
+
+      pendingRequest =
+        request;
+
+
+      openIdentificationMessage();
+
+
+      return false;
+
+    }
+
+
+    /*
+      Identité déjà connue :
+      contrôle éventuel de permission.
+    */
+
+    return executeRequest(
+      request
+    );
+
   }
 
-  document.addEventListener(
-    "bociteart:legal-completed",
-    handleLegalCompleted
-  );
+
+  /* =====================================================
+     LIBELLÉ DE CATÉGORIE
+     ===================================================== */
+
+  function categoryLabel(
+    category
+  ){
+
+    const labels = {
+
+      jeune:
+        "Jeune ou mineur",
+
+      citoyen:
+        "Citoyen majeur",
+
+      commerce:
+        "Commerçant",
+
+      entreprise:
+        "Entreprise",
+
+      association:
+        "Association",
+
+      sport:
+        "Club sportif",
+
+      ecole:
+        "École ou milieu scolaire",
+
+      mairie:
+        "Mairie ou collectivité"
+
+    };
+
+
+    return (
+      labels[
+        category
+      ] ||
+      category ||
+      "Non renseignée"
+    );
+
+  }
+
+
+  /* =====================================================
+     MON PROFIL
+     ===================================================== */
+
+  function openProfile(){
+
+    const account =
+      getAccount();
+
+
+    if(
+      !account
+    ){
+
+      pendingRequest = {
+
+        service:
+          "account",
+
+        action:
+          "profile"
+
+      };
+
+
+      openIdentificationMessage();
+
+
+      return;
+
+    }
+
+
+    const overlay =
+      showCard(`
+
+        <div class="bociteAccessTitle">
+          Mon profil et mes coordonnées
+        </div>
+
+        <p>
+          Modifiez ici les informations personnelles
+          autorisées.
+          Votre compte, votre historique et vos accès
+          restent rattachés au même profil.
+        </p>
+
+
+        <div class="bociteAccessField">
+
+          <label for="bociteProfileName">
+            Nom et prénom
+          </label>
+
+          <input
+            id="bociteProfileName"
+            type="text"
+            autocomplete="name"
+            value="${esc(account.displayName || "")}">
+
+        </div>
+
+
+        <div class="bociteAccessField">
+
+          <label for="bociteProfileEmail">
+            Adresse électronique
+          </label>
+
+          <input
+            id="bociteProfileEmail"
+            type="email"
+            autocomplete="email"
+            value="${esc(account.email || "")}">
+
+        </div>
+
+
+        <div class="bociteAccessField">
+
+          <label for="bociteProfilePhone">
+            Téléphone
+          </label>
+
+          <input
+            id="bociteProfilePhone"
+            type="tel"
+            autocomplete="tel"
+            value="${esc(account.phone || "")}">
+
+        </div>
+
+
+        <div class="bociteAccessField">
+
+          <label for="bociteProfileCommune">
+            Commune
+          </label>
+
+          <input
+            id="bociteProfileCommune"
+            type="text"
+            autocomplete="address-level2"
+            value="${esc(account.commune || "")}">
+
+        </div>
+
+
+        <div class="bociteAccessField">
+
+          <label>
+            Catégorie actuellement rattachée
+          </label>
+
+          <div class="bociteAccessReadOnly">
+
+            ${esc(
+              categoryLabel(
+                account.category
+              )
+            )}
+
+          </div>
+
+        </div>
+
+
+        <p>
+          Les changements sensibles liés à un rôle,
+          une structure, une gouvernance ou un moyen
+          de récupération suivent leur propre procédure
+          de contrôle.
+        </p>
+
+
+        <div
+          id="bociteProfileMessage"
+          class="bociteAccessMessage"
+          role="status">
+        </div>
+
+
+        <div class="bociteAccessActions">
+
+          <button
+            id="bociteProfileSaveBtn"
+            type="button">
+
+            Enregistrer mes modifications
+
+          </button>
+
+          <button
+            id="bociteProfileCloseBtn"
+            class="bociteAccessSecondary"
+            type="button">
+
+            Fermer
+
+          </button>
+
+        </div>
+
+      `);
+
+
+    overlay
+      .querySelector(
+        "#bociteProfileCloseBtn"
+      )
+      .onclick =
+        closeOverlay;
+
+
+    overlay
+      .querySelector(
+        "#bociteProfileSaveBtn"
+      )
+      .onclick =
+        function(){
+
+          const api =
+            registrationApi();
+
+
+          const message =
+            overlay.querySelector(
+              "#bociteProfileMessage"
+            );
+
+
+          if(
+            !api ||
+            typeof api.updateAccount !==
+              "function"
+          ){
+
+            return;
+
+          }
+
+
+          const displayName =
+
+            overlay
+              .querySelector(
+                "#bociteProfileName"
+              )
+              .value
+              .trim();
+
+
+          const email =
+
+            overlay
+              .querySelector(
+                "#bociteProfileEmail"
+              )
+              .value
+              .trim();
+
+
+          const phone =
+
+            overlay
+              .querySelector(
+                "#bociteProfilePhone"
+              )
+              .value
+              .trim();
+
+
+          const commune =
+
+            overlay
+              .querySelector(
+                "#bociteProfileCommune"
+              )
+              .value
+              .trim();
+
+
+          if(
+            !displayName ||
+            !commune ||
+            (
+              account.category !==
+                "jeune" &&
+              !email
+            )
+          ){
+
+            message.textContent =
+              "Complétez les informations nécessaires avant d’enregistrer.";
+
+
+            message.style.display =
+              "block";
+
+
+            return;
+
+          }
+
+
+          if(
+            email &&
+            (
+              !email.includes(
+                "@"
+              ) ||
+              !email.includes(
+                "."
+              )
+            )
+          ){
+
+            message.textContent =
+              "Indiquez une adresse électronique valide.";
+
+
+            message.style.display =
+              "block";
+
+
+            return;
+
+          }
+
+
+          api.updateAccount({
+
+            displayName:
+              displayName,
+
+            email:
+              email,
+
+            phone:
+              phone,
+
+            commune:
+              commune
+
+          });
+
+
+          if(
+            typeof api.saveDeclaredCommune ===
+              "function"
+          ){
+
+            api.saveDeclaredCommune(
+              commune
+            );
+
+          }
+
+
+          message.textContent =
+            "Vos informations ont été mises à jour.";
+
+
+          message.style.display =
+            "block";
+
+
+          document.dispatchEvent(
+
+            new CustomEvent(
+
+              "bociteart:profile-updated",
+
+              {
+
+                detail:{
+
+                  accountId:
+                    account.accountId,
+
+                  updatedAt:
+                    new Date()
+                      .toISOString()
+
+                }
+
+              }
+
+            )
+
+          );
+
+        };
+
+  }
+
+
+  /* =====================================================
+     FIN DE LA PREMIÈRE IDENTIFICATION
+     ===================================================== */
+
+  function showRegistrationCompleted(){
+
+    const overlay =
+      showCard(`
+
+        <div class="bociteAccessTitle">
+          Votre profil est enregistré
+        </div>
+
+        <p>
+          Vos informations et vos accès
+          sont maintenant rattachés à votre profil
+          ${brandHtml()}.
+        </p>
+
+        <p>
+          <strong>
+            Pour retrouver ou modifier votre fiche :
+          </strong>
+        </p>
+
+        <div class="bociteAccessPath">
+          Compte + aide → Mon profil
+        </div>
+
+        <p>
+          Vous pourrez y mettre à jour vos coordonnées
+          et les informations modifiables sans recommencer
+          votre inscription.
+        </p>
+
+        <p>
+          <strong>
+            Pensez à retenir cet emplacement.
+          </strong>
+        </p>
+
+        <div class="bociteAccessActions">
+
+          <button
+            id="bociteAccessViewProfileBtn"
+            type="button">
+
+            Voir mon profil
+
+          </button>
+
+          <button
+            id="bociteAccessContinueBtn"
+            class="bociteAccessSecondary"
+            type="button">
+
+            Continuer dans Bo’CitéArt
+
+          </button>
+
+        </div>
+
+      `);
+
+
+    overlay
+      .querySelector(
+        "#bociteAccessViewProfileBtn"
+      )
+      .onclick =
+        function(){
+
+          closeOverlay();
+
+          openProfile();
+
+        };
+
+
+    overlay
+      .querySelector(
+        "#bociteAccessContinueBtn"
+      )
+      .onclick =
+        function(){
+
+          closeOverlay();
+
+
+          const request =
+            pendingRequest;
+
+
+          pendingRequest =
+            null;
+
+
+          if(
+            request
+          ){
+
+            executeRequest(
+              request
+            );
+
+          }
+
+        };
+
+  }
+
+
+  /* =====================================================
+     COMPTE + AIDE → MON PROFIL
+     ===================================================== */
+
+  function injectProfileCard(){
+
+    const modalTitle =
+      document.getElementById(
+        "modalTitle"
+      );
+
+
+    const modalBody =
+      document.getElementById(
+        "modalBody"
+      );
+
+
+    if(
+      !modalTitle ||
+      !modalBody
+    ){
+
+      return;
+
+    }
+
+
+    if(
+      String(
+        modalTitle.textContent ||
+        ""
+      ).trim() !==
+        "Compte + aide"
+    ){
+
+      return;
+
+    }
+
+
+    if(
+      document.getElementById(
+        PROFILE_CARD_ID
+      )
+    ){
+
+      return;
+
+    }
+
+
+    ensureStyles();
+
+
+    const card =
+      document.createElement(
+        "div"
+      );
+
+
+    card.id =
+      PROFILE_CARD_ID;
+
+
+    if(
+      hasIdentity()
+    ){
+
+      const account =
+        getAccount() ||
+        {};
+
+
+      card.innerHTML = `
+
+        <div class="bociteAccessTitle">
+          Mon profil et mes coordonnées
+        </div>
+
+        <p>
+          Retrouvez ici votre fiche pour modifier
+          vos coordonnées et les informations autorisées
+          sans recommencer votre inscription.
+        </p>
+
+        <p>
+          Profil actuel :
+          <strong>
+            ${esc(account.displayName || "Utilisateur")}
+          </strong>
+        </p>
+
+        <button
+          id="bociteCompteAideOpenProfile"
+          type="button">
+
+          Ouvrir mon profil
+
+        </button>
+
+      `;
+
+    }else{
+
+      card.innerHTML = `
+
+        <div class="bociteAccessTitle">
+          Mon profil
+        </div>
+
+        <p>
+          Vous pouvez découvrir librement les parties
+          publiques de ${brandHtml()}.
+          Créez votre profil seulement lorsque vous
+          souhaitez utiliser un service personnel
+          ou réservé.
+        </p>
+
+        <button
+          id="bociteCompteAideCreateProfile"
+          type="button">
+
+          M’identifier / créer mon profil
+
+        </button>
+
+      `;
+
+    }
+
+
+    modalBody.insertBefore(
+      card,
+      modalBody.firstChild
+    );
+
+
+    const openProfileButton =
+
+      card.querySelector(
+        "#bociteCompteAideOpenProfile"
+      );
+
+
+    if(
+      openProfileButton
+    ){
+
+      openProfileButton.onclick =
+        openProfile;
+
+    }
+
+
+    const createProfileButton =
+
+      card.querySelector(
+        "#bociteCompteAideCreateProfile"
+      );
+
+
+    if(
+      createProfileButton
+    ){
+
+      createProfileButton.onclick =
+        function(){
+
+          const api =
+            registrationApi();
+
+
+          if(
+            api &&
+            typeof api.open ===
+              "function"
+          ){
+
+            api.open();
+
+          }
+
+        };
+
+    }
+
+  }
+
+
+  function installCompteAideHook(){
+
+    document.addEventListener(
+
+      "click",
+
+      function(
+        event
+      ){
+
+        const target =
+
+          event.target &&
+          event.target.closest
+
+            ? event.target.closest(
+                "#openSecure"
+              )
+
+            : null;
+
+
+        if(
+          !target
+        ){
+
+          return;
+
+        }
+
+
+        window.setTimeout(
+          injectProfileCard,
+          0
+        );
+
+
+        window.setTimeout(
+          injectProfileCard,
+          80
+        );
+
+      },
+
+      true
+
+    );
+
+  }
+
+
+  /* =====================================================
+     FIN D'IDENTIFICATION
+     ===================================================== */
 
   document.addEventListener(
-    "bociteart:introduction-completed",
-    handleIntroductionCompleted
-  );
 
-  document.addEventListener(
     "bociteart:registration-completed",
-    handleRegistrationCompleted
+
+    function(){
+
+      showRegistrationCompleted();
+
+    }
+
   );
 
-  document.addEventListener(
-    "bociteart:synoptique-completed",
-    handleSynoptiqueCompleted
-  );
-
-  /* =====================================================
-     REPRISE DU PARCOURS
-     ===================================================== */
-
-function resume(){
-
-  /*
-    MODE PRÉSENTATION :
-    le parcours complet recommence
-    depuis les informations légales.
-  */
-
-  if(PRESENTATION_MODE){
-
-    removeStorageItem(
-      STORAGE.session
-    );
-
-    removeStorageItem(
-      STORAGE.completed
-    );
-
-    currentStep =
-      "";
-
-    openLegal();
-
-    console.log(
-      "✅ Parcours complet affiché"
-    );
-
-    return;
-  }
-
-  /*
-    MODE UTILISATEUR NORMAL :
-    après la première validation complète,
-    l'application s'ouvre directement.
-  */
-
- if(journeyCompleted()){
-
-  openApplication();
-
-  return;
-}
-
-  const session =
-    getSession();
-
-  const savedStep =
-    session &&
-    session.version ===
-      JOURNEY_VERSION
-        ? session.step
-        : "";
-
-  switch(savedStep){
-
-    case STEPS.introduction:
-
-      openIntroduction();
-      break;
-
-    case STEPS.registration:
-
-      openRegistration();
-      break;
-
-    case STEPS.synoptique:
-
-      openSynoptique();
-      break;
-
-    case STEPS.legal:
-    default:
-
-      openLegal();
-      break;
-  }
-}
-  /* =====================================================
-     RÉINITIALISATION DE TEST
-     ===================================================== */
-
-  function resetJourney(){
-
-    removeStorageItem(
-      STORAGE.session
-    );
-
-    removeStorageItem(
-      STORAGE.completed
-    );
-
-    currentStep =
-      "";
-
-    closeAllEntryScreens();
-
-    openLegal();
-
-    console.log(
-      "✅ Parcours Bo'CitéArt réinitialisé"
-    );
-  }
 
   /* =====================================================
      API PUBLIQUE
      ===================================================== */
 
-  window.BociteStart = {
-    resume:
-      resume,
+  window.BociteAccess = {
 
-    reset:
-      resetJourney,
+    request:
+      requestAccess,
 
-    openLegal:
-      openLegal,
+    hasIdentity:
+      hasIdentity,
 
-    openIntroduction:
-      openIntroduction,
+    getAccount:
+      getAccount,
 
-    openRegistration:
-      openRegistration,
+    openIdentification:
+      openIdentificationMessage,
 
-    openSynoptique:
-      openSynoptique,
+    openProfile:
+      openProfile,
 
-    openApplication:
-      openApplication,
+    injectProfileCard:
+      injectProfileCard,
 
-    getCurrentStep:
+    clearPending:
       function(){
 
-        return currentStep;
-      },
+        pendingRequest =
+          null;
 
-    journeyCompleted:
-      journeyCompleted,
+      }
 
-    storageKeys:
-      Object.assign(
-        {},
-        STORAGE
-      ),
-
-    version:
-      JOURNEY_VERSION
   };
 
-  /* =====================================================
-     DÉMARRAGE UNIQUE
-     ===================================================== */
 
-  function startJourney(){
+  installCompteAideHook();
 
-    window.setTimeout(
-      resume,
-      0
-    );
-  }
-
-  if(
-    document.readyState ===
-    "loading"
-  ){
-
-    document.addEventListener(
-      "DOMContentLoaded",
-      startJourney,
-      {
-        once:true
-      }
-    );
-
-  }else{
-
-    startJourney();
-  }
 
   console.log(
-    "✅ Chef d'orchestre Bo'CitéArt V8 chargé"
+    "✅ Contrôleur central d'accès Bo'CitéArt chargé"
   );
+
 
 })();
 
+/* =========================================================
+   ÇA FINIT ICI
+   ========================================================= */
 /* =========================================================
    ÇA COMMENCE ICI
    BO'CITÉART — COMPTE + AIDE
