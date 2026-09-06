@@ -7862,7 +7862,7 @@ function sportPresidentHtml(){
   return `
 
     ${sportTitle(
-      "Identité et gouvernance du club avec"
+      "Identité et gouvernance du club avec" 
     )}
 
     <div class="sportCard">
