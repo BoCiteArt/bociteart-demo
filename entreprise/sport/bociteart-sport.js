@@ -5802,7 +5802,7 @@ function sportBenefitsHtml(){
         <li>
           partager les efforts,
           le matériel
-          et les responsabilités ;
+          et les responsabilités 
         </li>
 
         <li>
