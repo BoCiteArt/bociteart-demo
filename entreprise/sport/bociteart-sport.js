@@ -14256,23 +14256,84 @@ function openClubAccess(){
               "sportLoginStatus"
             );
 
-          if(
-            !id ||
-            !code
-          ){
+      if(
+  !id ||
+  !code
+){
 
-            if(o){
+  if(o){
 
-              o.textContent=
-                "Renseignez l’identifiant et le code.";
-            }
+    o.textContent=
+      "Renseignez l’identifiant et le code.";
+  }
 
-            return;
-          }
+  return;
+}
 
-          if(
-            sportLocked(id)
-          ){
+
+/* =========================================================
+   ÇA COMMENCE ICI
+   SPORT — ACCÈS DIRECT COMPLET POUR LA DÉMO
+   ========================================================= */
+
+if(
+  SPORT_CONFIG.mode !==
+    "production" &&
+
+  id ===
+    "141010" &&
+
+  code ===
+    "141010"
+){
+
+  sportResetFail(
+    id
+  );
+
+
+  window
+    .bociteartSportPresidentPrechecked =
+      true;
+
+
+  sportSession={
+
+    role:
+      "president",
+
+    accountId:
+      "sport-demo-president",
+
+    name:
+      "Président — accès de présentation",
+
+    team:
+      "",
+
+    testFullAccess:
+      true
+  };
+
+
+  window.bociteartSportSession=
+    sportSession;
+
+
+  openClubReserve();
+
+  return;
+}
+
+/* =========================================================
+   ÇA FINIT ICI
+   SPORT — ACCÈS DIRECT COMPLET POUR LA DÉMO
+   ========================================================= */
+
+
+if(
+  sportLocked(id)
+){
 
             if(o){
 
