@@ -16242,64 +16242,45 @@ function openClubAccess(){
                SPORT — PORTE DE SECOURS INDÉPENDANTE
                ====================================================== -->
 
-          <div
-            style="
-              margin-top:20px;
-              padding-top:18px;
-              border-top:1px solid #d9dfda;
-            "
-          >
+<div
+  style="
+    margin-top:20px;
+    padding-top:18px;
+    border-top:1px solid #d9dfda;
+  "
+>
 
-            <div class="sportSubTitle">
+  <div class="sportSubTitle">
+    Besoin d’aide pour votre accès ?
+  </div>
 
-              Difficulté d’accès
-              ou changement de responsable
+  <div
+    class="sportText"
+    style="margin-top:8px;"
+  >
 
-            </div>
+    En cas de difficulté de connexion
+    ou pour toute autre question concernant
+    l’accès à votre espace Sport,
+    vous pouvez contacter
+    ${sportBrandHtml()}
+    directement ici.
 
-            <div
-              class="sportText"
-              style="margin-top:8px;"
-            >
+  </div>
 
-              Vous faisiez partie du club,
-              vous êtes un collaborateur,
-              un nouveau responsable
-              ou une personne mandatée,
-              mais une difficulté empêche
-              l’accès normal à la structure ?
+  <button
+    id="sportContinuityOpen"
+    class="sportBtn"
+    type="button"
+    style="
+      width:100%;
+      margin-top:14px;
+    "
+  >
+    Contacter Bo'CitéArt
+  </button>
 
-              <br><br>
-
-              Vous pouvez signaler ici
-              la situation directement à
-              ${sportBrandHtml()}.
-
-              <br><br>
-
-              Cet accès reste disponible
-              indépendamment des droits
-              attribués ou retirés
-              par le responsable principal.
-
-              Aucun droit de direction
-              n’est accordé automatiquement.
-
-            </div>
-
-            <button
-              id="sportContinuityOpen"
-              class="sportBtn"
-              type="button"
-              style="
-                width:100%;
-                margin-top:14px;
-              "
-            >
-              Signaler une difficulté à Bo'CitéArt
-            </button>
-
-          </div>
+</div>
 
           <!-- ======================================================
                ÇA FINIT ICI
