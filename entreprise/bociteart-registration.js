@@ -3747,9 +3747,10 @@ function finishRegistration(
   );
 }
 
-/* =====================================================
-   ÉCRAN DE SÉCURISATION DU COMPTE
-   ===================================================== */
+/* =========================================================
+   ÇA COMMENCE ICI
+   COMPTE PERSONNEL — SÉCURISATION SANS CODE DE RÔLE
+   ========================================================= */
 
 function openAccountSecuritySetup(
   account
@@ -3759,645 +3760,590 @@ function openAccountSecuritySetup(
     return;
   }
 
-  const activationCode =
-    createNumericCode(6);
 
-  let emailCode =
+  let emailCode=
     "";
 
-  let smsCode =
+  let smsCode=
     "";
 
-  hashSecret(
-    activationCode
-  )
-  .then(function(
-    activationCodeHash
-  ){
 
-    saveAccountSecurity({
+  saveAccountSecurity({
 
-      accountId:
-        account.accountId,
+    accountId:
+      account.accountId,
 
-      activated:
-        false,
+    activated:
+      false,
 
-      passwordConfigured:
-        false,
+    passwordConfigured:
+      false,
 
-      activationCodeHash:
-        activationCodeHash,
+    /*
+      Aucun code d'activation de rôle
+      n'est demandé pour créer
+      le profil personnel Bo'CitéArt.
 
-      email:
-        account.email || "",
+      Les codes Président, Direction,
+      collaborateur, etc.
+      sont gérés uniquement
+      dans les espaces concernés.
+    */
 
-      phone:
-        account.phone || "",
+    activationCodeHash:
+      "",
 
-      createdAt:
-        new Date().toISOString()
+    email:
+      account.email ||
+      "",
 
-    });
+    phone:
+      account.phone ||
+      "",
 
-    const overlay =
-      getElement(
-        OVERLAY_ID
-      );
+    createdAt:
+      new Date()
+        .toISOString()
 
-    if(!overlay){
-      return;
-    }
-
-    const organizationHtml =
-      isOrganizationCategory(
-        account.category
-      )
-        ? `
-
-            <div class="bociteRegistrationPrivacy">
-
-              <strong>
-                Responsable principal
-              </strong>
-
-              <br><br>
-
-              Vous êtes le responsable principal
-              de cet espace ${getLogoHtml()}.
-
-              <br><br>
-
-              Vous pourrez ensuite donner
-              des accès individuels
-              à vos collaborateurs.
-
-              <br><br>
-
-              Chaque collaborateur aura
-              son propre accès et uniquement
-              les autorisations que vous lui accordez.
-
-              <br><br>
-
-              Vous pourrez couper immédiatement
-              l'accès d'une personne
-              lorsqu'elle quitte votre structure.
-
-            </div>
-
-          `
-        : "";
-
-    const smsHtml =
-      account.phone
-        ? `
-
-            <button
-              id="bociteSecuritySmsBtn"
-              type="button"
-              class="choiceBtn"
-              style="
-                width:100%;
-                margin-top:8px;
-              ">
-              Recevoir un code par SMS
-            </button>
+  });
 
 
-            <div
-              id="bociteSecuritySmsWrap"
-              class="bociteRegistrationField"
-              style="display:none;">
-
-              <label for="bociteSecuritySmsCode">
-                Code reçu par SMS
-              </label>
-
-              <input
-                id="bociteSecuritySmsCode"
-                type="text"
-                inputmode="numeric"
-                autocomplete="one-time-code"
-                maxlength="6"
-                placeholder="6 chiffres">
-
-            </div>
-
-          `
-        : "";
-
-    overlay.innerHTML = `
-
-      <div id="bociteRegistrationCard">
-
-        <h2 class="bociteRegistrationTitle">
-
-          Sécurisez votre compte
-
-          <br>
-
-          ${getLogoHtml()}
-
-        </h2>
+  const overlay=
+    getElement(
+      OVERLAY_ID
+    );
 
 
-        <div class="bociteRegistrationIntro">
+  if(!overlay){
+    return;
+  }
 
-          Votre sécurité protège
-          votre identité et vos accès
-          dans toute l'application.
 
-        </div>
+  const emailHtml=
+    account.email
+      ? `
 
-        <div class="bociteRegistrationPrivacy">
-
-          <strong>
-            Code d'activation initial
-          </strong>
-
-          <br><br>
-
-          Pour cette démonstration,
-          votre code est :
-
-          <br><br>
-
-          <strong
+          <button
+            id="bociteSecurityEmailBtn"
+            type="button"
+            class="choiceBtn"
             style="
-              display:block;
-              text-align:center;
-              color:#2f5d46;
-              font-size:28px;
-            ">
-            ${activationCode}
-          </strong>
+              width:100%;
+              margin-top:10px;
+            "
+          >
+            Vérifier mon adresse e-mail
+          </button>
 
-          <br>
+          <div
+            id="bociteSecurityEmailWrap"
+            class="bociteRegistrationField"
+            style="display:none;"
+          >
 
-          Dans la version officielle,
-          ce code sera transmis
-          de manière sécurisée
-          et utilisable une seule fois.
+            <label for="bociteSecurityEmailCode">
+              Code reçu par e-mail
+            </label>
 
-        </div>
-
-        <div class="bociteRegistrationField">
-
-          <label for="bociteSecurityInitialCode">
-            Saisissez votre code initial
-          </label>
-
-          <input
-            id="bociteSecurityInitialCode"
-            type="text"
-            inputmode="numeric"
-            autocomplete="one-time-code"
-            maxlength="6"
-            placeholder="6 chiffres">
-
-        </div>
-
-        <div class="bociteRegistrationField">
-
-          <label for="bociteSecurityPassword">
-            Créez votre mot de passe
-          </label>
-
-          <input
-            id="bociteSecurityPassword"
-            type="password"
-            autocomplete="new-password"
-            placeholder="Votre mot de passe">
-
-          <div class="bociteRegistrationHelp">
-
-            Utilisez un mot de passe
-            personnel que vous n'utilisez
-            pas ailleurs.
+            <input
+              id="bociteSecurityEmailCode"
+              type="text"
+              inputmode="numeric"
+              autocomplete="one-time-code"
+              maxlength="6"
+              placeholder="6 chiffres"
+            >
 
           </div>
 
-        </div>
+        `
+      : "";
 
-        <div class="bociteRegistrationField">
 
-          <label for="bociteSecurityPasswordConfirm">
-            Confirmez votre mot de passe
-          </label>
+  const smsHtml=
+    account.phone
+      ? `
 
-          <input
-            id="bociteSecurityPasswordConfirm"
-            type="password"
-            autocomplete="new-password"
-            placeholder="Confirmez votre mot de passe">
+          <button
+            id="bociteSecuritySmsBtn"
+            type="button"
+            class="choiceBtn"
+            style="
+              width:100%;
+              margin-top:8px;
+            "
+          >
+            Vérifier mon téléphone
+          </button>
 
-        </div>
+          <div
+            id="bociteSecuritySmsWrap"
+            class="bociteRegistrationField"
+            style="display:none;"
+          >
 
-        <div class="bociteRegistrationPrivacy">
+            <label for="bociteSecuritySmsCode">
+              Code reçu par SMS
+            </label>
 
-          <strong>
-            Préparez plusieurs moyens
-            de récupération
-          </strong>
+            <input
+              id="bociteSecuritySmsCode"
+              type="text"
+              inputmode="numeric"
+              autocomplete="one-time-code"
+              maxlength="6"
+              placeholder="6 chiffres"
+            >
 
-          <br><br>
+          </div>
 
-          Nous vous recommandons
-          d'enregistrer plusieurs moyens
-          permettant de confirmer votre identité.
+        `
+      : "";
 
-          <br><br>
 
-          Votre mot de passe actuel
-          ne peut pas vous être communiqué
-          par ${getLogoHtml()}.
+  overlay.innerHTML=`
 
-          <br><br>
+    <div id="bociteRegistrationCard">
 
-          En cas d'oubli,
-          une procédure sécurisée
-          de vérification et de réinitialisation
-          sera nécessaire.
+      <h2 class="bociteRegistrationTitle">
 
-        </div>
+        Sécurisez votre compte
 
-        <button
-          id="bociteSecurityEmailBtn"
-          type="button"
-          class="choiceBtn"
-          style="
-            width:100%;
-            margin-top:10px;
-          ">
-          Recevoir un code par e-mail
-        </button>
+        <br>
 
-        <div
-          id="bociteSecurityEmailWrap"
-          class="bociteRegistrationField"
-          style="display:none;">
+        ${getLogoHtml()}
 
-          <label for="bociteSecurityEmailCode">
-            Code reçu par e-mail
-          </label>
+      </h2>
 
-          <input
-            id="bociteSecurityEmailCode"
-            type="text"
-            inputmode="numeric"
-            autocomplete="one-time-code"
-            maxlength="6"
-            placeholder="6 chiffres">
 
-        </div>
+      <div class="bociteRegistrationIntro">
 
-        ${smsHtml}
-
-        <div class="bociteRegistrationPrivacy">
-
-          <strong>
-            Sécurité renforcée
-          </strong>
-
-          <br><br>
-
-          Votre compte est également préparé pour :
-
-          <br><br>
-
-          • double authentification
-          <br>
-          • passkey
-          <br>
-          • empreinte
-          <br>
-          • reconnaissance faciale
-          <br>
-          • Windows Hello
-          <br>
-          • clé de sécurité
-
-          <br><br>
-
-          Ces protections seront raccordées
-          au serveur sécurisé
-          dans la version officielle.
-
-        </div>
-
-        ${organizationHtml}
-
-        <div
-          id="bociteSecurityMessage"
-          role="alert"
-          style="
-            display:none;
-            margin-top:14px;
-            padding:13px;
-            border-left:6px solid #b00020;
-            background:#f7f3ea;
-            color:#111;
-            font-size:14px;
-            line-height:1.45;
-          ">
-        </div>
-
-        <button
-          id="bociteSecurityValidateBtn"
-          type="button"
-          style="
-            display:block;
-            width:100%;
-            margin-top:16px;
-            padding:15px 12px;
-            border:2px solid #2f5d46;
-            border-radius:10px;
-            background:#fff;
-            color:#111;
-            font-size:18px;
-            font-weight:900;
-            cursor:pointer;
-          ">
-          Sécuriser et ouvrir mon compte
-        </button>
+        Votre profil personnel
+        vous permet d’être reconnu
+        dans ${getLogoHtml()}
+        sans avoir à recommencer
+        votre identification
+        dans chaque espace.
 
       </div>
 
-    `;
 
-    /* ===================================================
-       CODE E-MAIL
-       =================================================== */
+      <div class="bociteRegistrationPrivacy">
 
-    const emailBtn =
-      getElement(
-        "bociteSecurityEmailBtn"
-      );
+        <strong>
+          Votre profil personnel
+        </strong>
 
-    if(emailBtn){
+        <br><br>
 
-      emailBtn.onclick =
-        function(){
+        Aucun code spécial Président,
+        Direction, commerce,
+        entreprise, association
+        ou club sportif
+        n’est nécessaire ici.
 
-          emailCode =
-            createNumericCode(6);
+        <br><br>
 
-          const wrap =
+        Les autorisations particulières
+        seront vérifiées uniquement
+        lorsque vous demanderez
+        l’accès à une fonction protégée.
+
+      </div>
+
+
+      <div class="bociteRegistrationField">
+
+        <label for="bociteSecurityPassword">
+          Créez votre mot de passe
+        </label>
+
+        <input
+          id="bociteSecurityPassword"
+          type="password"
+          autocomplete="new-password"
+          placeholder="Votre mot de passe"
+        >
+
+        <div class="bociteRegistrationHelp">
+
+          Utilisez un mot de passe personnel
+          que vous n’utilisez pas ailleurs.
+
+        </div>
+
+      </div>
+
+
+      <div class="bociteRegistrationField">
+
+        <label for="bociteSecurityPasswordConfirm">
+          Confirmez votre mot de passe
+        </label>
+
+        <input
+          id="bociteSecurityPasswordConfirm"
+          type="password"
+          autocomplete="new-password"
+          placeholder="Confirmez votre mot de passe"
+        >
+
+      </div>
+
+
+      <div class="bociteRegistrationPrivacy">
+
+        <strong>
+          Vérification et récupération
+        </strong>
+
+        <br><br>
+
+        Vérifiez au moins
+        votre adresse e-mail
+        ou votre téléphone.
+
+        <br><br>
+
+        Ces coordonnées permettront également
+        de sécuriser une future procédure
+        de récupération de votre compte.
+
+        <br><br>
+
+        ${getLogoHtml()}
+        ne peut jamais vous communiquer
+        votre mot de passe actuel.
+
+      </div>
+
+
+      ${emailHtml}
+
+      ${smsHtml}
+
+
+      <div class="bociteRegistrationPrivacy">
+
+        <strong>
+          Sécurité renforcée
+        </strong>
+
+        <br><br>
+
+        Le compte est préparé
+        pour accueillir ensuite,
+        selon l’appareil utilisé :
+
+        <br><br>
+
+        • double authentification
+        <br>
+        • passkey
+        <br>
+        • empreinte
+        <br>
+        • reconnaissance faciale
+        <br>
+        • Windows Hello
+        <br>
+        • clé de sécurité
+
+      </div>
+
+
+      <div
+        id="bociteSecurityMessage"
+        role="alert"
+        style="
+          display:none;
+          margin-top:14px;
+          padding:13px;
+          border-left:6px solid #b00020;
+          background:#f7f3ea;
+          color:#111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.45;
+        "
+      ></div>
+
+
+      <button
+        id="bociteSecurityValidateBtn"
+        type="button"
+        style="
+          display:block;
+          width:100%;
+          margin-top:16px;
+          padding:15px 12px;
+          border:2px solid #2f5d46;
+          border-radius:10px;
+          background:#ffffff;
+          color:#2f5d46;
+          font-size:16px;
+          font-weight:700;
+          cursor:pointer;
+        "
+      >
+        Enregistrer et ouvrir mon profil
+      </button>
+
+    </div>
+
+  `;
+
+
+  /* =====================================================
+     VÉRIFICATION E-MAIL
+     ===================================================== */
+
+  const emailBtn=
+    getElement(
+      "bociteSecurityEmailBtn"
+    );
+
+
+  if(emailBtn){
+
+    emailBtn.onclick=
+      function(){
+
+        emailCode=
+          createNumericCode(
+            6
+          );
+
+
+        const wrap=
+          getElement(
+            "bociteSecurityEmailWrap"
+          );
+
+
+        if(wrap){
+
+          wrap.style.display=
+            "block";
+        }
+
+
+        /*
+          PRÉSENTATION ACTUELLE UNIQUEMENT.
+
+          En production :
+          le code sera transmis
+          côté serveur.
+        */
+
+        alert(
+          "Code e-mail pour le test : " +
+          emailCode
+        );
+      };
+  }
+
+
+  /* =====================================================
+     VÉRIFICATION SMS
+     ===================================================== */
+
+  const smsBtn=
+    getElement(
+      "bociteSecuritySmsBtn"
+    );
+
+
+  if(smsBtn){
+
+    smsBtn.onclick=
+      function(){
+
+        smsCode=
+          createNumericCode(
+            6
+          );
+
+
+        const wrap=
+          getElement(
+            "bociteSecuritySmsWrap"
+          );
+
+
+        if(wrap){
+
+          wrap.style.display=
+            "block";
+        }
+
+
+        /*
+          PRÉSENTATION ACTUELLE UNIQUEMENT.
+
+          En production :
+          le code sera transmis
+          côté serveur.
+        */
+
+        alert(
+          "Code SMS pour le test : " +
+          smsCode
+        );
+      };
+  }
+
+
+  /* =====================================================
+     VALIDATION DU PROFIL
+     ===================================================== */
+
+  const validate=
+    getElement(
+      "bociteSecurityValidateBtn"
+    );
+
+
+  if(validate){
+
+    validate.onclick=
+      function(){
+
+        const password=
+          String(
             getElement(
-              "bociteSecurityEmailWrap"
-            );
+              "bociteSecurityPassword"
+            )?.value ||
+            ""
+          );
 
-          if(wrap){
 
-            wrap.style.display =
+        const confirmation=
+          String(
+            getElement(
+              "bociteSecurityPasswordConfirm"
+            )?.value ||
+            ""
+          );
+
+
+        const enteredEmailCode=
+          normalizeText(
+            getElement(
+              "bociteSecurityEmailCode"
+            )?.value
+          );
+
+
+        const enteredSmsCode=
+          normalizeText(
+            getElement(
+              "bociteSecuritySmsCode"
+            )?.value
+          );
+
+
+        const message=
+          getElement(
+            "bociteSecurityMessage"
+          );
+
+
+        if(
+          !password ||
+          !confirmation
+        ){
+
+          if(message){
+
+            message.textContent=
+              "Créez et confirmez votre mot de passe.";
+
+            message.style.display=
               "block";
           }
 
-          /*
-            DÉMONSTRATION UNIQUEMENT.
+          return;
+        }
 
-            En production :
-            envoi réel côté serveur.
-          */
 
-          alert(
-            "Démonstration — code e-mail : " +
-            emailCode
-          );
-        };
-    }
+        if(
+          password.length <
+          10
+        ){
 
-    /* ===================================================
-       CODE SMS
-       =================================================== */
+          if(message){
 
-    const smsBtn =
-      getElement(
-        "bociteSecuritySmsBtn"
-      );
+            message.textContent=
+              "Choisissez un mot de passe d’au moins 10 caractères.";
 
-    if(smsBtn){
-
-      smsBtn.onclick =
-        function(){
-
-          smsCode =
-            createNumericCode(6);
-
-          const wrap =
-            getElement(
-              "bociteSecuritySmsWrap"
-            );
-
-          if(wrap){
-
-            wrap.style.display =
+            message.style.display=
               "block";
           }
 
+          return;
+        }
 
-          /*
-            DÉMONSTRATION UNIQUEMENT.
 
-            En production :
-            envoi SMS réel côté serveur.
-          */
+        if(
+          password !==
+          confirmation
+        ){
 
-          alert(
-            "Démonstration — code SMS : " +
-            smsCode
+          if(message){
+
+            message.textContent=
+              "Les deux mots de passe ne correspondent pas.";
+
+            message.style.display=
+              "block";
+          }
+
+          return;
+        }
+
+
+        const emailVerified=
+          Boolean(
+            emailCode &&
+            enteredEmailCode ===
+              emailCode
           );
-        };
-    }
 
 
-    /* ===================================================
-       VALIDATION
-       =================================================== */
-
-    const validate =
-      getElement(
-        "bociteSecurityValidateBtn"
-      );
-
-    if(validate){
-
-      validate.onclick =
-        function(){
-
-          const initialCode =
-            normalizeText(
-              getElement(
-                "bociteSecurityInitialCode"
-              )?.value
-            );
+        const phoneVerified=
+          Boolean(
+            smsCode &&
+            enteredSmsCode ===
+              smsCode
+          );
 
 
-          const password =
-            String(
-              getElement(
-                "bociteSecurityPassword"
-              )?.value ||
-              ""
-            );
+        if(
+          !emailVerified &&
+          !phoneVerified
+        ){
 
+          if(message){
 
-          const confirmation =
-            String(
-              getElement(
-                "bociteSecurityPasswordConfirm"
-              )?.value ||
-              ""
-            );
+            message.textContent=
+              "Vérifiez au moins votre e-mail ou votre téléphone avant de continuer.";
 
-
-          const enteredEmailCode =
-            normalizeText(
-              getElement(
-                "bociteSecurityEmailCode"
-              )?.value
-            );
-
-
-          const enteredSmsCode =
-            normalizeText(
-              getElement(
-                "bociteSecuritySmsCode"
-              )?.value
-            );
-
-
-          const message =
-            getElement(
-              "bociteSecurityMessage"
-            );
-
-
-          if(
-            !initialCode ||
-            !password ||
-            !confirmation
-          ){
-
-            if(message){
-
-              message.textContent =
-                "Complétez le code initial et votre mot de passe.";
-
-              message.style.display =
-                "block";
-            }
-
-            return;
+            message.style.display=
+              "block";
           }
 
+          return;
+        }
 
-          if(
-            password.length <
-            10
+
+        hashSecret(
+          password
+        )
+        .then(
+          function(
+            passwordHash
           ){
-
-            if(message){
-
-              message.textContent =
-                "Choisissez un mot de passe d'au moins 10 caractères.";
-
-              message.style.display =
-                "block";
-            }
-
-            return;
-          }
-
-
-          if(
-            password !==
-            confirmation
-          ){
-
-            if(message){
-
-              message.textContent =
-                "Les deux mots de passe ne correspondent pas.";
-
-              message.style.display =
-                "block";
-            }
-
-            return;
-          }
-
-
-          Promise.all([
-
-            verifySecret(
-              initialCode,
-              activationCodeHash
-            ),
-
-            hashSecret(
-              password
-            )
-
-          ])
-          .then(function(results){
-
-            const initialCodeValid =
-              results[0];
-
-            const passwordHash =
-              results[1];
-
-
-            if(!initialCodeValid){
-
-              if(message){
-
-                message.textContent =
-                  "Le code initial est incorrect.";
-
-                message.style.display =
-                  "block";
-              }
-
-              return;
-            }
-
-
-            const emailVerified =
-              Boolean(
-                emailCode &&
-                enteredEmailCode ===
-                emailCode
-              );
-
-
-            const phoneVerified =
-              Boolean(
-                smsCode &&
-                enteredSmsCode ===
-                smsCode
-              );
-
-
-            if(
-              !emailVerified &&
-              !phoneVerified
-            ){
-
-              if(message){
-
-                message.textContent =
-                  "Validez au moins votre e-mail ou votre téléphone avant de continuer.";
-
-                message.style.display =
-                  "block";
-              }
-
-              return;
-            }
-
 
             saveAccountVerification({
 
@@ -4411,7 +4357,8 @@ function openAccountSecuritySetup(
                 phoneVerified,
 
               verifiedAt:
-                new Date().toISOString()
+                new Date()
+                  .toISOString()
 
             });
 
@@ -4434,10 +4381,12 @@ function openAccountSecuritySetup(
                 "",
 
               email:
-                account.email || "",
+                account.email ||
+                "",
 
               phone:
-                account.phone || "",
+                account.phone ||
+                "",
 
               emailRecovery:
                 emailVerified,
@@ -4452,23 +4401,27 @@ function openAccountSecuritySetup(
                 passkeyAvailable(),
 
               activatedAt:
-                new Date().toISOString()
+                new Date()
+                  .toISOString()
 
             });
 
 
-            const updatedAccount =
+            const updatedAccount=
               updateAccount({
 
-                professionalSecurityConfigured:
-                  isOrganizationCategory(
-                    account.category
-                  ),
+                securityConfigured:
+                  true,
 
-               securityConfigured:
-  account.category === "jeune"
-    ? false
-    : true
+                /*
+                  Important :
+                  un profil personnel identifié
+                  ne devient jamais automatiquement
+                  responsable d’une organisation.
+                */
+
+                professionalSecurityConfigured:
+                  false
 
               });
 
@@ -4476,6 +4429,7 @@ function openAccountSecuritySetup(
             addSecurityLog(
               "account_security_configured",
               {
+
                 accountId:
                   updatedAccount.accountId,
 
@@ -4483,12 +4437,7 @@ function openAccountSecuritySetup(
                   emailVerified,
 
                 phoneVerified:
-                  phoneVerified,
-
-                organization:
-                  isOrganizationCategory(
-                    updatedAccount.category
-                  )
+                  phoneVerified
               }
             );
 
@@ -4497,8 +4446,10 @@ function openAccountSecuritySetup(
               updatedAccount
             );
 
-          })
-          .catch(function(error){
+          }
+        )
+        .catch(
+          function(error){
 
             console.error(
               "Bo'CitéArt : sécurisation impossible.",
@@ -4508,27 +4459,20 @@ function openAccountSecuritySetup(
 
             if(message){
 
-              message.textContent =
-                "La sécurisation du compte n'a pas pu être terminée.";
+              message.textContent=
+                "La sécurisation du compte n’a pas pu être terminée.";
 
-              message.style.display =
+              message.style.display=
                 "block";
             }
-          });
+          }
+        );
 
-        };
-    }
+      };
+  }
 
-  })
-  .catch(function(error){
-
-    console.error(
-      "Bo'CitéArt : préparation de la sécurité impossible.",
-      error
-    );
-  });
 }
-   
+  
  /* =========================================================
    ÇA COMMENCE ICI
    INSCRIPTION — JEUNE SANS BARRIÈRE DE SÉCURISATION
