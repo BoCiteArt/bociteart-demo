@@ -149,8 +149,14 @@
     governanceReports:
       "bociteart_sport_governance_reports_v1",
 
-    mandateHistory:
-      "bociteart_sport_mandate_history_v1"
+   mandateHistory:
+  "bociteart_sport_mandate_history_v1",
+
+continuityRequests:
+  "bociteart_sport_continuity_requests_v1",
+
+continuitySecurity:
+  "bociteart_sport_continuity_security_v1"
   };
 
 
@@ -187,10 +193,19 @@
           "",
 
         governanceReportEndpoint:
-          "",
+  "",
 
-        supportEndpoint:
-          "",
+continuityEndpoint:
+  "",
+
+continuityStatusEndpoint:
+  "",
+
+continuityRecoveryEndpoint:
+  "",
+
+supportEndpoint:
+  "",
 
         merchantLookupEndpoint:
           "",
@@ -1738,15 +1753,20 @@ function sportRequireVerifiedGovernance(){
     return true;
   }
 
-  if(
-    SPORT_CONFIG.mode !==
-      "production" &&
+ if(
+  SPORT_CONFIG.mode !==
+    "production" &&
+  (
     window
       .bociteartSportPresidentPrechecked ===
-      true
-  ){
-    return true;
-  }
+        true ||
+    window
+      .bociteartSportRecoveryVerified ===
+        true
+  )
+){
+  return true;
+}
 
   if(
     sportGovernanceIsVerified()
@@ -14087,7 +14107,1996 @@ function openSportPresidentCode(){
 
 }
 
+/* =========================================================
+   ÇA COMMENCE ICI
+   SPORT — CONTINUITÉ DU CLUB / CODE DE REPRISE
+   ========================================================= */
 
+function sportContinuityRequests(){
+
+  const rows=
+    sportLoad(
+      SPORT_KEYS.continuityRequests,
+      []
+    );
+
+  return Array.isArray(rows)
+    ? rows
+    : [];
+}
+
+
+function sportSaveContinuityRequests(
+  rows
+){
+
+  return sportSave(
+    SPORT_KEYS.continuityRequests,
+    Array.isArray(rows)
+      ? rows.slice(-200)
+      : []
+  );
+}
+
+
+function sportLatestContinuityRequest(){
+
+  return sportContinuityRequests()
+    .slice()
+    .sort(
+      (a,b)=>
+        Number(
+          b.createdAt ||
+          0
+        ) -
+        Number(
+          a.createdAt ||
+          0
+        )
+    )[0] ||
+    null;
+}
+
+
+function sportContinuityStatusLabel(
+  status
+){
+
+  const labels={
+
+    pending_review:
+      "Demande reçue — vérification en cours",
+
+    need_information:
+      "Complément d’information demandé",
+
+    under_human_review:
+      "Vérification humaine nécessaire",
+
+    approved:
+      "Situation vérifiée — code de reprise autorisé",
+
+    rejected:
+      "Demande non validée",
+
+    recovery_activated:
+      "Accès de reprise activé"
+  };
+
+
+  return (
+    labels[
+      String(
+        status ||
+        ""
+      )
+    ] ||
+    "Demande enregistrée"
+  );
+}
+
+
+function sportContinuityFindKnownPerson(
+  data
+){
+
+  const email=
+    String(
+      data.email ||
+      ""
+    )
+      .trim()
+      .toLowerCase();
+
+
+  const phone=
+    String(
+      data.phone ||
+      ""
+    )
+      .replace(
+        /\D/g,
+        ""
+      );
+
+
+  const name=
+    String(
+      data.fullName ||
+      ""
+    )
+      .trim()
+      .toLowerCase();
+
+
+  const coach=
+    sportAccess()
+      .coaches
+      .find(
+        item=>{
+
+          const itemEmail=
+            String(
+              item.email ||
+              ""
+            )
+              .trim()
+              .toLowerCase();
+
+
+          const itemPhone=
+            String(
+              item.phone ||
+              ""
+            )
+              .replace(
+                /\D/g,
+                ""
+              );
+
+
+          const itemName=
+            String(
+              item.name ||
+              ""
+            )
+              .trim()
+              .toLowerCase();
+
+
+          return !!(
+
+            (
+              email &&
+              itemEmail ===
+                email
+            ) ||
+
+            (
+              phone &&
+              itemPhone ===
+                phone
+            ) ||
+
+            (
+              name &&
+              itemName ===
+                name
+            )
+          );
+        }
+      );
+
+
+  if(!coach){
+    return null;
+  }
+
+
+  return {
+
+    id:
+      String(
+        coach.id ||
+        ""
+      ),
+
+    identifier:
+      String(
+        coach.identifier ||
+        ""
+      ),
+
+    name:
+      String(
+        coach.name ||
+        ""
+      ),
+
+    active:
+      coach.active !==
+      false,
+
+    functionName:
+      String(
+        coach.functionName ||
+        ""
+      ),
+
+    team:
+      String(
+        coach.team ||
+        ""
+      )
+  };
+}
+
+
+function sportContinuityRepliesHtml(
+  request
+){
+
+  const replies=
+    request &&
+    Array.isArray(
+      request.replies
+    )
+      ? request.replies
+      : [];
+
+
+  if(!replies.length){
+
+    return `
+
+      <div class="sportStatus">
+
+        Aucun message complémentaire
+        pour le moment.
+
+      </div>
+
+    `;
+  }
+
+
+  return replies
+    .slice()
+    .sort(
+      (a,b)=>
+        Number(
+          a.createdAt ||
+          0
+        ) -
+        Number(
+          b.createdAt ||
+          0
+        )
+    )
+    .map(
+      reply=>`
+
+        <div class="sportItem">
+
+          <div class="sportName">
+
+            ${sportEsc(
+              reply.authorLabel ||
+              "Bo'CitéArt"
+            )}
+
+          </div>
+
+          <div
+            style="margin-top:6px;"
+          >
+
+            ${sportEsc(
+              reply.message ||
+              ""
+            )}
+
+          </div>
+
+          <div
+            class="sportStatus"
+            style="margin-top:6px;"
+          >
+
+            ${
+              reply.createdAt
+                ? new Date(
+                    reply.createdAt
+                  )
+                    .toLocaleString(
+                      "fr-FR"
+                    )
+                : ""
+            }
+
+          </div>
+
+        </div>
+
+      `
+    )
+    .join("");
+}
+
+
+function sportAddContinuityReply(
+  requestId,
+  message,
+  options={}
+){
+
+  const clean=
+    String(
+      message ||
+      ""
+    )
+      .trim()
+      .slice(
+        0,
+        500
+      );
+
+
+  if(!clean){
+    return false;
+  }
+
+
+  const rows=
+    sportContinuityRequests();
+
+
+  const index=
+    rows.findIndex(
+      item=>
+        String(
+          item.id ||
+          ""
+        ) ===
+        String(
+          requestId ||
+          ""
+        )
+    );
+
+
+  if(index < 0){
+    return false;
+  }
+
+
+  rows[index].replies=
+    Array.isArray(
+      rows[index].replies
+    )
+      ? rows[index].replies
+      : [];
+
+
+  rows[index].replies.push({
+
+    id:
+      sportId(
+        "continuity-reply"
+      ),
+
+    author:
+      String(
+        options.author ||
+        "bociteart"
+      ),
+
+    authorLabel:
+      String(
+        options.authorLabel ||
+        "Bo'CitéArt"
+      ),
+
+    message:
+      clean,
+
+    createdAt:
+      Date.now()
+  });
+
+
+  if(
+    options.status
+  ){
+
+    rows[index].status=
+      String(
+        options.status
+      );
+  }
+
+
+  rows[index].updatedAt=
+    Date.now();
+
+
+  sportSaveContinuityRequests(
+    rows
+  );
+
+
+  return true;
+}
+
+
+async function sportSubmitContinuityRequest(){
+
+  const status=
+    sportEl(
+      "sportContinuityStatus"
+    );
+
+
+  const data={
+
+    fullName:
+      String(
+        sportEl(
+          "sportContinuityName"
+        )?.value ||
+        ""
+      ).trim(),
+
+    clubName:
+      String(
+        sportEl(
+          "sportContinuityClub"
+        )?.value ||
+        ""
+      ).trim(),
+
+    commune:
+      String(
+        sportEl(
+          "sportContinuityCommune"
+        )?.value ||
+        ""
+      ).trim(),
+
+    functionName:
+      String(
+        sportEl(
+          "sportContinuityFunction"
+        )?.value ||
+        ""
+      ).trim(),
+
+    phone:
+      String(
+        sportEl(
+          "sportContinuityPhone"
+        )?.value ||
+        ""
+      ).trim(),
+
+    email:
+      String(
+        sportEl(
+          "sportContinuityEmail"
+        )?.value ||
+        ""
+      )
+        .trim()
+        .toLowerCase(),
+
+    officialReference:
+      String(
+        sportEl(
+          "sportContinuityOfficialReference"
+        )?.value ||
+        ""
+      ).trim(),
+
+    message:
+      String(
+        sportEl(
+          "sportContinuityMessage"
+        )?.value ||
+        ""
+      )
+        .trim()
+        .slice(
+          0,
+          500
+        ),
+
+    shareWithMunicipalSport:
+      sportEl(
+        "sportContinuityShareMairie"
+      )?.checked ===
+      true
+  };
+
+
+  if(
+    !data.fullName ||
+    !data.clubName ||
+    !data.commune ||
+    !data.functionName ||
+    !data.phone ||
+    !data.email ||
+    !data.message
+  ){
+
+    if(status){
+
+      status.textContent=
+        "Complétez le nom, le club, la commune, votre fonction, le téléphone, l’e-mail et l’explication de la situation.";
+    }
+
+    return;
+  }
+
+
+  if(
+    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      .test(
+        data.email
+      )
+  ){
+
+    if(status){
+
+      status.textContent=
+        "Vérifiez l’adresse e-mail indiquée.";
+    }
+
+    return;
+  }
+
+
+  if(
+    data.phone
+      .replace(
+        /\D/g,
+        ""
+      )
+      .length <
+      8
+  ){
+
+    if(status){
+
+      status.textContent=
+        "Vérifiez le numéro de téléphone indiqué.";
+    }
+
+    return;
+  }
+
+
+  const known=
+    sportContinuityFindKnownPerson(
+      data
+    );
+
+
+  const club=
+    sportClub();
+
+
+  const request={
+
+    id:
+      "BCA-CONT-" +
+      Date.now() +
+      "-" +
+      Math.random()
+        .toString(36)
+        .slice(2,6)
+        .toUpperCase(),
+
+    clubId:
+      SPORT_CONFIG.clubId,
+
+    clubRef:
+      String(
+        club.clubRef ||
+        ""
+      ),
+
+    clubName:
+      data.clubName,
+
+    commune:
+      data.commune,
+
+    requester:{
+
+      fullName:
+        data.fullName,
+
+      functionName:
+        data.functionName,
+
+      phone:
+        data.phone,
+
+      email:
+        data.email,
+
+      previouslyKnown:
+        !!known,
+
+      previousCollaborator:
+        known
+    },
+
+    officialReference:
+      data.officialReference,
+
+    message:
+      data.message,
+
+    shareWithMunicipalSport:
+      data.shareWithMunicipalSport,
+
+    status:
+      "pending_review",
+
+    replies:
+      [],
+
+    confidential:
+      true,
+
+    createdAt:
+      Date.now(),
+
+    updatedAt:
+      Date.now()
+  };
+
+
+  if(status){
+
+    status.textContent=
+      "Transmission de votre demande…";
+  }
+
+
+  if(
+    SPORT_CONFIG
+      .continuityEndpoint
+  ){
+
+    try{
+
+      const response=
+        await fetch(
+          SPORT_CONFIG
+            .continuityEndpoint,
+          {
+
+            method:
+              "POST",
+
+            credentials:
+              "include",
+
+            headers:{
+              "Content-Type":
+                "application/json"
+            },
+
+            body:
+              JSON.stringify(
+                request
+              )
+          }
+        );
+
+
+      if(!response.ok){
+        throw 0;
+      }
+
+
+      const result=
+        await response.json();
+
+
+      if(
+        result &&
+        result.requestId
+      ){
+
+        request.id=
+          String(
+            result.requestId
+          );
+      }
+
+
+      if(
+        result &&
+        result.status
+      ){
+
+        request.status=
+          String(
+            result.status
+          );
+      }
+
+
+    }catch(_){
+
+      request.status=
+        "pending_review";
+    }
+  }
+
+
+  const rows=
+    sportContinuityRequests();
+
+
+  rows.push(
+    request
+  );
+
+
+  sportSaveContinuityRequests(
+    rows
+  );
+
+
+  sportNotifyEvent(
+    "sport_continuity_request_created",
+    {
+
+      requestId:
+        request.id,
+
+      clubName:
+        request.clubName,
+
+      commune:
+        request.commune,
+
+      previouslyKnown:
+        !!known,
+
+      shareWithMunicipalSport:
+        request
+          .shareWithMunicipalSport
+    }
+  );
+
+
+  if(status){
+
+    status.textContent=
+      "Demande enregistrée. Référence : " +
+      request.id +
+      ". Vous pourrez suivre ici les réponses et les demandes de complément.";
+  }
+
+
+  window.setTimeout(
+    openSportContinuity,
+    450
+  );
+}
+
+
+async function sportRefreshContinuityRequest(){
+
+  const latest=
+    sportLatestContinuityRequest();
+
+
+  if(!latest){
+
+    openSportContinuity();
+
+    return;
+  }
+
+
+  if(
+    !SPORT_CONFIG
+      .continuityStatusEndpoint
+  ){
+
+    openSportContinuity();
+
+    return;
+  }
+
+
+  try{
+
+    const response=
+      await fetch(
+        SPORT_CONFIG
+          .continuityStatusEndpoint,
+        {
+
+          method:
+            "POST",
+
+          credentials:
+            "include",
+
+          headers:{
+            "Content-Type":
+              "application/json"
+          },
+
+          body:
+            JSON.stringify({
+
+              requestId:
+                latest.id
+            })
+        }
+      );
+
+
+    if(!response.ok){
+      throw 0;
+    }
+
+
+    const result=
+      await response.json();
+
+
+    const rows=
+      sportContinuityRequests();
+
+
+    const index=
+      rows.findIndex(
+        item=>
+          String(
+            item.id ||
+            ""
+          ) ===
+          String(
+            latest.id
+          )
+      );
+
+
+    if(index >= 0){
+
+      if(
+        result &&
+        result.status
+      ){
+
+        rows[index].status=
+          String(
+            result.status
+          );
+      }
+
+
+      if(
+        result &&
+        Array.isArray(
+          result.replies
+        )
+      ){
+
+        rows[index].replies=
+          result.replies;
+      }
+
+
+      rows[index].updatedAt=
+        Date.now();
+
+
+      sportSaveContinuityRequests(
+        rows
+      );
+    }
+
+
+  }catch(_){}
+
+
+  openSportContinuity();
+}
+
+
+async function sportVerifyContinuityRecovery(){
+
+  const latest=
+    sportLatestContinuityRequest();
+
+
+  const status=
+    sportEl(
+      "sportContinuityRecoveryStatus"
+    );
+
+
+  const code=
+    String(
+      sportEl(
+        "sportContinuityRecoveryCode"
+      )?.value ||
+      ""
+    ).trim();
+
+
+  if(!latest){
+
+    if(status){
+
+      status.textContent=
+        "Envoyez d’abord une demande de continuité.";
+    }
+
+    return;
+  }
+
+
+  if(
+    !/^[0-9]{6}$/
+      .test(
+        code
+      )
+  ){
+
+    if(status){
+
+      status.textContent=
+        "Saisissez le code de reprise à 6 chiffres.";
+    }
+
+    return;
+  }
+
+
+  let verifiedName=
+    latest.requester &&
+    latest.requester.fullName
+      ? latest.requester.fullName
+      : "Responsable vérifié";
+
+
+  let accountId=
+    "sport-continuity-recovery";
+
+
+  if(
+    SPORT_CONFIG.mode ===
+    "production"
+  ){
+
+    if(
+      !SPORT_CONFIG
+        .continuityRecoveryEndpoint
+    ){
+
+      if(status){
+
+        status.textContent=
+          "Le service sécurisé de reprise n’est pas encore raccordé.";
+      }
+
+      return;
+    }
+
+
+    try{
+
+      const response=
+        await fetch(
+          SPORT_CONFIG
+            .continuityRecoveryEndpoint,
+          {
+
+            method:
+              "POST",
+
+            credentials:
+              "include",
+
+            headers:{
+              "Content-Type":
+                "application/json"
+            },
+
+            body:
+              JSON.stringify({
+
+                requestId:
+                  latest.id,
+
+                code:
+                  code
+              })
+          }
+        );
+
+
+      if(!response.ok){
+        throw 0;
+      }
+
+
+      const result=
+        await response.json();
+
+
+      if(
+        !result ||
+        result.ok !==
+          true ||
+        result.verified !==
+          true
+      ){
+
+        throw 0;
+      }
+
+
+      verifiedName=
+        String(
+          result.name ||
+          verifiedName
+        );
+
+
+      accountId=
+        String(
+          result.accountId ||
+          accountId
+        );
+
+
+      const governance=
+        sportLoadGovernance();
+
+
+      governance.president=
+        Object.assign(
+          {},
+          governance.president ||
+          {},
+          {
+
+            fullName:
+              verifiedName,
+
+            role:
+              "Président / responsable légal",
+
+            email:
+              latest.requester &&
+              latest.requester.email ||
+              "",
+
+            phone:
+              latest.requester &&
+              latest.requester.phone ||
+              ""
+          }
+        );
+
+
+      sportSaveGovernance(
+        governance
+      );
+
+
+      sportApplyGovernanceVerification({
+
+        verified:
+          true,
+
+        verifiedBy:
+          "continuity_server"
+      });
+
+
+    }catch(_){
+
+      if(status){
+
+        status.textContent=
+          "Code incorrect, expiré ou situation non encore validée.";
+      }
+
+      return;
+    }
+
+
+  }else{
+
+    /*
+      CODE UNIQUEMENT POUR NOTRE PRÉSENTATION.
+
+      En production :
+      ce code est généré côté serveur,
+      temporaire,
+      personnel,
+      lié au dossier et au club.
+    */
+
+    const demoCode=
+      "141011";
+
+
+    const security=
+      sportLoad(
+        SPORT_KEYS.continuitySecurity,
+        {
+          usedRequestIds:{}
+        }
+      );
+
+
+    security.usedRequestIds=
+      security.usedRequestIds &&
+      typeof security.usedRequestIds ===
+      "object"
+        ? security.usedRequestIds
+        : {};
+
+
+    if(
+      security
+        .usedRequestIds[
+          latest.id
+        ]
+    ){
+
+      if(status){
+
+        status.textContent=
+          "Ce code de reprise a déjà été utilisé pour cette demande.";
+      }
+
+      return;
+    }
+
+
+    if(
+      code !==
+      demoCode
+    ){
+
+      if(status){
+
+        status.textContent=
+          "Code de reprise incorrect.";
+      }
+
+      return;
+    }
+
+
+    security
+      .usedRequestIds[
+        latest.id
+      ]=
+        Date.now();
+
+
+    sportSave(
+      SPORT_KEYS.continuitySecurity,
+      security
+    );
+
+
+    window
+      .bociteartSportRecoveryVerified=
+        true;
+  }
+
+
+  const rows=
+    sportContinuityRequests();
+
+
+  const index=
+    rows.findIndex(
+      item=>
+        String(
+          item.id ||
+          ""
+        ) ===
+        String(
+          latest.id
+        )
+    );
+
+
+  if(index >= 0){
+
+    rows[index].status=
+      "recovery_activated";
+
+
+    rows[index].recoveryActivatedAt=
+      Date.now();
+
+
+    sportSaveContinuityRequests(
+      rows
+    );
+  }
+
+
+  const club=
+    sportClub();
+
+
+  if(
+    !club.name ||
+    club.name ===
+    "Club partenaire"
+  ){
+
+    club.name=
+      latest.clubName ||
+      club.name;
+  }
+
+
+  if(!club.commune){
+
+    club.commune=
+      latest.commune ||
+      "";
+  }
+
+
+  sportSaveClub(
+    club
+  );
+
+
+  sportSession={
+
+    role:
+      "president",
+
+    accountId:
+      accountId,
+
+    name:
+      verifiedName,
+
+    team:
+      "",
+
+    continuityRecovery:
+      true,
+
+    continuityRequestId:
+      latest.id
+  };
+
+
+  window.bociteartSportSession=
+    sportSession;
+
+
+  sportRecordMandateEvent(
+    "continuity_recovery_access",
+    sportLoadGovernance(),
+    "continuity_recovery"
+  );
+
+
+  sportNotifyEvent(
+    "sport_continuity_recovery_activated",
+    {
+
+      requestId:
+        latest.id,
+
+      clubName:
+        latest.clubName
+    }
+  );
+
+
+  openClubReserve();
+}
+
+
+function openSportContinuity(){
+
+  const latest=
+    sportLatestContinuityRequest();
+
+
+  const club=
+    sportClub();
+
+
+  const isAdmin=
+    !!window
+      .bociteartAdminSession;
+
+
+  const followHtml=
+    latest
+      ? `
+
+          ${sportTitle(
+            "Suivi de ma demande avec"
+          )}
+
+          <div class="sportCard">
+
+            <div class="sportText">
+
+              Référence :
+              <strong>
+                ${sportEsc(
+                  latest.id
+                )}
+              </strong>
+
+              <br><br>
+
+              État :
+              <strong>
+                ${sportEsc(
+                  sportContinuityStatusLabel(
+                    latest.status
+                  )
+                )}
+              </strong>
+
+            </div>
+
+            <button
+              id="sportContinuityRefresh"
+              class="sportBtn"
+              type="button"
+              style="
+                width:100%;
+                margin-top:12px;
+              "
+            >
+              Actualiser le suivi
+            </button>
+
+            <div
+              style="margin-top:12px;"
+            >
+
+              ${sportContinuityRepliesHtml(
+                latest
+              )}
+
+            </div>
+
+          </div>
+
+        `
+      : "";
+
+
+  const adminHtml=
+    isAdmin &&
+    latest
+      ? `
+
+          ${sportTitle(
+            "Traitement confidentiel avec"
+          )}
+
+          <div class="sportCard">
+
+            <div class="sportText">
+
+              Cet espace sert uniquement
+              au traitement interne
+              d’un dossier nécessitant
+              une intervention humaine.
+
+            </div>
+
+            <label class="sportLabel">
+              Réponse au demandeur
+            </label>
+
+            <textarea
+              id="sportContinuityAdminReply"
+              class="sportField"
+              maxlength="500"
+              placeholder="500 caractères maximum"
+            ></textarea>
+
+            <label class="sportLabel">
+              État du dossier
+            </label>
+
+            <select
+              id="sportContinuityAdminStatus"
+              class="sportField"
+            >
+
+              <option
+                value="need_information"
+              >
+                Demander un complément
+              </option>
+
+              <option
+                value="under_human_review"
+              >
+                Maintenir en vérification humaine
+              </option>
+
+              <option
+                value="approved"
+              >
+                Situation vérifiée
+              </option>
+
+              <option
+                value="rejected"
+              >
+                Demande non validée
+              </option>
+
+            </select>
+
+            <button
+              id="sportContinuityAdminSend"
+              class="sportBtn"
+              type="button"
+              style="
+                width:100%;
+                margin-top:12px;
+              "
+            >
+              Envoyer la réponse
+            </button>
+
+          </div>
+
+        `
+      : "";
+
+
+  openModal(
+    "Continuité du club avec Bo'CitéArt",
+    `
+
+      ${sportStyles()}
+
+      <div class="bociteSportRoot">
+
+        ${sportTitle(
+          "Continuité de mon club avec"
+        )}
+
+        <div class="sportCard">
+
+          <div class="sportText">
+
+            Un changement de responsable,
+            une indisponibilité
+            ou une difficulté d’accès
+            ne doit jamais bloquer durablement
+            votre structure sportive.
+
+            <br><br>
+
+            <strong>
+
+              ${sportBrandHtml()}
+              ne désigne jamais
+              les dirigeants d’une structure.
+
+              Il sécurise uniquement
+              les accès numériques correspondant
+              aux fonctions officiellement établies.
+
+            </strong>
+
+            <br><br>
+
+            Une personne précédemment reconnue,
+            un responsable actuel
+            ou un nouveau responsable officiel
+            peut signaler ici la situation.
+
+            Aucun droit n’est transféré
+            automatiquement.
+
+          </div>
+
+        </div>
+
+
+        <div class="sportCard">
+
+          <div class="sportSubTitle">
+
+            Nous permettre
+            de vous recontacter
+
+          </div>
+
+          <label class="sportLabel">
+            Nom et prénom
+          </label>
+
+          <input
+            id="sportContinuityName"
+            class="sportField"
+            autocomplete="name"
+            placeholder="Nom et prénom"
+          >
+
+
+          <label class="sportLabel">
+            Club concerné
+          </label>
+
+          <input
+            id="sportContinuityClub"
+            class="sportField"
+            value="${sportEsc(
+              club.name ===
+              "Club partenaire"
+                ? ""
+                : club.name
+            )}"
+            placeholder="Nom du club"
+          >
+
+
+          <label class="sportLabel">
+            Commune
+          </label>
+
+          <input
+            id="sportContinuityCommune"
+            class="sportField"
+            value="${sportEsc(
+              club.commune ||
+              ""
+            )}"
+            placeholder="Commune"
+          >
+
+
+          <label class="sportLabel">
+
+            Votre fonction actuelle
+            ou la nouvelle fonction déclarée
+
+          </label>
+
+          <input
+            id="sportContinuityFunction"
+            class="sportField"
+            placeholder="Président, secrétaire, entraîneur, nouveau responsable..."
+          >
+
+
+          <label class="sportLabel">
+            Téléphone
+          </label>
+
+          <input
+            id="sportContinuityPhone"
+            class="sportField"
+            type="tel"
+            autocomplete="tel"
+            placeholder="Téléphone sur lequel nous pouvons vous joindre"
+          >
+
+
+          <label class="sportLabel">
+            E-mail
+          </label>
+
+          <input
+            id="sportContinuityEmail"
+            class="sportField"
+            type="email"
+            autocomplete="email"
+            placeholder="Adresse e-mail de contact"
+          >
+
+
+          <label class="sportLabel">
+
+            Référence
+            d’un document officiel utile
+
+          </label>
+
+          <input
+            id="sportContinuityOfficialReference"
+            class="sportField"
+            placeholder="Récépissé, déclaration de dirigeants, référence fédérale..."
+          >
+
+
+          <label class="sportLabel">
+
+            Expliquez brièvement
+            la situation
+
+          </label>
+
+          <textarea
+            id="sportContinuityMessage"
+            class="sportField"
+            maxlength="500"
+            placeholder="500 caractères maximum"
+          ></textarea>
+
+
+          <div
+            id="sportContinuityCount"
+            class="sportStatus"
+          >
+            0 / 500 caractères
+          </div>
+
+
+          <label class="sportCheck">
+
+            <input
+              id="sportContinuityShareMairie"
+              type="checkbox"
+            >
+
+            <span>
+
+              Transmettre également
+              cette demande
+              au service municipal Sport
+              lorsque le partenariat local
+              et le cadre applicable
+              le prévoient.
+
+            </span>
+
+          </label>
+
+
+          <div
+            class="sportText"
+            style="margin-top:10px;"
+          >
+
+            Cette transmission
+            ne désigne pas la mairie
+            comme arbitre juridique
+            de la gouvernance du club.
+
+          </div>
+
+
+          <button
+            id="sportContinuitySend"
+            class="sportBtn"
+            type="button"
+            style="
+              width:100%;
+              margin-top:14px;
+            "
+          >
+            Envoyer ma demande
+          </button>
+
+
+          <div
+            id="sportContinuityStatus"
+            class="sportStatus"
+          ></div>
+
+        </div>
+
+
+        ${followHtml}
+
+
+        ${sportTitle(
+          "Code de reprise avec"
+        )}
+
+        <div class="sportCard">
+
+          <div class="sportText">
+
+            Lorsque la situation
+            a été vérifiée,
+            un code de reprise temporaire,
+            personnel
+            et lié au club
+            peut être transmis
+            au responsable
+            dont les droits numériques
+            doivent être activés.
+
+            <br><br>
+
+            Ce code ne désigne jamais
+            juridiquement un dirigeant.
+
+            Il sert uniquement
+            à déverrouiller
+            les droits numériques
+            après contrôle
+            de la situation.
+
+          </div>
+
+
+          <label class="sportLabel">
+            Code de reprise
+          </label>
+
+          <input
+            id="sportContinuityRecoveryCode"
+            class="sportField"
+            type="password"
+            inputmode="numeric"
+            autocomplete="one-time-code"
+            maxlength="6"
+            placeholder="6 chiffres"
+          >
+
+
+          <button
+            id="sportContinuityRecoveryValidate"
+            class="sportBtn"
+            type="button"
+            style="
+              width:100%;
+              margin-top:12px;
+            "
+          >
+            Activer l’accès de reprise
+          </button>
+
+
+          <div
+            id="sportContinuityRecoveryStatus"
+            class="sportStatus"
+          ></div>
+
+        </div>
+
+
+        ${adminHtml}
+
+
+        <button
+          id="sportContinuityBack"
+          class="sportBtn"
+          type="button"
+          style="
+            width:100%;
+            margin-top:14px;
+          "
+        >
+          Retour aux accès Sport
+        </button>
+
+      </div>
+
+    `
+  );
+
+
+  sportSetModalHeader(
+    "Continuité du club avec"
+  );
+
+
+  setTimeout(
+    ()=>{
+
+      const message=
+        sportEl(
+          "sportContinuityMessage"
+        );
+
+
+      const count=
+        sportEl(
+          "sportContinuityCount"
+        );
+
+
+      if(
+        message &&
+        count
+      ){
+
+        const update=()=>{
+
+          count.textContent=
+            message.value.length +
+            " / 500 caractères";
+        };
+
+
+        message.oninput=
+          update;
+
+
+        update();
+      }
+
+
+      const send=
+        sportEl(
+          "sportContinuitySend"
+        );
+
+
+      if(send){
+
+        send.onclick=
+          sportSubmitContinuityRequest;
+      }
+
+
+      const refresh=
+        sportEl(
+          "sportContinuityRefresh"
+        );
+
+
+      if(refresh){
+
+        refresh.onclick=
+          sportRefreshContinuityRequest;
+      }
+
+
+      const recovery=
+        sportEl(
+          "sportContinuityRecoveryValidate"
+        );
+
+
+      if(recovery){
+
+        recovery.onclick=
+          sportVerifyContinuityRecovery;
+      }
+
+
+      const adminSend=
+        sportEl(
+          "sportContinuityAdminSend"
+        );
+
+
+      if(
+        adminSend &&
+        latest
+      ){
+
+        adminSend.onclick=
+          ()=>{
+
+            const reply=
+              String(
+                sportEl(
+                  "sportContinuityAdminReply"
+                )?.value ||
+                ""
+              )
+                .trim()
+                .slice(
+                  0,
+                  500
+                );
+
+
+            const nextStatus=
+              String(
+                sportEl(
+                  "sportContinuityAdminStatus"
+                )?.value ||
+                "under_human_review"
+              );
+
+
+            if(!reply){
+              return;
+            }
+
+
+            sportAddContinuityReply(
+              latest.id,
+              reply,
+              {
+
+                author:
+                  "bociteart_admin",
+
+                authorLabel:
+                  "Bo'CitéArt — suivi",
+
+                status:
+                  nextStatus
+              }
+            );
+
+
+            openSportContinuity();
+          };
+      }
+
+
+      const back=
+        sportEl(
+          "sportContinuityBack"
+        );
+
+
+      if(back){
+
+        back.onclick=
+          openClubAccess;
+      }
+
+    },
+    0
+  );
+}
+
+
+window.BociteSportContinuity={
+
+  open:
+    openSportContinuity,
+
+  requests:
+    () =>
+      sportContinuityRequests()
+        .slice(),
+
+  latest:
+    () =>
+      sportLatestContinuityRequest(),
+
+  addReply:
+    (
+      requestId,
+      message,
+      options
+    ) =>
+      sportAddContinuityReply(
+        requestId,
+        message,
+        options
+      )
+};
+
+/* =========================================================
+   ÇA FINIT ICI
+   SPORT — CONTINUITÉ DU CLUB / CODE DE REPRISE
+   ========================================================= */
+
+   
 function openClubAccess(){
 
   openModal(
@@ -14191,11 +16200,61 @@ function openClubAccess(){
           </button>
 
           <div
-            id="sportLoginStatus"
-            class="sportStatus"
-          ></div>
+  id="sportLoginStatus"
+  class="sportStatus"
+></div>
 
-        </div>
+</div>
+
+
+<div class="sportCard">
+
+  <div class="sportSubTitle">
+
+    Difficulté d’accès
+    ou changement de responsable
+
+  </div>
+
+  <div
+    class="sportText"
+    style="margin-top:8px;"
+  >
+
+    Un changement de responsable,
+    une indisponibilité
+    ou une difficulté d’accès
+    ne doit jamais bloquer durablement
+    votre club.
+
+    <br><br>
+
+    Si l’accès normal
+    à la structure n’est plus possible,
+    vous pouvez transmettre
+    la situation à ${sportBrandHtml()}.
+
+    Aucun droit
+    n’est transféré automatiquement.
+
+  </div>
+
+  <button
+    id="sportContinuityOpen"
+    class="sportBtn"
+    type="button"
+    style="
+      width:100%;
+      margin-top:12px;
+    "
+  >
+    Continuité de mon club
+  </button>
+
+</div>
+
+
+</div>
 
       </div>
 
@@ -14219,6 +16278,27 @@ function openClubAccess(){
         presidentCheck.onclick=
           openSportPresidentPrecheck;
       }
+
+       /* =========================================================
+   ÇA COMMENCE ICI
+   SPORT — PORTE DE CONTINUITÉ
+   ========================================================= */
+
+const continuity=
+  sportEl(
+    "sportContinuityOpen"
+  );
+
+
+if(continuity){
+
+  continuity.onclick=
+    openSportContinuity;
+}
+
+/* =========================================================
+   ÇA FINIT ICI
+   ========================================================= */
 
       const b=
         sportEl(
