@@ -5733,6 +5733,12 @@ function sportPublicResultsHtml(){
    SPORT — PRÉSENTATION PUBLIQUE COMPLÈTE
    ========================================================= */
 
+/* =========================================================
+   ÇA COMMENCE ICI
+   SPORT — PRÉSENTATION PUBLIQUE
+   TEXTES CONSOLIDÉS
+   ========================================================= */
+
 function sportBenefitsHtml(){
 
   return `
@@ -5879,7 +5885,7 @@ function sportBenefitsHtml(){
         </li>
 
         <li>
-          mieux connaître tous les commerces,
+          mieux connaître les commerces,
           les entreprises,
           les associations
           et les acteurs de la commune
@@ -5947,12 +5953,6 @@ function sportBenefitsHtml(){
           mettre en valeur
           les comportements responsables
           des équipes ;
-        </li>
-
-        <li>
-          consacrer les bocitecoins
-          aux besoins du club
-          et/ou à d’autres raisons bien utiles ;
         </li>
 
         <li>
@@ -6072,6 +6072,7 @@ function sportBenefitsHtml(){
           votre soutien ne reste jamais invisible :
           votre commerce devient un cœur,
           un poumon de la vie locale.
+
           Il crée de nouvelles rencontres,
           rapproche les habitants
           et fait vivre toute la commune,
@@ -6104,7 +6105,8 @@ function sportBenefitsHtml(){
           encourager le respect
           des équipements sportifs,
           des espaces communs
-          et de la commune ;
+          et, plus largement,
+          de la commune ;
         </li>
 
         <li>
@@ -6215,8 +6217,14 @@ function sportBenefitsHtml(){
     </div>
 
   `;
+
 }
 
+/* =========================================================
+   ÇA FINIT ICI
+   SPORT — PRÉSENTATION PUBLIQUE
+   TEXTES CONSOLIDÉS
+   ========================================================= */
 
 /* =========================================================
    BLOC SPORT 5
@@ -14561,7 +14569,7 @@ function openSportPanel(){
 
 
         ${sportTitle(
-          "Explorer les alentours avec"
+          "Explorer les alentours plaisirs et détente avec"
         )}
 
         <div class="sportCard">
