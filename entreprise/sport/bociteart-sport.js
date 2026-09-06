@@ -10874,6 +10874,27 @@ function sportRenderAccessList(){
         button.onclick=
           async ()=>{
 
+            /* =========================================================
+   ÇA COMMENCE ICI
+   SPORT — OUVERTURE CONTINUITÉ INDÉPENDANTE
+   ========================================================= */
+
+const continuity=
+  sportEl(
+    "sportContinuityOpen"
+  );
+
+if(continuity){
+
+  continuity.onclick=
+    openSportContinuity;
+}
+
+/* =========================================================
+   ÇA FINIT ICI
+   SPORT — OUVERTURE CONTINUITÉ INDÉPENDANTE
+   ========================================================= */ 
+
             if(
               !sportRequireVerifiedGovernance()
             ){
@@ -16200,12 +16221,83 @@ function openClubAccess(){
           </button>
 
           <div
+<div
   id="sportLoginStatus"
   class="sportStatus"
 ></div>
 
+
+<!-- ======================================================
+     ÇA COMMENCE ICI
+     SPORT — ALERTE / CONTINUITÉ INDÉPENDANTE
+     ====================================================== -->
+
+<div
+  style="
+    margin-top:20px;
+    padding-top:18px;
+    border-top:1px solid #d9dfda;
+  "
+>
+
+  <div class="sportSubTitle">
+
+    Difficulté d’accès
+    ou changement de responsable
+
+  </div>
+
+  <div
+    class="sportText"
+    style="margin-top:8px;"
+  >
+
+    Vous faisiez partie du club,
+    vous êtes un collaborateur,
+    un nouveau responsable
+    ou une personne mandatée,
+    mais une difficulté empêche
+    l’accès normal à la structure ?
+
+    <br><br>
+
+    Vous pouvez signaler ici
+    la situation directement à
+    ${sportBrandHtml()}.
+
+    <br><br>
+
+    Cet accès reste disponible
+    indépendamment des droits
+    attribués ou retirés
+    par le responsable principal.
+
+    Aucun droit de direction
+    n’est accordé automatiquement.
+
+  </div>
+
+  <button
+    id="sportContinuityOpen"
+    class="sportBtn"
+    type="button"
+    style="
+      width:100%;
+      margin-top:14px;
+    "
+  >
+    Signaler une difficulté à Bo'CitéArt
+  </button>
+
 </div>
 
+<!-- ======================================================
+     ÇA FINIT ICI
+     SPORT — ALERTE / CONTINUITÉ INDÉPENDANTE
+     ====================================================== -->
+
+
+</div>
 
 <div class="sportCard">
 
@@ -16306,9 +16398,7 @@ if(continuity){
         );
 
       if(!b){
-        return;
-      }
-
+     
       b.onclick=
         async ()=>{
 
@@ -16345,6 +16435,8 @@ if(continuity){
   }
 
   return;
+
+   };       
 }
 
 
