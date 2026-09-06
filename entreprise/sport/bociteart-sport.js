@@ -13048,7 +13048,7 @@ function openSportPanel(){
       if(m){
 
         m.onclick=
-          openWellbeingMap;
+          openWellbeingMap; 
       }
 
      /* =========================================================
