@@ -15829,73 +15829,126 @@ function openSportContinuity(){
         ${followHtml}
 
 
-        ${sportTitle(
-          "Code de reprise avec"
-        )}
+               /* ======================================================
+           ÇA COMMENCE ICI
+           SPORT — CODE DE REPRISE SELON ÉTAT DU DOSSIER
+           ====================================================== */
 
-        <div class="sportCard">
+        ${
+          latest &&
+          latest.status ===
+            "approved"
 
-          <div class="sportText">
+            ? `
 
-            Lorsque la situation
-            a été vérifiée,
-            un code de reprise temporaire,
-            personnel
-            et lié au club
-            peut être transmis
-            au responsable
-            dont les droits numériques
-            doivent être activés.
+                ${sportTitle(
+                  "Code de reprise avec"
+                )}
 
-            <br><br>
+                <div class="sportCard">
 
-            Ce code ne désigne jamais
-            juridiquement un dirigeant.
+                  <div class="sportText">
 
-            Il sert uniquement
-            à déverrouiller
-            les droits numériques
-            après contrôle
-            de la situation.
+                    Votre situation
+                    a été vérifiée.
 
-          </div>
+                    <br><br>
 
+                    Le code de reprise
+                    qui vous a été transmis
+                    permet d’activer
+                    l’accès numérique
+                    correspondant à votre club.
 
-          <label class="sportLabel">
-            Code de reprise
-          </label>
-
-          <input
-            id="sportContinuityRecoveryCode"
-            class="sportField"
-            type="password"
-            inputmode="numeric"
-            autocomplete="one-time-code"
-            maxlength="6"
-            placeholder="6 chiffres"
-          >
+                  </div>
 
 
-          <button
-            id="sportContinuityRecoveryValidate"
-            class="sportBtn"
-            type="button"
-            style="
-              width:100%;
-              margin-top:12px;
-            "
-          >
-            Activer l’accès de reprise
-          </button>
+                  <label class="sportLabel">
+                    Code de reprise
+                  </label>
+
+                  <input
+                    id="sportContinuityRecoveryCode"
+                    class="sportField"
+                    type="password"
+                    inputmode="numeric"
+                    autocomplete="one-time-code"
+                    maxlength="6"
+                    placeholder="6 chiffres"
+                  >
 
 
-          <div
-            id="sportContinuityRecoveryStatus"
-            class="sportStatus"
-          ></div>
+                  <button
+                    id="sportContinuityRecoveryValidate"
+                    class="sportBtn"
+                    type="button"
+                    style="
+                      width:100%;
+                      margin-top:12px;
+                    "
+                  >
+                    Activer l’accès de reprise
+                  </button>
 
-        </div>
 
+                  <div
+                    id="sportContinuityRecoveryStatus"
+                    class="sportStatus"
+                  ></div>
+
+                </div>
+
+              `
+
+            : latest &&
+              latest.status ===
+                "recovery_activated"
+
+              ? `
+
+                  ${sportTitle(
+                    "Accès de reprise avec"
+                  )}
+
+                  <div class="sportCard">
+
+                    <div class="sportStatus">
+
+                      ✓ L’accès de reprise
+                      a été activé.
+
+                    </div>
+
+                  </div>
+
+                `
+
+              : `
+
+                  ${sportTitle(
+                    "Code de reprise avec"
+                  )}
+
+                  <div class="sportCard">
+
+                    <div class="sportText">
+
+                      Le code de reprise
+                      apparaîtra ici
+                      lorsque la situation
+                      aura été vérifiée.
+
+                    </div>
+
+                  </div>
+
+                `
+        }
+
+        /* ======================================================
+           ÇA FINIT ICI
+           SPORT — CODE DE REPRISE SELON ÉTAT DU DOSSIER
+           ====================================================== */
 
         ${adminHtml}
 
