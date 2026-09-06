@@ -5478,35 +5478,40 @@ function sportPublicResultsHtml(){
   ).join("");
 }
 
+/* =========================================================
+   ÇA COMMENCE ICI
+   SPORT — PRÉSENTATION PUBLIQUE COMPLÈTE
+   ========================================================= */
 
 function sportBenefitsHtml(){
 
   return `
 
     ${sportTitle(
-      "Ce que le sport fait grandir avec"
+      "Sport avec"
     )}
 
     <div class="sportCard">
 
       <div class="sportText">
 
-        Le sport rassemble,
-        transmet
-        et révèle bien davantage
-        qu’un résultat.
-
-        Avec ${sportBrandHtml()},
-        l’entraînement,
-        la compétition
-        et la vie du club
-        deviennent des occasions concrètes
-        de faire grandir
+        Le sport relie l’effort,
         le respect,
         l’engagement,
-        l’entraide,
-        la responsabilité
+        la vie locale
         et la solidarité.
+
+        <br><br>
+
+        ${sportBrandHtml()}
+        rend visibles les clubs
+        et associations sportives,
+        leurs résultats,
+        les comportements
+        qui font grandir l’équipe,
+        et tous les acteurs
+        de la commune
+        qui les soutiennent.
 
       </div>
 
@@ -5696,13 +5701,14 @@ function sportBenefitsHtml(){
 
         <li>
           consacrer les bocitecoins
-          aux besoins utiles du club ;
+          aux besoins du club
+          et/ou à d’autres raisons bien utiles ;
         </li>
 
         <li>
           créer des relations directes
           avec les commerces
-          et entreprises de la commune ;
+          et les entreprises de la commune ;
         </li>
 
         <li>
@@ -5715,7 +5721,7 @@ function sportBenefitsHtml(){
         <li>
           donner davantage de visibilité
           aux clubs
-          et disciplines
+          et aux disciplines
           encore trop méconnus.
         </li>
 
@@ -5729,7 +5735,8 @@ function sportBenefitsHtml(){
           pour montrer ce qu’il fait,
           ce qu’il transmet
           et tout ce qu’il apporte
-          à la commune.
+          à d’autres
+          et à la commune.
         </strong>
 
       </div>
@@ -5739,7 +5746,7 @@ function sportBenefitsHtml(){
 
     ${sportTitle(
       "Ce que",
-      "apporte au commerçant"
+      "apporte aux commerçants partenaires"
     )}
 
     <div class="sportCard">
@@ -5779,22 +5786,23 @@ function sportBenefitsHtml(){
         </li>
 
         <li>
-          diffuser pendant 7 jours
+          diffuser pendant 5 jours
           une petite publicité locale
-          mettant en avant votre commerce
-          et le club soutenu ;
+          mettant en avant votre commerce,
+          le club
+          et d’autres soutiens bien utiles ;
         </li>
 
         <li>
           associer clairement votre enseigne
-          à la vie de tous les clubs sportifs
+          à la vie des clubs sportifs
           de votre commune ;
         </li>
 
         <li>
           aller plus loin
           en soutenant une association
-          de recherche retenue ;
+          de recherche médicale retenue ;
         </li>
 
         <li>
@@ -5816,7 +5824,8 @@ function sportBenefitsHtml(){
           un poumon de la vie locale.
           Il crée de nouvelles rencontres,
           rapproche les habitants
-          et fait vivre toute la commune.
+          et fait vivre toute la commune,
+          et bien au-delà...
         </strong>
 
       </div>
@@ -5834,49 +5843,43 @@ function sportBenefitsHtml(){
       <ul>
 
         <li>
-          valoriser les clubs
-          qui font vivre la commune
+          valoriser encore davantage
+          tous les clubs
+          qui font vivre
+          et vibrer la commune
           toute l’année ;
         </li>
 
         <li>
           encourager le respect
-          des équipements sportifs
-          et des espaces communs ;
+          des équipements sportifs,
+          des espaces communs
+          et de la commune ;
         </li>
 
         <li>
-          mieux faire connaître
+          faire connaître davantage
           la diversité sportive
           présente dans la commune ;
         </li>
 
         <li>
           renforcer les liens
-          entre clubs,
-          habitants,
-          commerces,
-          entreprises
-          et associations ;
+          et poser un phare éclairant
+          entre les clubs,
+          les habitants,
+          les commerces,
+          les entreprises
+          et les associations ;
         </li>
 
         <li>
-          disposer d’un cadre identifiable
-          et comptablement traçable
-          pour les bocitecoins Sport ;
-        </li>
-
-        <li>
-          gérer les Cabas
-          de 30 bocitecoins
-          et les reliquats de fin de saison
-          depuis son compte de service
-          Sport / solidarité ;
-        </li>
-
-        <li>
-          soutenir des causes solidaires
-          retenues avec ${sportBrandHtml()}.
+          apporter un soutien
+          indéfectible et nécessaire
+          à des causes solidaires
+          retenues avec
+          ${sportBrandHtml()}
+          et la Mairie.
         </li>
 
       </ul>
@@ -5894,9 +5897,9 @@ function sportBenefitsHtml(){
       <div class="sportText">
 
         <strong>
-          Faire vivre le local commence
-          par un geste simple :
-          acheter ici
+          Faire vivre le local
+          commence par un geste simple :
+          acheter ICI !
           ce dont vous avez besoin.
         </strong>
 
@@ -5905,16 +5908,17 @@ function sportBenefitsHtml(){
       <ul>
 
         <li>
-          acheter dans votre commune,
+          penser à acheter d’abord
+          dans votre commune,
           c’est investir
-          dans votre propre avenir
-          et celui de votre territoire ;
+          dans votre propre avenir,
+          dans celui de nos enfants
+          et dans celui de votre territoire ;
         </li>
 
         <li>
           soutenir un commerce,
-          c’est soutenir
-          des emplois,
+          c’est soutenir des emplois,
           des salariés,
           des artisans,
           des fournisseurs
@@ -5923,13 +5927,13 @@ function sportBenefitsHtml(){
 
         <li>
           préserver les professionnels
-          dont vous aurez besoin demain ;
+          dont vous aurez tous besoin demain ;
         </li>
 
         <li>
-          connaître les clubs,
-          associations
-          et acteurs
+          connaître les clubs de sport,
+          les associations
+          et les acteurs
           qui font vivre la commune ;
         </li>
 
@@ -5938,7 +5942,7 @@ function sportBenefitsHtml(){
           de chacun
           finissent toujours
           par produire
-          un résultat visible pour tous.
+          un résultat visible pour tous !
         </li>
 
       </ul>
@@ -5948,109 +5952,25 @@ function sportBenefitsHtml(){
         <strong>
           Avec ${sportBrandHtml()},
           acheter local,
-          c’est faire vivre
-          ce qui vous entoure
-          et investir
-          dans l’avenir de votre commune
-          et dans le vôtre.
+          c’est faire revivre
+          ce qui nous entoure,
+          investir dans l’avenir
+          de nos enfants,
+          de votre commune,
+          ainsi que dans votre propre vie !
         </strong>
 
       </div>
 
     </div>
 
-
-    ${sportTitle(
-      "Un vrai phare pour tous, y compris pour les associations solidaires avec"
-    )}
-
-    <div class="sportCard">
-
-      <div class="sportText">
-
-        Avec ${sportBrandHtml()},
-        les associations solidaires retenues
-        trouvent une place visible
-        au cœur de la commune.
-
-      </div>
-
-      <ul>
-
-        <li>
-          faire connaître des causes
-          encore trop méconnues ;
-        </li>
-
-        <li>
-          montrer le travail accompli ;
-        </li>
-
-        <li>
-          expliquer ce que
-          les soutiens reçus
-          permettent de réaliser ;
-        </li>
-
-        <li>
-          recevoir le soutien
-          des clubs
-          et des professionnels
-          selon les choix validés ;
-        </li>
-
-        <li>
-          retourner obligatoirement
-          le justificatif comptable prévu
-          lorsqu’un professionnel
-          leur verse une somme ;
-        </li>
-
-        <li>
-          remercier les clubs,
-          commerces,
-          entreprises,
-          citoyens
-          et collectivités
-          qui participent.
-        </li>
-
-      </ul>
-
-      <div class="sportText">
-
-        Les associations réellement proposées
-        sont sélectionnées
-        et vérifiées
-        avec la mairie
-        et ${sportBrandHtml()}.
-
-        Les emplacements
-        A, B, C et D
-        restent provisoires
-        jusqu’à leur désignation.
-
-      </div>
-
-      <div class="sportText">
-
-        <strong>
-          ${sportBrandHtml()}
-          devient un véritable phare
-          qui éclaire ce que chacun apporte
-          et donne envie aux autres
-          de rejoindre le mouvement.
-        </strong>
-
-      </div>
-
-    </div>
   `;
+
 }
 
-
 /* =========================================================
-   FIN BLOC SPORT 4
+   ÇA FINIT ICI FIN BLOC SPORT 4
+   SPORT — PRÉSENTATION PUBLIQUE COMPLÈTE
    ========================================================= */
 
   /* =========================================================
