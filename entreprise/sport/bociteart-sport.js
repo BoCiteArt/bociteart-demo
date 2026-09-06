@@ -12439,7 +12439,915 @@ function openClubReserve(){
 window.openClubReserve=
   openClubReserve;
 
+/* =========================================================
+   ÇA COMMENCE ICI
+   SPORT — PREMIER CONTRÔLE PRÉSIDENT / RESPONSABLE LÉGAL
+   ========================================================= */
 
+let sportPresidentAccessChallenge =
+  null;
+
+
+function openSportPresidentPrecheck(){
+
+  openModal(
+    "Vérification Président avec Bo'CitéArt",
+    `
+
+      ${sportStyles()}
+
+      <div class="bociteSportRoot">
+
+        <div class="sportCard">
+
+          <div class="sportName">
+            Un premier contrôle pour protéger votre espace
+          </div>
+
+          <div class="sportText">
+
+            Les espaces réservés de
+            ${sportBrandHtml()}
+            donnent accès à des fonctions propres
+            aux responsables officiellement habilités.
+
+            <br><br>
+
+            Face aux usurpations d’identité
+            et aux escroqueries,
+            cette première vérification permet
+            de filtrer les demandes avant
+            l’ouverture de l’espace privé du club.
+
+          </div>
+
+        </div>
+
+
+        <div class="sportCard">
+
+          <div class="sportName">
+            Président / responsable légal
+          </div>
+
+
+          <label class="sportLabel">
+            Nom exact du club
+          </label>
+
+          <input
+            id="sportPresidentCheckClub"
+            class="sportField"
+            autocomplete="organization"
+            placeholder="Nom officiel du club"
+          >
+
+
+          <label class="sportLabel">
+            Commune
+          </label>
+
+          <input
+            id="sportPresidentCheckCommune"
+            class="sportField"
+            autocomplete="address-level2"
+            placeholder="Commune du club"
+          >
+
+
+          <label class="sportLabel">
+            Numéro RNA
+          </label>
+
+          <input
+            id="sportPresidentCheckRna"
+            class="sportField"
+            autocomplete="off"
+            placeholder="W123456789"
+          >
+
+
+          <label class="sportLabel">
+            Fédération
+          </label>
+
+          <input
+            id="sportPresidentCheckFederation"
+            class="sportField"
+            autocomplete="off"
+            placeholder="Fédération sportive"
+          >
+
+
+          <label class="sportLabel">
+            Numéro d’affiliation du club
+          </label>
+
+          <input
+            id="sportPresidentCheckAffiliation"
+            class="sportField"
+            autocomplete="off"
+            placeholder="Identifiant fédéral du club"
+          >
+
+
+          <label class="sportLabel">
+            Votre prénom
+          </label>
+
+          <input
+            id="sportPresidentCheckFirstName"
+            class="sportField"
+            autocomplete="given-name"
+            placeholder="Prénom"
+          >
+
+
+          <label class="sportLabel">
+            Votre nom
+          </label>
+
+          <input
+            id="sportPresidentCheckLastName"
+            class="sportField"
+            autocomplete="family-name"
+            placeholder="Nom"
+          >
+
+
+          <label class="sportLabel">
+            Recevoir le code temporaire
+          </label>
+
+          <select
+            id="sportPresidentCheckChannel"
+            class="sportField"
+          >
+
+            <option value="email">
+              Par l’adresse électronique officielle déjà vérifiée
+            </option>
+
+            <option value="sms">
+              Par le numéro de téléphone déjà vérifié
+            </option>
+
+          </select>
+
+
+          <div
+            class="sportText"
+            style="margin-top:10px;"
+          >
+
+            La coordonnée de réception
+            n’est pas saisie ici.
+
+            <br><br>
+
+            Le code est envoyé uniquement
+            vers une coordonnée déjà rattachée
+            et vérifiée pour la structure.
+
+          </div>
+
+
+          <button
+            id="sportPresidentCheckRequest"
+            class="sportBtn"
+            type="button"
+            style="
+              width:100%;
+              margin-top:12px;
+            "
+          >
+            Vérifier ma demande et recevoir mon code
+          </button>
+
+
+          <button
+            id="sportPresidentCheckBack"
+            class="sportBtn"
+            type="button"
+            style="
+              width:100%;
+              margin-top:10px;
+            "
+          >
+            Retour
+          </button>
+
+
+          <div
+            id="sportPresidentCheckStatus"
+            class="sportStatus"
+          ></div>
+
+        </div>
+
+      </div>
+
+    `
+  );
+
+
+  sportSetModalHeader(
+    "Vérification Président avec"
+  );
+
+
+  setTimeout(
+    ()=>{
+
+      const requestBtn =
+        sportEl(
+          "sportPresidentCheckRequest"
+        );
+
+      const backBtn =
+        sportEl(
+          "sportPresidentCheckBack"
+        );
+
+      const status =
+        sportEl(
+          "sportPresidentCheckStatus"
+        );
+
+
+      if(backBtn){
+
+        backBtn.onclick =
+          openClubAccess;
+
+      }
+
+
+      if(!requestBtn){
+        return;
+      }
+
+
+      requestBtn.onclick =
+        async ()=>{
+
+          const data = {
+
+            clubName:
+              String(
+                sportEl(
+                  "sportPresidentCheckClub"
+                )?.value || ""
+              ).trim(),
+
+            commune:
+              String(
+                sportEl(
+                  "sportPresidentCheckCommune"
+                )?.value || ""
+              ).trim(),
+
+            rna:
+              String(
+                sportEl(
+                  "sportPresidentCheckRna"
+                )?.value || ""
+              )
+              .trim()
+              .toUpperCase(),
+
+            federation:
+              String(
+                sportEl(
+                  "sportPresidentCheckFederation"
+                )?.value || ""
+              ).trim(),
+
+            affiliation:
+              String(
+                sportEl(
+                  "sportPresidentCheckAffiliation"
+                )?.value || ""
+              ).trim(),
+
+            firstName:
+              String(
+                sportEl(
+                  "sportPresidentCheckFirstName"
+                )?.value || ""
+              ).trim(),
+
+            lastName:
+              String(
+                sportEl(
+                  "sportPresidentCheckLastName"
+                )?.value || ""
+              ).trim(),
+
+            channel:
+              String(
+                sportEl(
+                  "sportPresidentCheckChannel"
+                )?.value || "email"
+              )
+
+          };
+
+
+          if(
+            !data.clubName ||
+            !data.commune ||
+            !data.rna ||
+            !data.federation ||
+            !data.affiliation ||
+            !data.firstName ||
+            !data.lastName
+          ){
+
+            if(status){
+
+              status.textContent =
+                "Complétez tous les renseignements demandés.";
+
+            }
+
+            return;
+          }
+
+
+          if(
+            !/^W[0-9]{9}$/.test(
+              data.rna
+            )
+          ){
+
+            if(status){
+
+              status.textContent =
+                "Vérifiez le numéro RNA indiqué.";
+
+            }
+
+            return;
+          }
+
+
+          /*
+            PRODUCTION :
+            la vérification réelle reste côté serveur.
+
+            Le serveur doit :
+            - retrouver la structure ;
+            - contrôler la fonction ;
+            - retrouver une coordonnée déjà vérifiée ;
+            - envoyer le code temporaire.
+          */
+
+          if(
+            SPORT_CONFIG.mode ===
+              "production" &&
+            SPORT_CONFIG.authEndpoint
+          ){
+
+            try{
+
+              const response =
+                await fetch(
+                  SPORT_CONFIG.authEndpoint,
+                  {
+
+                    method:
+                      "POST",
+
+                    credentials:
+                      "include",
+
+                    headers:{
+                      "Content-Type":
+                        "application/json"
+                    },
+
+                    body:
+                      JSON.stringify({
+
+                        scope:
+                          "sport_president_precheck_request",
+
+                        request:
+                          data
+
+                      })
+
+                  }
+                );
+
+
+              if(!response.ok){
+                throw 0;
+              }
+
+
+              const result =
+                await response.json();
+
+
+              if(
+                !result ||
+                result.ok !== true ||
+                !result.challengeId
+              ){
+                throw 0;
+              }
+
+
+              sportPresidentAccessChallenge = {
+
+                challengeId:
+                  String(
+                    result.challengeId
+                  ),
+
+                deliveryMasked:
+                  String(
+                    result.deliveryMasked ||
+                    "coordonnée vérifiée de la structure"
+                  ),
+
+                data:
+                  data,
+
+                localCode:
+                  ""
+
+              };
+
+
+              openSportPresidentCode();
+
+              return;
+
+
+            }catch(_){
+
+              if(status){
+
+                status.textContent =
+                  "La vérification n’a pas pu être finalisée. Vérifiez les renseignements saisis.";
+
+              }
+
+              return;
+
+            }
+
+          }
+
+
+          /*
+            FONCTIONNEMENT ACTUEL SUR GITHUB PAGES :
+            simulation locale uniquement pour tester
+            le parcours écran par écran.
+
+            Cette partie disparaîtra lorsque
+            l'envoi réel SMS / e-mail sera raccordé.
+          */
+
+         /* =========================================================
+   ÇA COMMENCE ICI
+   CODE FIXE POUR LA DÉMO UNIQUEMENT
+   ========================================================= */
+
+const localCode =
+  "141010";
+
+/* =========================================================
+   ÇA FINIT ICI
+   ========================================================= */
+
+
+          sportPresidentAccessChallenge = {
+
+            challengeId:
+              "local-" +
+              Date.now(),
+
+            deliveryMasked:
+              data.channel === "sms"
+                ? "numéro officiel déjà vérifié"
+                : "adresse électronique officielle déjà vérifiée",
+
+            data:
+              data,
+
+            localCode:
+              localCode
+
+          };
+
+
+          openSportPresidentCode();
+
+        };
+
+    },
+    0
+  );
+
+}
+
+
+function openSportPresidentCode(){
+
+  const challenge =
+    sportPresidentAccessChallenge;
+
+
+  if(!challenge){
+
+    openSportPresidentPrecheck();
+
+    return;
+
+  }
+
+
+  const localHelp =
+
+    SPORT_CONFIG.mode !==
+      "production" &&
+    challenge.localCode
+
+      ? `
+
+          <div
+            class="sportStatus"
+            style="margin-top:10px;"
+          >
+            Pour le test actuel uniquement :
+            code temporaire
+            ${sportEsc(
+              challenge.localCode
+            )}
+          </div>
+
+        `
+
+      : "";
+
+
+  openModal(
+    "Code Président avec Bo'CitéArt",
+    `
+
+      ${sportStyles()}
+
+      <div class="bociteSportRoot">
+
+        <div class="sportCard">
+
+          <div class="sportName">
+            Votre demande a franchi le premier contrôle
+          </div>
+
+
+          <div class="sportText">
+
+            Un code temporaire a été envoyé vers :
+
+            <br><br>
+
+            <strong>
+              ${sportEsc(
+                challenge.deliveryMasked
+              )}
+            </strong>
+
+            <br><br>
+
+            Saisissez ce code
+            pour poursuivre vers
+            la fiche complète Président / Club.
+
+          </div>
+
+
+          ${localHelp}
+
+
+          <label class="sportLabel">
+            Code temporaire
+          </label>
+
+          <input
+            id="sportPresidentCheckCode"
+            class="sportField"
+            type="password"
+            inputmode="numeric"
+            autocomplete="one-time-code"
+            maxlength="6"
+            placeholder="6 chiffres"
+          >
+
+
+          <button
+            id="sportPresidentCheckValidate"
+            class="sportBtn"
+            type="button"
+            style="
+              width:100%;
+              margin-top:12px;
+            "
+          >
+            Valider mon code
+          </button>
+
+
+          <button
+            id="sportPresidentCodeBack"
+            class="sportBtn"
+            type="button"
+            style="
+              width:100%;
+              margin-top:10px;
+            "
+          >
+            Retour
+          </button>
+
+
+          <div
+            id="sportPresidentCodeStatus"
+            class="sportStatus"
+          ></div>
+
+        </div>
+
+      </div>
+
+    `
+  );
+
+
+  sportSetModalHeader(
+    "Code Président avec"
+  );
+
+
+  setTimeout(
+    ()=>{
+
+      const validate =
+        sportEl(
+          "sportPresidentCheckValidate"
+        );
+
+      const back =
+        sportEl(
+          "sportPresidentCodeBack"
+        );
+
+      const status =
+        sportEl(
+          "sportPresidentCodeStatus"
+        );
+
+
+      if(back){
+
+        back.onclick =
+          openSportPresidentPrecheck;
+
+      }
+
+
+      if(!validate){
+        return;
+      }
+
+
+      validate.onclick =
+        async ()=>{
+
+          const code =
+            String(
+              sportEl(
+                "sportPresidentCheckCode"
+              )?.value || ""
+            ).trim();
+
+
+          if(
+            !/^[0-9]{6}$/.test(
+              code
+            )
+          ){
+
+            if(status){
+
+              status.textContent =
+                "Saisissez le code temporaire à 6 chiffres.";
+
+            }
+
+            return;
+          }
+
+
+          let verifiedName =
+            challenge.data.firstName +
+            " " +
+            challenge.data.lastName;
+
+
+          let accountId =
+            "president-prechecked";
+
+
+          if(
+            SPORT_CONFIG.mode ===
+              "production" &&
+            SPORT_CONFIG.authEndpoint
+          ){
+
+            try{
+
+              const response =
+                await fetch(
+                  SPORT_CONFIG.authEndpoint,
+                  {
+
+                    method:
+                      "POST",
+
+                    credentials:
+                      "include",
+
+                    headers:{
+                      "Content-Type":
+                        "application/json"
+                    },
+
+                    body:
+                      JSON.stringify({
+
+                        scope:
+                          "sport_president_precheck_verify",
+
+                        challengeId:
+                          challenge.challengeId,
+
+                        code:
+                          code
+
+                      })
+
+                  }
+                );
+
+
+              if(!response.ok){
+                throw 0;
+              }
+
+
+              const result =
+                await response.json();
+
+
+              if(
+                !result ||
+                result.ok !== true
+              ){
+                throw 0;
+              }
+
+
+              verifiedName =
+                String(
+                  result.name ||
+                  verifiedName
+                );
+
+
+              accountId =
+                String(
+                  result.accountId ||
+                  accountId
+                );
+
+
+            }catch(_){
+
+              if(status){
+
+                status.textContent =
+                  "Code incorrect ou expiré.";
+
+              }
+
+              return;
+
+            }
+
+          }else{
+
+
+            if(
+              code !==
+              challenge.localCode
+            ){
+
+              if(status){
+
+                status.textContent =
+                  "Code incorrect ou expiré.";
+
+              }
+
+              return;
+
+            }
+
+          }
+
+
+          window
+            .bociteartSportPresidentPrechecked =
+              true;
+
+
+          window
+            .bociteartSportPresidentPrecheck = {
+
+              clubName:
+                challenge.data.clubName,
+
+              commune:
+                challenge.data.commune,
+
+              rna:
+                challenge.data.rna,
+
+              federation:
+                challenge.data.federation,
+
+              affiliation:
+                challenge.data.affiliation,
+
+              verifiedAt:
+                new Date()
+                  .toISOString()
+
+            };
+
+
+          sportSession = {
+
+            role:
+              "president",
+
+            accountId:
+              accountId,
+
+            name:
+              verifiedName,
+
+            team:
+              ""
+
+          };
+
+
+          window.bociteartSportSession =
+            sportSession;
+
+
+          sportPresidentAccessChallenge =
+            null;
+
+
+          /*
+            Le premier palier est validé.
+
+            On ouvre maintenant
+            la fiche complète déjà existante.
+          */
+
+          openClubReserve();
+
+        };
+
+    },
+    0
+  );
+
+}
+
+/* =========================================================
+   ÇA FINIT ICI
+   SPORT — PREMIER CONTRÔLE PRÉSIDENT / RESPONSABLE LÉGAL
+   ========================================================= */
+   
 function openClubAccess(){
 
   openModal(
@@ -12515,6 +13423,27 @@ function openClubAccess(){
   setTimeout(
     ()=>{
 
+/* =========================================================
+   ÇA COMMENCE ICI
+   OUVERTURE DU PREMIER CONTRÔLE PRÉSIDENT
+   ========================================================= */
+
+const presidentCheck=
+  sportEl(
+    "sportPresidentPrecheckOpen"
+  );
+
+if(presidentCheck){
+
+  presidentCheck.onclick=
+    openSportPresidentPrecheck;
+
+}
+
+/* =========================================================
+   ÇA FINIT ICI
+   ========================================================= */
+       
       const b=
         sportEl(
           "sportLoginBtn"
