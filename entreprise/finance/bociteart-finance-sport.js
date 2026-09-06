@@ -505,8 +505,18 @@
       return;
     }
 
-    const profile = sportFinanceInitialProfile();
-    const associations = sportFinanceAssociations();
+   /* =========================================================
+   ÇA COMMENCE ICI
+   FINANCE SPORT — IDENTIFICATION DU REPRÉSENTANT
+   ========================================================= */
+
+const profile = sportFinanceInitialProfile();
+const associations = sportFinanceAssociations();
+const representative = sportFinanceSession();
+
+/* =========================================================
+   ÇA FINIT ICI
+   ========================================================= */
 
     mount.dataset.financeReady = "1";
     mount.innerHTML = `
