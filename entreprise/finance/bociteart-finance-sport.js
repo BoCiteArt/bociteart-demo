@@ -39,9 +39,6 @@
      CONFIGURATION
      ========================================================= */
 
-  const VERSION =
-    "2026-09-07-98";
-
   const CONNECTOR_NAME =
     "sport-parrainage";
 
@@ -632,6 +629,11 @@
           "bcfSportMerchantSiret"
         ),
 
+      vatNumber:
+        sportFinanceValue(
+          "bcfSportMerchantVat"
+        ),
+
       address:
         sportFinanceValue(
           "bcfSportMerchantAddress"
@@ -734,9 +736,19 @@
         ),
 
       sirenSiret:
-        sportFinanceText(
+        sportFinanceDigits(
           source.sirenSiret
         ),
+
+      vatNumber:
+        sportFinanceText(
+          source.vatNumber
+        )
+          .replace(
+            /\s+/g,
+            ""
+          )
+          .toUpperCase(),
 
       address:
         sportFinanceText(
@@ -1545,6 +1557,35 @@
 
 
     if(
+      profile.vatNumber
+    ){
+
+      const vat =
+        sportFinanceText(
+          profile.vatNumber
+        )
+          .replace(
+            /\s+/g,
+            ""
+          )
+          .toUpperCase();
+
+
+      if(
+        !/^[A-Z]{2}[A-Z0-9]{8,12}$/
+          .test(
+            vat
+          )
+      ){
+
+        errors.push(
+          "Le numéro de TVA intracommunautaire indiqué n’est pas valide."
+        );
+      }
+    }
+
+
+    if(
       !profile.address
     ){
 
@@ -1669,6 +1710,20 @@
           true,
 
         idempotencyRequired:
+          true,
+
+        cardPaymentViaPsp:
+          true,
+
+        cardNetworksExpected:[
+          "visa",
+          "mastercard"
+        ],
+
+        dynamicPaymentQrServerSide:
+          true,
+
+        noBankSecretInBrowser:
           true
       },
 
@@ -1679,6 +1734,34 @@
           PUBLICATION_DAYS,
 
         startOnlyAfterConfirmedPayment:
+          true,
+
+        automaticServerActivationAfterPaid:
+          true,
+
+        clientCannotActivatePublication:
+          true
+      },
+
+
+      allocation:{
+
+        finalDistribution:
+          "server_only",
+
+        clubSupportNature:
+          "sponsorship",
+
+        associationShareOnlyIfSelectedAndValidated:
+          true,
+
+        associationQualification:
+          "server_validate_actual_eligibility",
+
+        bociteartServiceTreatment:
+          "server_only",
+
+        noPublicInternalFormula:
           true
       },
 
@@ -1697,6 +1780,12 @@
         beneficiarySettlementServerSide:
           true,
 
+        settlementAfterConfirmedPayment:
+          true,
+
+        noClientFinalAccounting:
+          true,
+
         noPublicInternalFormula:
           true
       },
@@ -1705,6 +1794,9 @@
       documents:{
 
         merchantDocumentRequired:
+          true,
+
+        clubSponsorshipDocumentRequired:
           true,
 
         clubDocumentAccordingToLegalStatus:
@@ -1720,6 +1812,15 @@
           true,
 
         electronicInvoicingCompatibilityRequired:
+          true,
+
+        monthlyGroupingAllowedWhenLegallyCompatible:
+          true,
+
+        accountingExportRequired:
+          true,
+
+        archiveRequired:
           true
       },
 
@@ -1733,7 +1834,10 @@
           "server_validate_actual_operation",
 
         associationTaxReceipt:
-          "only_if_legally_eligible"
+          "only_if_legally_eligible",
+
+        noAutomaticTaxReceipt:
+          true
       },
 
 
@@ -1749,6 +1853,9 @@
           true,
 
         securityLogRequired:
+          true,
+
+        serverRevalidationRequired:
           true
       }
     };
@@ -1757,7 +1864,7 @@
 
   /* =========================================================
      ÇA COMMENCE ICI
-     OUVERTURE DE LA DERNIÈRE VÉRIFICATION
+     OUVERTURE DU RÉCAPITULATIF
      ========================================================= */
 
   function sportFinanceOpenReview(){
@@ -1903,7 +2010,7 @@
 
 
       reviewTitle:
-        "Dernière vérification avant paiement",
+        "Récapitulatif avant paiement",
 
 
       operationRef:
@@ -1911,7 +2018,9 @@
 
 
       payerRef:
-        profile.sirenSiret,
+        sportFinanceDigits(
+          profile.sirenSiret
+        ),
 
 
       payerSnapshot:
@@ -1982,6 +2091,22 @@
         PUBLICATION_DAYS,
 
 
+      paymentChannel:
+        "card_psp",
+
+
+      paymentPresentation:{
+
+        cardNetworks:[
+          "visa",
+          "mastercard"
+        ],
+
+        dynamicQr:
+          true
+      },
+
+
       financePolicies:
         sportFinancePolicies(),
 
@@ -2026,7 +2151,9 @@
 
 
       payerRef:
-        profile.sirenSiret,
+        sportFinanceDigits(
+          profile.sirenSiret
+        ),
 
 
       merchantName:
@@ -2065,7 +2192,7 @@
 
   /* =========================================================
      ÇA FINIT ICI
-     OUVERTURE DE LA DERNIÈRE VÉRIFICATION
+     OUVERTURE DU RÉCAPITULATIF
      ========================================================= */
 
 
@@ -2287,7 +2414,9 @@
       {
 
         payerRef:
-          profile.sirenSiret,
+          sportFinanceDigits(
+            profile.sirenSiret
+          ),
 
 
         payerSnapshot:
@@ -2344,6 +2473,22 @@
 
         publicationDays:
           PUBLICATION_DAYS,
+
+
+        paymentChannel:
+          "card_psp",
+
+
+        paymentPresentation:{
+
+          cardNetworks:[
+            "visa",
+            "mastercard"
+          ],
+
+          dynamicQr:
+            true
+        },
 
 
         financePolicies:
@@ -2521,6 +2666,33 @@
             draft.publicationDays ||
             PUBLICATION_DAYS
           ),
+
+
+        paymentChannel:
+          sportFinanceText(
+            draft.paymentChannel ||
+            "card_psp"
+          ),
+
+
+        paymentPresentation:
+
+          sportFinanceClone(
+            draft.paymentPresentation
+          )
+
+          ||
+
+          {
+
+            cardNetworks:[
+              "visa",
+              "mastercard"
+            ],
+
+            dynamicQr:
+              true
+          },
 
 
         financePolicies:
@@ -2914,9 +3086,24 @@
 
           <br><br>
 
+          Le paiement est préparé
+          par le prestataire sécurisé
+          de Bo'CitéArt.
+
+          Les cartes
+          <strong>Visa</strong>
+          et <strong>Mastercard</strong>
+          sont prévues,
+          ainsi qu’un QR de paiement temporaire
+          lorsqu’il est proposé
+          par le prestataire.
+
+          <br><br>
+
           La diffusion démarre
-          uniquement après confirmation
-          effective du paiement
+          automatiquement
+          après confirmation effective
+          du paiement
           et dure
 
           <strong>
@@ -2996,7 +3183,7 @@
           >
 
             Corrigez les informations nécessaires,
-            puis revenez à l’aperçu définitif.
+            puis revenez au récapitulatif.
 
           </div>
 
@@ -3037,6 +3224,29 @@
               profile.sirenSiret ||
               profile.siret ||
               profile.siren
+
+            )}"
+          >
+
+
+          <label class="sportLabel">
+
+            N° TVA intracommunautaire
+            <span style="font-weight:400;">
+              (si applicable)
+            </span>
+
+          </label>
+
+
+          <input
+            id="bcfSportMerchantVat"
+            class="sportField"
+            value="${sportFinanceEscape(
+
+              profile.vatNumber ||
+              profile.vat ||
+              ""
 
             )}"
           >
@@ -3143,7 +3353,7 @@
           >
 
             Enregistrer les corrections
-            et revenir à l’aperçu
+            et revenir au récapitulatif
 
           </button>
 
@@ -3172,7 +3382,7 @@
             class="sportField"
             type="number"
             min="50"
-            step="1"
+            step="0.01"
             value="50"
           >
 
@@ -3280,20 +3490,21 @@
             style="margin-top:12px;"
           >
 
-            Aucun règlement,
-            reversement,
-            facture
-            ou reçu fiscal
-            n’est considéré comme définitif
-            dans le navigateur.
+            Le paiement,
+            la diffusion
+            et les documents associés
+            sont validés uniquement
+            après confirmation effective
+            du prestataire de paiement.
 
             <br><br>
 
-            Les documents
-            et traitements correspondants
-            sont établis
-            après contrôle du paiement
-            et du statut réel des parties.
+            Les justificatifs,
+            factures
+            et éventuels documents fiscaux
+            sont ensuite établis
+            selon le statut réel
+            des parties concernées.
 
           </div>
 
@@ -3308,7 +3519,7 @@
             "
           >
 
-            Vérifier la publicité et payer
+            Continuer vers le paiement
 
           </button>
 
@@ -3318,8 +3529,9 @@
             class="sportStatus"
           >
 
-            Choisissez d’abord
-            la destination du soutien.
+            Choisissez la destination
+            du parrainage,
+            puis continuez vers le paiement.
 
           </div>
 
@@ -3510,7 +3722,7 @@
 
 
       paid:
-        "Paiement confirmé. La diffusion de 5 jours et le traitement des documents associés peuvent maintenant être déclenchés côté serveur.",
+        "Paiement confirmé. La diffusion de 5 jours est déclenchée automatiquement côté serveur et les documents associés sont préparés selon le statut réel des parties.",
 
 
       refused:
@@ -3767,10 +3979,6 @@
 
   window.BociteFinanceSport = {
 
-    version:
-      VERSION,
-
-
     ready:
       true,
 
@@ -3819,7 +4027,7 @@
 
 
   console.info(
-    "✅ Bo'CitéArt Finance — raccord Sport V98 chargé"
+    "✅ Bo'CitéArt Finance — raccord Sport chargé"
   );
 
 })();
