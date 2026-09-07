@@ -16818,9 +16818,6 @@ function openSportPanel(){
 
 window.BociteSportModule={
 
-  version:
-    "2026-09-07-107",
-
   ready:
     true,
 
@@ -16849,10 +16846,8 @@ window.BociteSportModule={
     )
 };
 
-
 window.openSportPanel=
   openSportPanel;
-
 
 /* =========================================================
    FIN DU MODULE SPORT EXTERNE
