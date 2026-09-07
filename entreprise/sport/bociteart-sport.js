@@ -499,40 +499,65 @@ function sportSetModalHeader(
 before
 ){
 
-const title=
-sportEl(
-"modalTitle"
-);
+  const applyHeader=
+    ()=>{
 
-const body=
-sportEl(
-"modalBody"
-);
+      const title=
+        sportEl(
+          "modalTitle"
+        );
 
-if(
-!title ||
-!body
-){
-return;
+      const body=
+        sportEl(
+          "modalBody"
+        );
+
+      if(
+        !title ||
+        !body
+      ){
+        return;
+      }
+
+      if(
+        !body.querySelector(
+          ".bociteSportRoot"
+        )
+      ){
+        return;
+      }
+
+      title.innerHTML=
+        sportEsc(
+          before ||
+          ""
+        ) +
+        ' <span style="color:#2f5d46 !important;font-weight:700;">' +
+        "Bo'Cité" +
+        '<span style="color:#b00020 !important;font-weight:700;">' +
+        "Art" +
+        "</span>" +
+        "</span>";
+    };
+
+
+  applyHeader();
+
+  window.setTimeout(
+    applyHeader,
+    0
+  );
+
+  window.setTimeout(
+    applyHeader,
+    60
+  );
+
+  window.setTimeout(
+    applyHeader,
+    180
+  );
 }
-
-if(
-!body.querySelector(
-".bociteSportRoot"
-)
-){
-return;
-}
-
-title.innerHTML=
-sportEsc(
-before ||
-""
-) +
-" " +
-sportBrandHtml();
-}
-
 /* =========================================================
 ÇA FINIT ICI — PROTECTION DU TITRE SPORT
 ========================================================= */
