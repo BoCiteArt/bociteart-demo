@@ -1741,32 +1741,60 @@ async function sportSubmitGovernanceVerification(){
    VERROU DES FONCTIONS SENSIBLES
    ========================================================= */
 
+/* =========================================================
+   ÇA COMMENCE ICI
+   SPORT — VERROU DES FONCTIONS SENSIBLES
+   ========================================================= */
+
 function sportRequireVerifiedGovernance(){
 
-  const presentationMode=
-    new URLSearchParams(
-      window.location.search
-    ).get("presentation") ===
-    "1";
+  /*
+    Le paramètre ?presentation=1
+    ne donne aucun droit privé.
 
-  if(presentationMode){
+    Une fonction sensible n'est accessible
+    qu'après un véritable accès reconnu.
+  */
+
+
+  /* =====================================================
+     ADMINISTRATION PRIVÉE Bo'CitéArt
+     ===================================================== */
+
+  if(
+    window.bociteartAdminSession
+  ){
     return true;
   }
 
- if(
-  SPORT_CONFIG.mode !==
-    "production" &&
-  (
-    window
-      .bociteartSportPresidentPrechecked ===
-        true ||
-    window
-      .bociteartSportRecoveryVerified ===
-        true
-  )
-){
-  return true;
-}
+
+  /* =====================================================
+     PRÉSIDENT VALIDÉ EN PRÉPRODUCTION
+     OU CODE DE REPRISE VALIDÉ
+     ===================================================== */
+
+  if(
+    SPORT_CONFIG.mode !==
+      "production" &&
+    (
+      window
+        .bociteartSportPresidentPrechecked ===
+          true
+
+      ||
+
+      window
+        .bociteartSportRecoveryVerified ===
+          true
+    )
+  ){
+    return true;
+  }
+
+
+  /* =====================================================
+     GOUVERNANCE OFFICIELLEMENT VALIDÉE
+     ===================================================== */
 
   if(
     sportGovernanceIsVerified()
@@ -1774,13 +1802,22 @@ function sportRequireVerifiedGovernance(){
     return true;
   }
 
+
+  /* =====================================================
+     AUCUNE AUTORISATION
+     ===================================================== */
+
   alert(
-    "La gouvernance de la structure doit être vérifiée avant l’ouverture de cette fonction réservée."
+    "Cet accès réservé nécessite une vérification préalable."
   );
 
   return false;
 }
 
+/* =========================================================
+   ÇA FINIT ICI
+   SPORT — VERROU DES FONCTIONS SENSIBLES
+   ========================================================= */
 
 /* =========================================================
    PORTEFEUILLE SPORT
