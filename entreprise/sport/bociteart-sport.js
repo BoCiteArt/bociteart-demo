@@ -12607,54 +12607,51 @@ function sportPrivateAccessHelpHtml(){
 
   return `
 
-    <div class="sportCard">
+ <div class="sportCard">
 
-      <div class="sportSubTitle">
-        Assistance sur mon accès
-      </div>
+  <div class="sportSubTitle">
+    Difficulté d’accès à mon espace
+  </div>
 
-      <div
-        class="sportText"
-        style="margin-top:8px;"
-      >
+  <div
+    class="sportText"
+    style="margin-top:8px;"
+  >
+    Merci de contacter
+    ${sportBrandHtml()}
+    depuis cet espace uniquement
+    lorsqu’une difficulté importante
+    empêche réellement d’utiliser
+    les accès habituels
+    et qu’il n’est pas possible
+    de la résoudre autrement.
 
-        Cet espace est accessible uniquement
-        après identification.
+    <br><br>
 
-        <br><br>
+    Cet espace n’est pas destiné
+    aux questions courantes,
+    à l’organisation interne du club,
+    à la gestion des équipes,
+    au matériel,
+    aux plannings
+    ou à la logistique.
+  </div>
 
-        Utilisez-le lorsqu’une difficulté importante
-        concerne votre accès personnel
-        à ${sportBrandHtml()}
-        et qu’elle ne peut pas être résolue
-        par les moyens habituels.
+  <button
+    id="sportPrivateAccessHelp"
+    class="sportBtn"
+    type="button"
+    style="
+      width:100%;
+      margin-top:14px;
+    "
+  >
+    Contacter Bo'CitéArt
+  </button>
 
-        <br><br>
+</div>
 
-        Il n’est pas destiné
-        aux questions courantes,
-        au matériel,
-        aux équipes,
-        aux plannings
-        ou à l’organisation du club.
-
-      </div>
-
-      <button
-        id="sportPrivateAccessHelp"
-        class="sportBtn"
-        type="button"
-        style="
-          width:100%;
-          margin-top:12px;
-        "
-      >
-        Signaler une difficulté avec mon accès
-      </button>
-
-    </div>
-
-  `;
+`;
 }
 /* =========================================================
    ÇA COMMENCE ICI
