@@ -1,1410 +1,1356 @@
 /* =========================================================
-   BO'CITÉART — MODULE SPORT EXTERNE
-   Fichier : sport/bociteart-sport.js
-
-   Ce fichier contient le moteur complet de la tuile Sport.
-   Il est chargé par index.html mais n'ouvre rien
-   automatiquement au chargement.
-   ========================================================= */
+BO'CITÉART — MODULE SPORT EXTERNE
+Fichier : sport/bociteart-sport.js
+Ce fichier contient le moteur complet de la tuile Sport.
+Il est chargé par index.html mais n'ouvre rien
+automatiquement au chargement.
+========================================================= */
 
 (function(){
-  "use strict";
-
-
-  /* =========================================================
-     PROTECTION CONTRE UN DOUBLE CHARGEMENT
-     ========================================================= */
-
-  if(
-    window.__bociteSportModuleLoaded
-  ){
-    return;
-  }
-
-  window.__bociteSportModuleLoaded=
-    true;
-
-
-  /* =========================================================
-     PASSERELLES VERS LES FONCTIONS GÉNÉRALES DE INDEX.HTML
-     ========================================================= */
-
-  const openModal=
-    (...args)=>{
-
-      if(
-        typeof window.openModal !==
-        "function"
-      ){
-
-        console.error(
-          "Bo'CitéArt Sport : openModal indisponible."
-        );
-
-        return;
-      }
-
-      return window.openModal(
-        ...args
-      );
-    };
-
-
-  const openWellbeingMap=
-    (...args)=>{
-
-      if(
-        typeof window.openWellbeingMap !==
-        "function"
-      ){
-
-        alert(
-          "La carte est momentanément indisponible."
-        );
-
-        return;
-      }
-
-      return window.openWellbeingMap(
-        ...args
-      );
-    };
-
-
-  const logPilotageAccess=
-    (...args)=>{
-
-      if(
-        typeof window.logPilotageAccess ===
-        "function"
-      ){
-
-        return window.logPilotageAccess(
-          ...args
-        );
-      }
-    };
-
-
-  /* =========================================================
-     SPORT — CLÉS DE STOCKAGE
-     ========================================================= */
-
-  const SPORT_KEYS={
-
-    wallet:
-      "bociteart_sport_wallet_v3",
-
-    ledger:
-      "bociteart_sport_ledger_v3",
-
-    access:
-      "bociteart_sport_access_v3",
-
-    accessSecurity:
-      "bociteart_sport_access_security_v1",
-
-    club:
-      "bociteart_sport_club_v4",
-
-    training:
-      "bociteart_sport_training_v3",
-
-    reports:
-      "bociteart_sport_reports_v4",
-
-    solidarity:
-      "bociteart_sport_solidarity_v4",
-
-    exchanges:
-      "bociteart_sport_exchanges_v4",
-
-    season:
-      "bociteart_sport_season_v2",
-
-    contacts:
-      "bociteart_sport_support_contacts_v2",
-
-    associations:
-      "bociteart_sport_associations_v2",
-
-    dossiers:
-      "bociteart_sport_support_dossiers_v2",
-
-    receipts:
-      "bociteart_sport_receipts_v2",
-
-    mairieTransfers:
-      "bociteart_sport_mairie_transfers_v2",
-
-    payments:
-      "bociteart_sport_payments_v2",
-
-    pubs:
-      "bociteart_sport_pubs_v3",
-
-    governance:
-      "bociteart_sport_governance_v1",
-
-   mandateHistory:
-  "bociteart_sport_mandate_history_v1",
-
-continuityRequests:
-  "bociteart_sport_continuity_requests_v1",
-
-continuitySecurity:
-  "bociteart_sport_continuity_security_v1"
-  };
-
-
-  /* =========================================================
-     SPORT — CONFIGURATION
-     ========================================================= */
-
-  const SPORT_CONFIG=
-    Object.assign(
-      {
-
-        mode:
-          "preproduction",
-
-        clubId:
-          "sport-club-local",
-
-        resultsEndpoint:
-          "",
-
-        identityEndpoint:
-          "",
-
-        authEndpoint:
-          "",
-
-        scanEndpoint:
-          "",
-
-        notificationEndpoint:
-          "",
-
-        governanceEndpoint:
-          "",
-
-continuityEndpoint:
-  "",
-
-continuityStatusEndpoint:
-  "",
-
-continuityRecoveryEndpoint:
-  "",
-
-supportEndpoint:
-  "",
-
-        merchantLookupEndpoint:
-          "",
-
-        checkoutEndpoint:
-          "",
-
-        paymentStatusEndpoint:
-          "",
-
-        billingProductCode:
-          "SPORT_TAPE_5D",
-
-        supportMinimumHT:
-          50,
-
-        schoolYearEndMonthDay:
-          "07-07",
-
-        mairieSportAccountCode:
-          "MAIRIE-SPORT-SOLIDARITE"
-
-      },
-
-      window.BOCITEART_SPORT_CONFIG ||
-      {}
-    );
-
-
-  /* =========================================================
-     SESSION SPORT
-     ========================================================= */
-
-  let sportSession=
-    window.bociteartSportSession ||
-    {
-
-      role:"",
-      accountId:"",
-      name:"",
-      team:""
-    };
-
-
-  /* =========================================================
-     OUTILS GÉNÉRAUX
-     ========================================================= */
-
-  const sportEl=
-    id =>
-      document.getElementById(
-        id
-      );
-
-
-  const sportLoad=
-    (
-      key,
-      fallback
-    )=>{
-
-      try{
-
-        const raw=
-          localStorage.getItem(
-            key
-          );
-
-        return raw
-          ? JSON.parse(raw)
-          : fallback;
-
-      }catch(error){
-
-        return fallback;
-      }
-    };
-
-
-  const sportSave=
-    (
-      key,
-      value
-    )=>{
-
-      try{
-
-        localStorage.setItem(
-          key,
-          JSON.stringify(
-            value
-          )
-        );
-
-        return true;
-
-      }catch(error){
-
-        return false;
-      }
-    };
-
-
-  const sportId=
-    prefix =>
-      String(
-        prefix ||
-        "sport"
-      ) +
-      "-" +
-      Date.now() +
-      "-" +
-      Math.random()
-        .toString(36)
-        .slice(2,8);
-
-
-  const sportEsc=
-    value =>
-      String(
-        value == null
-          ? ""
-          : value
-      )
-        .replace(
-          /&/g,
-          "&amp;"
-        )
-        .replace(
-          /</g,
-          "&lt;"
-        )
-        .replace(
-          />/g,
-          "&gt;"
-        )
-        .replace(
-          /"/g,
-          "&quot;"
-        )
-        .replace(
-          /'/g,
-          "&#039;"
-        );
-
-
-  function sportNotifyEvent(
-    eventName,
-    payload
-  ){
-
-    const data=
-      Object.assign(
-        {
-          event:
-            String(
-              eventName ||
-              "sport_event"
-            ),
-
-          clubId:
-            SPORT_CONFIG.clubId,
-
-          clubRef:
-            sportClub &&
-            typeof sportClub ===
-              "function"
-              ? (
-                  sportClub()
-                    .clubRef ||
-                  ""
-                )
-              : "",
-
-          actor:{
-
-            accountId:
-              String(
-                sportSession &&
-                sportSession.accountId ||
-                ""
-              ),
-
-            name:
-              String(
-                sportSession &&
-                sportSession.name ||
-                ""
-              ),
-
-            role:
-              String(
-                sportSession &&
-                sportSession.role ||
-                ""
-              )
-          },
-
-          createdAt:
-            new Date()
-              .toISOString()
-        },
-
-        payload &&
-        typeof payload ===
-          "object"
-          ? payload
-          : {}
-      );
-
-    if(
-      !SPORT_CONFIG
-        .notificationEndpoint
-    ){
-
-      return Promise.resolve({
-        ok:true,
-        pending:true,
-        payload:data
-      });
-    }
-
-    return fetch(
-      SPORT_CONFIG
-        .notificationEndpoint,
-      {
-        method:"POST",
-        credentials:"include",
-        headers:{
-          "Content-Type":
-            "application/json"
-        },
-        body:
-          JSON.stringify(
-            data
-          )
-      }
-    )
-      .then(
-        response => ({
-          ok:
-            response.ok,
-          sent:
-            response.ok
-        })
-      )
-      .catch(
-        () => ({
-          ok:false,
-          pending:true
-        })
-      );
-  }
-
-
-  /* =========================================================
-     IDENTITÉ VISUELLE Bo'CitéArt
-     ========================================================= */
-
-  const sportBrandHtml=
-    () =>
-      '<span class="bociteSportLogo">' +
-      "Bo'Cité" +
-      '<span class="bociteSportArt">' +
-      "Art" +
-      "</span>" +
-      "</span>";
+"use strict";
 
 /* =========================================================
-   ÇA COMMENCE ICI — PROTECTION DU TITRE SPORT
-   ========================================================= */
+PROTECTION CONTRE UN DOUBLE CHARGEMENT
+========================================================= */
 
-function sportSetModalHeader(
-  before
+if(
+window.__bociteSportModuleLoaded
+){
+return;
+}
+
+window.__bociteSportModuleLoaded=
+true;
+
+
+/* =========================================================
+PASSERELLES VERS LES FONCTIONS GÉNÉRALES DE INDEX.HTML
+========================================================= */
+
+const openModal=
+(...args)=>{
+
+if(
+typeof window.openModal !==
+"function"
 ){
 
-  const title =
-    sportEl(
-      "modalTitle"
-    );
+console.error(
+"Bo'CitéArt Sport : openModal indisponible."
+);
 
-  const body =
-    sportEl(
-      "modalBody"
-    );
+return;
+}
 
-  if(
-    !title ||
-    !body
-  ){
-    return;
-  }
+return window.openModal(
+...args
+);
+};
 
-  /*
-   * Sport ne peut modifier le titre que si la fenêtre
-   * actuellement affichée contient réellement Sport.
-   */
-  if(
-    !body.querySelector(
-      ".bociteSportRoot"
-    )
-  ){
-    return;
-  }
 
-  title.innerHTML =
-    sportEsc(
-      before ||
-      ""
-    ) +
-    " " +
-    sportBrandHtml();
+const openWellbeingMap=
+(...args)=>{
+
+if(
+typeof window.openWellbeingMap !==
+"function"
+){
+
+alert(
+"La carte est momentanément indisponible."
+);
+
+return;
+}
+
+return window.openWellbeingMap(
+...args
+);
+};
+
+
+const logPilotageAccess=
+(...args)=>{
+
+if(
+typeof window.logPilotageAccess ===
+"function"
+){
+
+return window.logPilotageAccess(
+...args
+);
+}
+};
+
+
+/* =========================================================
+SPORT — CLÉS DE STOCKAGE
+========================================================= */
+
+const SPORT_KEYS={
+
+wallet:
+"bociteart_sport_wallet_v3",
+
+ledger:
+"bociteart_sport_ledger_v3",
+
+access:
+"bociteart_sport_access_v3",
+
+accessSecurity:
+"bociteart_sport_access_security_v1",
+
+accessHistory:
+"bociteart_sport_access_history_v1",
+
+club:
+"bociteart_sport_club_v4",
+
+training:
+"bociteart_sport_training_v3",
+
+reports:
+"bociteart_sport_reports_v4",
+
+solidarity:
+"bociteart_sport_solidarity_v4",
+
+exchanges:
+"bociteart_sport_exchanges_v4",
+
+season:
+"bociteart_sport_season_v2",
+
+contacts:
+"bociteart_sport_support_contacts_v2",
+
+associations:
+"bociteart_sport_associations_v2",
+
+dossiers:
+"bociteart_sport_support_dossiers_v2",
+
+receipts:
+"bociteart_sport_receipts_v2",
+
+mairieTransfers:
+"bociteart_sport_mairie_transfers_v2",
+
+payments:
+"bociteart_sport_payments_v2",
+
+pubs:
+"bociteart_sport_pubs_v3",
+
+governance:
+"bociteart_sport_governance_v1",
+
+mandateHistory:
+"bociteart_sport_mandate_history_v1",
+
+continuityRequests:
+"bociteart_sport_continuity_requests_v1",
+
+continuitySecurity:
+"bociteart_sport_continuity_security_v1"
+
+};
+
+
+/* =========================================================
+SPORT — CONFIGURATION
+========================================================= */
+
+const SPORT_CONFIG=
+Object.assign(
+{
+
+mode:
+"preproduction",
+
+clubId:
+"sport-club-local",
+
+resultsEndpoint:
+"",
+
+identityEndpoint:
+"",
+
+authEndpoint:
+"",
+
+scanEndpoint:
+"",
+
+notificationEndpoint:
+"",
+
+governanceEndpoint:
+"",
+
+continuityEndpoint:
+"",
+
+continuityStatusEndpoint:
+"",
+
+continuityRecoveryEndpoint:
+"",
+
+supportEndpoint:
+"",
+
+merchantLookupEndpoint:
+"",
+
+checkoutEndpoint:
+"",
+
+paymentStatusEndpoint:
+"",
+
+billingProductCode:
+"SPORT_TAPE_5D",
+
+supportMinimumHT:
+50,
+
+schoolYearEndMonthDay:
+"07-07",
+
+mairieSportAccountCode:
+"MAIRIE-SPORT-SOLIDARITE"
+
+},
+
+window.BOCITEART_SPORT_CONFIG ||
+{}
+);
+
+
+/* =========================================================
+SESSION SPORT
+========================================================= */
+
+let sportSession=
+window.bociteartSportSession ||
+{
+
+role:"",
+accountId:"",
+name:"",
+team:""
+
+};
+
+
+/* =========================================================
+OUTILS GÉNÉRAUX
+========================================================= */
+
+const sportEl=
+id =>
+document.getElementById(
+id
+);
+
+
+const sportLoad=
+(
+key,
+fallback
+)=>{
+
+try{
+
+const raw=
+localStorage.getItem(
+key
+);
+
+return raw
+? JSON.parse(raw)
+: fallback;
+
+}catch(error){
+
+return fallback;
+}
+};
+
+
+const sportSave=
+(
+key,
+value
+)=>{
+
+try{
+
+localStorage.setItem(
+key,
+JSON.stringify(
+value
+)
+);
+
+return true;
+
+}catch(error){
+
+return false;
+}
+};
+
+
+const sportId=
+prefix =>
+String(
+prefix ||
+"sport"
+) +
+"-" +
+Date.now() +
+"-" +
+Math.random()
+.toString(36)
+.slice(2,8);
+
+
+const sportEsc=
+value =>
+String(
+value == null
+? ""
+: value
+)
+.replace(
+/&/g,
+"&amp;"
+)
+.replace(
+/</g,
+"&lt;"
+)
+.replace(
+/>/g,
+"&gt;"
+)
+.replace(
+/"/g,
+"&quot;"
+)
+.replace(
+/'/g,
+"&#039;"
+);
+
+
+function sportNotifyEvent(
+eventName,
+payload
+){
+
+const data=
+Object.assign(
+{
+
+event:
+String(
+eventName ||
+"sport_event"
+),
+
+clubId:
+SPORT_CONFIG.clubId,
+
+clubRef:
+sportClub &&
+typeof sportClub ===
+"function"
+? (
+sportClub()
+.clubRef ||
+""
+)
+: "",
+
+actor:{
+
+accountId:
+String(
+sportSession &&
+sportSession.accountId ||
+""
+),
+
+name:
+String(
+sportSession &&
+sportSession.name ||
+""
+),
+
+role:
+String(
+sportSession &&
+sportSession.role ||
+""
+)
+
+},
+
+createdAt:
+new Date()
+.toISOString()
+
+},
+
+payload &&
+typeof payload ===
+"object"
+? payload
+: {}
+);
+
+
+if(
+!SPORT_CONFIG
+.notificationEndpoint
+){
+
+return Promise.resolve({
+
+ok:true,
+pending:true,
+payload:data
+
+});
+}
+
+
+return fetch(
+SPORT_CONFIG
+.notificationEndpoint,
+{
+
+method:"POST",
+
+credentials:"include",
+
+headers:{
+
+"Content-Type":
+"application/json"
+
+},
+
+body:
+JSON.stringify(
+data
+)
+
+}
+)
+.then(
+response => ({
+
+ok:
+response.ok,
+
+sent:
+response.ok
+
+})
+)
+.catch(
+() => ({
+
+ok:false,
+pending:true
+
+})
+);
+}
+
+
+/* =========================================================
+IDENTITÉ VISUELLE Bo'CitéArt
+========================================================= */
+
+const sportBrandHtml=
+() =>
+'<span class="bociteSportLogo">' +
+"Bo'Cité" +
+'<span class="bociteSportArt">' +
+"Art" +
+"</span>" +
+"</span>";
+
+
+/* =========================================================
+ÇA COMMENCE ICI — PROTECTION DU TITRE SPORT
+========================================================= */
+
+function sportSetModalHeader(
+before
+){
+
+const title=
+sportEl(
+"modalTitle"
+);
+
+const body=
+sportEl(
+"modalBody"
+);
+
+if(
+!title ||
+!body
+){
+return;
+}
+
+if(
+!body.querySelector(
+".bociteSportRoot"
+)
+){
+return;
+}
+
+title.innerHTML=
+sportEsc(
+before ||
+""
+) +
+" " +
+sportBrandHtml();
 }
 
 /* =========================================================
-   ÇA FINIT ICI — PROTECTION DU TITRE SPORT
-   ========================================================= */
+ÇA FINIT ICI — PROTECTION DU TITRE SPORT
+========================================================= */
 
-  function sportTitle(
-    before,
-    after=""
-  ){
 
-    return `
+function sportTitle(
+before,
+after=""
+){
 
-      <div
-        class="sportTitleCard"
-      >
+return `
 
-        <div
-          class="sportTitleText"
-        >
+<div
+class="sportTitleCard"
+>
 
-          ${sportEsc(
-            before
-          )}
+<div
+class="sportTitleText"
+>
 
-          ${sportBrandHtml()}
+${sportEsc(
+before
+)}
 
-          ${
-            after
-              ? " " +
-                sportEsc(
-                  after
-                )
-              : ""
-          }
+${sportBrandHtml()}
 
-        </div>
+${
+after
+? " " +
+sportEsc(
+after
+)
+: ""
+}
 
-      </div>
+</div>
 
-    `;
-  }
+</div>
 
-  /* =========================================================
-     STYLES DU MODULE SPORT
-     ========================================================= */
-
-  function sportStyles(){
-
-    return `
-
-      <style>
-
-        #modal .head{
-          background:#ffffff !important;
-        }
-
-
-        #modalTitle{
-          color:#2f5d46 !important;
-          font-size:17px !important;
-          font-weight:700 !important;
-        }
-
-
-        #modalTitle .bociteSportLogo{
-          display:inline-block;
-          color:#2f5d46 !important;
-          font-weight:700 !important;
-          white-space:nowrap !important;
-        }
-
-
-        #modalTitle .bociteSportArt{
-          color:#b00020 !important;
-          font-weight:700 !important;
-        }
-
-
-        .bociteSportRoot{
-          color:#111111;
-          font-size:14px;
-          font-weight:400;
-          line-height:1.55;
-        }
-
-
-        .bociteSportRoot *{
-          box-sizing:border-box;
-        }
-
-
-        .sportTitleCard{
-          margin-top:14px;
-          margin-bottom:0;
-          padding:14px 14px 6px;
-          background:#ffffff;
-          border:1px solid rgba(47,93,70,.20);
-          border-bottom:0;
-          border-radius:14px 14px 0 0;
-        }
-
-
-        .sportTitleCard:first-child{
-          margin-top:0;
-        }
-
-
-        .sportTitleCard + .sportCard,
-        .sportTitleCard + .walletBox{
-          margin-top:0 !important;
-          padding-top:8px;
-          border-top:0 !important;
-          border-radius:0 0 14px 14px !important;
-        }
-
-
-        .sportTitleText,
-        .sportSubTitle{
-          color:#2f5d46;
-          font-size:17px;
-          font-weight:700;
-          line-height:1.35;
-        }
-
-
-        .sportCard,
-        .walletBox{
-          margin-top:8px;
-          padding:14px;
-          background:#ffffff !important;
-          border:1px solid rgba(47,93,70,.20) !important;
-          border-radius:14px;
-          color:#111111 !important;
-          font-size:14px !important;
-          font-weight:400 !important;
-          line-height:1.55 !important;
-        }
-
-
-        .sportText,
-        .walletSub{
-          color:#111111 !important;
-          font-size:14px !important;
-          font-weight:400 !important;
-          line-height:1.55 !important;
-        }
-
-
-        .bociteSportRoot ul{
-          margin:10px 0 0 20px;
-          padding:0;
-        }
-
-
-        .bociteSportRoot li{
-          margin:6px 0;
-          font-weight:400;
-        }
-
-
-        .bociteSportLogo{
-          display:inline-block;
-          color:#2f5d46 !important;
-          font-weight:700 !important;
-          white-space:nowrap !important;
-        }
-
-
-        .bociteSportArt{
-          color:#b00020 !important;
-          font-weight:700 !important;
-        }
-
-
-        .sportBtn,
-        .walletMini{
-          background:#ffffff !important;
-          color:#2f5d46 !important;
-          border:1px solid rgba(47,93,70,.38) !important;
-          border-radius:10px;
-          padding:9px 12px;
-          min-height:42px;
-          font-size:14px !important;
-          font-weight:700 !important;
-          cursor:pointer;
-        }
-
-
-        .sportBtnDanger{
-          color:#8e001a !important;
-          border-color:rgba(176,0,32,.35) !important;
-        }
-
-
-        .sportActions{
-          display:flex;
-          gap:10px;
-          flex-wrap:wrap;
-          margin-top:12px;
-        }
-
-
-        .sportActions > button{
-          flex:1 1 180px;
-        }
-
-
-        .sportField{
-          width:100%;
-          margin-top:6px;
-          padding:10px;
-          background:#ffffff !important;
-          color:#111111 !important;
-          border:1px solid rgba(47,93,70,.28) !important;
-          border-radius:10px;
-          font-size:14px !important;
-          font-weight:400 !important;
-        }
-
-
-        textarea.sportField{
-          min-height:100px;
-          resize:vertical;
-        }
-
-
-        .sportLabel{
-          display:block;
-          margin-top:10px;
-          color:#111111;
-          font-size:14px;
-          font-weight:400;
-        }
-
-
-        .sportCheck{
-          display:flex;
-          gap:9px;
-          align-items:flex-start;
-          margin-top:8px;
-        }
-
-
-        .sportStatus,
-        .sportItem{
-          margin-top:10px;
-          padding:10px;
-          background:#ffffff;
-          border:1px solid rgba(47,93,70,.18);
-          border-radius:10px;
-          color:#111111;
-          font-size:14px;
-          font-weight:400;
-        }
-
-
-        .sportName{
-          color:#2f5d46;
-          font-size:15px;
-          font-weight:700;
-        }
-
-
-        .sportPill{
-          display:inline-block;
-          margin:5px 5px 0 0;
-          padding:4px 8px;
-          border:1px solid rgba(47,93,70,.25);
-          border-radius:999px;
-          font-size:12px;
-        }
-
-
-        .walletTitle{
-          color:#2f5d46 !important;
-          font-size:17px !important;
-          font-weight:700 !important;
-        }
-
-
-        .walletValue{
-          font-size:34px;
-          font-weight:700;
-          line-height:1.1;
-          margin-top:6px;
-        }
-
-      </style>
-
-    `;
-  }
-
-
-  /* =========================================================
-     DATE DE FIN DE SAISON PAR DÉFAUT
-     ========================================================= */
-
-  function sportDefaultSeasonEndDate(){
-
-    const now=
-      new Date();
-
-
-    const parts=
-      String(
-        SPORT_CONFIG
-          .schoolYearEndMonthDay ||
-        "07-07"
-      )
-        .split("-");
-
-
-    const month=
-      Math.max(
-        1,
-        Math.min(
-          12,
-          Number(
-            parts[0] ||
-            7
-          )
-        )
-      );
-
-
-    const day=
-      Math.max(
-        1,
-        Math.min(
-          31,
-          Number(
-            parts[1] ||
-            7
-          )
-        )
-      );
-
-
-    let year=
-      now.getFullYear();
-
-
-    if(
-      now >
-      new Date(
-        year,
-        month - 1,
-        day,
-        23,
-        59,
-        59
-      )
-    ){
-
-      year++;
-    }
-
-
-    return (
-      `${year}-` +
-      `${String(month).padStart(2,"0")}-` +
-      `${String(day).padStart(2,"0")}`
-    );
-  }
+`;
+}
 
 
 /* =========================================================
-   FIN DU BLOC SPORT 1
-   LE BLOC 2 SE COLLE IMMÉDIATEMENT DESSOUS
-   ========================================================= */
+STYLES DU MODULE SPORT
+========================================================= */
+
+function sportStyles(){
+
+return `
+
+<style>
+
+#modal .head{
+background:#ffffff !important;
+}
+
+#modalTitle{
+color:#2f5d46 !important;
+font-size:17px !important;
+font-weight:700 !important;
+}
+
+#modalTitle .bociteSportLogo{
+display:inline-block;
+color:#2f5d46 !important;
+font-weight:700 !important;
+white-space:nowrap !important;
+}
+
+#modalTitle .bociteSportArt{
+color:#b00020 !important;
+font-weight:700 !important;
+}
+
+.bociteSportRoot{
+color:#111111;
+font-size:14px;
+font-weight:400;
+line-height:1.55;
+}
+
+.bociteSportRoot *{
+box-sizing:border-box;
+}
+
+.sportTitleCard{
+margin-top:14px;
+margin-bottom:0;
+padding:14px 14px 6px;
+background:#ffffff;
+border:1px solid rgba(47,93,70,.20);
+border-bottom:0;
+border-radius:14px 14px 0 0;
+}
+
+.sportTitleCard:first-child{
+margin-top:0;
+}
+
+.sportTitleCard + .sportCard,
+.sportTitleCard + .walletBox{
+margin-top:0 !important;
+padding-top:8px;
+border-top:0 !important;
+border-radius:0 0 14px 14px !important;
+}
+
+.sportTitleText,
+.sportSubTitle{
+color:#2f5d46;
+font-size:17px;
+font-weight:700;
+line-height:1.35;
+}
+
+.sportCard,
+.walletBox{
+margin-top:8px;
+padding:14px;
+background:#ffffff !important;
+border:1px solid rgba(47,93,70,.20) !important;
+border-radius:14px;
+color:#111111 !important;
+font-size:14px !important;
+font-weight:400 !important;
+line-height:1.55 !important;
+}
+
+.sportText,
+.walletSub{
+color:#111111 !important;
+font-size:14px !important;
+font-weight:400 !important;
+line-height:1.55 !important;
+}
+
+.bociteSportRoot ul{
+margin:10px 0 0 20px;
+padding:0;
+}
+
+.bociteSportRoot li{
+margin:6px 0;
+font-weight:400;
+}
+
+.bociteSportLogo{
+display:inline-block;
+color:#2f5d46 !important;
+font-weight:700 !important;
+white-space:nowrap !important;
+}
+
+.bociteSportArt{
+color:#b00020 !important;
+font-weight:700 !important;
+}
+
+.sportBtn,
+.walletMini{
+background:#ffffff !important;
+color:#2f5d46 !important;
+border:1px solid rgba(47,93,70,.38) !important;
+border-radius:10px;
+padding:9px 12px;
+min-height:42px;
+font-size:14px !important;
+font-weight:700 !important;
+cursor:pointer;
+}
+
+.sportBtnDanger{
+color:#8e001a !important;
+border-color:rgba(176,0,32,.35) !important;
+}
+
+.sportActions{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+margin-top:12px;
+}
+
+.sportActions > button{
+flex:1 1 180px;
+}
+
+.sportField{
+width:100%;
+margin-top:6px;
+padding:10px;
+background:#ffffff !important;
+color:#111111 !important;
+border:1px solid rgba(47,93,70,.28) !important;
+border-radius:10px;
+font-size:14px !important;
+font-weight:400 !important;
+}
+
+textarea.sportField{
+min-height:100px;
+resize:vertical;
+}
+
+.sportLabel{
+display:block;
+margin-top:10px;
+color:#111111;
+font-size:14px;
+font-weight:400;
+}
+
+.sportCheck{
+display:flex;
+gap:9px;
+align-items:flex-start;
+margin-top:8px;
+}
+
+.sportStatus,
+.sportItem{
+margin-top:10px;
+padding:10px;
+background:#ffffff;
+border:1px solid rgba(47,93,70,.18);
+border-radius:10px;
+color:#111111;
+font-size:14px;
+font-weight:400;
+}
+
+.sportName{
+color:#2f5d46;
+font-size:15px;
+font-weight:700;
+}
+
+.sportPill{
+display:inline-block;
+margin:5px 5px 0 0;
+padding:4px 8px;
+border:1px solid rgba(47,93,70,.25);
+border-radius:999px;
+font-size:12px;
+}
+
+.walletTitle{
+color:#2f5d46 !important;
+font-size:17px !important;
+font-weight:700 !important;
+}
+
+.walletValue{
+font-size:34px;
+font-weight:700;
+line-height:1.1;
+margin-top:6px;
+}
+
+</style>
+
+`;
+}
+
 
 /* =========================================================
-   BLOC SPORT 2
-   IDENTITÉ DU CLUB
-   GOUVERNANCE / CONTINUITÉ
-   PORTEFEUILLE BOCITECOINS
-   ========================================================= */
+DATE DE FIN DE SAISON PAR DÉFAUT
+========================================================= */
+
+function sportDefaultSeasonEndDate(){
+
+const now=
+new Date();
+
+const parts=
+String(
+SPORT_CONFIG
+.schoolYearEndMonthDay ||
+"07-07"
+)
+.split("-");
+
+const month=
+Math.max(
+1,
+Math.min(
+12,
+Number(
+parts[0] ||
+7
+)
+)
+);
+
+const day=
+Math.max(
+1,
+Math.min(
+31,
+Number(
+parts[1] ||
+7
+)
+)
+);
+
+let year=
+now.getFullYear();
+
+if(
+now >
+new Date(
+year,
+month - 1,
+day,
+23,
+59,
+59
+)
+){
+
+year++;
+}
+
+return (
+`${year}-` +
+`${String(month).padStart(2,"0")}-` +
+`${String(day).padStart(2,"0")}`
+);
+}
 
 
 /* =========================================================
-   IDENTITÉ DE LA STRUCTURE SPORTIVE
-   ========================================================= */
+IDENTITÉ DE LA STRUCTURE SPORTIVE
+========================================================= */
 
 function sportClub(){
 
-  const base={
+const base={
 
-    id:
-      SPORT_CONFIG.clubId,
+id:
+SPORT_CONFIG.clubId,
 
-    clubRef:
-      "",
+clubRef:
+"",
 
-    name:
-      "Club partenaire",
+name:
+"Club partenaire",
 
-    officialName:
-      "",
+officialName:
+"",
 
-    commune:
-      "",
+commune:
+"",
 
-    organizationType:
-      "association_sportive",
+organizationType:
+"association_sportive",
 
-    legalForm:
-      "",
+legalForm:
+"",
 
-    sirenSiret:
-      "",
+sirenSiret:
+"",
 
-    rnaNumber:
-      "",
+rnaNumber:
+"",
 
-    vatStatus:
-      "to_verify",
+vatStatus:
+"to_verify",
 
-    vatNumber:
-      "",
+vatNumber:
+"",
 
-    accountingEmail:
-      "",
+accountingEmail:
+"",
 
-    sportName:
-      "",
+sportName:
+"",
 
-    federation:
-      "",
+federation:
+"",
 
-    league:
-      "",
+league:
+"",
 
-    officialClubId:
-      "",
+officialClubId:
+"",
 
-    officialResultsUrl:
-      "",
+officialResultsUrl:
+"",
 
-    publicNetworkUrl:
-      "",
+publicNetworkUrl:
+"",
 
-    teams:
-      [],
+teams:
+[],
 
-    seasonEndDate:
-      sportDefaultSeasonEndDate(),
+seasonEndDate:
+sportDefaultSeasonEndDate(),
 
-    identityStatus:
-      "pending"
-  };
+identityStatus:
+"pending"
 
-
-  const saved=
-    sportLoad(
-      SPORT_KEYS.club,
-      null
-    );
+};
 
 
-  if(
-    !saved ||
-    typeof saved !==
-    "object"
-  ){
-
-    return base;
-  }
+const saved=
+sportLoad(
+SPORT_KEYS.club,
+null
+);
 
 
-  return Object.assign(
-    {},
-    base,
-    saved,
-    {
+if(
+!saved ||
+typeof saved !==
+"object"
+){
 
-      teams:
-        Array.isArray(
-          saved.teams
-        )
-          ? saved.teams
-          : []
-    }
-  );
+return base;
+}
+
+
+return Object.assign(
+{},
+base,
+saved,
+{
+
+teams:
+Array.isArray(
+saved.teams
+)
+? saved.teams
+: []
+
+}
+);
 }
 
 
 const sportSaveClub=
-  club =>
-    sportSave(
-      SPORT_KEYS.club,
-      club
-    );
+club =>
+sportSave(
+SPORT_KEYS.club,
+club
+);
 
 
 /* =========================================================
-   HISTORIQUE DES MANDATS
-   APPARTIENT À LA STRUCTURE
-   ========================================================= */
+HISTORIQUE DES MANDATS
+========================================================= */
 
 function sportMandateHistory(){
 
-  const rows=
-    sportLoad(
-      SPORT_KEYS.mandateHistory,
-      []
-    );
+const rows=
+sportLoad(
+SPORT_KEYS.mandateHistory,
+[]
+);
 
-  return Array.isArray(rows)
-    ? rows
-    : [];
+return Array.isArray(rows)
+? rows
+: [];
 }
 
 
 function sportSaveMandateHistory(
-  rows
+rows
 ){
 
-  return sportSave(
-    SPORT_KEYS.mandateHistory,
-    Array.isArray(rows)
-      ? rows.slice(-500)
-      : []
-  );
+return sportSave(
+SPORT_KEYS.mandateHistory,
+Array.isArray(rows)
+? rows.slice(-500)
+: []
+);
 }
 
 
 function sportRecordMandateEvent(
-  type,
-  governance,
-  source
+type,
+governance,
+source
 ){
 
-  const rows=
-    sportMandateHistory();
+const rows=
+sportMandateHistory();
 
+rows.push({
 
-  rows.push({
+id:
+sportId(
+"mandate"
+),
 
-    id:
-      sportId(
-        "mandate"
-      ),
+clubId:
+SPORT_CONFIG.clubId,
 
-    clubId:
-      SPORT_CONFIG.clubId,
+clubRef:
+sportClub()
+.clubRef ||
+"",
 
-    clubRef:
-      sportClub()
-        .clubRef ||
-      "",
+type:
+String(
+type ||
+"governance_update"
+),
 
-    type:
-      String(
-        type ||
-        "governance_update"
-      ),
+presidentName:
+String(
+governance &&
+governance.president &&
+governance.president.fullName ||
+""
+),
 
-    presidentName:
-      String(
-        governance &&
-        governance.president &&
-        governance.president.fullName ||
-        ""
-      ),
+presidentRole:
+String(
+governance &&
+governance.president &&
+governance.president.role ||
+""
+),
 
-    presidentRole:
-      String(
-        governance &&
-        governance.president &&
-        governance.president.role ||
-        ""
-      ),
+governanceStatus:
+String(
+governance &&
+governance.status ||
+""
+),
 
-    governanceStatus:
-      String(
-        governance &&
-        governance.status ||
-        ""
-      ),
+activationStatus:
+String(
+governance &&
+governance.activationStatus ||
+""
+),
 
-    activationStatus:
-      String(
-        governance &&
-        governance.activationStatus ||
-        ""
-      ),
+source:
+String(
+source ||
+"sport_module"
+),
 
-    source:
-      String(
-        source ||
-        "sport_module"
-      ),
+createdAt:
+Date.now()
 
-    createdAt:
-      Date.now()
-  });
+});
 
-
-  sportSaveMandateHistory(
-    rows
-  );
+sportSaveMandateHistory(
+rows
+);
 }
 
 
 /* =========================================================
-   GOUVERNANCE PAR DÉFAUT
-   ========================================================= */
+GOUVERNANCE PAR DÉFAUT
+========================================================= */
 
 function sportDefaultGovernance(){
 
-  return {
+return {
 
-    clubId:
-      SPORT_CONFIG.clubId,
+clubId:
+SPORT_CONFIG.clubId,
 
-    /*
-      draft
-      pending_review
-      verified
-      suspended
-      disputed
-    */
-    status:
-      "draft",
+status:
+"draft",
 
-    /*
-      blocked
-      active
-    */
-    activationStatus:
-      "blocked",
+activationStatus:
+"blocked",
 
-    president:{
+president:{
 
-      fullName:
-        "",
+fullName:
+"",
 
-      role:
-        "Président / responsable légal",
+role:
+"Président / responsable légal",
 
-      email:
-        "",
+email:
+"",
 
-      phone:
-        "",
+phone:
+"",
 
-      officialReference:
-        "",
+officialReference:
+"",
 
-      verificationStatus:
-        "pending"
-    },
+verificationStatus:
+"pending"
 
-    submittedAt:
-      null,
+},
 
-    verifiedAt:
-      null,
+submittedAt:
+null,
 
-    verifiedBy:
-      "",
+verifiedAt:
+null,
 
-    updatedAt:
-      Date.now()
-  };
+verifiedBy:
+"",
+
+updatedAt:
+Date.now()
+
+};
 }
 
-/* =========================================================
-   CHARGEMENT DE LA GOUVERNANCE
-   ========================================================= */
 
 function sportLoadGovernance(){
 
-  const saved=
-    sportLoad(
-      SPORT_KEYS.governance,
-      null
-    );
+const saved=
+sportLoad(
+SPORT_KEYS.governance,
+null
+);
 
-  const base=
-    sportDefaultGovernance();
+const base=
+sportDefaultGovernance();
 
-  if(
-    !saved ||
-    typeof saved !==
-    "object"
-  ){
-
-    return base;
-  }
-
-  const president=
-    Object.assign(
-      {},
-      base.president,
-      saved.president ||
-      {}
-    );
-
-  /*
-    Nettoyage automatique des anciennes données
-    continuity-1 / continuity-2.
-
-    La continuité est désormais assurée
-    par les collaborateurs autorisés.
-  */
-  const clean=
-    Object.assign(
-      {},
-      base,
-      saved,
-      {
-        president:
-          president
-      }
-    );
-
-  if(
-    Object.prototype.hasOwnProperty.call(
-      clean,
-      "continuity"
-    )
-  ){
-    delete clean.continuity;
-
-    sportSave(
-      SPORT_KEYS.governance,
-      clean
-    );
-  }
-
-  return clean;
-}
-
-/* =========================================================
-   ENREGISTREMENT DE LA GOUVERNANCE
-   ========================================================= */
-
-function sportSaveGovernance(
-  data
+if(
+!saved ||
+typeof saved !==
+"object"
 ){
 
-  if(
-    !data ||
-    typeof data !==
-    "object"
-  ){
+return base;
+}
 
-    return false;
-  }
+const president=
+Object.assign(
+{},
+base.president,
+saved.president ||
+{}
+);
 
+const clean=
+Object.assign(
+{},
+base,
+saved,
+{
 
-  const clean=
-    Object.assign(
-      {},
-      data,
-      {
+president:
+president
 
-        clubId:
-          SPORT_CONFIG.clubId,
+}
+);
 
-        updatedAt:
-          Date.now()
-      }
-    );
+if(
+Object.prototype.hasOwnProperty.call(
+clean,
+"continuity"
+)
+){
 
+delete clean.continuity;
 
-  return sportSave(
-    SPORT_KEYS.governance,
-    clean
-  );
+sportSave(
+SPORT_KEYS.governance,
+clean
+);
+}
+
+return clean;
 }
 
 
-/* =========================================================
-   CONTRÔLE DE COMPLÉTUDE
-   ========================================================= */
+function sportSaveGovernance(
+data
+){
+
+if(
+!data ||
+typeof data !==
+"object"
+){
+
+return false;
+}
+
+const clean=
+Object.assign(
+{},
+data,
+{
+
+clubId:
+SPORT_CONFIG.clubId,
+
+updatedAt:
+Date.now()
+
+}
+);
+
+return sportSave(
+SPORT_KEYS.governance,
+clean
+);
+}
+
 
 function sportGovernanceCompleteness(){
 
-  const governance=
-    sportLoadGovernance();
+const governance=
+sportLoadGovernance();
 
-  const missing=[];
+const missing=[];
 
-  const president=
-    governance.president ||
-    {};
+const president=
+governance.president ||
+{};
 
-  if(
-    !String(
-      president.fullName ||
-      ""
-    ).trim()
-  ){
+if(
+!String(
+president.fullName ||
+""
+).trim()
+){
 
-    missing.push(
-      "Président / responsable légal"
-    );
-  }
-
-  if(
-    !String(
-      president.role ||
-      ""
-    ).trim()
-  ){
-
-    missing.push(
-      "Fonction du Président"
-    );
-  }
-
-  if(
-    !String(
-      president.email ||
-      ""
-    ).trim() &&
-    !String(
-      president.phone ||
-      ""
-    ).trim()
-  ){
-
-    missing.push(
-      "Coordonnée du Président"
-    );
-  }
-
-  return {
-
-    complete:
-      missing.length ===
-      0,
-
-    missing:
-      missing
-  };
+missing.push(
+"Président / responsable légal"
+);
 }
 
+if(
+!String(
+president.role ||
+""
+).trim()
+){
 
-/* =========================================================
-   GOUVERNANCE RÉELLEMENT VALIDÉE
-   ========================================================= */
+missing.push(
+"Fonction du Président"
+);
+}
+
+if(
+!String(
+president.email ||
+""
+).trim() &&
+!String(
+president.phone ||
+""
+).trim()
+){
+
+missing.push(
+"Coordonnée du Président"
+);
+}
+
+return {
+
+complete:
+missing.length ===
+0,
+
+missing:
+missing
+
+};
+}
+
 
 function sportGovernanceIsVerified(){
 
-  const governance=
-    sportLoadGovernance();
+const governance=
+sportLoadGovernance();
 
-  const completeness=
-    sportGovernanceCompleteness();
+const completeness=
+sportGovernanceCompleteness();
 
-  if(
-    completeness.complete !==
-    true
-  ){
+if(
+completeness.complete !==
+true
+){
 
-    return false;
-  }
-
-  if(
-    governance.status !==
-    "verified"
-  ){
-
-    return false;
-  }
-
-  if(
-    governance.activationStatus !==
-    "active"
-  ){
-
-    return false;
-  }
-
-  const president=
-    governance.president ||
-    {};
-
-  if(
-    president.verificationStatus !==
-    "verified"
-  ){
-
-    return false;
-  }
-
-  return true;
+return false;
 }
 
+if(
+governance.status !==
+"verified"
+){
+
+return false;
+}
+
+if(
+governance.activationStatus !==
+"active"
+){
+
+return false;
+}
+
+const president=
+governance.president ||
+{};
+
+if(
+president.verificationStatus !==
+"verified"
+){
+
+return false;
+}
+
+return true;
+}
 
 /* =========================================================
    ENREGISTRER UNE NOUVELLE DÉCLARATION
@@ -1586,10 +1532,8 @@ async function sportSubmitGovernanceVerification(){
   const governance=
     sportLoadGovernance();
 
-
   const completeness=
     sportGovernanceCompleteness();
-
 
   if(
     !completeness.complete
@@ -1607,7 +1551,6 @@ async function sportSubmitGovernanceVerification(){
     };
   }
 
-
   if(
     !SPORT_CONFIG
       .governanceEndpoint
@@ -1622,7 +1565,6 @@ async function sportSubmitGovernanceVerification(){
       pending:true
     };
   }
-
 
   try{
 
@@ -1639,7 +1581,6 @@ async function sportSubmitGovernanceVerification(){
             "include",
 
           headers:{
-
             "Content-Type":
               "application/json"
           },
@@ -1661,7 +1602,6 @@ async function sportSubmitGovernanceVerification(){
         }
       );
 
-
     if(
       !response.ok
     ){
@@ -1679,10 +1619,8 @@ async function sportSubmitGovernanceVerification(){
       };
     }
 
-
     const result=
       await response.json();
-
 
     if(
       result &&
@@ -1694,7 +1632,6 @@ async function sportSubmitGovernanceVerification(){
         result
       );
 
-
       return {
 
         ok:true,
@@ -1702,7 +1639,6 @@ async function sportSubmitGovernanceVerification(){
         verified:true
       };
     }
-
 
     return {
 
@@ -1712,7 +1648,6 @@ async function sportSubmitGovernanceVerification(){
 
       pending:true
     };
-
 
   }catch(error){
 
@@ -1729,173 +1664,130 @@ async function sportSubmitGovernanceVerification(){
     };
   }
 }
-
-
+   
 /* =========================================================
-   VERROU DES FONCTIONS SENSIBLES
-   ========================================================= */
-
-/* =========================================================
-   ÇA COMMENCE ICI
-   SPORT — VERROU DES FONCTIONS SENSIBLES
-   ========================================================= */
+VERROU DES FONCTIONS SENSIBLES
+========================================================= */
 
 function sportRequireVerifiedGovernance(){
 
-  /*
-    Le paramètre ?presentation=1
-    ne donne aucun droit privé.
+if(
+window.bociteartAdminSession
+){
 
-    Une fonction sensible n'est accessible
-    qu'après un véritable accès reconnu.
-  */
-
-
-  /* =====================================================
-     ADMINISTRATION PRIVÉE Bo'CitéArt
-     ===================================================== */
-
-  if(
-    window.bociteartAdminSession
-  ){
-    return true;
-  }
-
-
-  /* =====================================================
-     PRÉSIDENT VALIDÉ EN PRÉPRODUCTION
-     OU CODE DE REPRISE VALIDÉ
-     ===================================================== */
-
-  if(
-    SPORT_CONFIG.mode !==
-      "production" &&
-    (
-      window
-        .bociteartSportPresidentPrechecked ===
-          true
-
-      ||
-
-      window
-        .bociteartSportRecoveryVerified ===
-          true
-    )
-  ){
-    return true;
-  }
-
-
-  /* =====================================================
-     GOUVERNANCE OFFICIELLEMENT VALIDÉE
-     ===================================================== */
-
-  if(
-    sportGovernanceIsVerified()
-  ){
-    return true;
-  }
-
-
-  /* =====================================================
-     AUCUNE AUTORISATION
-     ===================================================== */
-
-  alert(
-    "Cet accès réservé nécessite une vérification préalable."
-  );
-
-  return false;
+return true;
 }
 
-/* =========================================================
-   ÇA FINIT ICI
-   SPORT — VERROU DES FONCTIONS SENSIBLES
-   ========================================================= */
+if(
+SPORT_CONFIG.mode !==
+"production" &&
+(
+window
+.bociteartSportPresidentPrechecked ===
+true
+||
+window
+.bociteartSportRecoveryVerified ===
+true
+)
+){
+
+return true;
+}
+
+if(
+sportGovernanceIsVerified()
+){
+
+return true;
+}
+
+alert(
+"Cet accès réservé nécessite une vérification préalable."
+);
+
+return false;
+}
+
 
 /* =========================================================
-   PORTEFEUILLE SPORT
-   ========================================================= */
+PORTEFEUILLE SPORT
+========================================================= */
 
 function sportWallet(){
 
-  const saved=
-    sportLoad(
-      SPORT_KEYS.wallet,
-      {
-        vert:0
-      }
-    );
+const saved=
+sportLoad(
+SPORT_KEYS.wallet,
+{
+vert:0
+}
+);
 
+return {
 
-  return {
+vert:
+Math.max(
+0,
+Number(
+saved &&
+saved.vert ||
+0
+)
+)
 
-    vert:
-      Math.max(
-        0,
-        Number(
-          saved &&
-          saved.vert ||
-          0
-        )
-      )
-  };
+};
 }
 
 
 function sportSaveWallet(
-  wallet
+wallet
 ){
 
-  return sportSave(
-    SPORT_KEYS.wallet,
-    {
+return sportSave(
+SPORT_KEYS.wallet,
+{
 
-      vert:
-        Math.max(
-          0,
-          Number(
-            wallet &&
-            wallet.vert ||
-            0
-          )
-        )
-    }
-  );
+vert:
+Math.max(
+0,
+Number(
+wallet &&
+wallet.vert ||
+0
+)
+)
+
+}
+);
 }
 
 
-/* =========================================================
-   JOURNAL BOCITECOINS SPORT
-   ========================================================= */
-
 function sportLedger(){
 
-  const rows=
-    sportLoad(
-      SPORT_KEYS.ledger,
-      []
-    );
+const rows=
+sportLoad(
+SPORT_KEYS.ledger,
+[]
+);
 
-
-  return Array.isArray(rows)
-    ? rows
-    : [];
+return Array.isArray(rows)
+? rows
+: [];
 }
 
 
 function sportSaveLedger(
-  rows
+rows
 ){
 
-  return sportSave(
-    SPORT_KEYS.ledger,
-    Array.isArray(rows)
-      ? rows.slice(-500)
-      : []
-  );
+return sportSave(
+SPORT_KEYS.ledger,
+Array.isArray(rows)
+? rows.slice(-500)
+: []
+);
 }
-
 
 /* =========================================================
    CRÉDITER 1 BOCITECOIN
@@ -1909,7 +1801,6 @@ function sportAddCoin(
 
   const ledger=
     sportLedger();
-
 
   if(
     reference &&
@@ -1937,19 +1828,15 @@ function sportAddCoin(
     };
   }
 
-
   const wallet=
     sportWallet();
-
 
   wallet.vert +=
     1;
 
-
   sportSaveWallet(
     wallet
   );
-
 
   ledger.push({
 
@@ -1992,7 +1879,6 @@ function sportAddCoin(
         )
   });
 
-
   sportSaveLedger(
     ledger
   );
@@ -2001,26 +1887,29 @@ function sportAddCoin(
     "sport_coin_credit",
     {
       amount:1,
+
       reason:
         String(
           reason ||
           ""
         ),
+
       reference:
         String(
           reference ||
           ""
         ),
+
       team:
         String(
           team ||
           ""
         ),
+
       balance:
         wallet.vert
     }
   );
-
 
   return {
 
@@ -2045,7 +1934,6 @@ function sportDebitBag(
   const wallet=
     sportWallet();
 
-
   if(
     wallet.vert <
     30
@@ -2063,19 +1951,15 @@ function sportDebitBag(
     };
   }
 
-
   wallet.vert -=
     30;
-
 
   sportSaveWallet(
     wallet
   );
 
-
   const ledger=
     sportLedger();
-
 
   ledger.push({
 
@@ -2117,7 +2001,6 @@ function sportDebitBag(
         )
   });
 
-
   sportSaveLedger(
     ledger
   );
@@ -2126,12 +2009,14 @@ function sportDebitBag(
     "sport_bag_debit",
     {
       amount:30,
+
       balance:
         wallet.vert,
+
       representative:
         representative &&
         typeof representative ===
-          "object"
+        "object"
           ? representative
           : {}
     }
@@ -2158,13 +2043,11 @@ function sportDebitRemainder(
   const wallet=
     sportWallet();
 
-
   const amount=
     Number(
       wallet.vert ||
       0
     );
-
 
   if(
     amount <=
@@ -2183,7 +2066,6 @@ function sportDebitRemainder(
     };
   }
 
-
   if(
     amount >=
     30
@@ -2201,19 +2083,15 @@ function sportDebitRemainder(
     };
   }
 
-
   wallet.vert=
     0;
-
 
   sportSaveWallet(
     wallet
   );
 
-
   const ledger=
     sportLedger();
-
 
   ledger.push({
 
@@ -2248,7 +2126,6 @@ function sportDebitRemainder(
         )
   });
 
-
   sportSaveLedger(
     ledger
   );
@@ -2264,376 +2141,664 @@ function sportDebitRemainder(
       0
   };
 }
-
-
+   
 /* =========================================================
-   BLOC SPORT 3
-   ACCÈS — DONNÉES — SOUTIENS — CABAS
-   ========================================================= */
+ACCÈS — COLLABORATEURS
+========================================================= */
 
 async function sportHash(v){
 
-  v=
-    String(v||"");
+v=
+String(v||"");
 
-  try{
+try{
 
-    if(
-      crypto &&
-      crypto.subtle &&
-      TextEncoder
-    ){
+if(
+crypto &&
+crypto.subtle &&
+TextEncoder
+){
 
-      const b=
-        await crypto.subtle.digest(
-          "SHA-256",
-          new TextEncoder()
-            .encode(v)
-        );
+const b=
+await crypto.subtle.digest(
+"SHA-256",
+new TextEncoder()
+.encode(v)
+);
 
-      return Array
-        .from(
-          new Uint8Array(b)
-        )
-        .map(
-          x =>
-            x
-              .toString(16)
-              .padStart(2,"0")
-        )
-        .join("");
-    }
+return Array
+.from(
+new Uint8Array(b)
+)
+.map(
+x =>
+x
+.toString(16)
+.padStart(2,"0")
+)
+.join("");
+}
 
-  }catch(e){}
+}catch(e){}
 
-  return "local:" + v;
+return "local:" + v;
 }
 
 
 function sportAccess(){
 
-  const normalizeCoach=
-    coach =>{
+const normalizeCoach=
+coach =>{
 
-      coach=
-        coach &&
-        typeof coach ===
-        "object"
-          ? coach
-          : {};
+coach=
+coach &&
+typeof coach ===
+"object"
+? coach
+: {};
 
-      return Object.assign(
-        {},
-        coach,
-        {
-         permissions:
-  Array.isArray(
-    coach.permissions
-  )
-    ? Array.from(
-        new Set(
-          coach.permissions
-            .map(
-              x =>
-                String(
-                  x ||
-                  ""
-                ).trim()
-            )
-            .filter(Boolean)
-            .filter(
-              permission =>
-                permission !==
-                  "governance_report"
-            )
-        )
-      )
-    : []
-        }
-      );
-    };
+return Object.assign(
+{},
+coach,
+{
 
-  const x=
-    sportLoad(
-      SPORT_KEYS.access,
-      null
-    );
+permissions:
+Array.isArray(
+coach.permissions
+)
+? Array.from(
+new Set(
+coach.permissions
+.map(
+x =>
+String(
+x ||
+""
+).trim()
+)
+.filter(Boolean)
+.filter(
+permission =>
+permission !==
+"governance_report"
+)
+)
+)
+: []
 
-  if(
-    x &&
-    Array.isArray(
-      x.coaches
-    )
-  ){
+}
+);
+};
 
-    return {
 
-      clubId:
-        String(
-          x.clubId ||
-          SPORT_CONFIG.clubId
-        ),
+const x=
+sportLoad(
+SPORT_KEYS.access,
+null
+);
 
-      president:{
 
-        id:
-          "president",
+if(
+x &&
+Array.isArray(
+x.coaches
+)
+){
 
-        name:
-          String(
-            x.president &&
-            x.president.name ||
-            "Président / responsable légal"
-          ),
+return {
 
-        active:
-          !(
-            x.president &&
-            x.president.active === false
-          )
-      },
+clubId:
+String(
+x.clubId ||
+SPORT_CONFIG.clubId
+),
 
-      coaches:
-        x.coaches.map(
-          normalizeCoach
-        )
-    };
-  }
+president:{
 
-  return {
+id:
+"president",
 
-    clubId:
-      SPORT_CONFIG.clubId,
+name:
+String(
+x.president &&
+x.president.name ||
+"Président / responsable légal"
+),
 
-    president:{
+active:
+!(
+x.president &&
+x.president.active ===
+false
+)
 
-      id:
-        "president",
+},
 
-      name:
-        "Président / responsable légal",
+coaches:
+x.coaches.map(
+normalizeCoach
+)
 
-      active:
-        true
-    },
+};
+}
 
-    coaches:[]
-  };
+
+return {
+
+clubId:
+SPORT_CONFIG.clubId,
+
+president:{
+
+id:
+"president",
+
+name:
+"Président / responsable légal",
+
+active:
+true
+
+},
+
+coaches:[]
+
+};
 }
 
 
 function sportCurrentCoach(){
 
-  if(
-    sportSession.role !==
-      "coach"
-  ){
-    return null;
-  }
+if(
+sportSession.role !==
+"coach"
+){
 
-  return sportAccess()
-    .coaches
-    .find(
-      coach =>
-        String(
-          coach.id ||
-          ""
-        ) ===
-        String(
-          sportSession.accountId ||
-          ""
-        )
-    ) ||
-    null;
+return null;
+}
+
+return sportAccess()
+.coaches
+.find(
+coach =>
+String(
+coach.id ||
+""
+) ===
+String(
+sportSession.accountId ||
+""
+)
+) ||
+null;
 }
 
 
 function sportHasPermission(
-  permission
+permission
 ){
 
-  if(
-    sportSession.role ===
-      "president"
-  ){
-    return true;
-  }
+if(
+sportSession.role ===
+"president"
+){
 
-  const coach=
-    sportCurrentCoach();
+return true;
+}
 
-  return !!(
-    coach &&
-    coach.active !== false &&
-    Array.isArray(
-      coach.permissions
-    ) &&
-    coach.permissions.includes(
-      String(
-        permission ||
-        ""
-      )
-    )
-  );
+const coach=
+sportCurrentCoach();
+
+return !!(
+coach &&
+coach.active !==
+false &&
+Array.isArray(
+coach.permissions
+) &&
+coach.permissions.includes(
+String(
+permission ||
+""
+)
+)
+);
 }
 
 
-const sportSaveAccess =
-  x => sportSave(
-    SPORT_KEYS.access,
-    x
-  );
+const sportSaveAccess=
+x =>
+sportSave(
+SPORT_KEYS.access,
+x
+);
 
 
-const sportNorm =
-  v =>
-    String(v||"")
-      .trim()
-      .toUpperCase()
-      .replace(/\s+/g,"");
+/* =========================================================
+HISTORIQUE DES ACCÈS COLLABORATEURS
+========================================================= */
+
+function sportCollaboratorAccessHistory(){
+
+const rows=
+sportLoad(
+SPORT_KEYS.accessHistory,
+[]
+);
+
+return Array.isArray(rows)
+? rows
+: [];
+}
+
+
+function sportSaveCollaboratorAccessHistory(
+rows
+){
+
+return sportSave(
+SPORT_KEYS.accessHistory,
+Array.isArray(rows)
+? rows.slice(-1000)
+: []
+);
+}
+
+
+function sportRecordCollaboratorAccessEvent(
+type,
+collaborator,
+extra={}
+){
+
+if(
+!collaborator ||
+typeof collaborator !==
+"object"
+){
+
+return;
+}
+
+const rows=
+sportCollaboratorAccessHistory();
+
+rows.push({
+
+id:
+sportId(
+"collaborator-access"
+),
+
+type:
+String(
+type ||
+"updated"
+),
+
+clubId:
+SPORT_CONFIG.clubId,
+
+clubRef:
+sportClub()
+.clubRef ||
+"",
+
+collaboratorId:
+String(
+collaborator.id ||
+""
+),
+
+identifier:
+String(
+collaborator.identifier ||
+""
+),
+
+name:
+String(
+collaborator.name ||
+""
+),
+
+functionName:
+String(
+collaborator.functionName ||
+""
+),
+
+team:
+String(
+collaborator.team ||
+""
+),
+
+active:
+collaborator.active !==
+false,
+
+actor:{
+
+accountId:
+String(
+sportSession.accountId ||
+""
+),
+
+name:
+String(
+sportSession.name ||
+""
+),
+
+role:
+String(
+sportSession.role ||
+""
+)
+
+},
+
+details:
+extra &&
+typeof extra ===
+"object"
+? extra
+: {},
+
+createdAt:
+Date.now()
+
+});
+
+sportSaveCollaboratorAccessHistory(
+rows
+);
+}
+
+function sportRenderAccessHistory(){
+
+  const out=
+    sportEl(
+      "sportAccessHistoryList"
+    );
+
+  if(!out){
+    return;
+  }
+
+  const rows=
+    sportCollaboratorAccessHistory()
+      .slice()
+      .sort(
+        (a,b) =>
+          Number(
+            b.createdAt ||
+            0
+          ) -
+          Number(
+            a.createdAt ||
+            0
+          )
+      )
+      .slice(0,100);
+
+  const labels={
+
+    created:
+      "Accès créé",
+
+    updated:
+      "Fiche modifiée",
+
+    suspended:
+      "Accès désactivé",
+
+    reactivated:
+      "Accès réactivé",
+
+    code_renewed:
+      "Code renouvelé",
+
+    login:
+      "Connexion collaborateur"
+  };
+
+  out.innerHTML=
+    rows.length
+      ? rows.map(
+          item => `
+
+            <div class="sportItem">
+
+              <div class="sportName">
+                ${sportEsc(
+                  item.name ||
+                  "Collaborateur"
+                )}
+              </div>
+
+              <div style="margin-top:5px;">
+                ${sportEsc(
+                  labels[item.type] ||
+                  item.type ||
+                  "Mise à jour"
+                )}
+              </div>
+
+              ${
+                item.identifier
+                  ? `
+
+                    <div style="margin-top:5px;">
+                      Identifiant :
+                      <strong>
+                        ${sportEsc(
+                          item.identifier
+                        )}
+                      </strong>
+                    </div>
+
+                  `
+                  : ""
+              }
+
+              ${
+                item.functionName
+                  ? `
+
+                    <div style="margin-top:5px;">
+                      Fonction :
+                      ${sportEsc(
+                        item.functionName
+                      )}
+                    </div>
+
+                  `
+                  : ""
+              }
+
+              <div class="sportStatus">
+
+                ${
+                  item.createdAt
+                    ? new Date(
+                        item.createdAt
+                      ).toLocaleString(
+                        "fr-FR"
+                      )
+                    : ""
+                }
+
+              </div>
+
+            </div>
+
+          `
+        ).join("")
+      : '<div class="sportStatus">Aucun événement d’accès enregistré.</div>';
+}
+   
+/* =========================================================
+SÉCURITÉ ACCÈS
+========================================================= */
+
+const sportNorm=
+v =>
+String(v||"")
+.trim()
+.toUpperCase()
+.replace(/\s+/g,"");
 
 
 function sportSecurity(){
 
-  const x=
-    sportLoad(
-      SPORT_KEYS.accessSecurity,
-      {}
-    );
+const x=
+sportLoad(
+SPORT_KEYS.accessSecurity,
+{}
+);
 
-  return (
-    x &&
-    typeof x === "object"
-  )
-    ? x
-    : {};
+return (
+x &&
+typeof x ===
+"object"
+)
+? x
+: {};
 }
 
 
 function sportLocked(id){
 
-  const k=
-    sportNorm(id);
+const k=
+sportNorm(id);
 
-  const d=
-    sportSecurity();
+const d=
+sportSecurity();
 
-  const e=
-    d[k];
+const e=
+d[k];
 
-  if(!e){
-    return false;
-  }
+if(!e){
 
-  if(
-    Number(
-      e.lockedUntil ||
-      0
-    ) >
-    Date.now()
-  ){
-    return true;
-  }
+return false;
+}
 
-  if(e.lockedUntil){
+if(
+Number(
+e.lockedUntil ||
+0
+) >
+Date.now()
+){
 
-    delete d[k];
+return true;
+}
 
-    sportSave(
-      SPORT_KEYS.accessSecurity,
-      d
-    );
-  }
+if(e.lockedUntil){
 
-  return false;
+delete d[k];
+
+sportSave(
+SPORT_KEYS.accessSecurity,
+d
+);
+}
+
+return false;
 }
 
 
 function sportFail(id){
 
-  const k=
-    sportNorm(id);
+const k=
+sportNorm(id);
 
-  const d=
-    sportSecurity();
+const d=
+sportSecurity();
 
-  const e=
-    d[k] || {
-      failures:0,
-      lockedUntil:0
-    };
+const e=
+d[k] || {
 
-  if(
-    e.lockedUntil &&
-    Date.now() >=
-    e.lockedUntil
-  ){
-    e.failures=0;
-    e.lockedUntil=0;
-  }
+failures:0,
+lockedUntil:0
 
-  e.failures=
-    Number(
-      e.failures ||
-      0
-    ) + 1;
+};
 
-  if(
-    e.failures >= 3
-  ){
+if(
+e.lockedUntil &&
+Date.now() >=
+e.lockedUntil
+){
 
-    e.lockedUntil=
-      Date.now() +
-      (
-        15 *
-        60 *
-        1000
-      );
-  }
+e.failures=0;
+e.lockedUntil=0;
+}
 
-  d[k]=e;
+e.failures=
+Number(
+e.failures ||
+0
+) + 1;
 
-  sportSave(
-    SPORT_KEYS.accessSecurity,
-    d
-  );
+if(
+e.failures >=
+3
+){
 
-  try{
+e.lockedUntil=
+Date.now() +
+(
+15 *
+60 *
+1000
+);
+}
 
-    logPilotageAccess(
-      "Sport",
-      e.lockedUntil
-        ? "Accès responsable Sport temporairement verrouillé"
-        : "Échec accès responsable Sport"
-    );
+d[k]=e;
 
-  }catch(_){}
+sportSave(
+SPORT_KEYS.accessSecurity,
+d
+);
 
-  return !!e.lockedUntil;
+try{
+
+logPilotageAccess(
+"Sport",
+e.lockedUntil
+? "Accès responsable Sport temporairement verrouillé"
+: "Échec accès responsable Sport"
+);
+
+}catch(_){}
+
+return !!e.lockedUntil;
 }
 
 
 function sportResetFail(id){
 
-  const k=
-    sportNorm(id);
+const k=
+sportNorm(id);
 
-  const d=
-    sportSecurity();
+const d=
+sportSecurity();
 
-  if(d[k]){
+if(d[k]){
 
-    delete d[k];
+delete d[k];
 
-    sportSave(
-      SPORT_KEYS.accessSecurity,
-      d
-    );
-  }
+sportSave(
+SPORT_KEYS.accessSecurity,
+d
+);
+}
 }
 
-
-const sportReports=()=>{
+ const sportReports=()=>{
 
   const x=
     sportLoad(
@@ -3474,7 +3639,6 @@ async function sportCreateSupportDossier(
     dossier:d
   };
 }
-
 
 function sportMarkReceiptReceived(
   dossierId,
@@ -4342,8 +4506,7 @@ async function sportValidateBag(
   };
 }
 
-
-window.BociteSportMerchant={
+ window.BociteSportMerchant={
 
   validateClubScan:
     (
@@ -4813,7 +4976,7 @@ window.BociteSportSupportRules={
    IDENTITÉ — RÉSULTATS — SAISON — PRÉSENTATION PUBLIQUE
    ========================================================= */
 
-function sportSaveIdentityFromUi(){
+ function sportSaveIdentityFromUi(){
 
   if(
     sportSession.role !==
@@ -5795,7 +5958,7 @@ function sportPublicResultsHtml(){
    TEXTES CONSOLIDÉS
    ========================================================= */
 
-function sportBenefitsHtml(){
+ function sportBenefitsHtml(){
 
   return `
 
@@ -6287,237 +6450,13 @@ function sportBenefitsHtml(){
    GOUVERNANCE — SIGNALEMENT — MÉMOIRE DU CLUB
    ========================================================= */
 
-function sportGovernanceHtml(){
+/* =========================================================
+   GOUVERNANCE — MOTEUR CONSERVÉ SANS FORMULAIRE DUPLIQUÉ
+   La vérification Président se fait désormais uniquement
+   par le parcours dédié avant l'ouverture de l'espace privé.
+   ========================================================= */
 
-  const g=
-    sportLoadGovernance();
-
-  const p=
-    g.president || {};
-
-  const verified=
-    sportGovernanceIsVerified();
-
-  return `
-
-    <div class="sportCard">
-
-      <div class="sportSubTitle">
-        Gouvernance du club
-        avec ${sportBrandHtml()}
-      </div>
-
-      <div class="sportText" style="margin-top:8px;">
-
-        Les informations déclarées doivent
-        correspondre au président
-        ou responsable légal réel
-        de la structure.
-
-        <br><br>
-
-        Une simple saisie ne valide jamais
-        un président ou responsable légal.
-
-        Les fonctions réservées restent bloquées
-        tant que les informations nécessaires
-        n’ont pas été vérifiées,
-        sauf dans le mode de présentation prévu
-        pour tester le fonctionnement.
-
-      </div>
-
-      <div
-        class="sportStatus"
-        style="margin-top:10px;"
-      >
-        État :
-        <strong>
-          ${
-            verified
-              ? "✓ Gouvernance validée"
-              : "Vérification nécessaire"
-          }
-        </strong>
-      </div>
-
-      <div class="sportSubTitle" style="margin-top:16px;">
-        Président / responsable légal
-      </div>
-
-      <label class="sportLabel">
-        Nom et prénom
-      </label>
-
-      <input
-        id="sportGovPresidentName"
-        class="sportField"
-        value="${sportEsc(p.fullName || "")}"
-      >
-
-      <label class="sportLabel">
-        Fonction officielle
-      </label>
-
-      <input
-        id="sportGovPresidentRole"
-        class="sportField"
-        value="${sportEsc(
-          p.role ||
-          "Président / responsable légal"
-        )}"
-      >
-
-      <label class="sportLabel">
-        Email
-      </label>
-
-      <input
-        id="sportGovPresidentEmail"
-        class="sportField"
-        type="email"
-        value="${sportEsc(p.email || "")}"
-      >
-
-      <label class="sportLabel">
-        Téléphone
-      </label>
-
-      <input
-        id="sportGovPresidentPhone"
-        class="sportField"
-        value="${sportEsc(p.phone || "")}"
-      >
-
-      <label class="sportLabel">
-        Référence permettant de justifier la fonction
-      </label>
-
-      <input
-        id="sportGovPresidentRef"
-        class="sportField"
-        value="${sportEsc(
-          p.officialReference || ""
-        )}"
-        placeholder="Référence du document ou mandat"
-      >
-
-      <button
-        id="sportGovernanceSave"
-        class="sportBtn"
-        type="button"
-        style="
-          width:100%;
-          margin-top:16px;
-        "
-      >
-        Enregistrer et demander la vérification
-      </button>
-
-      <div
-        id="sportGovernanceStatus"
-        class="sportStatus"
-      ></div>
-
-    </div>
-
-  `;
-}
-
-
-async function sportSaveGovernanceFromUi(){
-
-  const value=
-    id =>
-      String(
-        sportEl(id)?.value ||
-        ""
-      ).trim();
-
-  const president={
-
-    fullName:
-      value(
-        "sportGovPresidentName"
-      ),
-
-    role:
-      value(
-        "sportGovPresidentRole"
-      ),
-
-    email:
-      value(
-        "sportGovPresidentEmail"
-      ),
-
-    phone:
-      value(
-        "sportGovPresidentPhone"
-      ),
-
-    officialReference:
-      value(
-        "sportGovPresidentRef"
-      )
-  };
-
-  sportSaveGovernanceDraft(
-    president
-  );
-
-  const status=
-    sportEl(
-      "sportGovernanceStatus"
-    );
-
-  const check=
-    sportGovernanceCompleteness();
-
-  if(!check.complete){
-
-    if(status){
-
-      status.textContent=
-        "La fiche est enregistrée mais reste incomplète. " +
-        check.missing.join(", ") +
-        ".";
-    }
-
-    return;
-  }
-
-  if(status){
-
-    status.textContent=
-      "Fiche complète. Vérification en attente.";
-  }
-
-  const result=
-    await sportSubmitGovernanceVerification();
-
-  if(
-    result &&
-    result.verified === true
-  ){
-
-    if(status){
-
-      status.textContent=
-        "✓ Gouvernance vérifiée.";
-    }
-
-    return;
-  }
-
-  if(status){
-
-    status.textContent=
-      "Fiche enregistrée. Les fonctions réservées seront ouvertes après validation.";
-  }
-}
-
-function sportHistoryTimestamp(item){
+ function sportHistoryTimestamp(item){
 
   if(!item){
     return 0;
@@ -7515,7 +7454,7 @@ function sportRenderPresidentHistory(){
    ÉCRANS PRIVÉS
    ========================================================= */
 
-function sportPresidentHtml(){
+ function sportPresidentHtml(){
 
   if(
     sportSession.role !==
@@ -7961,6 +7900,20 @@ function sportPresidentHtml(){
         class="sportStatus"
       ></div>
 
+      <div
+        class="sportStatus"
+        style="margin-top:14px;"
+      >
+        Les accès actifs sont affichés ci-dessous.
+        La présidence peut désactiver immédiatement
+        un collaborateur sans rechercher ailleurs.
+      </div>
+
+      <div
+        id="sportAccessList"
+        style="display:block;"
+      ></div>
+
       <button
         id="sportAccessHistoryToggle"
         class="sportBtn"
@@ -7968,11 +7921,11 @@ function sportPresidentHtml(){
         data-opened="0"
         style="width:100%;margin-top:14px;"
       >
-        Historique des collaborateurs
+        Voir l’historique des accès
       </button>
 
       <div
-        id="sportAccessList"
+        id="sportAccessHistoryList"
         style="display:none;"
       ></div>
 
@@ -8012,7 +7965,7 @@ function sportPresidentHtml(){
    ENTRAÎNEMENTS RESPONSABLES
    ========================================================= */
 
-function sportTrainingHtml(){
+ function sportTrainingHtml(){
 
   return `
 
@@ -8543,7 +8496,7 @@ function sportBagHtml(){
    PARRAINAGE — COMMERCE — PAIEMENT
    ========================================================= */
 
-function sportPaymentRecords(){
+   function sportPaymentRecords(){
 
   const x=
     sportLoad(
@@ -9933,7 +9886,6 @@ function sportSupportHtml(){
    BLOC SPORT 8
    ACCÈS ENTRAÎNEURS — SÉANCES — CONTACTS
    ========================================================= */
-
 function sportResetCoachForm(){
 
   [
@@ -9957,7 +9909,6 @@ function sportResetCoachForm(){
   );
 
   [
-    
     "sportCoachSolidarityManage"
   ].forEach(
     id =>{
@@ -9986,6 +9937,7 @@ function sportResetCoachForm(){
     );
 
   if(save){
+
     save.textContent=
       "Enregistrer le collaborateur";
   }
@@ -9996,7 +9948,9 @@ function sportResetCoachForm(){
     );
 
   if(cancel){
-    cancel.style.display="none";
+
+    cancel.style.display=
+      "none";
   }
 
   const code=
@@ -10005,6 +9959,7 @@ function sportResetCoachForm(){
     );
 
   if(code){
+
     code.placeholder=
       "6 caractères minimum";
   }
@@ -10105,7 +10060,9 @@ function sportEditCoach(id){
     );
 
   if(cancel){
-    cancel.style.display="block";
+
+    cancel.style.display=
+      "block";
   }
 
   const code=
@@ -10127,14 +10084,18 @@ function sportEditCoach(id){
   if(firstField){
 
     firstField.scrollIntoView({
-      behavior:"smooth",
-      block:"center"
+
+      behavior:
+        "smooth",
+
+      block:
+        "center"
     });
   }
 }
+   
 
-
-function sportRenderAccessList(){
+  function sportRenderAccessList(){
 
   const out=
     sportEl(
@@ -10146,6 +10107,11 @@ function sportRenderAccessList(){
       "sportAccessHistoryToggle"
     );
 
+  const historyOut=
+    sportEl(
+      "sportAccessHistoryList"
+    );
+
   const cancelButton=
     sportEl(
       "sportCoachCancel"
@@ -10155,21 +10121,30 @@ function sportRenderAccessList(){
     return;
   }
 
+  /*
+    La liste des collaborateurs reste toujours visible
+    à la présidence pour permettre une désactivation immédiate.
+  */
+  out.style.display=
+    "block";
+
   if(historyButton){
 
     const opened=
       historyButton.dataset.opened ===
       "1";
 
-    out.style.display=
-      opened
-        ? "block"
-        : "none";
+    if(historyOut){
+      historyOut.style.display=
+        opened
+          ? "block"
+          : "none";
+    }
 
     historyButton.textContent=
       opened
-        ? "Fermer l’historique"
-        : "Historique des collaborateurs";
+        ? "Fermer l’historique des accès"
+        : "Voir l’historique des accès";
 
     historyButton.onclick=
       ()=>{
@@ -10185,7 +10160,6 @@ function sportRenderAccessList(){
   }
 
   if(cancelButton){
-
     cancelButton.onclick=
       sportResetCoachForm;
   }
@@ -10213,6 +10187,8 @@ function sportRenderAccessList(){
 
     out.innerHTML=
       '<div class="sportStatus">Aucun collaborateur enregistré.</div>';
+
+    sportRenderAccessHistory();
 
     return;
   }
@@ -10258,6 +10234,16 @@ function sportRenderAccessList(){
 
             </div>
 
+            <div style="margin-top:6px;">
+              Identifiant personnel :
+              <strong>
+                ${sportEsc(
+                  x.identifier ||
+                  "Non attribué"
+                )}
+              </strong>
+            </div>
+
             <div
               style="
                 margin-top:6px;
@@ -10293,14 +10279,11 @@ function sportRenderAccessList(){
                         .map(
                           permission =>
                             permission ===
-                              "governance_report"
-                              ? "signalement gouvernance"
-                              : permission ===
-                                  "solidarity_manage"
-                                  ? "orientation solidaire"
-                                  : sportEsc(
-                                      permission
-                                    )
+                              "solidarity_manage"
+                              ? "orientation solidaire"
+                              : sportEsc(
+                                  permission
+                                )
                         )
                         .join(", ")
                     }
@@ -10438,6 +10421,8 @@ function sportRenderAccessList(){
           ()=>{
 
             if(
+              sportSession.role !==
+                "president" ||
               !sportRequireVerifiedGovernance()
             ){
               return;
@@ -10471,6 +10456,14 @@ function sportRenderAccessList(){
               access
             );
 
+            sportRecordCollaboratorAccessEvent(
+              access.coaches[index].active ===
+                false
+                ? "suspended"
+                : "reactivated",
+              access.coaches[index]
+            );
+
             sportNotifyEvent(
               access.coaches[index].active ===
                 false
@@ -10490,11 +10483,6 @@ function sportRenderAccessList(){
       }
     );
 
-/* =========================================================
-   ÇA COMMENCE ICI
-   SPORT — RENOUVELLEMENT DU CODE COLLABORATEUR
-   ========================================================= */
-
   out
     .querySelectorAll(
       "[data-sport-reset]"
@@ -10506,6 +10494,8 @@ function sportRenderAccessList(){
           async ()=>{
 
             if(
+              sportSession.role !==
+                "president" ||
               !sportRequireVerifiedGovernance()
             ){
               return;
@@ -10572,13 +10562,16 @@ function sportRenderAccessList(){
                 .identifier
             );
 
+            sportRecordCollaboratorAccessEvent(
+              "code_renewed",
+              access.coaches[index]
+            );
+
             sportNotifyEvent(
               "sport_collaborator_code_renewed",
               {
-
                 collaboratorId:
                   access.coaches[index].id,
-
                 collaboratorName:
                   access.coaches[index].name ||
                   ""
@@ -10586,22 +10579,18 @@ function sportRenderAccessList(){
             );
 
             alert(
-              "Le nouveau code est enregistré."
+              "Le nouveau code est enregistré. Remettez-le uniquement au collaborateur concerné."
             );
 
             sportRenderAccessList();
           };
       }
     );
+
+  sportRenderAccessHistory();
 }
 
-/* =========================================================
-   ÇA FINIT ICI
-   SPORT — RENOUVELLEMENT DU CODE COLLABORATEUR
-   ========================================================= */
-
-
-async function sportCreateCoach(){
+ async function sportCreateCoach(){
 
   if(
     sportSession.role !==
@@ -10705,6 +10694,8 @@ async function sportCreateCoach(){
   }
 
   let message="";
+  let savedCollaborator=null;
+  let eventType="updated";
 
   if(editId){
 
@@ -10774,8 +10765,16 @@ async function sportCreateCoach(){
       );
     }
 
+    savedCollaborator=
+      access.coaches[index];
+
     message=
-      "La fiche du collaborateur a été modifiée.";
+      code
+        ? "La fiche et le code du collaborateur ont été modifiés."
+        : "La fiche du collaborateur a été modifiée.";
+
+    eventType=
+      "updated";
 
   }else{
 
@@ -10800,7 +10799,7 @@ async function sportCreateCoach(){
         .slice(2,6)
         .toUpperCase();
 
-    access.coaches.push({
+    const collaborator={
 
       id:
         sportId(
@@ -10842,22 +10841,60 @@ async function sportCreateCoach(){
 
       updatedAt:
         Date.now()
-    });
+    };
+
+    access.coaches.push(
+      collaborator
+    );
+
+    savedCollaborator=
+      collaborator;
 
     message=
       "Collaborateur enregistré. Identifiant : " +
-      identifier;
+      identifier +
+      ". Remettez-lui cet identifiant et le code personnel que vous venez de choisir.";
+
+    eventType=
+      "created";
   }
 
   sportSaveAccess(
     access
   );
 
+  if(savedCollaborator){
+
+    sportRecordCollaboratorAccessEvent(
+      eventType,
+      savedCollaborator,
+      {
+        codeChanged:
+          !!code
+      }
+    );
+
+    if(
+      editId &&
+      code
+    ){
+
+      sportRecordCollaboratorAccessEvent(
+        "code_renewed",
+        savedCollaborator
+      );
+    }
+  }
+
   sportNotifyEvent(
     editId
       ? "sport_collaborator_updated"
       : "sport_collaborator_created",
     {
+      collaboratorId:
+        savedCollaborator
+          ? savedCollaborator.id
+          : "",
       collaboratorName:
         name,
       permissions:
@@ -11279,9 +11316,11 @@ function sportSaveSolidarityFromUi(){
       "solidarity_manage"
     )
   ){
+
     alert(
       "Cette orientation est réservée à la présidence ou à une personne officiellement habilitée."
     );
+
     return;
   }
 
@@ -11445,7 +11484,6 @@ function sportSaveSolidarityFromUi(){
       "Orientation enregistrée. Les destinations réelles restent soumises à la validation des associations proposées.";
   }
 }
-
 
 function sportRefreshWallet(){
 
@@ -12382,6 +12420,138 @@ function sportWalletHtml(){
 
 
 /* =========================================================
+   ESPACE COMMUN PRÉSIDENT / COLLABORATEURS
+   ========================================================= */
+
+   function sportCollaboratorSpaceHeaderHtml(){
+
+  const isCollaborator=
+    sportSession.role ===
+      "coach";
+
+  const coach=
+    isCollaborator
+      ? sportCurrentCoach()
+      : null;
+
+  return `
+
+    <div class="sportCard">
+
+      <div class="sportSubTitle">
+        ${
+          isCollaborator
+            ? "Mon espace collaborateur avec"
+            : "Espace commun du club avec"
+        }
+        ${sportBrandHtml()}
+      </div>
+
+      ${
+        isCollaborator
+          ? `
+
+              <div
+                class="sportText"
+                style="margin-top:8px;"
+              >
+                Vous êtes connecté avec
+                votre accès personnel.
+                Les opérations réalisées
+                depuis cet espace restent
+                rattachées à votre identifiant.
+              </div>
+
+              <div class="sportStatus">
+
+                <strong>
+                  ${sportEsc(
+                    coach &&
+                    coach.name ||
+                    sportSession.name ||
+                    "Collaborateur"
+                  )}
+                </strong>
+
+                ${
+                  coach &&
+                  coach.functionName
+                    ? "<br>Fonction : " +
+                      sportEsc(
+                        coach.functionName
+                      )
+                    : ""
+                }
+
+                ${
+                  coach &&
+                  coach.team
+                    ? "<br>Équipe : " +
+                      sportEsc(
+                        coach.team
+                      )
+                    : ""
+                }
+
+                ${
+                  coach &&
+                  coach.identifier
+                    ? "<br>Identifiant : <strong>" +
+                      sportEsc(
+                        coach.identifier
+                      ) +
+                      "</strong>"
+                    : ""
+                }
+
+              </div>
+
+              <button
+                class="sportBtn sportBtnDanger"
+                type="button"
+                disabled
+                aria-disabled="true"
+                style="
+                  width:100%;
+                  margin-top:12px;
+                  opacity:.55;
+                  cursor:not-allowed;
+                "
+              >
+                Désactiver cet accès — réservé à la présidence
+              </button>
+
+            `
+          : `
+
+              <div
+                class="sportText"
+                style="margin-top:8px;"
+              >
+                Les fonctions qui suivent
+                sont l’espace commun utilisé
+                par la présidence et les collaborateurs autorisés.
+
+                <br><br>
+
+                Chaque collaborateur dispose
+                de son propre identifiant
+                et de son propre code.
+                La présidence conserve la maîtrise
+                de l’activation ou de la désactivation
+                de chaque accès.
+              </div>
+
+            `
+      }
+
+    </div>
+
+  `;
+}
+
+
+/* =========================================================
    ÇA COMMENCE ICI
    SPORT — VERROU DE L'ESPACE PRIVÉ DU CLUB
    ========================================================= */
@@ -12532,6 +12702,7 @@ function openClubReserve(){
     return;
   }
 
+
   /* =====================================================
      À PARTIR D'ICI SEULEMENT
      L'ESPACE PRIVÉ EST AUTORISÉ
@@ -12576,14 +12747,6 @@ function openClubReserve(){
 
         </div>
 
-/* =========================================================
-   ÇA COMMENCE ICI
-   SPORT — SÉPARATION PRÉSIDENT / COLLABORATEUR
-   ========================================================= */
-
-        ${sportResultsPrivateHtml()}
-
-
         ${
           sportSession.role ===
             "president"
@@ -12594,11 +12757,18 @@ function openClubReserve(){
 
                 ${sportPresidentHistoryHtml()}
 
+                ${sportCollaboratorSpaceHeaderHtml()}
+
               `
 
-            : ""
+            : `
+
+                ${sportCollaboratorSpaceHeaderHtml()}
+
+              `
         }
 
+        ${sportResultsPrivateHtml()}
 
         ${sportTrainingHtml()}
 
@@ -12608,13 +12778,7 @@ function openClubReserve(){
 
         ${sportBagHtml()}
 
-
         <div id="bociteSportFinanceMount"></div>
-
-/* =========================================================
-   ÇA FINIT ICI
-   SPORT — SÉPARATION PRÉSIDENT / COLLABORATEUR
-   ========================================================= */
 
         <div class="sportActions">
 
@@ -12674,18 +12838,6 @@ function openClubReserve(){
       sportInitSupportPaymentUi();
 
       sportRenderPresidentHistory();
-
-
-      const governanceSave=
-        sportEl(
-          "sportGovernanceSave"
-        );
-
-      if(governanceSave){
-
-        governanceSave.onclick=
-          sportSaveGovernanceFromUi;
-      }
 
       const historyRefresh=
         sportEl(
@@ -12943,8 +13095,7 @@ window.openClubReserve=
 let sportPresidentAccessChallenge =
   null;
 
-
-function openSportPresidentPrecheck(){
+  function openSportPresidentPrecheck(){
 
   openModal(
     "Vérification Président avec Bo'CitéArt",
@@ -13908,7 +14059,7 @@ function openSportPresidentCode(){
 
 }
 
-/* =========================================================
+  /* =========================================================
    ÇA COMMENCE ICI
    SPORT — CONTINUITÉ DU CLUB / CODE DE REPRISE
    ========================================================= */
@@ -15215,7 +15366,6 @@ async function sportVerifyContinuityRecovery(){
   openClubReserve();
 }
 
-
 function openSportContinuity(){
 
   const latest=
@@ -15376,7 +15526,7 @@ function openSportContinuity(){
 
 
   openModal(
-    "Continuité du club avec Bo'CitéArt",
+    "En cas de difficulté importante, contactez Bo'CitéArt",
     `
 
       ${sportStyles()}
@@ -15384,42 +15534,49 @@ function openSportContinuity(){
       <div class="bociteSportRoot">
 
         ${sportTitle(
-          "Continuité de mon club avec"
+          "Demande exceptionnelle avec"
         )}
 
         <div class="sportCard">
 
           <div class="sportText">
 
-            Un changement de responsable,
-            une indisponibilité
-            ou une difficulté d’accès
-            ne doit jamais bloquer durablement
-            votre structure sportive.
+            Merci de contacter
+            ${sportBrandHtml()}
+            depuis cet espace uniquement
+            lorsqu’une difficulté importante
+            empêche réellement l’accès normal
+            ou la continuité des droits numériques
+            liés au club
+            et qu’aucune solution habituelle
+            ne permet de régler la situation.
+
+            <br><br>
+
+            Cet espace n’est pas destiné
+            aux questions courantes,
+            à l’organisation interne du club,
+            aux équipes,
+            au matériel,
+            aux plannings
+            ou à la logistique.
 
             <br><br>
 
             <strong>
-
               ${sportBrandHtml()}
-              ne désigne jamais
-              les dirigeants d’une structure.
-
+              ne désigne jamais les dirigeants
+              d’une structure.
               Il sécurise uniquement
               les accès numériques correspondant
               aux fonctions officiellement établies.
-
             </strong>
 
             <br><br>
 
-            Une personne précédemment reconnue,
-            un responsable actuel
-            ou un nouveau responsable officiel
-            peut signaler ici la situation.
-
             Aucun droit n’est transféré
-            automatiquement.
+            ou modifié automatiquement
+            avant vérification de la situation.
 
           </div>
 
@@ -15938,8 +16095,7 @@ window.BociteSportContinuity={
    SPORT — CONTINUITÉ DU CLUB / CODE DE REPRISE
    ========================================================= */
 
-   
-/* =========================================================
+  /* =========================================================
    ÇA COMMENCE ICI
    SPORT — ACCÈS RESPONSABLES + CONTINUITÉ INDÉPENDANTE
    ========================================================= */
@@ -15958,7 +16114,6 @@ function openClubAccess(){
           "Accès responsables avec"
         )}
 
-
         <div class="sportCard">
 
           <div class="sportSubTitle">
@@ -15969,20 +16124,17 @@ function openClubAccess(){
             class="sportText"
             style="margin-top:8px;"
           >
-
             Vous représentez officiellement
             le club ou l’association sportive.
 
             <br><br>
 
-            Avant l’ouverture de la fiche complète,
-            un premier contrôle permet
-            de vérifier la demande
-            et de transmettre
-            un code temporaire
+            Avant l’ouverture de l’espace complet,
+            votre demande doit être vérifiée.
+            Le code temporaire Président
+            n’est transmis qu’après ce contrôle
             vers une coordonnée officielle
-            déjà vérifiée.
-
+            déjà vérifiée pour la structure.
           </div>
 
           <button
@@ -15999,7 +16151,6 @@ function openClubAccess(){
 
         </div>
 
-
         <div class="sportCard">
 
           <div class="sportSubTitle">
@@ -16010,14 +16161,18 @@ function openClubAccess(){
             class="sportText"
             style="margin-top:8px;"
           >
+            Le président attribue
+            un accès individuel à chaque collaborateur.
 
-            Utilisez l’identifiant personnel
-            et le code qui vous ont été remis
-            par le président
-            ou le responsable habilité du club.
+            <br><br>
 
+            Entrez ici l’identifiant personnel
+            et le code qui vous ont été remis.
+            Chaque accès reste rattaché
+            à la personne concernée
+            et peut être désactivé immédiatement
+            par la présidence.
           </div>
-
 
           <label class="sportLabel">
             Identifiant personnel
@@ -16029,7 +16184,6 @@ function openClubAccess(){
             autocomplete="username"
             placeholder="Identifiant collaborateur"
           >
-
 
           <label class="sportLabel">
             Code personnel
@@ -16043,7 +16197,6 @@ function openClubAccess(){
             placeholder="Code d’accès"
           >
 
-
           <button
             id="sportLoginBtn"
             class="sportBtn"
@@ -16053,92 +16206,58 @@ function openClubAccess(){
               margin-top:12px;
             "
           >
-            Ouvrir mon espace
+            Ouvrir mon espace collaborateur
           </button>
-
 
           <div
             id="sportLoginStatus"
             class="sportStatus"
           ></div>
 
+        </div>
 
-        <!-- ======================================================
-     ÇA COMMENCE ICI
-     SPORT — PORTE DE SECOURS INDÉPENDANTE
-     ====================================================== -->
+        <div class="sportCard">
 
-<div
-  style="
-    margin-top:20px;
-    padding-top:18px;
-    border-top:1px solid #d9dfda;
-  "
->
+          <div class="sportSubTitle">
+            En cas de difficulté importante
+          </div>
 
-  <div class="sportSubTitle">
-    En cas de difficulté importante
-  </div>
+          <div
+            class="sportText"
+            style="margin-top:8px;"
+          >
+            Merci de contacter
+            ${sportBrandHtml()}
+            depuis cet espace uniquement
+            lorsqu’une difficulté importante
+            empêche réellement d’utiliser
+            les accès habituels
+            et qu’il n’est pas possible
+            de la résoudre autrement.
 
+            <br><br>
 
-  <div
-    class="sportText"
-    style="margin-top:8px;"
-  >
+            Cet espace n’est pas destiné
+            aux questions courantes,
+            à l’organisation interne du club,
+            à la gestion des équipes,
+            au matériel,
+            aux plannings
+            ou à la logistique.
+          </div>
 
-    Merci de contacter
-    ${sportBrandHtml()}
-    depuis cet espace uniquement
-    lorsqu’une difficulté importante
-    empêche l’accès normal
-    à votre espace Sport
-    et qu’il n’est pas possible
-    de la résoudre autrement.
+          <button
+            id="sportContinuityOpen"
+            class="sportBtn"
+            type="button"
+            style="
+              width:100%;
+              margin-top:14px;
+            "
+          >
+            Contacter Bo'CitéArt
+          </button>
 
-    <br><br>
-
-    Cet espace n’est pas destiné
-    aux questions courantes,
-    à l’organisation interne du club,
-    à la gestion des équipes,
-    au matériel,
-    aux plannings,
-    à la logistique
-    ou aux difficultés
-    que le président
-    ou les responsables habituels
-    peuvent régler directement.
-
-    <br><br>
-
-    Il reste accessible
-    lorsqu’une situation exceptionnelle
-    empêche réellement
-    d’utiliser les accès habituels
-    ou nécessite l’intervention
-    de ${sportBrandHtml()}.
-
-  </div>
-
-
-  <button
-    id="sportContinuityOpen"
-    class="sportBtn"
-    type="button"
-    style="
-      width:100%;
-      margin-top:14px;
-    "
-  >
-    Contacter Bo'CitéArt
-  </button>
-
-</div>
-
-<!-- ======================================================
-     ÇA FINIT ICI
-     SPORT — PORTE DE SECOURS INDÉPENDANTE
-     ====================================================== -->
         </div>
 
       </div>
@@ -16146,19 +16265,12 @@ function openClubAccess(){
     `
   );
 
-
   sportSetModalHeader(
     "Accès responsables avec"
   );
 
-
   setTimeout(
     ()=>{
-
-
-      /* =====================================================
-         PRÉSIDENT / RESPONSABLE LÉGAL
-         ===================================================== */
 
       const presidentCheck=
         sportEl(
@@ -16166,16 +16278,9 @@ function openClubAccess(){
         );
 
       if(presidentCheck){
-
         presidentCheck.onclick=
           openSportPresidentPrecheck;
       }
-
-
-      /* =====================================================
-         CONTINUITÉ INDÉPENDANTE
-         CETTE PORTE NE DÉPEND PAS DU PRÉSIDENT
-         ===================================================== */
 
       const continuity=
         sportEl(
@@ -16183,103 +16288,144 @@ function openClubAccess(){
         );
 
       if(continuity){
-
         continuity.onclick=
           openSportContinuity;
       }
-
-
-      /* =====================================================
-         CONNEXION COLLABORATEUR
-         ===================================================== */
 
       const b=
         sportEl(
           "sportLoginBtn"
         );
 
-      if(b){
+      if(!b){
+        return;
+      }
 
-        b.onclick=
-          async ()=>{
+      b.onclick=
+        async ()=>{
 
-            const id=
-              String(
-                sportEl(
-                  "sportLoginIdentifier"
-                )?.value ||
-                ""
-              ).trim();
-
-            const code=
-              String(
-                sportEl(
-                  "sportLoginCode"
-                )?.value ||
-                ""
-              ).trim();
-
-            const o=
+          const id=
+            String(
               sportEl(
-                "sportLoginStatus"
-              );
+                "sportLoginIdentifier"
+              )?.value ||
+              ""
+            ).trim();
 
+          const code=
+            String(
+              sportEl(
+                "sportLoginCode"
+              )?.value ||
+              ""
+            ).trim();
 
-            if(
-              !id ||
-              !code
-            ){
+          const o=
+            sportEl(
+              "sportLoginStatus"
+            );
 
-              if(o){
+          if(
+            !id ||
+            !code
+          ){
 
-                o.textContent=
-                  "Renseignez l’identifiant et le code.";
-              }
-
-              return;
+            if(o){
+              o.textContent=
+                "Renseignez l’identifiant et le code.";
             }
 
+            return;
+          }
 
-            /* =================================================
-               ACCÈS PRÉSIDENT POUR NOTRE PRÉSENTATION
-               HORS PRODUCTION UNIQUEMENT
-               ================================================= */
+          if(
+            sportLocked(
+              id
+            )
+          ){
 
-            if(
-              SPORT_CONFIG.mode !==
-                "production" &&
+            if(o){
+              o.textContent=
+                "Accès temporairement indisponible. Si aucune solution habituelle n’est possible, utilisez l’espace de contact Bo'CitéArt.";
+            }
 
-              id ===
-                "141010" &&
+            return;
+          }
 
-              code ===
-                "141010"
-            ){
+          if(
+            SPORT_CONFIG.mode ===
+              "production" &&
+            SPORT_CONFIG.authEndpoint
+          ){
+
+            try{
+
+              const r=
+                await fetch(
+                  SPORT_CONFIG.authEndpoint,
+                  {
+                    method:
+                      "POST",
+                    credentials:
+                      "include",
+                    headers:{
+                      "Content-Type":
+                        "application/json"
+                    },
+                    body:
+                      JSON.stringify({
+                        scope:
+                          "sport_responsible",
+                        identifier:
+                          id,
+                        code:
+                          code
+                      })
+                  }
+                );
+
+              if(!r.ok){
+                throw 0;
+              }
+
+              const j=
+                await r.json();
+
+              /*
+                Le Président ne passe jamais
+                par la connexion collaborateur.
+              */
+              if(
+                !j ||
+                j.ok !== true ||
+                j.role ===
+                  "president"
+              ){
+                throw 0;
+              }
 
               sportResetFail(
                 id
               );
 
-              window
-                .bociteartSportPresidentPrechecked=
-                  true;
-
               sportSession={
-
                 role:
-                  "president",
-
+                  "coach",
                 accountId:
-                  "sport-demo-president",
-
+                  String(
+                    j.accountId ||
+                    id
+                  ),
                 name:
-                  "Président — accès de présentation",
-
+                  String(
+                    j.name ||
+                    "Collaborateur"
+                  ),
                 team:
-                  "",
-
-                testFullAccess:
-                  true
+                  String(
+                    j.team ||
+                    ""
+                  )
               };
 
               window.bociteartSportSession=
@@ -16288,257 +16434,97 @@ function openClubAccess(){
               openClubReserve();
 
               return;
-            }
 
+            }catch(_){
 
-            /* =================================================
-               VERROU TEMPORAIRE
-               ================================================= */
-
-            if(
-              sportLocked(
-                id
-              )
-            ){
-
-              if(o){
-
-                o.textContent=
-                  "Accès temporairement indisponible. Utilisez le signalement à Bo'CitéArt si la situation nécessite une continuité du club.";
-              }
-
-              return;
-            }
-
-
-            /* =================================================
-               PRODUCTION — CONTRÔLE SERVEUR
-               ================================================= */
-
-            if(
-              SPORT_CONFIG.mode ===
-                "production" &&
-              SPORT_CONFIG.authEndpoint
-            ){
-
-              try{
-
-                const r=
-                  await fetch(
-                    SPORT_CONFIG.authEndpoint,
-                    {
-
-                      method:
-                        "POST",
-
-                      credentials:
-                        "include",
-
-                      headers:{
-                        "Content-Type":
-                          "application/json"
-                      },
-
-                      body:
-                        JSON.stringify({
-
-                          scope:
-                            "sport_responsible",
-
-                          identifier:
-                            id,
-
-                          code:
-                            code
-                        })
-                    }
-                  );
-
-
-                if(!r.ok){
-                  throw 0;
-                }
-
-
-                const j=
-                  await r.json();
-
-
-                /*
-                  Le Président ne passe pas
-                  par la connexion collaborateur.
-                */
-
-                if(
-                  !j ||
-                  j.ok !== true ||
-                  j.role ===
-                    "president"
-                ){
-
-                  throw 0;
-                }
-
-
-                sportResetFail(
+              const locked=
+                sportFail(
                   id
                 );
 
-
-                sportSession={
-
-                  role:
-                    "coach",
-
-                  accountId:
-                    String(
-                      j.accountId ||
-                      id
-                    ),
-
-                  name:
-                    String(
-                      j.name ||
-                      "Collaborateur"
-                    ),
-
-                  team:
-                    String(
-                      j.team ||
-                      ""
-                    )
-                };
-
-
-                window.bociteartSportSession=
-                  sportSession;
-
-
-                openClubReserve();
-
-                return;
-
-
-              }catch(_){
-
-                const locked=
-                  sportFail(
-                    id
-                  );
-
-                if(o){
-
-                  o.textContent=
-                    locked
-
-                      ? "Accès temporairement indisponible. Utilisez le signalement à Bo'CitéArt si nécessaire."
-
-                      : "Accès réservé aux collaborateurs autorisés.";
-                }
-
-                return;
+              if(o){
+                o.textContent=
+                  locked
+                    ? "Accès temporairement indisponible. Si aucune solution habituelle n’est possible, utilisez l’espace de contact Bo'CitéArt."
+                    : "Accès réservé aux collaborateurs autorisés.";
               }
-            }
-
-
-            /* =================================================
-               PRÉPRODUCTION — CONTRÔLE LOCAL COLLABORATEUR
-               ================================================= */
-
-            const access=
-              sportAccess();
-
-
-            const collaborator=
-              access.coaches
-                .find(
-                  item =>
-
-                    sportNorm(
-                      item.identifier
-                    ) ===
-                    sportNorm(
-                      id
-                    ) &&
-
-                    item.active !==
-                      false
-                );
-
-
-            if(
-              collaborator &&
-              collaborator.codeHash ===
-                await sportHash(
-                  code
-                )
-            ){
-
-              sportResetFail(
-                id
-              );
-
-
-              sportSession={
-
-                role:
-                  "coach",
-
-                accountId:
-                  collaborator.id,
-
-                name:
-                  collaborator.name ||
-                  "Collaborateur",
-
-                team:
-                  collaborator.team ||
-                  ""
-              };
-
-
-              window.bociteartSportSession=
-                sportSession;
-
-
-              openClubReserve();
 
               return;
             }
+          }
 
+          const access=
+            sportAccess();
 
-            /* =================================================
-               ÉCHEC DE CONNEXION
-               ================================================= */
-
-            const locked=
-              sportFail(
-                id
+          const collaborator=
+            access.coaches
+              .find(
+                item =>
+                  sportNorm(
+                    item.identifier
+                  ) ===
+                  sportNorm(
+                    id
+                  ) &&
+                  item.active !==
+                    false
               );
 
+          if(
+            collaborator &&
+            collaborator.codeHash ===
+              await sportHash(
+                code
+              )
+          ){
 
-            if(o){
+            sportResetFail(
+              id
+            );
 
-              o.textContent=
-                locked
+            sportSession={
+              role:
+                "coach",
+              accountId:
+                collaborator.id,
+              name:
+                collaborator.name ||
+                "Collaborateur",
+              team:
+                collaborator.team ||
+                ""
+            };
 
-                  ? "Accès temporairement indisponible. Utilisez le signalement à Bo'CitéArt si nécessaire."
+            window.bociteartSportSession=
+              sportSession;
 
-                  : "Accès réservé aux collaborateurs autorisés.";
-            }
+            sportRecordCollaboratorAccessEvent(
+              "login",
+              collaborator
+            );
 
-          };
-      }
+            openClubReserve();
+
+            return;
+          }
+
+          const locked=
+            sportFail(
+              id
+            );
+
+          if(o){
+            o.textContent=
+              locked
+                ? "Accès temporairement indisponible. Si aucune solution habituelle n’est possible, utilisez l’espace de contact Bo'CitéArt."
+                : "Accès réservé aux collaborateurs autorisés.";
+          }
+        };
 
     },
     0
   );
 }
-
-/* =========================================================
-   ÇA FINIT ICI
-   SPORT — ACCÈS RESPONSABLES + CONTINUITÉ INDÉPENDANTE
-   ========================================================= */
 
 
 window.openClubAccess=
@@ -16808,7 +16794,7 @@ function openSportPanel(){
 window.BociteSportModule={
 
   version:
-    "2026-09-06-83",
+    "2026-09-07-107",
 
   ready:
     true,
@@ -16848,3 +16834,7 @@ window.openSportPanel=
    ========================================================= */
 
 })();
+
+
+
+ 
