@@ -12568,31 +12568,8 @@ function sportWalletHtml(){
 
   <br><br>
 
-  Il n’est pas destiné
-  aux questions courantes,
-  aux équipes,
-  au matériel,
-  aux plannings
-  ou à l’organisation du club.
-</div>
-
-<button
-  id="sportCollaboratorHelp"
-  class="sportBtn"
-  type="button"
-  style="
-    width:100%;
-    margin-top:12px;
-  "
->
-  Signaler un problème avec mon accès
-</button>
-
             `
           : `
-
-          
-
               <div
                 class="sportText"
                 style="margin-top:8px;"
@@ -12619,7 +12596,66 @@ function sportWalletHtml(){
   `;
 }
 
+function sportPrivateAccessHelpHtml(){
 
+  if(
+    sportSession.role !== "president" &&
+    sportSession.role !== "coach"
+  ){
+    return "";
+  }
+
+  return `
+
+    <div class="sportCard">
+
+      <div class="sportSubTitle">
+        Assistance sur mon accès
+      </div>
+
+      <div
+        class="sportText"
+        style="margin-top:8px;"
+      >
+
+        Cet espace est accessible uniquement
+        après identification.
+
+        <br><br>
+
+        Utilisez-le lorsqu’une difficulté importante
+        concerne votre accès personnel
+        à ${sportBrandHtml()}
+        et qu’elle ne peut pas être résolue
+        par les moyens habituels.
+
+        <br><br>
+
+        Il n’est pas destiné
+        aux questions courantes,
+        au matériel,
+        aux équipes,
+        aux plannings
+        ou à l’organisation du club.
+
+      </div>
+
+      <button
+        id="sportPrivateAccessHelp"
+        class="sportBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-top:12px;
+        "
+      >
+        Signaler une difficulté avec mon accès
+      </button>
+
+    </div>
+
+  `;
+}
 /* =========================================================
    ÇA COMMENCE ICI
    SPORT — VERROU DE L'ESPACE PRIVÉ DU CLUB
@@ -12836,6 +12872,8 @@ function openClubReserve(){
               `
         }
 
+        ${sportPrivateAccessHelpHtml()}
+        
         ${sportResultsPrivateHtml()}
 
         ${sportTrainingHtml()}
@@ -12907,14 +12945,14 @@ function openClubReserve(){
 
       sportRenderPresidentHistory();
 
-    const collaboratorHelp=
+const privateAccessHelp=
   sportEl(
-    "sportCollaboratorHelp"
+    "sportPrivateAccessHelp"
   );
 
-if(collaboratorHelp){
+if(privateAccessHelp){
 
-  collaboratorHelp.onclick=
+  privateAccessHelp.onclick=
     openSportContinuity;
 }
 
@@ -15277,7 +15315,7 @@ async function sportVerifyContinuityRecovery(){
     */
 
     const demoCode=
-      "141011";
+      "141010";
 
 
     const security=
@@ -15461,25 +15499,39 @@ async function sportVerifyContinuityRecovery(){
 
 function openSportContinuity(){
 
-    const currentCollaborator=
-    sportCurrentCoach();
+   const currentCollaborator=
+  sportSession.role ===
+    "coach"
+    ? sportCurrentCoach()
+    : null;
 
-  if(
-    sportSession.role !==
-      "coach" ||
-    !currentCollaborator ||
-    currentCollaborator.active ===
+const authorized=
+  (
+    sportSession.role ===
+      "president" &&
+    (
+      Boolean(
+        window.bociteartAdminSession
+      ) ||
+      window.bociteartSportPresidentPrechecked ===
+        true ||
+      window.bociteartSportRecoveryVerified ===
+        true ||
+      sportGovernanceIsVerified()
+    )
+  )
+  ||
+  (
+    sportSession.role ===
+      "coach" &&
+    currentCollaborator &&
+    currentCollaborator.active !==
       false
-  ){
+  );
 
-    alert(
-      "Cet espace est réservé aux collaborateurs autorisés du club."
-    );
-
-    openClubAccess();
-
-    return;
-  }
+if(!authorized){
+  return;
+}
 
   const latest=
     sportLatestContinuityRequest();
@@ -16328,29 +16380,6 @@ function openClubAccess(){
           ></div>
 
         </div>
-
-        <div class="sportCard">
-
-          <div class="sportSubTitle">
-            En cas de difficulté importante
-          </div>
-
-          <div
-            class="sportText"
-            style="margin-top:8px;"
-          >
-            Merci de contacter
-            ${sportBrandHtml()}
-            depuis cet espace uniquement
-            lorsqu’une difficulté importante
-            empêche réellement d’utiliser
-            les accès habituels
-            et qu’il n’est pas possible
-            de la résoudre autrement.
-
-            <br><br>
-
-      </div>
 
     `
   );
