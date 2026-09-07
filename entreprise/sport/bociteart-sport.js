@@ -15745,7 +15745,7 @@ function openSportContinuity(){
 
 
   sportSetModalHeader(
-    "Continuité du club avec"
+    "En cas de difficulté importante, contactez"
   );
 
 
@@ -16063,10 +16063,10 @@ function openClubAccess(){
           ></div>
 
 
-          <!-- ======================================================
-               ÇA COMMENCE ICI
-               SPORT — PORTE DE SECOURS INDÉPENDANTE
-               ====================================================== -->
+        <!-- ======================================================
+     ÇA COMMENCE ICI
+     SPORT — PORTE DE SECOURS INDÉPENDANTE
+     ====================================================== -->
 
 <div
   style="
@@ -16077,22 +16077,49 @@ function openClubAccess(){
 >
 
   <div class="sportSubTitle">
-    Besoin d’aide pour votre accès ?
+    En cas de difficulté importante
   </div>
+
 
   <div
     class="sportText"
     style="margin-top:8px;"
   >
 
-    En cas de modification ou importante
-    concernant votre accès
-    ou votre club,
-    vous pouvez contacter
+    Merci de contacter
     ${sportBrandHtml()}
-    directement ici.
+    depuis cet espace uniquement
+    lorsqu’une difficulté importante
+    empêche l’accès normal
+    à votre espace Sport
+    et qu’il n’est pas possible
+    de la résoudre autrement.
+
+    <br><br>
+
+    Cet espace n’est pas destiné
+    aux questions courantes,
+    à l’organisation interne du club,
+    à la gestion des équipes,
+    au matériel,
+    aux plannings,
+    à la logistique
+    ou aux difficultés
+    que le président
+    ou les responsables habituels
+    peuvent régler directement.
+
+    <br><br>
+
+    Il reste accessible
+    lorsqu’une situation exceptionnelle
+    empêche réellement
+    d’utiliser les accès habituels
+    ou nécessite l’intervention
+    de ${sportBrandHtml()}.
 
   </div>
+
 
   <button
     id="sportContinuityOpen"
@@ -16108,11 +16135,10 @@ function openClubAccess(){
 
 </div>
 
-          <!-- ======================================================
-               ÇA FINIT ICI
-               SPORT — PORTE DE SECOURS INDÉPENDANTE
-               ====================================================== -->
-
+<!-- ======================================================
+     ÇA FINIT ICI
+     SPORT — PORTE DE SECOURS INDÉPENDANTE
+     ====================================================== -->
         </div>
 
       </div>
