@@ -12765,16 +12765,176 @@ function sportWalletHtml(){
 }
 
 
+/* =========================================================
+   ÇA COMMENCE ICI
+   SPORT — VERROU DE L'ESPACE PRIVÉ DU CLUB
+   ========================================================= */
+
 function openClubReserve(){
+
+  /*
+    L'espace complet Président / Club
+    ne doit jamais être construit
+    avant qu'un accès valable ait été obtenu.
+
+    Le mode présentation ne contourne pas
+    cette protection.
+  */
+
+
+  /* =====================================================
+     PRÉSIDENT / RESPONSABLE LÉGAL
+     ===================================================== */
+
+  const presidentAuthorized=
+    (
+      sportSession.role ===
+        "president"
+    )
+    &&
+    (
+      Boolean(
+        window.bociteartAdminSession
+      )
+
+      ||
+
+      window
+        .bociteartSportPresidentPrechecked ===
+          true
+
+      ||
+
+      window
+        .bociteartSportRecoveryVerified ===
+          true
+
+      ||
+
+      sportGovernanceIsVerified()
+    );
+
+
+  /* =====================================================
+     COLLABORATEUR
+     ===================================================== */
+
+  let collaboratorAuthorized=
+    false;
+
+
+  if(
+    sportSession.role ===
+      "coach" &&
+    sportSession.accountId
+  ){
+
+    if(
+      SPORT_CONFIG.mode ===
+        "production"
+    ){
+
+      /*
+        En production,
+        la session collaborateur
+        devra avoir été validée
+        côté serveur avant d'arriver ici.
+      */
+
+      collaboratorAuthorized=
+        true;
+
+    }else{
+
+      const access=
+        sportAccess();
+
+
+      const collaborator=
+        Array.isArray(
+          access.coaches
+        )
+
+          ? access.coaches.find(
+              item =>
+                String(
+                  item.id ||
+                  ""
+                ) ===
+                String(
+                  sportSession.accountId ||
+                  ""
+                )
+            )
+
+          : null;
+
+
+      collaboratorAuthorized=
+        Boolean(
+          collaborator &&
+          collaborator.active !==
+            false
+        );
+    }
+  }
+
+
+  /* =====================================================
+     AUCUN ACCÈS PRIVÉ VALIDE
+     ===================================================== */
+
+  if(
+    !presidentAuthorized &&
+    !collaboratorAuthorized
+  ){
+
+    sportSession={
+
+      role:"",
+      accountId:"",
+      name:"",
+      team:""
+    };
+
+
+    window.bociteartSportSession=
+      sportSession;
+
+
+    /*
+      Retour vers la porte générale.
+
+      La rubrique :
+      "Difficulté ou modification importante"
+      reste donc accessible,
+      même sans validation Président.
+    */
+
+    openClubAccess();
+
+    return;
+  }
+
+  /* =====================================================
+     À PARTIR D'ICI SEULEMENT
+     L'ESPACE PRIVÉ EST AUTORISÉ
+     ===================================================== */
 
   const c=
     sportClub();
+
 
   const role=
     sportSession.role ===
       "president"
       ? "Présidence / responsable légal"
       : "Entraîneur / responsable";
+
+/* =========================================================
+   ÇA FINIT ICI
+   SPORT — VERROU DE L'ESPACE PRIVÉ DU CLUB
+   ========================================================= */
 
   openModal(
     "Club avec Bo'CitéArt",
