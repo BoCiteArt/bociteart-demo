@@ -12546,8 +12546,52 @@ function sportWalletHtml(){
                 Désactiver cet accès — réservé à la présidence
               </button>
 
+              <div
+  class="sportSubTitle"
+  style="margin-top:18px;"
+>
+  Assistance sur mon accès
+</div>
+
+<div
+  class="sportText"
+  style="margin-top:8px;"
+>
+  Cet espace est réservé aux collaborateurs
+  déjà identifiés.
+
+  <br><br>
+
+  Utilisez-le uniquement lorsqu’un problème important
+  concernant votre accès personnel
+  ne peut pas être résolu normalement.
+
+  <br><br>
+
+  Il n’est pas destiné
+  aux questions courantes,
+  aux équipes,
+  au matériel,
+  aux plannings
+  ou à l’organisation du club.
+</div>
+
+<button
+  id="sportCollaboratorHelp"
+  class="sportBtn"
+  type="button"
+  style="
+    width:100%;
+    margin-top:12px;
+  "
+>
+  Signaler un problème avec mon accès
+</button>
+
             `
           : `
+
+          
 
               <div
                 class="sportText"
@@ -12714,13 +12758,12 @@ function openClubReserve(){
 
 
     /*
-      Retour vers la porte générale.
+    /*
+  Retour vers la porte générale.
 
-      La rubrique :
-      "Difficulté ou modification importante"
-      reste donc accessible,
-      même sans validation Président.
-    */
+  Aucun espace d’assistance privé
+  n’est accessible sans connexion autorisée.
+*/
 
     openClubAccess();
 
@@ -12863,6 +12906,17 @@ function openClubReserve(){
       sportInitSupportPaymentUi();
 
       sportRenderPresidentHistory();
+
+    const collaboratorHelp=
+  sportEl(
+    "sportCollaboratorHelp"
+  );
+
+if(collaboratorHelp){
+
+  collaboratorHelp.onclick=
+    openSportContinuity;
+}
 
       const historyRefresh=
         sportEl(
@@ -14508,6 +14562,20 @@ function sportAddContinuityReply(
 
 async function sportSubmitContinuityRequest(){
 
+    const currentCollaborator=
+    sportCurrentCoach();
+
+  if(
+    sportSession.role !==
+      "coach" ||
+    !currentCollaborator ||
+    currentCollaborator.active ===
+      false
+  ){
+
+    return;
+  }
+
   const status=
     sportEl(
       "sportContinuityStatus"
@@ -15393,6 +15461,26 @@ async function sportVerifyContinuityRecovery(){
 
 function openSportContinuity(){
 
+    const currentCollaborator=
+    sportCurrentCoach();
+
+  if(
+    sportSession.role !==
+      "coach" ||
+    !currentCollaborator ||
+    currentCollaborator.active ===
+      false
+  ){
+
+    alert(
+      "Cet espace est réservé aux collaborateurs autorisés du club."
+    );
+
+    openClubAccess();
+
+    return;
+  }
+
   const latest=
     sportLatestContinuityRequest();
 
@@ -15551,7 +15639,7 @@ function openSportContinuity(){
 
 
   openModal(
-    "En cas de difficulté importante, contactez Bo'CitéArt",
+  "Assistance sur mon accès",
     `
 
       ${sportStyles()}
@@ -15559,7 +15647,7 @@ function openSportContinuity(){
       <div class="bociteSportRoot">
 
         ${sportTitle(
-          "Demande exceptionnelle avec"
+          "Assistance sur mon accès avec"
         )}
 
         <div class="sportCard">
@@ -15927,7 +16015,7 @@ function openSportContinuity(){
 
 
   sportSetModalHeader(
-    "En cas de difficulté importante, contactez"
+    "Assistance sur mon accès avec"
   );
 
 
@@ -16262,29 +16350,6 @@ function openClubAccess(){
 
             <br><br>
 
-            Cet espace n’est pas destiné
-            aux questions courantes,
-            à l’organisation interne du club,
-            à la gestion des équipes,
-            au matériel,
-            aux plannings
-            ou à la logistique.
-          </div>
-
-          <button
-            id="sportContinuityOpen"
-            class="sportBtn"
-            type="button"
-            style="
-              width:100%;
-              margin-top:14px;
-            "
-          >
-            Contacter Bo'CitéArt
-          </button>
-
-        </div>
-
       </div>
 
     `
@@ -16305,16 +16370,6 @@ function openClubAccess(){
       if(presidentCheck){
         presidentCheck.onclick=
           openSportPresidentPrecheck;
-      }
-
-      const continuity=
-        sportEl(
-          "sportContinuityOpen"
-        );
-
-      if(continuity){
-        continuity.onclick=
-          openSportContinuity;
       }
 
       const b=
