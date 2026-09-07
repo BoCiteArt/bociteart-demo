@@ -2227,6 +2227,17 @@ return Object.assign(
 coach,
 {
 
+passwordHash:
+  String(
+    coach.passwordHash ||
+    ""
+  ),
+
+passwordInitialized:
+  coach.passwordInitialized ===
+    true,
+
+  
 permissions:
 Array.isArray(
 coach.permissions
@@ -2585,6 +2596,12 @@ function sportRenderAccessHistory(){
 
     code_renewed:
       "Code renouvelé",
+
+   password_created:
+  "Mot de passe personnel créé",
+
+password_changed:
+  "Mot de passe personnel modifié", 
 
     login:
       "Connexion collaborateur"
@@ -7889,7 +7906,7 @@ function sportRenderPresidentHistory(){
       </label>
 
       <label class="sportLabel">
-        Code initial
+        Code d’accès temporaire
       </label>
 
       <input
@@ -10529,7 +10546,7 @@ function sportEditCoach(id){
             const code=
               String(
                 prompt(
-                  "Nouveau code personnel — 6 caractères minimum",
+                  "Nouveau code d’accès temporaire  — 6 caractères minimum",
                   ""
                 ) ||
                 ""
@@ -10571,6 +10588,12 @@ function sportEditCoach(id){
               await sportHash(
                 code
               );
+
+            access.coaches[index].passwordHash=
+  "";
+
+access.coaches[index].passwordInitialized=
+  false;
 
             access.coaches[index].active=
               true;
@@ -10858,6 +10881,12 @@ function sportEditCoach(id){
       codeHash:
         await sportHash(code),
 
+      passwordHash:
+  "",
+
+passwordInitialized:
+  false,
+
       active:
         true,
 
@@ -10878,7 +10907,7 @@ function sportEditCoach(id){
     message=
       "Collaborateur enregistré. Identifiant : " +
       identifier +
-      ". Remettez-lui cet identifiant et le code personnel que vous venez de choisir.";
+    ". Remettez-lui cet identifiant et le code d’accès temporaire que vous venez de choisir.";
 
     eventType=
       "created";
@@ -12532,6 +12561,18 @@ function sportWalletHtml(){
               </div>
 
               <button
+  id="sportCollaboratorPasswordChangeOpen"
+  class="sportBtn"
+  type="button"
+  style="
+    width:100%;
+    margin-top:12px;
+  "
+>
+  Modifier mon mot de passe
+</button>
+             
+              <button
                 class="sportBtn sportBtnDanger"
                 type="button"
                 disabled
@@ -12658,6 +12699,390 @@ function sportPrivateAccessHelpHtml(){
    SPORT — VERROU DE L'ESPACE PRIVÉ DU CLUB
    ========================================================= */
 
+/* =========================================================
+   ÇA COMMENCE ICI
+   SPORT — MODIFIER MON MOT DE PASSE COLLABORATEUR
+   ========================================================= */
+
+function openSportCollaboratorPasswordChange(){
+
+  const collaborator=
+    sportCurrentCoach();
+
+
+  if(
+    sportSession.role !==
+      "coach" ||
+    !collaborator ||
+    collaborator.active ===
+      false ||
+    collaborator.passwordInitialized !==
+      true
+  ){
+
+    return;
+  }
+
+
+  openModal(
+    "Modifier mon mot de passe avec Bo'CitéArt",
+    `
+
+      ${sportStyles()}
+
+      <div class="bociteSportRoot">
+
+        ${sportTitle(
+          "Modifier mon mot de passe avec"
+        )}
+
+        <div class="sportCard">
+
+          <div class="sportSubTitle">
+            Mon mot de passe personnel
+          </div>
+
+          <div
+            class="sportText"
+            style="margin-top:8px;"
+          >
+            Votre mot de passe reste personnel.
+
+            <br><br>
+
+            Le Président du club
+            ne peut ni le consulter
+            ni le connaître.
+          </div>
+
+
+          <label class="sportLabel">
+            Mot de passe actuel
+          </label>
+
+          <input
+            id="sportCollaboratorCurrentPassword"
+            class="sportField"
+            type="password"
+            autocomplete="current-password"
+          >
+
+
+          <label class="sportLabel">
+            Nouveau mot de passe
+          </label>
+
+          <input
+            id="sportCollaboratorChangedPassword"
+            class="sportField"
+            type="password"
+            autocomplete="new-password"
+            placeholder="8 caractères minimum"
+          >
+
+
+          <label class="sportLabel">
+            Confirmer le nouveau mot de passe
+          </label>
+
+          <input
+            id="sportCollaboratorChangedPasswordConfirm"
+            class="sportField"
+            type="password"
+            autocomplete="new-password"
+            placeholder="Répétez votre nouveau mot de passe"
+          >
+
+
+          <button
+            id="sportCollaboratorPasswordChangeSave"
+            class="sportBtn"
+            type="button"
+            style="
+              width:100%;
+              margin-top:14px;
+            "
+          >
+            Enregistrer mon nouveau mot de passe
+          </button>
+
+
+          <div
+            id="sportCollaboratorPasswordChangeStatus"
+            class="sportStatus"
+          ></div>
+
+        </div>
+
+
+        <div class="sportActions">
+
+          <button
+            id="sportCollaboratorPasswordChangeBack"
+            class="sportBtn"
+            type="button"
+          >
+            Retour à mon espace
+          </button>
+
+        </div>
+
+      </div>
+
+    `
+  );
+
+
+  sportSetModalHeader(
+    "Modifier mon mot de passe avec"
+  );
+
+
+  window.setTimeout(
+    ()=>{
+
+      const save=
+        sportEl(
+          "sportCollaboratorPasswordChangeSave"
+        );
+
+
+      if(save){
+
+        save.onclick=
+          async ()=>{
+
+            const status=
+              sportEl(
+                "sportCollaboratorPasswordChangeStatus"
+              );
+
+
+            const currentPassword=
+              String(
+                sportEl(
+                  "sportCollaboratorCurrentPassword"
+                )?.value ||
+                ""
+              );
+
+
+            const newPassword=
+              String(
+                sportEl(
+                  "sportCollaboratorChangedPassword"
+                )?.value ||
+                ""
+              );
+
+
+            const confirmation=
+              String(
+                sportEl(
+                  "sportCollaboratorChangedPasswordConfirm"
+                )?.value ||
+                ""
+              );
+
+
+            if(
+              !currentPassword
+            ){
+
+              if(status){
+
+                status.textContent=
+                  "Saisissez votre mot de passe actuel.";
+              }
+
+              return;
+            }
+
+
+            if(
+              newPassword.length <
+                8
+            ){
+
+              if(status){
+
+                status.textContent=
+                  "Le nouveau mot de passe doit comporter au moins 8 caractères.";
+              }
+
+              return;
+            }
+
+
+            if(
+              newPassword !==
+                confirmation
+            ){
+
+              if(status){
+
+                status.textContent=
+                  "Les deux nouveaux mots de passe ne correspondent pas.";
+              }
+
+              return;
+            }
+
+
+            if(
+              currentPassword ===
+                newPassword
+            ){
+
+              if(status){
+
+                status.textContent=
+                  "Choisissez un nouveau mot de passe différent de l’ancien.";
+              }
+
+              return;
+            }
+
+
+            const access=
+              sportAccess();
+
+
+            const index=
+              access.coaches
+                .findIndex(
+                  item =>
+                    String(
+                      item.id ||
+                      ""
+                    ) ===
+                    String(
+                      collaborator.id ||
+                      ""
+                    )
+                );
+
+
+            if(index < 0){
+
+              if(status){
+
+                status.textContent=
+                  "Cet accès n’est plus disponible.";
+              }
+
+              return;
+            }
+
+
+            if(
+              access.coaches[index]
+                .active ===
+                  false
+            ){
+
+              if(status){
+
+                status.textContent=
+                  "Cet accès est désactivé.";
+              }
+
+              return;
+            }
+
+
+            const currentHash=
+              await sportHash(
+                currentPassword
+              );
+
+
+            if(
+              currentHash !==
+                access.coaches[index]
+                  .passwordHash
+            ){
+
+              if(status){
+
+                status.textContent=
+                  "Le mot de passe actuel est incorrect.";
+              }
+
+              return;
+            }
+
+
+            access.coaches[index]
+              .passwordHash=
+                await sportHash(
+                  newPassword
+                );
+
+
+            access.coaches[index]
+              .passwordInitialized=
+                true;
+
+
+            access.coaches[index]
+              .codeHash=
+                "";
+
+
+            access.coaches[index]
+              .updatedAt=
+                Date.now();
+
+
+            sportSaveAccess(
+              access
+            );
+
+
+            sportRecordCollaboratorAccessEvent(
+              "password_changed",
+              access.coaches[index]
+            );
+
+
+            if(status){
+
+              status.textContent=
+                "Votre nouveau mot de passe est enregistré.";
+            }
+
+
+            window.setTimeout(
+              openClubReserve,
+              500
+            );
+          };
+      }
+
+
+      const back=
+        sportEl(
+          "sportCollaboratorPasswordChangeBack"
+        );
+
+
+      if(back){
+
+        back.onclick=
+          openClubReserve;
+      }
+
+    },
+    0
+  );
+}
+
+/* =========================================================
+   ÇA FINIT ICI
+   SPORT — MODIFIER MON MOT DE PASSE COLLABORATEUR
+   ========================================================= */
+  
 function openClubReserve(){
 
   /*
@@ -12952,6 +13377,17 @@ if(privateAccessHelp){
   privateAccessHelp.onclick=
     openSportContinuity;
 }
+
+     const collaboratorPasswordChange=
+  sportEl(
+    "sportCollaboratorPasswordChangeOpen"
+  );
+
+if(collaboratorPasswordChange){
+
+  collaboratorPasswordChange.onclick=
+    openSportCollaboratorPasswordChange;
+} 
 
       const historyRefresh=
         sportEl(
@@ -16262,7 +16698,311 @@ window.BociteSportContinuity={
    SPORT — ACCÈS RESPONSABLES + CONTINUITÉ INDÉPENDANTE
    ========================================================= */
 
-function openClubAccess(){
+/* =========================================================
+   ÇA COMMENCE ICI
+   SPORT — PREMIÈRE CONNEXION COLLABORATEUR
+   CRÉATION DU MOT DE PASSE PERSONNEL
+   ========================================================= */
+
+function openSportCollaboratorPasswordSetup(
+  collaborator
+){
+
+  if(
+    !collaborator ||
+    collaborator.active ===
+      false
+  ){
+    return;
+  }
+
+  openModal(
+    "Créer mon mot de passe avec Bo'CitéArt",
+    `
+
+      ${sportStyles()}
+
+      <div class="bociteSportRoot">
+
+        ${sportTitle(
+          "Créer mon mot de passe avec"
+        )}
+
+        <div class="sportCard">
+
+          <div class="sportSubTitle">
+            Première connexion
+          </div>
+
+          <div
+            class="sportText"
+            style="margin-top:8px;"
+          >
+            Votre identifiant
+            et le code d’accès initial
+            ont été validés.
+
+            <br><br>
+
+            Créez maintenant
+            votre mot de passe personnel.
+
+            Le Président ne pourra
+            ni le consulter
+            ni le connaître.
+
+            Après son enregistrement,
+            le code d’accès initial
+            ne sera plus utilisable.
+          </div>
+
+          <label class="sportLabel">
+            Nouveau mot de passe
+          </label>
+
+          <input
+            id="sportCollaboratorNewPassword"
+            class="sportField"
+            type="password"
+            autocomplete="new-password"
+            placeholder="8 caractères minimum"
+          >
+
+          <label class="sportLabel">
+            Confirmer le nouveau mot de passe
+          </label>
+
+          <input
+            id="sportCollaboratorNewPasswordConfirm"
+            class="sportField"
+            type="password"
+            autocomplete="new-password"
+            placeholder="Répétez votre mot de passe"
+          >
+
+          <button
+            id="sportCollaboratorPasswordCreate"
+            class="sportBtn"
+            type="button"
+            style="
+              width:100%;
+              margin-top:14px;
+            "
+          >
+            Enregistrer mon mot de passe
+          </button>
+
+          <div
+            id="sportCollaboratorPasswordStatus"
+            class="sportStatus"
+          ></div>
+
+        </div>
+
+      </div>
+
+    `
+  );
+
+  sportSetModalHeader(
+    "Créer mon mot de passe avec"
+  );
+
+
+  window.setTimeout(
+    ()=>{
+
+      const button=
+        sportEl(
+          "sportCollaboratorPasswordCreate"
+        );
+
+      if(!button){
+        return;
+      }
+
+
+      button.onclick=
+        async ()=>{
+
+          const password=
+            String(
+              sportEl(
+                "sportCollaboratorNewPassword"
+              )?.value ||
+              ""
+            );
+
+          const confirmation=
+            String(
+              sportEl(
+                "sportCollaboratorNewPasswordConfirm"
+              )?.value ||
+              ""
+            );
+
+          const status=
+            sportEl(
+              "sportCollaboratorPasswordStatus"
+            );
+
+
+          if(
+            password.length <
+              8
+          ){
+
+            if(status){
+
+              status.textContent=
+                "Le mot de passe doit comporter au moins 8 caractères.";
+            }
+
+            return;
+          }
+
+
+          if(
+            password !==
+              confirmation
+          ){
+
+            if(status){
+
+              status.textContent=
+                "Les deux mots de passe ne correspondent pas.";
+            }
+
+            return;
+          }
+
+
+          const access=
+            sportAccess();
+
+
+          const index=
+            access.coaches
+              .findIndex(
+                item =>
+                  String(
+                    item.id
+                  ) ===
+                  String(
+                    collaborator.id
+                  )
+              );
+
+
+          if(index < 0){
+
+            if(status){
+
+              status.textContent=
+                "Cet accès n’est plus disponible.";
+            }
+
+            return;
+          }
+
+
+          if(
+            access.coaches[index]
+              .active ===
+                false
+          ){
+
+            if(status){
+
+              status.textContent=
+                "Cet accès est désactivé.";
+            }
+
+            return;
+          }
+
+
+          access.coaches[index]
+            .passwordHash=
+              await sportHash(
+                password
+              );
+
+
+          access.coaches[index]
+            .passwordInitialized=
+              true;
+
+
+          /*
+            Le code temporaire
+            est neutralisé après
+            la création du mot de passe.
+          */
+
+          access.coaches[index]
+            .codeHash=
+              "";
+
+
+          access.coaches[index]
+            .updatedAt=
+              Date.now();
+
+
+          sportSaveAccess(
+            access
+          );
+
+
+          sportResetFail(
+            access.coaches[index]
+              .identifier
+          );
+
+
+          sportRecordCollaboratorAccessEvent(
+            "password_created",
+            access.coaches[index]
+          );
+
+
+          sportSession={
+
+            role:
+              "coach",
+
+            accountId:
+              access.coaches[index].id,
+
+            name:
+              access.coaches[index].name ||
+              "Collaborateur",
+
+            team:
+              access.coaches[index].team ||
+              ""
+          };
+
+
+          window.bociteartSportSession=
+            sportSession;
+
+
+          openClubReserve();
+        };
+
+    },
+    0
+  );
+}
+
+/* =========================================================
+   ÇA FINIT ICI
+   SPORT — PREMIÈRE CONNEXION COLLABORATEUR
+   ========================================================= */
+  
+  function openClubAccess(){
 
   openModal(
     "Accès responsables avec Bo'CitéArt",
@@ -16328,13 +17068,21 @@ function openClubAccess(){
 
             <br><br>
 
-            Entrez ici l’identifiant personnel
-            et le code qui vous ont été remis.
-            Chaque accès reste rattaché
-            à la personne concernée
-            et peut être désactivé immédiatement
-            par la présidence.
-          </div>
+           Lors de votre première connexion,
+utilisez l’identifiant personnel
+et le code d’accès temporaire
+qui vous ont été remis.
+
+<br><br>
+
+Après avoir créé votre mot de passe personnel,
+utilisez ensuite votre identifiant
+et ce mot de passe pour vous connecter.
+
+Chaque accès reste rattaché
+à la personne concernée
+et peut être désactivé immédiatement
+par la présidence.
 
           <label class="sportLabel">
             Identifiant personnel
@@ -16348,7 +17096,7 @@ function openClubAccess(){
           >
 
           <label class="sportLabel">
-            Code personnel
+            Code d’accès ou mot de passe personnel 
           </label>
 
           <input
@@ -16438,7 +17186,7 @@ function openClubAccess(){
 
             if(o){
               o.textContent=
-                "Renseignez l’identifiant et le code.";
+                "Renseignez l’identifiant et votre code d’accès ou mot de passe personnel.";
             }
 
             return;
@@ -16452,7 +17200,7 @@ function openClubAccess(){
 
             if(o){
               o.textContent=
-                "Accès temporairement indisponible. Si aucune solution habituelle n’est possible, utilisez l’espace de contact Bo'CitéArt.";
+               "Accès temporairement indisponible. Contactez le président ou le responsable légal du club.";
             }
 
             return;
@@ -16551,7 +17299,7 @@ function openClubAccess(){
               if(o){
                 o.textContent=
                   locked
-                    ? "Accès temporairement indisponible. Si aucune solution habituelle n’est possible, utilisez l’espace de contact Bo'CitéArt."
+                    ? "Accès temporairement indisponible. Contactez le président ou le responsable légal du club."
                     : "Accès réservé aux collaborateurs autorisés.";
               }
 
@@ -16576,44 +17324,96 @@ function openClubAccess(){
                     false
               );
 
-          if(
-            collaborator &&
-            collaborator.codeHash ===
-              await sportHash(
-                code
-              )
-          ){
+        const enteredHash=
+  await sportHash(
+    code
+  );
 
-            sportResetFail(
-              id
-            );
 
-            sportSession={
-              role:
-                "coach",
-              accountId:
-                collaborator.id,
-              name:
-                collaborator.name ||
-                "Collaborateur",
-              team:
-                collaborator.team ||
-                ""
-            };
+const passwordAlreadyCreated=
+  collaborator &&
+  collaborator.passwordInitialized ===
+    true &&
+  !!collaborator.passwordHash;
 
-            window.bociteartSportSession=
-              sportSession;
 
-            sportRecordCollaboratorAccessEvent(
-              "login",
-              collaborator
-            );
+const validAccess=
+  collaborator &&
+  (
+    passwordAlreadyCreated
 
-            openClubReserve();
+      ? collaborator.passwordHash ===
+          enteredHash
 
-            return;
-          }
+      : collaborator.codeHash ===
+          enteredHash
+  );
 
+
+if(validAccess){
+
+  sportResetFail(
+    id
+  );
+
+
+  sportRecordCollaboratorAccessEvent(
+    "login",
+    collaborator
+  );
+
+
+  /*
+    PREMIÈRE CONNEXION :
+    le code temporaire est correct,
+    mais le collaborateur doit maintenant
+    créer son mot de passe personnel.
+  */
+
+  if(
+    !passwordAlreadyCreated
+  ){
+
+    openSportCollaboratorPasswordSetup(
+      collaborator
+    );
+
+    return;
+  }
+
+
+  /*
+    CONNEXIONS SUIVANTES :
+    identifiant + mot de passe personnel.
+  */
+
+  sportSession={
+
+    role:
+      "coach",
+
+    accountId:
+      collaborator.id,
+
+    name:
+      collaborator.name ||
+      "Collaborateur",
+
+    team:
+      collaborator.team ||
+      ""
+  };
+
+
+  window.bociteartSportSession=
+    sportSession;
+
+
+  openClubReserve();
+
+  return;
+}
+          
           const locked=
             sportFail(
               id
@@ -16622,7 +17422,7 @@ function openClubAccess(){
           if(o){
             o.textContent=
               locked
-                ? "Accès temporairement indisponible. Si aucune solution habituelle n’est possible, utilisez l’espace de contact Bo'CitéArt."
+                ? "Accès temporairement indisponible. Contactez le président ou le responsable légal du club."
                 : "Accès réservé aux collaborateurs autorisés.";
           }
         };
