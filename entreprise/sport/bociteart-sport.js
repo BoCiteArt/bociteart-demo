@@ -146,9 +146,6 @@
     governance:
       "bociteart_sport_governance_v1",
 
-    governanceReports:
-      "bociteart_sport_governance_reports_v1",
-
    mandateHistory:
   "bociteart_sport_mandate_history_v1",
 
@@ -191,9 +188,6 @@ continuitySecurity:
 
         governanceEndpoint:
           "",
-
-        governanceReportEndpoint:
-  "",
 
 continuityEndpoint:
   "",
@@ -2332,24 +2326,29 @@ function sportAccess(){
         {},
         coach,
         {
-          permissions:
-            Array.isArray(
-              coach.permissions
+         permissions:
+  Array.isArray(
+    coach.permissions
+  )
+    ? Array.from(
+        new Set(
+          coach.permissions
+            .map(
+              x =>
+                String(
+                  x ||
+                  ""
+                ).trim()
             )
-              ? Array.from(
-                  new Set(
-                    coach.permissions
-                      .map(
-                        x =>
-                          String(
-                            x ||
-                            ""
-                          ).trim()
-                      )
-                      .filter(Boolean)
-                  )
-                )
-              : []
+            .filter(Boolean)
+            .filter(
+              permission =>
+                permission !==
+                  "governance_report"
+            )
+        )
+      )
+    : []
         }
       );
     };
@@ -6518,386 +6517,6 @@ async function sportSaveGovernanceFromUi(){
   }
 }
 
-
-function sportGovernanceReports(){
-
-  const rows=
-    sportLoad(
-      SPORT_KEYS.governanceReports,
-      []
-    );
-
-  return Array.isArray(rows)
-    ? rows
-    : [];
-}
-
-
-function sportSaveGovernanceReports(rows){
-
-  return sportSave(
-    SPORT_KEYS.governanceReports,
-    Array.isArray(rows)
-      ? rows
-      : []
-  );
-}
-
-
-function sportGovernanceReportHtml(){
-
-  if(
-    !sportHasPermission(
-      "governance_report"
-    )
-  ){
-    return "";
-  }
-
-  return `
-
-    <div class="sportCard">
-
-      <div class="sportSubTitle">
-        Continuité de la structure sportive
-        avec ${sportBrandHtml()}
-      </div>
-
-      <div class="sportText" style="margin-top:8px;">
-
-        Un départ, un remplacement,
-        une indisponibilité ou une contestation
-        peut être signalé sans attendre
-        la transmission des anciens accès.
-
-        <br><br>
-
-        Le signalement est traité
-        confidentiellement.
-
-        Il ne modifie pas automatiquement
-        les droits d’une personne
-        tant que la situation
-        n’a pas été contrôlée.
-
-      </div>
-
-      <label class="sportLabel">
-        Situation
-      </label>
-
-      <select
-        id="sportGovReportType"
-        class="sportField"
-      >
-
-        <option value="">
-          Choisir
-        </option>
-
-        <option value="president_change">
-          Changement de Président / responsable légal
-        </option>
-
-        <option value="person_departure">
-          Départ d’une personne déclarée
-        </option>
-
-        <option value="person_removed">
-          Personne retirée de ses fonctions
-        </option>
-
-        <option value="unavailable">
-          Responsable indisponible
-        </option>
-
-        <option value="access_problem">
-          Problème d’accès ou de continuité
-        </option>
-
-        <option value="mandate_dispute">
-          Contestation concernant une fonction
-        </option>
-
-        <option value="other">
-          Autre changement
-        </option>
-
-      </select>
-
-      <label class="sportLabel">
-        Personne concernée
-      </label>
-
-      <input
-        id="sportGovReportPerson"
-        class="sportField"
-        placeholder="Nom et prénom"
-      >
-
-      <label class="sportLabel">
-        Précisions
-      </label>
-
-      <textarea
-        id="sportGovReportMessage"
-        class="sportField"
-        style="min-height:90px;"
-        placeholder="Indiquez simplement ce qui a changé."
-      ></textarea>
-
-      <button
-        id="sportGovReportSend"
-        class="sportBtn"
-        type="button"
-        style="
-          width:100%;
-          margin-top:14px;
-        "
-      >
-        Transmettre le changement
-      </button>
-
-      <div
-        id="sportGovReportStatus"
-        class="sportStatus"
-      ></div>
-
-    </div>
-
-  `;
-}
-
-
-async function sportSendGovernanceReport(){
-
-  if(
-    !sportHasPermission(
-      "governance_report"
-    )
-  ){
-    return;
-  }
-
-  const type=
-    String(
-      sportEl(
-        "sportGovReportType"
-      )?.value ||
-      ""
-    ).trim();
-
-  const person=
-    String(
-      sportEl(
-        "sportGovReportPerson"
-      )?.value ||
-      ""
-    ).trim();
-
-  const message=
-    String(
-      sportEl(
-        "sportGovReportMessage"
-      )?.value ||
-      ""
-    ).trim();
-
-  const status=
-    sportEl(
-      "sportGovReportStatus"
-    );
-
-  if(!type){
-
-    if(status){
-
-      status.textContent=
-        "Choisissez la situation à signaler.";
-    }
-
-    return;
-  }
-
-  if(
-    !person &&
-    !message
-  ){
-
-    if(status){
-
-      status.textContent=
-        "Indiquez la personne concernée ou une courte précision.";
-    }
-
-    return;
-  }
-
-  const report={
-
-    id:
-      "SPORT-GOV-" +
-      Date.now(),
-
-    clubId:
-      SPORT_CONFIG.clubId,
-
-    clubRef:
-      sportClub().clubRef ||
-      "",
-
-    type:
-      type,
-
-    person:
-      person,
-
-    message:
-      message,
-
-    reporterRole:
-      String(
-        sportSession.role ||
-        ""
-      ),
-
-    reporterAccountId:
-      String(
-        sportSession.accountId ||
-        ""
-      ),
-
-    reporterName:
-      String(
-        sportSession.name ||
-        ""
-      ),
-
-    confidential:
-      true,
-
-    status:
-      "pending_review",
-
-    createdAt:
-      new Date()
-        .toISOString()
-  };
-
-  if(
-    SPORT_CONFIG
-      .governanceReportEndpoint
-  ){
-
-    try{
-
-      const response=
-        await fetch(
-          SPORT_CONFIG
-            .governanceReportEndpoint,
-          {
-            method:"POST",
-            credentials:"include",
-            headers:{
-              "Content-Type":
-                "application/json"
-            },
-            body:
-              JSON.stringify(
-                report
-              )
-          }
-        );
-
-      if(!response.ok){
-
-        throw new Error(
-          "report_failed"
-        );
-      }
-
-      const result=
-        await response.json();
-
-      if(
-        result &&
-        result.reference
-      ){
-
-        report.serverReference=
-          String(
-            result.reference
-          );
-      }
-
-      report.status=
-        "transmitted";
-
-    }catch(error){
-
-      report.status=
-        "pending_transmission";
-    }
-  }
-
-  const rows=
-    sportGovernanceReports();
-
-  rows.push(
-    report
-  );
-
-  sportSaveGovernanceReports(
-    rows.slice(-100)
-  );
-
-  sportNotifyEvent(
-    "sport_governance_report",
-    {
-      reportId:
-        report.id,
-      reportType:
-        report.type,
-      confidential:
-        true
-    }
-  );
-
-  const typeEl=
-    sportEl(
-      "sportGovReportType"
-    );
-
-  if(typeEl){
-    typeEl.value="";
-  }
-
-  const personEl=
-    sportEl(
-      "sportGovReportPerson"
-    );
-
-  if(personEl){
-    personEl.value="";
-  }
-
-  const messageEl=
-    sportEl(
-      "sportGovReportMessage"
-    );
-
-  if(messageEl){
-    messageEl.value="";
-  }
-
-  if(status){
-
-    status.textContent=
-      "Signalement enregistré. La situation sera vérifiée avant toute modification des droits.";
-  }
-}
-
-
 function sportHistoryTimestamp(item){
 
   if(!item){
@@ -8290,20 +7909,6 @@ function sportPresidentHtml(){
       <div class="sportSubTitle" style="margin-top:16px;">
         Habilitations particulières
       </div>
-
-      <label class="sportCheck">
-
-        <input
-          id="sportCoachGovernanceReport"
-          type="checkbox"
-        >
-
-        <span>
-          Autoriser le signalement confidentiel
-          d’un changement de gouvernance
-        </span>
-
-      </label>
 
       <label class="sportCheck">
 
@@ -10352,7 +9957,7 @@ function sportResetCoachForm(){
   );
 
   [
-    "sportCoachGovernanceReport",
+    
     "sportCoachSolidarityManage"
   ].forEach(
     id =>{
@@ -10466,22 +10071,6 @@ function sportEditCoach(id){
         }
       }
     );
-
-  const governanceReport=
-    sportEl(
-      "sportCoachGovernanceReport"
-    );
-
-  if(governanceReport){
-
-    governanceReport.checked=
-      Array.isArray(
-        coach.permissions
-      ) &&
-      coach.permissions.includes(
-        "governance_report"
-      );
-  }
 
   const solidarityManage=
     sportEl(
@@ -11095,16 +10684,6 @@ async function sportCreateCoach(){
     ).trim();
 
   const permissions=[];
-
-  if(
-    sportEl(
-      "sportCoachGovernanceReport"
-    )?.checked
-  ){
-    permissions.push(
-      "governance_report"
-    );
-  }
 
   if(
     sportEl(
@@ -12997,11 +12576,29 @@ function openClubReserve(){
 
         </div>
 
+/* =========================================================
+   ÇA COMMENCE ICI
+   SPORT — SÉPARATION PRÉSIDENT / COLLABORATEUR
+   ========================================================= */
+
         ${sportResultsPrivateHtml()}
 
-        ${sportPresidentHtml()}
 
-        ${sportGovernanceReportHtml()}
+        ${
+          sportSession.role ===
+            "president"
+
+            ? `
+
+                ${sportPresidentHtml()}
+
+                ${sportPresidentHistoryHtml()}
+
+              `
+
+            : ""
+        }
+
 
         ${sportTrainingHtml()}
 
@@ -13011,9 +12608,13 @@ function openClubReserve(){
 
         ${sportBagHtml()}
 
-        ${sportPresidentHistoryHtml()}
 
         <div id="bociteSportFinanceMount"></div>
+
+/* =========================================================
+   ÇA FINIT ICI
+   SPORT — SÉPARATION PRÉSIDENT / COLLABORATEUR
+   ========================================================= */
 
         <div class="sportActions">
 
@@ -13085,19 +12686,6 @@ function openClubReserve(){
         governanceSave.onclick=
           sportSaveGovernanceFromUi;
       }
-
-
-      const governanceReportSend=
-        sportEl(
-          "sportGovReportSend"
-        );
-
-      if(governanceReportSend){
-
-        governanceReportSend.onclick=
-          sportSendGovernanceReport;
-      }
-
 
       const historyRefresh=
         sportEl(
@@ -16022,14 +15610,7 @@ function openSportContinuity(){
 
         </div>
 
-
         ${followHtml}
-
-
-               /* ======================================================
-           ÇA COMMENCE ICI
-           SPORT — CODE DE REPRISE SELON ÉTAT DU DOSSIER
-           ====================================================== */
 
         ${
           latest &&
@@ -16141,11 +15722,6 @@ function openSportContinuity(){
 
                 `
         }
-
-        /* ======================================================
-           ÇA FINIT ICI
-           SPORT — CODE DE REPRISE SELON ÉTAT DU DOSSIER
-           ====================================================== */
 
         ${adminHtml}
 
