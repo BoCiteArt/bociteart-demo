@@ -2764,6 +2764,1648 @@ function sportRenderAccessHistory(){
   }
 }
 
+/* =========================================================
+   SÉCURITÉ ACCÈS
+   ========================================================= */
+
+const sportNorm=
+  v =>
+    String(v || "")
+      .trim()
+      .toUpperCase()
+      .replace(/\s+/g,"");
+
+
+function sportSecurity(){
+
+  const x=
+    sportLoad(
+      SPORT_KEYS.accessSecurity,
+      {}
+    );
+
+  return (
+    x &&
+    typeof x ===
+      "object"
+  )
+    ? x
+    : {};
+}
+
+
+function sportLocked(id){
+
+  const k=
+    sportNorm(id);
+
+  const d=
+    sportSecurity();
+
+  const e=
+    d[k];
+
+  if(!e){
+    return false;
+  }
+
+  if(
+    Number(
+      e.lockedUntil ||
+      0
+    ) >
+    Date.now()
+  ){
+    return true;
+  }
+
+  if(e.lockedUntil){
+
+    delete d[k];
+
+    sportSave(
+      SPORT_KEYS.accessSecurity,
+      d
+    );
+  }
+
+  return false;
+}
+
+
+function sportFail(id){
+
+  const k=
+    sportNorm(id);
+
+  const d=
+    sportSecurity();
+
+  const e=
+    d[k] || {
+      failures:0,
+      lockedUntil:0
+    };
+
+  if(
+    e.lockedUntil &&
+    Date.now() >=
+      e.lockedUntil
+  ){
+
+    e.failures=0;
+    e.lockedUntil=0;
+  }
+
+  e.failures=
+    Number(
+      e.failures ||
+      0
+    ) + 1;
+
+  if(
+    e.failures >= 3
+  ){
+
+    e.lockedUntil=
+      Date.now() +
+      (
+        15 *
+        60 *
+        1000
+      );
+  }
+
+  d[k]=e;
+
+  sportSave(
+    SPORT_KEYS.accessSecurity,
+    d
+  );
+
+  try{
+
+    logPilotageAccess(
+      "Sport",
+      e.lockedUntil
+        ? "Accès responsable Sport temporairement verrouillé"
+        : "Échec accès responsable Sport"
+    );
+
+  }catch(_){}
+
+  return !!e.lockedUntil;
+}
+
+
+function sportResetFail(id){
+
+  const k=
+    sportNorm(id);
+
+  const d=
+    sportSecurity();
+
+  if(d[k]){
+
+    delete d[k];
+
+    sportSave(
+      SPORT_KEYS.accessSecurity,
+      d
+    );
+  }
+}
+
+
+/* =========================================================
+   RÉSULTATS
+   ========================================================= */
+
+const sportReports=()=>{
+
+  const x=
+    sportLoad(
+      SPORT_KEYS.reports,
+      []
+    );
+
+  return Array.isArray(x)
+    ? x
+    : [];
+};
+
+
+const sportSaveReports=
+  x =>
+    sportSave(
+      SPORT_KEYS.reports,
+      Array.isArray(x)
+        ? x.slice(-500)
+        : []
+    );
+
+
+/* =========================================================
+   ENTRAÎNEMENTS
+   ========================================================= */
+
+const sportTrainings=()=>{
+
+  const x=
+    sportLoad(
+      SPORT_KEYS.training,
+      []
+    );
+
+  return Array.isArray(x)
+    ? x
+    : [];
+};
+
+
+const sportSaveTrainings=
+  x =>
+    sportSave(
+      SPORT_KEYS.training,
+      Array.isArray(x)
+        ? x.slice(-400)
+        : []
+    );
+
+
+/* =========================================================
+   ÉCHANGES CABAS
+   ========================================================= */
+
+const sportExchanges=()=>{
+
+  const x=
+    sportLoad(
+      SPORT_KEYS.exchanges,
+      []
+    );
+
+  return Array.isArray(x)
+    ? x
+    : [];
+};
+
+
+const sportSaveExchanges=
+  x =>
+    sportSave(
+      SPORT_KEYS.exchanges,
+      Array.isArray(x)
+        ? x.slice(-500)
+        : []
+    );
+
+
+/* =========================================================
+   CONTACTS COMMERCES
+   ========================================================= */
+
+const sportContacts=()=>{
+
+  const x=
+    sportLoad(
+      SPORT_KEYS.contacts,
+      []
+    );
+
+  return Array.isArray(x)
+    ? x
+    : [];
+};
+
+
+const sportSaveContacts=
+  x =>
+    sportSave(
+      SPORT_KEYS.contacts,
+      Array.isArray(x)
+        ? x.slice(-500)
+        : []
+    );
+
+
+/* =========================================================
+   ASSOCIATIONS VALIDÉES
+   ========================================================= */
+
+function sportAssociations(){
+
+  const base=[
+
+    {
+      id:"A",
+      label:"Association solidaire A",
+      cause:
+        "En attente du choix défini par la mairie et Bo'CitéArt"
+    },
+
+    {
+      id:"B",
+      label:"Association solidaire B",
+      cause:
+        "En attente du choix défini par la mairie et Bo'CitéArt"
+    },
+
+    {
+      id:"C",
+      label:"Association solidaire C",
+      cause:
+        "En attente du choix défini par la mairie et Bo'CitéArt"
+    },
+
+    {
+      id:"D",
+      label:"Association solidaire D",
+      cause:
+        "En attente du choix défini par la mairie et Bo'CitéArt"
+    }
+
+  ].map(
+    x =>
+      Object.assign(
+        x,
+        {
+          active:false,
+          verified:false,
+          legalName:"",
+          sirenSiret:"",
+          rnaNumber:"",
+          accountingEmail:"",
+          canIssueRequiredDocument:false,
+          canIssueTaxReceipt:false,
+          fiscalEligibilityStatus:
+            "to_verify",
+          renewalEligible:true,
+          renewalBlockReason:""
+        }
+      )
+  );
+
+  const saved=
+    sportLoad(
+      SPORT_KEYS.associations,
+      []
+    );
+
+  const map={};
+
+  if(
+    Array.isArray(saved)
+  ){
+
+    saved.forEach(
+      x=>{
+
+        if(
+          x &&
+          x.id
+        ){
+
+          map[x.id]=x;
+        }
+      }
+    );
+  }
+
+  return base.map(
+    x =>
+      Object.assign(
+        {},
+        x,
+        map[x.id] || {}
+      )
+  );
+}
+
+
+const sportSaveAssociations=
+  x =>
+    sportSave(
+      SPORT_KEYS.associations,
+      Array.isArray(x)
+        ? x.slice(0,20)
+        : []
+    );
+
+
+const sportAssociationOK=
+  a =>
+    !!(
+      a &&
+      a.active === true &&
+      a.verified === true &&
+      a.canIssueRequiredDocument ===
+        true &&
+      a.renewalEligible !==
+        false
+    );
+
+
+/* =========================================================
+   DOSSIERS DE SOUTIEN
+   ========================================================= */
+
+const sportDossiers=()=>{
+
+  const x=
+    sportLoad(
+      SPORT_KEYS.dossiers,
+      []
+    );
+
+  return Array.isArray(x)
+    ? x
+    : [];
+};
+
+
+const sportSaveDossiers=
+  x =>
+    sportSave(
+      SPORT_KEYS.dossiers,
+      Array.isArray(x)
+        ? x.slice(-1000)
+        : []
+    );
+
+
+/* =========================================================
+   JUSTIFICATIFS
+   ========================================================= */
+
+const sportReceipts=()=>{
+
+  const x=
+    sportLoad(
+      SPORT_KEYS.receipts,
+      []
+    );
+
+  return Array.isArray(x)
+    ? x
+    : [];
+};
+
+
+const sportSaveReceipts=
+  x =>
+    sportSave(
+      SPORT_KEYS.receipts,
+      Array.isArray(x)
+        ? x.slice(-1000)
+        : []
+    );
+
+
+/* =========================================================
+   TRANSFERTS MAIRIE
+   ========================================================= */
+
+const sportMairieTransfers=()=>{
+
+  const x=
+    sportLoad(
+      SPORT_KEYS.mairieTransfers,
+      []
+    );
+
+  return Array.isArray(x)
+    ? x
+    : [];
+};
+
+
+const sportSaveMairieTransfers=
+  x =>
+    sportSave(
+      SPORT_KEYS.mairieTransfers,
+      Array.isArray(x)
+        ? x.slice(-1000)
+        : []
+    );
+
+
+/* =========================================================
+   RÉPARTITION D'UN SOUTIEN
+   ========================================================= */
+
+function sportAllocation(
+  mode,
+  amountHT
+){
+
+  const amount=
+    Math.round(
+      Number(
+        amountHT ||
+        0
+      ) *
+      100
+    ) / 100;
+
+  if(
+    !Number.isFinite(
+      amount
+    ) ||
+    amount <
+      Number(
+        SPORT_CONFIG.supportMinimumHT ||
+        50
+      )
+  ){
+    return null;
+  }
+
+  const code=
+    String(
+      mode ||
+      ""
+    ).toUpperCase();
+
+  if(
+    code ===
+      "ALL_CLUB" ||
+    code ===
+      "ALL-CLUB" ||
+    code ===
+      "100_CLUB" ||
+    String(mode) ===
+      "all_club"
+  ){
+
+    return {
+
+      mode:
+        "all_club",
+
+      allocationCode:
+        "ALL_CLUB",
+
+      amountHT:
+        amount,
+
+      clubHT:
+        amount,
+
+      associationHT:
+        0
+    };
+  }
+
+  if(
+    code ===
+      "HALF_HALF" ||
+    code ===
+      "50_50" ||
+    String(mode) ===
+      "half_half"
+  ){
+
+    const clubHT=
+      Math.round(
+        (
+          amount /
+          2
+        ) *
+        100
+      ) / 100;
+
+    const associationHT=
+      Math.round(
+        (
+          amount -
+          clubHT
+        ) *
+        100
+      ) / 100;
+
+    return {
+
+      mode:
+        "half_half",
+
+      allocationCode:
+        "HALF_HALF",
+
+      amountHT:
+        amount,
+
+      clubHT:
+        clubHT,
+
+      associationHT:
+        associationHT
+    };
+  }
+
+  return null;
+}
+
+
+/* =========================================================
+   PROJET DE JUSTIFICATIF ASSOCIATION
+   ========================================================= */
+
+function sportReceiptDraft(
+  d,
+  a
+){
+
+  if(
+    !d ||
+    !a ||
+    Number(
+      d.allocation
+        .associationHT ||
+      0
+    ) <= 0
+  ){
+    return null;
+  }
+
+  return {
+
+    id:
+      sportId(
+        "receipt"
+      ),
+
+    dossierId:
+      d.id,
+
+    operationRef:
+      d.operationRef,
+
+    associationId:
+      a.id,
+
+    associationName:
+      a.legalName ||
+      a.label,
+
+    donorName:
+      d.merchant.name,
+
+    donorSiret:
+      d.merchant.sirenSiret,
+
+    donorAddress:
+      d.merchant.address,
+
+    donorEmail:
+      d.merchant.accountingEmail ||
+      d.merchant.email,
+
+    amountHT:
+      d.allocation
+        .associationHT,
+
+    currency:
+      "EUR",
+
+    fiscalNature:
+      "to_validate_by_association",
+
+    documentTypeRequested:
+      "accounting_supporting_document",
+
+    taxReceiptAllowedOnlyIfAssociationConfirmsEligibility:
+      a.canIssueTaxReceipt ===
+      true,
+
+    status:
+      "waiting_association",
+
+    createdAt:
+      Date.now()
+  };
+}
+
+
+/* =========================================================
+   PROJET DE DOCUMENT CLUB
+   ========================================================= */
+
+function sportClubDocumentDraft(d){
+
+  if(
+    !d ||
+    Number(
+      d.allocation &&
+      d.allocation.clubHT ||
+      0
+    ) <= 0
+  ){
+    return null;
+  }
+
+  return {
+
+    id:
+      sportId(
+        "club-document"
+      ),
+
+    dossierId:
+      d.id,
+
+    operationRef:
+      d.operationRef,
+
+    beneficiaryClubRef:
+      d.club.clubRef,
+
+    beneficiaryName:
+      d.club.officialName ||
+      d.club.name,
+
+    beneficiarySiret:
+      d.club.sirenSiret,
+
+    beneficiaryVatStatus:
+      d.club.vatStatus,
+
+    beneficiaryVatNumber:
+      d.club.vatNumber,
+
+    customerName:
+      d.merchant.name,
+
+    customerSiret:
+      d.merchant.sirenSiret,
+
+    customerEmail:
+      d.merchant.accountingEmail ||
+      d.merchant.email,
+
+    amountHT:
+      d.allocation.clubHT,
+
+    currency:
+      "EUR",
+
+    documentType:
+      "invoice_or_accounting_document_to_validate",
+
+    vatTreatment:
+      "to_validate_from_club_fiscal_status",
+
+    status:
+      "waiting_club_validation",
+
+    createdAt:
+      Date.now()
+  };
+}
+
+
+/* =========================================================
+   CRÉATION D'UN DOSSIER DE SOUTIEN
+   ========================================================= */
+
+async function sportCreateSupportDossier(
+  scan,
+  merchant,
+  mode,
+  associationId,
+  amountHT
+){
+
+  const club=
+    sportClub();
+
+  const allocation=
+    sportAllocation(
+      mode,
+      amountHT
+    );
+
+  merchant=
+    merchant &&
+    typeof merchant ===
+      "object"
+      ? merchant
+      : {};
+
+  if(
+    !club.clubRef ||
+    !scan ||
+    scan.type !==
+      "sport_club_ref" ||
+    String(
+      scan.clubRef ||
+      ""
+    ) !==
+    String(
+      club.clubRef ||
+      ""
+    )
+  ){
+
+    return {
+      ok:false,
+      reason:
+        "invalid_club_scan"
+    };
+  }
+
+  if(!allocation){
+
+    return {
+      ok:false,
+      reason:
+        "invalid_allocation"
+    };
+  }
+
+  let association=null;
+
+  if(
+    allocation.associationHT >
+    0
+  ){
+
+    association=
+      sportAssociations()
+        .find(
+          x =>
+            String(
+              x.id
+            ) ===
+            String(
+              associationId ||
+              ""
+            )
+        );
+
+    if(
+      !sportAssociationOK(
+        association
+      )
+    ){
+
+      return {
+        ok:false,
+        reason:
+          "association_not_eligible"
+      };
+    }
+  }
+
+  const d={
+
+    id:
+      sportId(
+        "support"
+      ),
+
+    operationRef:
+      "BCA-SPORT-SOUTIEN-" +
+      Date.now(),
+
+    club:{
+
+      clubRef:
+        club.clubRef,
+
+      name:
+        club.name,
+
+      officialName:
+        club.officialName,
+
+      commune:
+        club.commune,
+
+      organizationType:
+        club.organizationType,
+
+      legalForm:
+        club.legalForm,
+
+      sirenSiret:
+        club.sirenSiret,
+
+      rnaNumber:
+        club.rnaNumber,
+
+      vatStatus:
+        club.vatStatus,
+
+      vatNumber:
+        club.vatNumber,
+
+      accountingEmail:
+        club.accountingEmail
+    },
+
+    merchant:{
+
+      id:
+        String(
+          merchant.id ||
+          merchant.merchantId ||
+          ""
+        ),
+
+      type:
+        String(
+          merchant.type ||
+          "professional"
+        ),
+
+      name:
+        String(
+          merchant.name ||
+          merchant.shopName ||
+          merchant.companyName ||
+          ""
+        ),
+
+      sirenSiret:
+        String(
+          merchant.sirenSiret ||
+          merchant.siret ||
+          ""
+        ),
+
+      address:
+        String(
+          merchant.address ||
+          ""
+        ),
+
+      email:
+        String(
+          merchant.email ||
+          ""
+        ),
+
+      accountingEmail:
+        String(
+          merchant.accountingEmail ||
+          merchant.email ||
+          ""
+        ),
+
+      phone:
+        String(
+          merchant.phone ||
+          ""
+        )
+    },
+
+    allocation:
+      allocation,
+
+    association:
+      association
+        ? {
+
+            id:
+              association.id,
+
+            label:
+              association.label,
+
+            legalName:
+              association.legalName,
+
+            accountingEmail:
+              association.accountingEmail
+          }
+        : null,
+
+    visibility:{
+
+      durationDays:
+        Number(
+          SPORT_CONFIG.publicityDays ||
+          3
+        ),
+
+      status:
+        "pending_payment_and_validation"
+    },
+
+    fiscalQualification:
+      "to_validate",
+
+    taxTreatment:
+      "not_hardcoded",
+
+    clubDocumentStatus:
+      allocation.clubHT > 0
+        ? "waiting_club_validation"
+        : "not_required",
+
+    receiptStatus:
+      allocation.associationHT > 0
+        ? "waiting_association"
+        : "not_required",
+
+    status:
+      "prepared",
+
+    createdAt:
+      Date.now()
+  };
+
+  d.clubDocumentDraft=
+    sportClubDocumentDraft(
+      d
+    );
+
+  d.receiptDraft=
+    association
+      ? sportReceiptDraft(
+          d,
+          association
+        )
+      : null;
+
+  if(
+    SPORT_CONFIG.supportEndpoint
+  ){
+
+    try{
+
+      const r=
+        await fetch(
+          SPORT_CONFIG.supportEndpoint,
+          {
+
+            method:
+              "POST",
+
+            credentials:
+              "include",
+
+            headers:{
+              "Content-Type":
+                "application/json"
+            },
+
+            body:
+              JSON.stringify(
+                d
+              )
+          }
+        );
+
+      if(r.ok){
+
+        const j=
+          await r.json();
+
+        if(
+          j &&
+          j.operationRef
+        ){
+
+          d.operationRef=
+            String(
+              j.operationRef
+            );
+        }
+
+        d.status=
+          "transmitted";
+      }
+
+    }catch(_){
+
+      d.status=
+        "waiting_transmission";
+    }
+  }
+
+  const all=
+    sportDossiers();
+
+  all.push(
+    d
+  );
+
+  sportSaveDossiers(
+    all
+  );
+
+  if(
+    d.receiptDraft
+  ){
+
+    const q=
+      sportReceipts();
+
+    q.push(
+      d.receiptDraft
+    );
+
+    sportSaveReceipts(
+      q
+    );
+  }
+
+  return {
+
+    ok:true,
+
+    dossier:
+      d
+  };
+}
+
+
+/* =========================================================
+   JUSTIFICATIF REÇU
+   ========================================================= */
+
+function sportMarkReceiptReceived(
+  dossierId,
+  doc
+){
+
+  const all=
+    sportDossiers();
+
+  const i=
+    all.findIndex(
+      x =>
+        String(
+          x.id
+        ) ===
+        String(
+          dossierId
+        )
+    );
+
+  if(i < 0){
+
+    return {
+      ok:false
+    };
+  }
+
+  all[i].receiptStatus=
+    "received";
+
+  all[i].receiptDocument=
+    doc || {};
+
+  all[i].receiptReceivedAt=
+    Date.now();
+
+  sportSaveDossiers(
+    all
+  );
+
+  const q=
+    sportReceipts();
+
+  const j=
+    q.findIndex(
+      x =>
+        String(
+          x.dossierId
+        ) ===
+        String(
+          dossierId
+        )
+    );
+
+  if(j >= 0){
+
+    q[j].status=
+      "received";
+
+    q[j].receivedAt=
+      Date.now();
+
+    sportSaveReceipts(
+      q
+    );
+  }
+
+  return {
+    ok:true
+  };
+}
+
+
+/* =========================================================
+   JUSTIFICATIF MANQUANT
+   ========================================================= */
+
+function sportMarkReceiptMissing(
+  dossierId
+){
+
+  const all=
+    sportDossiers();
+
+  const i=
+    all.findIndex(
+      x =>
+        String(
+          x.id
+        ) ===
+        String(
+          dossierId
+        )
+    );
+
+  if(
+    i < 0 ||
+    !all[i].association
+  ){
+
+    return {
+      ok:false
+    };
+  }
+
+  all[i].receiptStatus=
+    "missing_blocks_renewal";
+
+  sportSaveDossiers(
+    all
+  );
+
+  const a=
+    sportAssociations();
+
+  const j=
+    a.findIndex(
+      x =>
+        String(
+          x.id
+        ) ===
+        String(
+          all[i]
+            .association
+            .id
+        )
+    );
+
+  if(j >= 0){
+
+    a[j].renewalEligible=
+      false;
+
+    a[j].renewalBlockReason=
+      "Justificatif obligatoire non retourné";
+
+    sportSaveAssociations(
+      a
+    );
+  }
+
+  return {
+    ok:true
+  };
+}
+
+
+/* =========================================================
+   CODE DYNAMIQUE DU CLUB
+   ========================================================= */
+
+function sportClubCode(){
+
+  const c=
+    sportClub();
+
+  const representative={
+
+    ref:
+      String(
+        sportSession.accountId ||
+        sportSession.role ||
+        ""
+      ),
+
+    name:
+      String(
+        sportSession.name ||
+        "Responsable du club"
+      ),
+
+    role:
+      String(
+        sportSession.role ||
+        ""
+      ),
+
+    team:
+      String(
+        sportSession.team ||
+        ""
+      )
+  };
+
+  const now=
+    Date.now();
+
+  const expiresAt=
+    now +
+    (
+      2 *
+      60 *
+      1000
+    );
+
+  const scanToken=
+    SPORT_CONFIG.mode ===
+      "production"
+      ? ""
+      : (
+          "SPORT-" +
+          Math.random()
+            .toString(36)
+            .slice(2,8)
+            .toUpperCase() +
+          "-" +
+          String(
+            now
+          ).slice(-6)
+        );
+
+  return {
+
+    type:
+      "sport_club_ref",
+
+    clubId:
+      c.id,
+
+    clubRef:
+      String(
+        c.clubRef ||
+        ""
+      ),
+
+    clubName:
+      String(
+        c.name ||
+        ""
+      ),
+
+    commune:
+      String(
+        c.commune ||
+        ""
+      ),
+
+    organizationType:
+      String(
+        c.organizationType ||
+        ""
+      ),
+
+    presentedBy:
+      representative,
+
+    scanToken:
+      scanToken,
+
+    issuedAt:
+      now,
+
+    expiresAt:
+      expiresAt,
+
+    ts:
+      now
+  };
+}
+
+
+/* =========================================================
+   JUSTIFICATIF AUTOMATIQUE D'ÉCHANGE CABAS
+   ========================================================= */
+
+function sportCreateBagExchangeReceipt(
+  exchange,
+  balance
+){
+
+  if(!exchange){
+    return null;
+  }
+
+  const receipt={
+
+    id:
+      sportId(
+        "bag-receipt"
+      ),
+
+    documentType:
+      "sport_bag_exchange_receipt",
+
+    operationRef:
+      String(
+        exchange.operationRef ||
+        exchange.id ||
+        ""
+      ),
+
+    clubRef:
+      String(
+        exchange.clubRef ||
+        ""
+      ),
+
+    clubName:
+      String(
+        exchange.clubName ||
+        ""
+      ),
+
+    amount:
+      Number(
+        exchange.amount ||
+        30
+      ),
+
+    balanceAfter:
+      Number(
+        balance ||
+        0
+      ),
+
+    actor:
+      exchange.actor ||
+      {},
+
+    representative:
+      exchange.representative ||
+      {},
+
+    purchase:
+      exchange.purchase
+        ? {
+
+            amountTTC:
+              Number(
+                exchange.purchase
+                  .amountTTC ||
+                0
+              ),
+
+            reference:
+              String(
+                exchange.purchase
+                  .reference ||
+                ""
+              )
+          }
+        : null,
+
+    validatedAt:
+      exchange.validatedAt ||
+      Date.now(),
+
+    status:
+      "recorded",
+
+    createdAt:
+      Date.now()
+  };
+
+  const receipts=
+    sportReceipts();
+
+  receipts.push(
+    receipt
+  );
+
+  sportSaveReceipts(
+    receipts
+  );
+
+  return receipt;
+}
+
+
+/* =========================================================
+   NOTIFICATION D'UN ÉCHANGE CABAS
+   ========================================================= */
+
+async function sportNotifyBagExchange(
+  exchange,
+  balance,
+  receipt
+){
+
+  if(!exchange){
+
+    return {
+      ok:false
+    };
+  }
+
+  const payload={
+
+    event:
+      "sport_bag_redeemed",
+
+    operationRef:
+      String(
+        exchange.operationRef ||
+        exchange.id ||
+        ""
+      ),
+
+    receiptId:
+      String(
+        receipt &&
+        receipt.id ||
+        ""
+      ),
+
+    documentType:
+      "sport_bag_exchange_receipt",
+
+    clubRef:
+      String(
+        exchange.clubRef ||
+        ""
+      ),
+
+    clubName:
+      String(
+        exchange.clubName ||
+        ""
+      ),
+
+    amount:
+      Number(
+        exchange.amount ||
+        30
+      ),
+
+    balance:
+      Number(
+        balance ||
+        0
+      ),
+
+    actor:
+      exchange.actor ||
+      {},
+
+    representative:
+      exchange.representative ||
+      {},
+
+    purchase:
+      exchange.purchase
+        ? {
+
+            amountTTC:
+              Number(
+                exchange.purchase
+                  .amountTTC ||
+                0
+              ),
+
+            reference:
+              String(
+                exchange.purchase
+                  .reference ||
+                ""
+              )
+          }
+        : null,
+
+    validatedAt:
+      exchange.validatedAt ||
+      Date.now(),
+
+    requestedChannels:[
+      "in_app",
+      "email",
+      "sms"
+    ]
+  };
+
+  if(
+    !SPORT_CONFIG.notificationEndpoint
+  ){
+
+    return {
+
+      ok:true,
+
+      pending:true,
+
+      payload:
+        payload
+    };
+  }
+
+  try{
+
+    const response=
+      await fetch(
+        SPORT_CONFIG.notificationEndpoint,
+        {
+
+          method:
+            "POST",
+
+          credentials:
+            "include",
+
+          headers:{
+            "Content-Type":
+              "application/json"
+          },
+
+          body:
+            JSON.stringify(
+              payload
+            )
+        }
+      );
+
+    if(
+      !response.ok
+    ){
+
+      return {
+
+        ok:false,
+
+        pending:true
+      };
+    }
+
+    return {
+
+      ok:true,
+
+      sent:true
+    };
+
+  }catch(error){
+
+    return {
+
+      ok:false,
+
+      pending:true
+    };
+  }
+}
 
 async function sportValidateBag(
   scan,
@@ -4835,12 +6477,10 @@ function sportRunSeason(){
   }
 }
 
-
 window.BociteSportSeasonMaintenance={
   run:
     sportRunSeason
 };
-
 
 function sportPublicResultsHtml(){
 
@@ -4900,6 +6540,84 @@ function sportPublicResultsHtml(){
     `
   ).join("");
 }
+
+
+/* =========================================================
+   PRÉSENTATION PUBLIQUE — CE QUE LE SPORT FAIT GRANDIR
+   ========================================================= */
+
+function sportBenefitsHtml(){
+
+  return `
+
+    ${sportTitle(
+      "Ce que le sport fait grandir avec"
+    )}
+
+    <div class="sportCard">
+
+      <div class="sportText">
+
+        Le sport rassemble bien au-delà
+        des entraînements et des compétitions.
+
+        <br><br>
+
+        Il apprend à avancer ensemble,
+        à respecter les autres,
+        à prendre soin des lieux,
+        du matériel
+        et de ce qui appartient à tous.
+
+        <br><br>
+
+        Avec ${sportBrandHtml()},
+        les efforts des équipes,
+        les résultats sportifs
+        et les gestes collectifs
+        contribuent également
+        à faire vivre le club
+        et son territoire.
+
+        <br><br>
+
+        Les jeunes découvrent concrètement
+        que leurs actions,
+        leurs choix
+        et leur engagement
+        peuvent produire quelque chose
+        d’utile pour tout le groupe.
+
+        <br><br>
+
+        Clubs,
+        familles,
+        habitants,
+        commerces partenaires,
+        associations
+        et acteurs locaux
+        se rapprochent ainsi
+        autour de la vie sportive.
+
+        <br><br>
+
+        Le sport devient aussi
+        une façon simple
+        de mieux connaître
+        ce qui existe autour de soi,
+        de soutenir la vie locale
+        et de transmettre naturellement
+        des valeurs de respect,
+        de partage
+        et de responsabilité.
+
+      </div>
+
+    </div>
+
+  `;
+}
+
 
 /* =========================================================
    BLOC SPORT 5
