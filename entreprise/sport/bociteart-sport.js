@@ -154,7 +154,10 @@ continuityRequests:
 "bociteart_sport_continuity_requests_v1",
 
 continuitySecurity:
-"bociteart_sport_continuity_security_v1"
+"bociteart_sport_continuity_security_v1",
+
+youthSponsorship:
+"bociteart_sport_youth_sponsorship_choice_v1"
 
 };
 
@@ -213,10 +216,22 @@ paymentStatusEndpoint:
 "",
 
 billingProductCode:
-"SPORT_TAPE_5D",
+"SPORT_TAPE_3D",
 
 supportMinimumHT:
 50,
+
+publicityDays:
+3,
+
+publicityDailyCapacity:
+6,
+
+publicityHoldMinutes:
+15,
+
+publicityManualExtensionMinutes:
+5,
 
 schoolYearEndMonthDay:
 "07-07",
@@ -496,7 +511,7 @@ const sportBrandHtml=
 ========================================================= */
 
 function sportSetModalHeader(
-before
+  before
 ){
 
   const applyHeader=
@@ -507,23 +522,7 @@ before
           "modalTitle"
         );
 
-      const body=
-        sportEl(
-          "modalBody"
-        );
-
-      if(
-        !title ||
-        !body
-      ){
-        return;
-      }
-
-      if(
-        !body.querySelector(
-          ".bociteSportRoot"
-        )
-      ){
+      if(!title){
         return;
       }
 
@@ -543,19 +542,18 @@ before
 
   applyHeader();
 
-  window.setTimeout(
-    applyHeader,
-    0
-  );
-
-  window.setTimeout(
-    applyHeader,
-    60
-  );
-
-  window.setTimeout(
-    applyHeader,
-    180
+  [
+    50,
+    150,
+    300,
+    600,
+    1000
+  ].forEach(
+    delay =>
+      window.setTimeout(
+        applyHeader,
+        delay
+      )
   );
 }
 /* =========================================================
@@ -599,7 +597,6 @@ after
 
 `;
 }
-
 
 /* =========================================================
 STYLES DU MODULE SPORT
@@ -2166,7 +2163,7 @@ function sportDebitRemainder(
       0
   };
 }
-   
+
 /* =========================================================
 ACCÈS — COLLABORATEURS
 ========================================================= */
@@ -2237,7 +2234,6 @@ passwordInitialized:
   coach.passwordInitialized ===
     true,
 
-  
 permissions:
 Array.isArray(
 coach.permissions
@@ -2256,7 +2252,9 @@ x ||
 .filter(
 permission =>
 permission !==
-"governance_report"
+"governance_report" &&
+permission !==
+"solidarity_manage"
 )
 )
 )
@@ -2597,11 +2595,11 @@ function sportRenderAccessHistory(){
     code_renewed:
       "Code renouvelé",
 
-   password_created:
-  "Mot de passe personnel créé",
+    password_created:
+      "Mot de passe personnel créé",
 
-password_changed:
-  "Mot de passe personnel modifié", 
+    password_changed:
+      "Mot de passe personnel modifié",
 
     login:
       "Connexion collaborateur"
@@ -2681,1397 +2679,6 @@ password_changed:
         ).join("")
       : '<div class="sportStatus">Aucun événement d’accès enregistré.</div>';
 }
-   
-/* =========================================================
-SÉCURITÉ ACCÈS
-========================================================= */
-
-const sportNorm=
-v =>
-String(v||"")
-.trim()
-.toUpperCase()
-.replace(/\s+/g,"");
-
-
-function sportSecurity(){
-
-const x=
-sportLoad(
-SPORT_KEYS.accessSecurity,
-{}
-);
-
-return (
-x &&
-typeof x ===
-"object"
-)
-? x
-: {};
-}
-
-
-function sportLocked(id){
-
-const k=
-sportNorm(id);
-
-const d=
-sportSecurity();
-
-const e=
-d[k];
-
-if(!e){
-
-return false;
-}
-
-if(
-Number(
-e.lockedUntil ||
-0
-) >
-Date.now()
-){
-
-return true;
-}
-
-if(e.lockedUntil){
-
-delete d[k];
-
-sportSave(
-SPORT_KEYS.accessSecurity,
-d
-);
-}
-
-return false;
-}
-
-
-function sportFail(id){
-
-const k=
-sportNorm(id);
-
-const d=
-sportSecurity();
-
-const e=
-d[k] || {
-
-failures:0,
-lockedUntil:0
-
-};
-
-if(
-e.lockedUntil &&
-Date.now() >=
-e.lockedUntil
-){
-
-e.failures=0;
-e.lockedUntil=0;
-}
-
-e.failures=
-Number(
-e.failures ||
-0
-) + 1;
-
-if(
-e.failures >=
-3
-){
-
-e.lockedUntil=
-Date.now() +
-(
-15 *
-60 *
-1000
-);
-}
-
-d[k]=e;
-
-sportSave(
-SPORT_KEYS.accessSecurity,
-d
-);
-
-try{
-
-logPilotageAccess(
-"Sport",
-e.lockedUntil
-? "Accès responsable Sport temporairement verrouillé"
-: "Échec accès responsable Sport"
-);
-
-}catch(_){}
-
-return !!e.lockedUntil;
-}
-
-
-function sportResetFail(id){
-
-const k=
-sportNorm(id);
-
-const d=
-sportSecurity();
-
-if(d[k]){
-
-delete d[k];
-
-sportSave(
-SPORT_KEYS.accessSecurity,
-d
-);
-}
-}
-
- const sportReports=()=>{
-
-  const x=
-    sportLoad(
-      SPORT_KEYS.reports,
-      []
-    );
-
-  return Array.isArray(x)
-    ? x
-    : [];
-};
-
-
-const sportSaveReports =
-  x =>
-    sportSave(
-      SPORT_KEYS.reports,
-      Array.isArray(x)
-        ? x.slice(-500)
-        : []
-    );
-
-
-const sportTrainings=()=>{
-
-  const x=
-    sportLoad(
-      SPORT_KEYS.training,
-      []
-    );
-
-  return Array.isArray(x)
-    ? x
-    : [];
-};
-
-
-const sportSaveTrainings =
-  x =>
-    sportSave(
-      SPORT_KEYS.training,
-      Array.isArray(x)
-        ? x.slice(-400)
-        : []
-    );
-
-
-const sportExchanges=()=>{
-
-  const x=
-    sportLoad(
-      SPORT_KEYS.exchanges,
-      []
-    );
-
-  return Array.isArray(x)
-    ? x
-    : [];
-};
-
-
-const sportSaveExchanges =
-  x =>
-    sportSave(
-      SPORT_KEYS.exchanges,
-      Array.isArray(x)
-        ? x.slice(-500)
-        : []
-    );
-
-
-const sportContacts=()=>{
-
-  const x=
-    sportLoad(
-      SPORT_KEYS.contacts,
-      []
-    );
-
-  return Array.isArray(x)
-    ? x
-    : [];
-};
-
-
-const sportSaveContacts =
-  x =>
-    sportSave(
-      SPORT_KEYS.contacts,
-      Array.isArray(x)
-        ? x.slice(-500)
-        : []
-    );
-
-
-function sportAssociations(){
-
-  const base=[
-
-    {
-      id:"A",
-      label:"Association solidaire A",
-      cause:
-        "En attente du choix défini par la mairie et Bo'CitéArt"
-    },
-
-    {
-      id:"B",
-      label:"Association solidaire B",
-      cause:
-        "En attente du choix défini par la mairie et Bo'CitéArt"
-    },
-
-    {
-      id:"C",
-      label:"Association solidaire C",
-      cause:
-        "En attente du choix défini par la mairie et Bo'CitéArt"
-    },
-
-    {
-      id:"D",
-      label:"Association solidaire D",
-      cause:
-        "En attente du choix défini par la mairie et Bo'CitéArt"
-    }
-
-  ].map(
-    x =>
-      Object.assign(
-        x,
-        {
-          active:false,
-          verified:false,
-          legalName:"",
-          sirenSiret:"",
-          rnaNumber:"",
-          accountingEmail:"",
-          canIssueRequiredDocument:false,
-          canIssueTaxReceipt:false,
-          fiscalEligibilityStatus:"to_verify",
-          renewalEligible:true,
-          renewalBlockReason:""
-        }
-      )
-  );
-
-  const saved=
-    sportLoad(
-      SPORT_KEYS.associations,
-      []
-    );
-
-  const map={};
-
-  if(
-    Array.isArray(saved)
-  ){
-
-    saved.forEach(
-      x=>{
-
-        if(
-          x &&
-          x.id
-        ){
-          map[x.id]=x;
-        }
-      }
-    );
-  }
-
-  return base.map(
-    x =>
-      Object.assign(
-        {},
-        x,
-        map[x.id] || {}
-      )
-  );
-}
-
-
-const sportSaveAssociations =
-  x =>
-    sportSave(
-      SPORT_KEYS.associations,
-      Array.isArray(x)
-        ? x.slice(0,20)
-        : []
-    );
-
-
-const sportAssociationOK =
-  a =>
-    !!(
-      a &&
-      a.active === true &&
-      a.verified === true &&
-      a.canIssueRequiredDocument === true &&
-      a.renewalEligible !== false
-    );
-
-
-const sportDossiers=()=>{
-
-  const x=
-    sportLoad(
-      SPORT_KEYS.dossiers,
-      []
-    );
-
-  return Array.isArray(x)
-    ? x
-    : [];
-};
-
-
-const sportSaveDossiers =
-  x =>
-    sportSave(
-      SPORT_KEYS.dossiers,
-      Array.isArray(x)
-        ? x.slice(-1000)
-        : []
-    );
-
-
-const sportReceipts=()=>{
-
-  const x=
-    sportLoad(
-      SPORT_KEYS.receipts,
-      []
-    );
-
-  return Array.isArray(x)
-    ? x
-    : [];
-};
-
-
-const sportSaveReceipts =
-  x =>
-    sportSave(
-      SPORT_KEYS.receipts,
-      Array.isArray(x)
-        ? x.slice(-1000)
-        : []
-    );
-
-
-const sportMairieTransfers=()=>{
-
-  const x=
-    sportLoad(
-      SPORT_KEYS.mairieTransfers,
-      []
-    );
-
-  return Array.isArray(x)
-    ? x
-    : [];
-};
-
-
-const sportSaveMairieTransfers =
-  x =>
-    sportSave(
-      SPORT_KEYS.mairieTransfers,
-      Array.isArray(x)
-        ? x.slice(-1000)
-        : []
-    );
-
-
-function sportAllocation(
-  mode,
-  amountHT
-){
-
-  const amount=
-    Math.round(
-      Number(amountHT || 0) *
-      100
-    ) / 100;
-
-  if(
-    !Number.isFinite(amount) ||
-    amount <
-      Number(
-        SPORT_CONFIG.supportMinimumHT ||
-        50
-      )
-  ){
-    return null;
-  }
-
-  const code=
-    String(
-      mode ||
-      ""
-    ).toUpperCase();
-
-  if(
-    code === "ALL_CLUB" ||
-    code === "ALL-CLUB" ||
-    code === "100_CLUB" ||
-    String(mode) === "all_club"
-  ){
-
-    return {
-
-      mode:
-        "all_club",
-
-      allocationCode:
-        "ALL_CLUB",
-
-      amountHT:
-        amount,
-
-      clubHT:
-        amount,
-
-      associationHT:
-        0
-    };
-  }
-
-  if(
-    code === "HALF_HALF" ||
-    code === "50_50" ||
-    String(mode) === "half_half"
-  ){
-
-    const clubHT=
-      Math.round(
-        (
-          amount /
-          2
-        ) *
-        100
-      ) / 100;
-
-    const associationHT=
-      Math.round(
-        (
-          amount -
-          clubHT
-        ) *
-        100
-      ) / 100;
-
-    return {
-
-      mode:
-        "half_half",
-
-      allocationCode:
-        "HALF_HALF",
-
-      amountHT:
-        amount,
-
-      clubHT:
-        clubHT,
-
-      associationHT:
-        associationHT
-    };
-  }
-
-  return null;
-}
-
-
-function sportReceiptDraft(
-  d,
-  a
-){
-
-  if(
-    !d ||
-    !a ||
-    Number(
-      d.allocation
-        .associationHT ||
-      0
-    ) <= 0
-  ){
-    return null;
-  }
-
-  return {
-
-    id:
-      sportId("receipt"),
-
-    dossierId:
-      d.id,
-
-    operationRef:
-      d.operationRef,
-
-    associationId:
-      a.id,
-
-    associationName:
-      a.legalName ||
-      a.label,
-
-    donorName:
-      d.merchant.name,
-
-    donorSiret:
-      d.merchant.sirenSiret,
-
-    donorAddress:
-      d.merchant.address,
-
-    donorEmail:
-      d.merchant.accountingEmail ||
-      d.merchant.email,
-
-    amountHT:
-      d.allocation.associationHT,
-
-    currency:
-      "EUR",
-
-    fiscalNature:
-      "to_validate_by_association",
-
-    documentTypeRequested:
-      "accounting_supporting_document",
-
-    taxReceiptAllowedOnlyIfAssociationConfirmsEligibility:
-      a.canIssueTaxReceipt === true,
-
-    status:
-      "waiting_association",
-
-    createdAt:
-      Date.now()
-  };
-}
-
-
-function sportClubDocumentDraft(d){
-
-  if(
-    !d ||
-    Number(
-      d.allocation &&
-      d.allocation.clubHT ||
-      0
-    ) <= 0
-  ){
-    return null;
-  }
-
-  return {
-
-    id:
-      sportId(
-        "club-document"
-      ),
-
-    dossierId:
-      d.id,
-
-    operationRef:
-      d.operationRef,
-
-    beneficiaryClubRef:
-      d.club.clubRef,
-
-    beneficiaryName:
-      d.club.officialName ||
-      d.club.name,
-
-    beneficiarySiret:
-      d.club.sirenSiret,
-
-    beneficiaryVatStatus:
-      d.club.vatStatus,
-
-    beneficiaryVatNumber:
-      d.club.vatNumber,
-
-    customerName:
-      d.merchant.name,
-
-    customerSiret:
-      d.merchant.sirenSiret,
-
-    customerEmail:
-      d.merchant.accountingEmail ||
-      d.merchant.email,
-
-    amountHT:
-      d.allocation.clubHT,
-
-    currency:
-      "EUR",
-
-    documentType:
-      "invoice_or_accounting_document_to_validate",
-
-    vatTreatment:
-      "to_validate_from_club_fiscal_status",
-
-    status:
-      "waiting_club_validation",
-
-    createdAt:
-      Date.now()
-  };
-}
-
-
-async function sportCreateSupportDossier(
-  scan,
-  merchant,
-  mode,
-  associationId,
-  amountHT
-){
-
-  const club=
-    sportClub();
-
-  const allocation=
-    sportAllocation(
-      mode,
-      amountHT
-    );
-
-  merchant=
-    merchant &&
-    typeof merchant === "object"
-      ? merchant
-      : {};
-
-  if(
-    !club.clubRef ||
-    !scan ||
-    scan.type !==
-      "sport_club_ref" ||
-    String(
-      scan.clubRef ||
-      ""
-    ) !==
-    String(
-      club.clubRef ||
-      ""
-    )
-  ){
-
-    return {
-      ok:false,
-      reason:
-        "invalid_club_scan"
-    };
-  }
-
-  if(!allocation){
-
-    return {
-      ok:false,
-      reason:
-        "invalid_allocation"
-    };
-  }
-
-  let association=null;
-
-  if(
-    allocation.associationHT >
-    0
-  ){
-
-    association=
-      sportAssociations()
-        .find(
-          x =>
-            String(x.id) ===
-            String(
-              associationId ||
-              ""
-            )
-        );
-
-    if(
-      !sportAssociationOK(
-        association
-      )
-    ){
-
-      return {
-        ok:false,
-        reason:
-          "association_not_eligible"
-      };
-    }
-  }
-
-  const d={
-
-    id:
-      sportId("support"),
-
-    operationRef:
-      "BCA-SPORT-SOUTIEN-" +
-      Date.now(),
-
-    club:{
-
-      clubRef:
-        club.clubRef,
-
-      name:
-        club.name,
-
-      officialName:
-        club.officialName,
-
-      commune:
-        club.commune,
-
-      organizationType:
-        club.organizationType,
-
-      legalForm:
-        club.legalForm,
-
-      sirenSiret:
-        club.sirenSiret,
-
-      rnaNumber:
-        club.rnaNumber,
-
-      vatStatus:
-        club.vatStatus,
-
-      vatNumber:
-        club.vatNumber,
-
-      accountingEmail:
-        club.accountingEmail
-    },
-
-    merchant:{
-
-      id:
-        String(
-          merchant.id ||
-          merchant.merchantId ||
-          ""
-        ),
-
-      type:
-        String(
-          merchant.type ||
-          "professional"
-        ),
-
-      name:
-        String(
-          merchant.name ||
-          merchant.shopName ||
-          merchant.companyName ||
-          ""
-        ),
-
-      sirenSiret:
-        String(
-          merchant.sirenSiret ||
-          merchant.siret ||
-          ""
-        ),
-
-      address:
-        String(
-          merchant.address ||
-          ""
-        ),
-
-      email:
-        String(
-          merchant.email ||
-          ""
-        ),
-
-      accountingEmail:
-        String(
-          merchant.accountingEmail ||
-          merchant.email ||
-          ""
-        ),
-
-      phone:
-        String(
-          merchant.phone ||
-          ""
-        )
-    },
-
-    allocation:
-      allocation,
-
-    association:
-      association
-        ? {
-            id:
-              association.id,
-
-            label:
-              association.label,
-
-            legalName:
-              association.legalName,
-
-            accountingEmail:
-              association.accountingEmail
-          }
-        : null,
-
-    visibility:{
-      durationDays:5,
-      status:
-        "pending_payment_and_validation"
-    },
-
-    fiscalQualification:
-      "to_validate",
-
-    taxTreatment:
-      "not_hardcoded",
-
-    clubDocumentStatus:
-      allocation.clubHT > 0
-        ? "waiting_club_validation"
-        : "not_required",
-
-    receiptStatus:
-      allocation.associationHT > 0
-        ? "waiting_association"
-        : "not_required",
-
-    status:
-      "prepared",
-
-    createdAt:
-      Date.now()
-  };
-
-  d.clubDocumentDraft=
-    sportClubDocumentDraft(d);
-
-  d.receiptDraft=
-    association
-      ? sportReceiptDraft(
-          d,
-          association
-        )
-      : null;
-
-  if(
-    SPORT_CONFIG.supportEndpoint
-  ){
-
-    try{
-
-      const r=
-        await fetch(
-          SPORT_CONFIG.supportEndpoint,
-          {
-            method:"POST",
-            credentials:"include",
-            headers:{
-              "Content-Type":
-                "application/json"
-            },
-            body:
-              JSON.stringify(d)
-          }
-        );
-
-      if(r.ok){
-
-        const j=
-          await r.json();
-
-        if(
-          j &&
-          j.operationRef
-        ){
-          d.operationRef=
-            String(
-              j.operationRef
-            );
-        }
-
-        d.status=
-          "transmitted";
-      }
-
-    }catch(_){
-
-      d.status=
-        "waiting_transmission";
-    }
-  }
-
-  const all=
-    sportDossiers();
-
-  all.push(d);
-
-  sportSaveDossiers(all);
-
-  if(d.receiptDraft){
-
-    const q=
-      sportReceipts();
-
-    q.push(
-      d.receiptDraft
-    );
-
-    sportSaveReceipts(q);
-  }
-
-  return {
-    ok:true,
-    dossier:d
-  };
-}
-
-function sportMarkReceiptReceived(
-  dossierId,
-  doc
-){
-
-  const all=
-    sportDossiers();
-
-  const i=
-    all.findIndex(
-      x =>
-        String(x.id) ===
-        String(dossierId)
-    );
-
-  if(i < 0){
-
-    return {
-      ok:false
-    };
-  }
-
-  all[i].receiptStatus=
-    "received";
-
-  all[i].receiptDocument=
-    doc || {};
-
-  all[i].receiptReceivedAt=
-    Date.now();
-
-  sportSaveDossiers(all);
-
-  const q=
-    sportReceipts();
-
-  const j=
-    q.findIndex(
-      x =>
-        String(
-          x.dossierId
-        ) ===
-        String(dossierId)
-    );
-
-  if(j >= 0){
-
-    q[j].status=
-      "received";
-
-    q[j].receivedAt=
-      Date.now();
-
-    sportSaveReceipts(q);
-  }
-
-  return {
-    ok:true
-  };
-}
-
-
-function sportMarkReceiptMissing(
-  dossierId
-){
-
-  const all=
-    sportDossiers();
-
-  const i=
-    all.findIndex(
-      x =>
-        String(x.id) ===
-        String(dossierId)
-    );
-
-  if(
-    i < 0 ||
-    !all[i].association
-  ){
-
-    return {
-      ok:false
-    };
-  }
-
-  all[i].receiptStatus=
-    "missing_blocks_renewal";
-
-  sportSaveDossiers(all);
-
-  const a=
-    sportAssociations();
-
-  const j=
-    a.findIndex(
-      x =>
-        String(x.id) ===
-        String(
-          all[i]
-            .association
-            .id
-        )
-    );
-
-  if(j >= 0){
-
-    a[j].renewalEligible=
-      false;
-
-    a[j].renewalBlockReason=
-      "Justificatif obligatoire non retourné";
-
-    sportSaveAssociations(a);
-  }
-
-  return {
-    ok:true
-  };
-}
-
-
-function sportClubCode(){
-
-  const c=
-    sportClub();
-
-  const representative={
-
-    ref:
-      String(
-        sportSession.accountId ||
-        sportSession.role ||
-        ""
-      ),
-
-    name:
-      String(
-        sportSession.name ||
-        "Responsable du club"
-      ),
-
-    role:
-      String(
-        sportSession.role ||
-        ""
-      ),
-
-    team:
-      String(
-        sportSession.team ||
-        ""
-      )
-  };
-
-  const now=
-    Date.now();
-
-  const expiresAt=
-    now +
-    (
-      2 *
-      60 *
-      1000
-    );
-
-  const scanToken=
-    SPORT_CONFIG.mode ===
-      "production"
-      ? ""
-      : (
-          "SPORT-" +
-          Math.random()
-            .toString(36)
-            .slice(2,8)
-            .toUpperCase() +
-          "-" +
-          String(
-            now
-          ).slice(-6)
-        );
-
-  return {
-
-    type:
-      "sport_club_ref",
-
-    clubId:
-      c.id,
-
-    clubRef:
-      String(
-        c.clubRef ||
-        ""
-      ),
-
-    clubName:
-      String(
-        c.name ||
-        ""
-      ),
-
-    commune:
-      String(
-        c.commune ||
-        ""
-      ),
-
-    organizationType:
-      String(
-        c.organizationType ||
-        ""
-      ),
-
-    presentedBy:
-      representative,
-
-    scanToken:
-      scanToken,
-
-    issuedAt:
-      now,
-
-    expiresAt:
-      expiresAt,
-
-    ts:
-      now
-  };
-}
-
-
-function sportCreateBagExchangeReceipt(
-  exchange,
-  balance
-){
-
-  if(!exchange){
-    return null;
-  }
-
-  const receipt={
-
-    id:
-      sportId(
-        "bag-receipt"
-      ),
-
-    documentType:
-      "sport_bag_exchange_receipt",
-
-    operationRef:
-      String(
-        exchange.operationRef ||
-        exchange.id ||
-        ""
-      ),
-
-    clubRef:
-      String(
-        exchange.clubRef ||
-        ""
-      ),
-
-    clubName:
-      String(
-        exchange.clubName ||
-        ""
-      ),
-
-    amount:
-      Number(
-        exchange.amount ||
-        30
-      ),
-
-    balanceAfter:
-      Number(
-        balance || 0
-      ),
-
-    actor:
-      exchange.actor || {},
-
-    representative:
-      exchange.representative || {},
-
-    purchase:
-      exchange.purchase
-        ? {
-            amountTTC:
-              Number(
-                exchange.purchase.amountTTC ||
-                0
-              ),
-
-            reference:
-              String(
-                exchange.purchase.reference ||
-                ""
-              )
-          }
-        : null,
-
-    validatedAt:
-      exchange.validatedAt ||
-      Date.now(),
-
-    status:
-      "recorded",
-
-    createdAt:
-      Date.now()
-  };
-
-  const receipts=
-    sportReceipts();
-
-  receipts.push(
-    receipt
-  );
-
-  sportSaveReceipts(
-    receipts
-  );
-
-  return receipt;
-}
-
-
-async function sportNotifyBagExchange(
-  exchange,
-  balance,
-  receipt
-){
-
-  if(!exchange){
-
-    return {
-      ok:false
-    };
-  }
-
-  const payload={
-
-    event:
-      "sport_bag_redeemed",
-
-    operationRef:
-      String(
-        exchange.operationRef ||
-        exchange.id ||
-        ""
-      ),
-
-    receiptId:
-      String(
-        receipt &&
-        receipt.id ||
-        ""
-      ),
-
-    documentType:
-      "sport_bag_exchange_receipt",
-
-    clubRef:
-      String(
-        exchange.clubRef ||
-        ""
-      ),
-
-    clubName:
-      String(
-        exchange.clubName ||
-        ""
-      ),
-
-    amount:
-      Number(
-        exchange.amount ||
-        30
-      ),
-
-    balance:
-      Number(
-        balance || 0
-      ),
-
-    actor:
-      exchange.actor || {},
 
     representative:
       exchange.representative || {},
@@ -4385,7 +2992,13 @@ async function sportValidateBag(
         purchaseAmount,
 
       reference:
-        purchaseReference
+        purchaseReference,
+
+      bocitecoinRecipient:
+        String(
+          actor.purchaseCoinRecipient ||
+          ""
+        )
     };
   }
 
@@ -4548,78 +3161,368 @@ async function sportValidateBag(
   };
 }
 
- window.BociteSportMerchant={
+
+window.BociteSportMerchant={
 
   validateClubScan:
-    (
+    async (
       scan,
       merchant,
       purchase
-    ) =>
-      sportValidateBag(
-        scan,
-        {
+    ) =>{
 
-          type:
-            "merchant",
+      const merchantData=
+        merchant &&
+        typeof merchant ===
+          "object"
+          ? merchant
+          : {
+              name:
+                String(
+                  merchant ||
+                  "Commerce partenaire"
+                )
+            };
 
-          label:
-            String(
-              merchant &&
-              merchant.name ||
 
-              merchant &&
-              merchant.shopName ||
+      const purchaseData=
+        purchase &&
+        typeof purchase ===
+          "object"
+          ? purchase
+          : {};
 
-              merchant ||
 
-              "Commerce partenaire"
-            ),
+      const merchantId=
+        String(
+          merchantData.id ||
+          merchantData.merchantId ||
+          merchantData.siret ||
+          merchantData.sirenSiret ||
+          ""
+        ).trim();
 
-          merchantId:
-            String(
-              merchant &&
-              (
-                merchant.id ||
-                merchant.merchantId ||
-                merchant.siret ||
-                merchant.sirenSiret
-              ) ||
-              ""
-            ),
 
-          partnerActive:
-            !!(
-              merchant &&
-              (
-                merchant.partnerActive ===
-                  true ||
-                merchant.bociteartPartner ===
-                  true ||
-                merchant.partnerStatus ===
-                  "active"
-              )
-            ),
+      const purchaseAmountTTC=
+        Number(
+          purchaseData.amountTTC ||
+          0
+        );
 
-          purchaseAmountTTC:
-            Number(
-              purchase &&
-              purchase.amountTTC ||
-              0
-            ),
 
-          purchaseReference:
-            String(
-              purchase &&
-              (
-                purchase.reference ||
-                purchase.ticketReference ||
-                purchase.transactionReference
-              ) ||
-              ""
+      const purchaseReference=
+        String(
+          purchaseData.reference ||
+          purchaseData.ticketReference ||
+          purchaseData.transactionReference ||
+          ""
+        ).trim();
+
+
+      const recipientRaw=
+        String(
+          purchaseData.bocitecoinRecipient ||
+          purchaseData.recipient ||
+          ""
+        )
+          .trim()
+          .toLowerCase();
+
+
+      const purchaseCoinRecipient=
+        [
+          "club",
+          "club_sport",
+          "sport"
+        ].includes(
+          recipientRaw
+        )
+          ? "club"
+          : [
+              "personal",
+              "personnel",
+              "perso",
+              "citizen",
+              "citoyen"
+            ].includes(
+              recipientRaw
             )
+              ? "personal"
+              : "";
+
+
+      const positivePartnerSignal=
+        !!(
+          merchantData &&
+          (
+            merchantData.partnerActive ===
+              true ||
+            merchantData.bociteartPartner ===
+              true ||
+            merchantData.partnerStatus ===
+              "active" ||
+            merchantData.validated ===
+              true ||
+            merchantData.active ===
+              true
+          )
+        );
+
+
+      const partnerActive=
+        SPORT_CONFIG.mode ===
+          "production"
+          ? positivePartnerSignal
+          : merchantData.partnerActive !==
+              false;
+
+
+      const club=
+        sportClub();
+
+
+      const validClubScan=
+        !!(
+          club.clubRef &&
+          scan &&
+          scan.type ===
+            "sport_club_ref" &&
+          String(
+            scan.clubRef ||
+            ""
+          ) ===
+            String(
+              club.clubRef
+            )
+        );
+
+
+      /* =====================================================
+         ACHAT RÉEL D'AU MOINS 10 €
+
+         - achat pour le club : +1 au club ;
+         - achat personnel : le bocitecoin personnel
+           reste géré par le parcours citoyen / commerce ;
+         - jamais de double crédit.
+         ===================================================== */
+
+      if(
+        validClubScan &&
+        partnerActive ===
+          true &&
+        purchaseAmountTTC >=
+          10 &&
+        purchaseReference &&
+        purchaseCoinRecipient ===
+          "club"
+      ){
+
+        sportAddCoin(
+          "Achat réel effectué pour le club",
+          "merchant-purchase:" +
+            purchaseReference,
+          String(
+            scan.presentedBy &&
+            scan.presentedBy.team ||
+            sportSession.team ||
+            ""
+          )
+        );
+
+        sportRefreshWallet();
+      }
+
+
+      /*
+        L'achat personnel n'est jamais crédité
+        dans le portefeuille Sport.
+        Le moteur citoyen / commerce reste propriétaire
+        de ce crédit personnel.
+      */
+
+      if(
+        validClubScan &&
+        partnerActive ===
+          true &&
+        purchaseAmountTTC >=
+          10 &&
+        purchaseReference &&
+        purchaseCoinRecipient ===
+          "personal"
+      ){
+
+        window.dispatchEvent(
+          new CustomEvent(
+            "bociteart:sport-personal-purchase-coin",
+            {
+              detail:{
+                purchaseReference:
+                  purchaseReference,
+                amountTTC:
+                  purchaseAmountTTC,
+                merchantId:
+                  merchantId,
+                representative:
+                  scan.presentedBy ||
+                  {}
+              }
+            }
+          )
+        );
+      }
+
+
+      /* =====================================================
+         LE COMMERÇANT PEUT REPORTER L'ÉCHANGE
+         EN CAS D'AFFLUENCE.
+         L'ACHAT RESTE INDÉPENDANT.
+         ===================================================== */
+
+      if(
+        purchaseData.exchangeAccepted ===
+          false
+      ){
+
+        return {
+          ok:false,
+          neutral:true,
+          reason:
+            "merchant_postponed",
+          balance:
+            sportWallet().vert
+        };
+      }
+
+
+      /* =====================================================
+         ANTI DOUBLE VALIDATION DU MÊME TICKET
+         ===================================================== */
+
+      if(
+        validClubScan &&
+        purchaseReference
+      ){
+
+        const existing=
+          sportExchanges()
+            .find(
+              item =>
+                item &&
+                String(
+                  item.clubRef ||
+                  ""
+                ) ===
+                  String(
+                    club.clubRef ||
+                    ""
+                  ) &&
+                String(
+                  item.purchase &&
+                  item.purchase.reference ||
+                  ""
+                ) ===
+                  purchaseReference &&
+                String(
+                  item.actor &&
+                  item.actor.merchantId ||
+                  ""
+                ) ===
+                  merchantId
+            );
+
+
+        if(existing){
+
+          return {
+            ok:true,
+            duplicate:true,
+            balance:
+              sportWallet().vert,
+            operationRef:
+              String(
+                existing.operationRef ||
+                ""
+              )
+          };
         }
-      ),
+      }
+
+
+      const result=
+        await sportValidateBag(
+          scan,
+          {
+            type:
+              "merchant",
+            label:
+              String(
+                merchantData.name ||
+                merchantData.shopName ||
+                merchantData.companyName ||
+                "Commerce partenaire"
+              ),
+            merchantId:
+              merchantId,
+            partnerActive:
+              partnerActive,
+            purchaseAmountTTC:
+              purchaseAmountTTC,
+            purchaseReference:
+              purchaseReference,
+            purchaseCoinRecipient:
+              purchaseCoinRecipient
+          }
+        );
+
+
+      if(
+        !result ||
+        result.ok !==
+          true
+      ){
+        return result;
+      }
+
+
+      /* =====================================================
+         ÉCHANGE CABAS TERMINÉ :
+         SEULEMENT MAINTENANT LA VISIBILITÉ PEUT ÊTRE PROPOSÉE.
+         ===================================================== */
+
+      if(
+        window.BociteFinanceSport &&
+        typeof window.BociteFinanceSport.afterCabasExchange ===
+          "function"
+      ){
+
+        window.BociteFinanceSport
+          .afterCabasExchange({
+            exchange:
+              result,
+            merchant:
+              merchantData,
+            purchase:{
+              amountTTC:
+                purchaseAmountTTC,
+              reference:
+                purchaseReference,
+              bocitecoinRecipient:
+                purchaseCoinRecipient
+            }
+          });
+      }
+
+
+      return Object.assign(
+        {},
+        result,
+        {
+          purchaseCoinRecipient:
+            purchaseCoinRecipient
+        }
+      );
+    },
+
 
   createSupportFromClubScan:
     (
@@ -4637,19 +3540,17 @@ async function sportValidateBag(
         amountHT
       ),
 
+
   allocationOptions:
     amountHT => [
-
       sportAllocation(
         "ALL_CLUB",
         amountHT
       ),
-
       sportAllocation(
         "HALF_HALF",
         amountHT
       )
-
     ].filter(Boolean)
 };
 
@@ -4980,7 +3881,19 @@ window.BociteSportSupportRules={
     50,
 
   publicationDays:
+    3,
+
+  dailyCapacity:
+    6,
+
+  holdMinutes:
+    15,
+
+  manualExtensionMinutes:
     5,
+
+  extraResearchMinimum:
+    10,
 
   amountRule:
     "free_amount_from_minimum",
@@ -5011,7 +3924,6 @@ window.BociteSportSupportRules={
   taxTreatment:
     "validated_case_by_case"
 };
-
 
 /* =========================================================
    BLOC SPORT 4
@@ -5988,504 +4900,6 @@ function sportPublicResultsHtml(){
     `
   ).join("");
 }
-
-
-/* =========================================================
-   SPORT — PRÉSENTATION PUBLIQUE COMPLÈTE
-   ========================================================= */
-
-/* =========================================================
-   ÇA COMMENCE ICI
-   SPORT — PRÉSENTATION PUBLIQUE
-   TEXTES CONSOLIDÉS
-   ========================================================= */
-
- function sportBenefitsHtml(){
-
-  return `
-
-    ${sportTitle(
-      "Sport avec"
-    )}
-
-    <div class="sportCard">
-
-      <div class="sportText">
-
-        Le sport relie l’effort,
-        le respect,
-        l’engagement,
-        la vie locale
-        et la solidarité.
-
-        <br><br>
-
-        ${sportBrandHtml()}
-        rend visibles les clubs
-        et associations sportives,
-        leurs résultats,
-        les comportements
-        qui font grandir l’équipe,
-        et tous les acteurs
-        de la commune
-        qui les soutiennent.
-
-      </div>
-
-      <ul>
-
-        <li>
-          écouter les consignes du coach
-          et aller jusqu’au bout
-          de l’effort demandé ;
-        </li>
-
-        <li>
-          respecter ses partenaires,
-          ses adversaires,
-          les arbitres,
-          les entraîneurs,
-          les bénévoles
-          et tout le personnel de service ;
-        </li>
-
-        <li>
-          savoir attendre,
-          écouter
-          et laisser une place aux autres ;
-        </li>
-
-        <li>
-          encourager un équipier
-          lorsqu’il rencontre une difficulté ;
-        </li>
-
-        <li>
-          partager les efforts,
-          le matériel
-          et les responsabilités 
-        </li>
-
-        <li>
-          accepter la victoire avec respect
-          et la défaite avec dignité ;
-        </li>
-
-        <li>
-          être ponctuel
-          et respecter l’engagement pris
-          envers son équipe ;
-        </li>
-
-        <li>
-          ranger le matériel
-          après l’entraînement
-          ou le match ;
-        </li>
-
-        <li>
-          laisser les vestiaires,
-          le terrain,
-          la salle
-          et les espaces utilisés propres ;
-        </li>
-
-        <li>
-          prendre soin des équipements
-          appartenant au club
-          ou à la collectivité ;
-        </li>
-
-        <li>
-          apprendre que les bons comportements
-          produisent toujours quelque chose
-          de rare et de précieux :
-          des valeurs,
-          de la confiance
-          et une utilité réelle
-          pour tout le club ;
-        </li>
-
-        <li>
-          comprendre progressivement
-          que le sport est
-          un formidable miroir
-          de nos comportements
-          et une force
-          au service de la solidarité.
-        </li>
-
-      </ul>
-
-    </div>
-
-
-    ${sportTitle(
-      "Ce que",
-      "apporte au sportif"
-    )}
-
-    <div class="sportCard">
-
-      <ul>
-
-        <li>
-          voir ses efforts
-          et ceux de son équipe
-          reconnus au-delà du seul score ;
-        </li>
-
-        <li>
-          participer à un objectif collectif
-          plutôt qu’à une récompense individuelle ;
-        </li>
-
-        <li>
-          retrouver les résultats de son équipe
-          et des autres équipes du club ;
-        </li>
-
-        <li>
-          mieux connaître les commerces,
-          les entreprises,
-          les associations
-          et les acteurs de la commune
-          qui soutiennent son club ;
-        </li>
-
-        <li>
-          devenir un ambassadeur
-          de son équipe,
-          de son club
-          et de sa commune ;
-        </li>
-
-        <li>
-          comprendre que le sport relie
-          effort,
-          respect,
-          vie locale
-          et solidarité.
-        </li>
-
-      </ul>
-
-      <div class="sportText">
-
-        <strong>
-          Avec ${sportBrandHtml()},
-          le sportif porte aussi
-          les valeurs de son club
-          partout où il va.
-        </strong>
-
-      </div>
-
-    </div>
-
-
-    ${sportTitle(
-      "Ce que",
-      "apporte au club"
-    )}
-
-    <div class="sportCard">
-
-      <ul>
-
-        <li>
-          faire connaître ses équipes,
-          ses disciplines,
-          ses résultats
-          et ses rendez-vous ;
-        </li>
-
-        <li>
-          valoriser le travail
-          des présidents,
-          entraîneurs,
-          éducateurs,
-          dirigeants,
-          bénévoles
-          et de tout le personnel de service ;
-        </li>
-
-        <li>
-          mettre en valeur
-          les comportements responsables
-          des équipes ;
-        </li>
-
-        <li>
-          créer des relations directes
-          avec les commerces
-          et les entreprises de la commune ;
-        </li>
-
-        <li>
-          renforcer les relations
-          avec les adhérents,
-          les familles
-          et les supporters ;
-        </li>
-
-        <li>
-          donner davantage de visibilité
-          aux clubs
-          et aux disciplines
-          encore trop méconnus.
-        </li>
-
-      </ul>
-
-      <div class="sportText">
-
-        <strong>
-          Avec ${sportBrandHtml()},
-          chaque club gagne une nouvelle porte
-          pour montrer ce qu’il fait,
-          ce qu’il transmet
-          et tout ce qu’il apporte
-          à d’autres
-          et à la commune.
-        </strong>
-
-      </div>
-
-    </div>
-
-
-    ${sportTitle(
-      "Ce que",
-      "apporte aux commerçants partenaires"
-    )}
-
-    <div class="sportCard">
-
-      <div class="sportText">
-
-        Voici une belle occasion
-        de montrer qui vous êtes
-        dans toute la commune,
-        de faire connaître vos services
-        et de montrer concrètement
-        votre attachement
-        à la vie locale.
-
-      </div>
-
-      <ul>
-
-        <li>
-          être davantage remarqué
-          par les citoyens,
-          les adhérents,
-          les familles,
-          les supporters
-          et leur entourage ;
-        </li>
-
-        <li>
-          disposer d’une présence supplémentaire
-          dans ${sportBrandHtml()} ;
-        </li>
-
-        <li>
-          ouvrir une véritable fenêtre
-          sur la ville,
-          dans la poche de tous ;
-        </li>
-
-        <li>
-          diffuser pendant 5 jours
-          une petite publicité locale
-          mettant en avant votre commerce,
-          le club
-          et d’autres soutiens bien utiles ;
-        </li>
-
-        <li>
-          associer clairement votre enseigne
-          à la vie des clubs sportifs
-          de votre commune ;
-        </li>
-
-        <li>
-          aller plus loin
-          en soutenant une association
-          de recherche médicale retenue ;
-        </li>
-
-        <li>
-          créer une relation durable
-          avec un club
-          qui a des besoins d’achat,
-          d’équipement
-          et de développement.
-        </li>
-
-      </ul>
-
-      <div class="sportText">
-
-        <strong>
-          Avec ${sportBrandHtml()},
-          votre soutien ne reste jamais invisible :
-          votre commerce devient un cœur,
-          un poumon de la vie locale.
-
-          Il crée de nouvelles rencontres,
-          rapproche les habitants
-          et fait vivre toute la commune,
-          et bien au-delà...
-        </strong>
-
-      </div>
-
-    </div>
-
-
-    ${sportTitle(
-      "Dans le cadre sportif, ce que",
-      "apporte à la mairie"
-    )}
-
-    <div class="sportCard">
-
-      <ul>
-
-        <li>
-          valoriser encore davantage
-          tous les clubs
-          qui font vivre
-          et vibrer la commune
-          toute l’année ;
-        </li>
-
-        <li>
-          encourager le respect
-          des équipements sportifs,
-          des espaces communs
-          et, plus largement,
-          de la commune ;
-        </li>
-
-        <li>
-          faire connaître davantage
-          la diversité sportive
-          présente dans la commune ;
-        </li>
-
-        <li>
-          renforcer les liens
-          et poser un phare éclairant
-          entre les clubs,
-          les habitants,
-          les commerces,
-          les entreprises
-          et les associations ;
-        </li>
-
-        <li>
-          apporter un soutien
-          indéfectible et nécessaire
-          à des causes solidaires
-          retenues avec
-          ${sportBrandHtml()}
-          et la Mairie.
-        </li>
-
-      </ul>
-
-    </div>
-
-
-    ${sportTitle(
-      "Ce que",
-      "apporte au citoyen"
-    )}
-
-    <div class="sportCard">
-
-      <div class="sportText">
-
-        <strong>
-          Faire vivre le local
-          commence par un geste simple :
-          acheter ICI !
-          ce dont vous avez besoin.
-        </strong>
-
-      </div>
-
-      <ul>
-
-        <li>
-          penser à acheter d’abord
-          dans votre commune,
-          c’est investir
-          dans votre propre avenir,
-          dans celui de nos enfants
-          et dans celui de votre territoire ;
-        </li>
-
-        <li>
-          soutenir un commerce,
-          c’est soutenir des emplois,
-          des salariés,
-          des artisans,
-          des fournisseurs
-          et toute une activité locale ;
-        </li>
-
-        <li>
-          préserver les professionnels
-          dont vous aurez tous besoin demain ;
-        </li>
-
-        <li>
-          connaître les clubs de sport,
-          les associations
-          et les acteurs
-          qui font vivre la commune ;
-        </li>
-
-        <li>
-          voir que les petits gestes
-          de chacun
-          finissent toujours
-          par produire
-          un résultat visible pour tous !
-        </li>
-
-      </ul>
-
-      <div class="sportText">
-
-        <strong>
-          Avec ${sportBrandHtml()},
-          acheter local,
-          c’est faire revivre
-          ce qui nous entoure,
-          investir dans l’avenir
-          de nos enfants,
-          de votre commune,
-          ainsi que dans votre propre vie !
-        </strong>
-
-      </div>
-
-    </div>
-
-  `;
-
-}
-
-/* =========================================================
-   ÇA FINIT ICI
-   SPORT — PRÉSENTATION PUBLIQUE
-   TEXTES CONSOLIDÉS
-   ========================================================= */
 
 /* =========================================================
    BLOC SPORT 5
@@ -7490,7 +5904,6 @@ function sportRenderPresidentHistory(){
       `;
 }
 
-
 /* =========================================================
    BLOC SPORT 6
    ÉCRANS PRIVÉS
@@ -7818,10 +6231,14 @@ function sportRenderPresidentHistory(){
         autant d’accès individuels que nécessaire.
 
         Chaque collaborateur possède
-        son propre identifiant,
-        son propre code
-        et uniquement les habilitations
-        nécessaires à sa fonction.
+        son propre identifiant
+        et reçoit d’abord un code d’accès temporaire.
+
+        Lors de sa première connexion,
+        il crée ensuite son mot de passe personnel.
+        La présidence peut activer, désactiver
+        ou renouveler l’accès sans connaître
+        ce mot de passe personnel.
 
       </div>
 
@@ -7886,24 +6303,6 @@ function sportRenderPresidentHistory(){
         class="sportField"
         type="email"
       >
-
-      <div class="sportSubTitle" style="margin-top:16px;">
-        Habilitations particulières
-      </div>
-
-      <label class="sportCheck">
-
-        <input
-          id="sportCoachSolidarityManage"
-          type="checkbox"
-        >
-
-        <span>
-          Autoriser la modification
-          de l’orientation solidaire du club
-        </span>
-
-      </label>
 
       <label class="sportLabel">
         Code d’accès temporaire
@@ -8266,222 +6665,528 @@ function sportResultsPrivateHtml(){
   `;
 }
 
+/* =========================================================
+   CHOIX COLLECTIF DES JEUNES AVANT LES PARRAINAGES
+   ========================================================= */
 
-function sportSolidarityHtml(){
+function sportYouthNormalizeGroup(
+  value
+){
+
+  return String(
+    value ||
+    ""
+  )
+    .trim()
+    .toLocaleLowerCase(
+      "fr-FR"
+    );
+}
+
+
+function sportYouthSponsorshipStore(){
 
   const saved=
     sportLoad(
-      SPORT_KEYS.solidarity,
-      {
-        mode:"none",
-        map:{}
-      }
+      SPORT_KEYS.youthSponsorship,
+      null
     );
 
-  const a=
-    sportAssociations();
-
-  const canManage=
-    sportHasPermission(
-      "solidarity_manage"
-    );
-
-  const modeLabel=
-    saved.mode === "full"
-      ? "Donner 100 %"
-      : saved.mode === "partial"
-        ? "Partager une partie"
-        : "Garder 100 % pour le club";
 
   if(
-    !canManage
+    !saved ||
+    typeof saved !==
+      "object"
   ){
+
+    return {
+      records:[],
+      activeRecordId:""
+    };
+  }
+
+
+  if(
+    saved.locked ===
+      true &&
+    !Array.isArray(
+      saved.records
+    )
+  ){
+
+    const legacy=
+      Object.assign(
+        {},
+        saved,
+        {
+          id:
+            String(
+              saved.id ||
+              "youth-legacy"
+            )
+        }
+      );
+
+    return {
+      records:[
+        legacy
+      ],
+      activeRecordId:
+        legacy.id
+    };
+  }
+
+
+  return {
+    records:
+      Array.isArray(
+        saved.records
+      )
+        ? saved.records
+        : [],
+    activeRecordId:
+      String(
+        saved.activeRecordId ||
+        ""
+      )
+  };
+}
+
+
+function sportSaveYouthSponsorshipStore(
+  store
+){
+
+  const clean=
+    store &&
+    typeof store ===
+      "object"
+      ? store
+      : {};
+
+
+  return sportSave(
+    SPORT_KEYS.youthSponsorship,
+    {
+      records:
+        Array.isArray(
+          clean.records
+        )
+          ? clean.records.slice(-100)
+          : [],
+      activeRecordId:
+        String(
+          clean.activeRecordId ||
+          ""
+        )
+    }
+  );
+}
+
+
+function sportYouthFindGroup(
+  groupName
+){
+
+  const key=
+    sportYouthNormalizeGroup(
+      groupName
+    );
+
+  if(!key){
+    return null;
+  }
+
+
+  return sportYouthSponsorshipStore()
+    .records
+    .slice()
+    .reverse()
+    .find(
+      item =>
+        item &&
+        item.locked ===
+          true &&
+        sportYouthNormalizeGroup(
+          item.groupName
+        ) ===
+          key
+    ) ||
+    null;
+}
+
+
+function sportYouthOrientation(){
+
+  const store=
+    sportYouthSponsorshipStore();
+
+  const sessionGroup=
+    String(
+      sportSession.team ||
+      ""
+    ).trim();
+
+  let record=null;
+
+
+  if(sessionGroup){
+
+    record=
+      sportYouthFindGroup(
+        sessionGroup
+      );
+  }
+
+
+  if(
+    !record &&
+    sportSession.role ===
+      "president" &&
+    store.activeRecordId
+  ){
+
+    record=
+      store.records
+        .find(
+          item =>
+            String(
+              item &&
+              item.id ||
+              ""
+            ) ===
+              String(
+                store.activeRecordId
+              )
+        ) ||
+      null;
+  }
+
+
+  if(!record){
+
+    return {
+      locked:false,
+      id:"",
+      choice:"",
+      associationId:"",
+      associationName:"",
+      groupName:
+        sessionGroup,
+      recordedBy:{},
+      lockedAt:null
+    };
+  }
+
+
+  return Object.assign(
+    {
+      locked:false,
+      id:"",
+      choice:"",
+      associationId:"",
+      associationName:"",
+      groupName:"",
+      recordedBy:{},
+      lockedAt:null
+    },
+    record
+  );
+}
+
+
+function sportYouthSponsorshipHtml(){
+
+  const saved=
+    sportYouthOrientation();
+
+  const associations=
+    sportAssociations()
+      .filter(
+        item =>
+          sportAssociationOK(
+            item
+          )
+      );
+
+  const currentGroup=
+    String(
+      saved.groupName ||
+      sportSession.team ||
+      ""
+    ).trim();
+
+
+  if(
+    saved.locked ===
+      true
+  ){
+
+    const label=
+      saved.choice ===
+        "club_research"
+        ? "50 % pour le club / 50 % pour la recherche médicale"
+        : "100 % pour le club";
+
 
     return `
 
       ${sportTitle(
-        "Orientation solidaire du club avec"
+        "Choix des jeunes pour les prochains parrainages avec"
       )}
 
       <div class="sportCard">
 
-        <div class="sportText">
+        <div class="sportSubTitle">
+          Choix enregistré et verrouillé
+        </div>
 
-          Orientation actuelle :
+        <div
+          class="sportText"
+          style="margin-top:8px;"
+        >
+
+          Groupe :
           <strong>
-            ${sportEsc(modeLabel)}
+            ${sportEsc(
+              saved.groupName ||
+              "Groupe du club"
+            )}
+          </strong>
+
+          <br><br>
+
+          Orientation choisie collectivement
+          par les jeunes :
+
+          <strong>
+            ${sportEsc(
+              label
+            )}
           </strong>.
 
+          ${
+            saved.associationName
+              ? `
+
+                <br><br>
+
+                Association retenue :
+
+                <strong>
+                  ${sportEsc(
+                    saved.associationName
+                  )}
+                </strong>.
+
+              `
+              : ""
+          }
+
           <br><br>
 
-          Cette orientation est décidée
-          par la présidence
-          ou par une personne disposant
-          d’une habilitation spécifique.
+          Ce choix a été confirmé
+          avec le groupe.
 
-          <br><br>
-
-          En fin de saison,
-          un reliquat inférieur à 30
-          peut être remis à la mairie
-          pour une association validée.
+          Il n’est plus modifiable
+          pour les parrainages
+          auxquels il est rattaché.
 
         </div>
 
-      </div>
+        ${
+          sportSession.role ===
+            "president"
+            ? `
 
+              <button
+                id="sportYouthPrepareAnotherGroup"
+                class="sportBtn"
+                type="button"
+                style="
+                  width:100%;
+                  margin-top:12px;
+                "
+              >
+                Préparer le choix d’un autre groupe
+              </button>
+
+            `
+            : ""
+        }
+
+      </div>
     `;
   }
+
 
   return `
 
     ${sportTitle(
-      "Orientation solidaire du club avec"
+      "Choix des jeunes pour les prochains parrainages avec"
     )}
 
     <div class="sportCard">
 
       <div class="sportText">
 
-        Le club choisit
-        de garder ses bocitecoins,
-        d’en partager une partie
-        ou de les orienter entièrement
-        vers une association.
+        Prenez quelques instants
+        avec les jeunes pour leur expliquer
+        qu’un soutien peut aussi aider
+        la recherche médicale
+        et les personnes concernées.
 
         <br><br>
 
-        En fin de saison,
-        un reliquat inférieur à 30
-        peut être remis à la mairie
-        pour une association validée.
+        Leur choix donne une dimension collective
+        à l’action du groupe,
+        au-delà du sport.
+
+        C’est leur décision commune :
+        le Président ou le collaborateur
+        l’enregistre sans la choisir à leur place.
 
       </div>
 
-      <label class="sportCheck">
 
-        <input
-          type="radio"
-          name="sportDonMode"
-          value="none"
-          ${saved.mode==="none" ? "checked" : ""}
-        >
-
-        Garder 100 % pour le club
-
+      <label class="sportLabel">
+        Groupe / équipe concerné
       </label>
 
-      <label class="sportCheck">
-
-        <input
-          type="radio"
-          name="sportDonMode"
-          value="partial"
-          ${saved.mode==="partial" ? "checked" : ""}
-        >
-
-        Partager une partie
-
-      </label>
-
-      <label class="sportCheck">
-
-        <input
-          type="radio"
-          name="sportDonMode"
-          value="full"
-          ${saved.mode==="full" ? "checked" : ""}
-        >
-
-        Donner 100 %
-
-      </label>
-
-      <div class="sportCard">
-
-        <div class="sportSubTitle">
-          Associations proposées
-          avec ${sportBrandHtml()}
-        </div>
-
+      <input
+        id="sportYouthGroupName"
+        class="sportField"
+        maxlength="60"
+        value="${sportEsc(
+          currentGroup
+        )}"
         ${
-          a.map(
-            (x,index) => `
-
-              <div class="sportItem">
-
-                <label class="sportCheck">
-
-                  <input
-                    class="sportAssoPick"
-                    type="checkbox"
-                    data-id="${sportEsc(x.id)}"
-                    ${
-                      saved.map &&
-                      saved.map[x.id] != null
-                        ? "checked"
-                        : ""
-                    }
-                  >
-
-                  <span>
-
-                    <strong>
-
-                      ${
-                        sportAssociationOK(x)
-                          ? sportEsc(
-                              x.legalName ||
-                              x.label
-                            )
-                          : "Choix solidaire " +
-                            String(index + 1)
-                      }
-
-                    </strong>
-
-                    —
-
-                    ${
-                      sportAssociationOK(x)
-                        ? (
-                            sportEsc(x.cause) +
-                            " — association validée"
-                          )
-                        : "En attente du choix défini par la mairie et Bo'CitéArt"
-                    }
-
-                  </span>
-
-                </label>
-
-                <label class="sportLabel">
-                  Part en %
-                </label>
-
-                <input
-                  class="sportField sportAssoPct"
-                  type="number"
-                  min="0"
-                  max="100"
-                  value="${Number(
-                    saved.map &&
-                    saved.map[x.id] ||
-                    0
-                  )}"
-                  data-id="${sportEsc(x.id)}"
-                >
-
-              </div>
-
-            `
-          ).join("")
+          sportSession.team
+            ? "readonly"
+            : ""
         }
+      >
+
+
+      <label class="sportCheck">
+
+        <input
+          type="radio"
+          name="sportYouthSponsorshipChoice"
+          value="club_only"
+        >
+
+        <span>
+          <strong>
+            100 % pour le club
+          </strong>
+        </span>
+
+      </label>
+
+
+      <label class="sportCheck">
+
+        <input
+          type="radio"
+          name="sportYouthSponsorshipChoice"
+          value="club_research"
+        >
+
+        <span>
+          <strong>
+            50 % pour le club /
+            50 % pour la recherche médicale
+          </strong>
+        </span>
+
+      </label>
+
+
+      <div
+        id="sportYouthResearchAssociationBox"
+        style="
+          display:none;
+          margin-top:10px;
+        "
+      >
+
+        <label class="sportLabel">
+          Association de recherche médicale retenue
+        </label>
+
+        <select
+          id="sportYouthResearchAssociation"
+          class="sportField"
+        >
+
+          <option value="">
+            Choisir l’association
+          </option>
+
+          ${
+            associations
+              .map(
+                item => `
+
+                  <option
+                    value="${sportEsc(
+                      item.id
+                    )}"
+                  >
+                    ${sportEsc(
+                      item.legalName ||
+                      item.label ||
+                      item.name ||
+                      "Association"
+                    )}
+                  </option>
+
+                `
+              )
+              .join("")
+          }
+
+        </select>
 
       </div>
+
+
+      ${
+        !associations.length
+          ? `
+
+            <div class="sportStatus">
+
+              Aucune association
+              de recherche validée
+              n’est encore disponible.
+
+              Le choix 50/50
+              ne pourra pas être verrouillé
+              tant qu’une association
+              n’est pas validée.
+
+            </div>
+
+          `
+          : ""
+      }
+
+
+      <div class="sportStatus">
+
+        <strong>Attention :</strong>
+        une fois ce choix confirmé,
+        il ne pourra plus être effacé
+        ou remplacé
+        pour les parrainages concernés.
+
+      </div>
+
 
       <button
-        id="sportSolidaritySave"
+        id="sportYouthSponsorshipSave"
         class="sportBtn"
         type="button"
         style="
@@ -8489,20 +7194,345 @@ function sportSolidarityHtml(){
           margin-top:12px;
         "
       >
-        Enregistrer l’orientation
+        Confirmer définitivement
+        le choix du groupe
       </button>
 
+
       <div
-        id="sportSolidarityStatus"
+        id="sportYouthSponsorshipStatus"
         class="sportStatus"
-      >
-        Modalités d’échange
-        et de remise des reliquats
-        à voir avec la mairie.
-      </div>
+      ></div>
 
     </div>
   `;
+}
+
+
+function sportBindYouthSponsorship(){
+
+  const another=
+    sportEl(
+      "sportYouthPrepareAnotherGroup"
+    );
+
+
+  if(another){
+
+    another.onclick=
+      ()=>{
+
+        if(
+          sportSession.role !==
+            "president"
+        ){
+          return;
+        }
+
+
+        const store=
+          sportYouthSponsorshipStore();
+
+        store.activeRecordId=
+          "";
+
+        sportSaveYouthSponsorshipStore(
+          store
+        );
+
+        openClubReserve();
+      };
+  }
+
+
+  document
+    .querySelectorAll(
+      'input[name="sportYouthSponsorshipChoice"]'
+    )
+    .forEach(
+      radio =>{
+
+        radio.onchange=
+          ()=>{
+
+            const box=
+              sportEl(
+                "sportYouthResearchAssociationBox"
+              );
+
+            if(box){
+
+              box.style.display=
+                radio.checked &&
+                radio.value ===
+                  "club_research"
+                  ? "block"
+                  : "none";
+            }
+          };
+      }
+    );
+
+
+  const save=
+    sportEl(
+      "sportYouthSponsorshipSave"
+    );
+
+  if(!save){
+    return;
+  }
+
+
+  save.onclick=
+    ()=>{
+
+      if(
+        ![
+          "president",
+          "coach"
+        ].includes(
+          String(
+            sportSession.role ||
+            ""
+          )
+        )
+      ){
+        return;
+      }
+
+
+      const groupName=
+        String(
+          sportEl(
+            "sportYouthGroupName"
+          )?.value ||
+          sportSession.team ||
+          ""
+        ).trim();
+
+
+      const choice=
+        String(
+          document.querySelector(
+            'input[name="sportYouthSponsorshipChoice"]:checked'
+          )?.value ||
+          ""
+        );
+
+
+      if(!groupName){
+
+        alert(
+          "Renseignez le groupe ou l’équipe concerné."
+        );
+
+        return;
+      }
+
+
+      const alreadyLocked=
+        sportYouthFindGroup(
+          groupName
+        );
+
+
+      if(alreadyLocked){
+
+        if(
+          sportSession.role ===
+            "president"
+        ){
+
+          const store=
+            sportYouthSponsorshipStore();
+
+          store.activeRecordId=
+            String(
+              alreadyLocked.id ||
+              ""
+            );
+
+          sportSaveYouthSponsorshipStore(
+            store
+          );
+        }
+
+
+        alert(
+          "Le choix de ce groupe est déjà enregistré et verrouillé."
+        );
+
+        openClubReserve();
+
+        return;
+      }
+
+
+      if(
+        ![
+          "club_only",
+          "club_research"
+        ].includes(
+          choice
+        )
+      ){
+
+        alert(
+          "Demandez au groupe de choisir une orientation."
+        );
+
+        return;
+      }
+
+
+      let associationId="";
+      let associationName="";
+
+
+      if(
+        choice ===
+          "club_research"
+      ){
+
+        associationId=
+          String(
+            sportEl(
+              "sportYouthResearchAssociation"
+            )?.value ||
+            ""
+          ).trim();
+
+
+        const association=
+          sportAssociations()
+            .find(
+              item =>
+                String(
+                  item.id
+                ) ===
+                  associationId &&
+                sportAssociationOK(
+                  item
+                )
+            );
+
+
+        if(!association){
+
+          alert(
+            "Choisissez une association de recherche médicale validée."
+          );
+
+          return;
+        }
+
+
+        associationName=
+          String(
+            association.legalName ||
+            association.label ||
+            association.name ||
+            ""
+          ).trim();
+      }
+
+
+      const phrase=
+        choice ===
+          "club_research"
+          ? "50 % pour le club / 50 % pour la recherche médicale"
+          : "100 % pour le club";
+
+
+      if(
+        !window.confirm(
+          "Le groupe a choisi : " +
+          phrase +
+          (
+            associationName
+              ? "\nAssociation : " +
+                associationName
+              : ""
+          ) +
+          "\n\nConfirmer définitivement ce choix ?"
+        )
+      ){
+        return;
+      }
+
+
+      const record={
+        id:
+          sportId(
+            "youth-choice"
+          ),
+        locked:true,
+        choice:
+          choice,
+        associationId:
+          associationId,
+        associationName:
+          associationName,
+        groupName:
+          groupName,
+        recordedBy:{
+          accountId:
+            String(
+              sportSession.accountId ||
+              ""
+            ),
+          name:
+            String(
+              sportSession.name ||
+              ""
+            ),
+          role:
+            String(
+              sportSession.role ||
+              ""
+            )
+        },
+        lockedAt:
+          Date.now()
+      };
+
+
+      const store=
+        sportYouthSponsorshipStore();
+
+      store.records.push(
+        record
+      );
+
+      store.activeRecordId=
+        record.id;
+
+
+      sportSaveYouthSponsorshipStore(
+        store
+      );
+
+
+      sportNotifyEvent(
+        "sport_youth_sponsorship_choice_locked",
+        {
+          recordId:
+            record.id,
+          choice:
+            choice,
+          associationId:
+            associationId,
+          associationName:
+            associationName,
+          groupName:
+            groupName
+        }
+      );
+
+
+      openClubReserve();
+    };
 }
 
 
@@ -8562,1372 +7592,17 @@ function sportSavePaymentRecords(x){
   );
 }
 
-
-function sportSupportReadMerchant(){
-
-  return {
-
-    name:
-      String(
-        sportEl(
-          "sportSupportMerchantName"
-        )?.value ||
-        ""
-      ).trim(),
-
-    sirenSiret:
-      String(
-        sportEl(
-          "sportSupportMerchantSiret"
-        )?.value ||
-        ""
-      ).trim(),
-
-    address:
-      String(
-        sportEl(
-          "sportSupportMerchantAddress"
-        )?.value ||
-        ""
-      ).trim(),
-
-    phone:
-      String(
-        sportEl(
-          "sportSupportMerchantPhone"
-        )?.value ||
-        ""
-      ).trim(),
-
-    email:
-      String(
-        sportEl(
-          "sportSupportMerchantEmail"
-        )?.value ||
-        ""
-      ).trim(),
-
-    accountingEmail:
-      String(
-        sportEl(
-          "sportSupportMerchantAccountingEmail"
-        )?.value ||
-        ""
-      ).trim()
-  };
-}
-
-
-function sportSupportFillMerchant(profile){
-
-  if(
-    !profile ||
-    typeof profile !== "object"
-  ){
-    return;
-  }
-
-  const data={
-
-    sportSupportMerchantName:
-      profile.name ||
-      profile.shopName ||
-      profile.companyName ||
-      "",
-
-    sportSupportMerchantSiret:
-      profile.sirenSiret ||
-      profile.siret ||
-      "",
-
-    sportSupportMerchantAddress:
-      profile.address ||
-      "",
-
-    sportSupportMerchantPhone:
-      profile.phone ||
-      "",
-
-    sportSupportMerchantEmail:
-      profile.email ||
-      "",
-
-    sportSupportMerchantAccountingEmail:
-      profile.accountingEmail ||
-      profile.email ||
-      ""
-  };
-
-  Object
-    .keys(data)
-    .forEach(
-      id=>{
-
-        const e=
-          sportEl(id);
-
-        if(e){
-
-          e.value=
-            String(
-              data[id] ||
-              ""
-            );
-        }
-      }
-    );
-
-  window
-    .BOCITEART_LAST_SPORT_MERCHANT_PROFILE=
-      profile;
-}
-
-
-function sportSupportSaveMerchant(){
-
-  const profile=
-    sportSupportReadMerchant();
-
-  if(!profile.name){
-    return;
-  }
-
-  const all=
-    sportContacts();
-
-  let index=-1;
-
-  if(profile.sirenSiret){
-
-    index=
-      all.findIndex(
-        x =>
-          String(
-            x.sirenSiret ||
-            ""
-          ) ===
-          String(
-            profile.sirenSiret
-          )
-      );
-  }
-
-  if(index < 0){
-
-    index=
-      all.findIndex(
-        x =>
-          String(
-            x.name ||
-            ""
-          )
-            .trim()
-            .toLowerCase() ===
-          profile.name
-            .trim()
-            .toLowerCase()
-      );
-  }
-
-  const item={
-
-    id:
-      index >= 0
-        ? all[index].id
-        : sportId(
-            "merchant"
-          ),
-
-    name:
-      profile.name,
-
-    sirenSiret:
-      profile.sirenSiret,
-
-    address:
-      profile.address,
-
-    phone:
-      profile.phone,
-
-    email:
-      profile.email,
-
-    accountingEmail:
-      profile.accountingEmail,
-
-    archived:
-      false,
-
-    updatedAt:
-      Date.now()
-  };
-
-  if(index >= 0){
-
-    all[index]=
-      Object.assign(
-        {},
-        all[index],
-        item
-      );
-
-  }else{
-
-    all.push(item);
-  }
-
-  sportSaveContacts(all);
-}
-
-
-async function sportSupportFindMerchant(){
-
-  const status=
-    sportEl(
-      "sportSupportStatus"
-    );
-
-  const club=
-    sportClub();
-
-  if(!club.clubRef){
-
-    if(status){
-
-      status.textContent=
-        "La fiche d’identité du club doit d’abord être validée.";
-    }
-
-    return;
-  }
-
-  if(
-    SPORT_CONFIG
-      .merchantLookupEndpoint
-  ){
-
-    if(status){
-
-      status.textContent=
-        "Recherche du commerce…";
-    }
-
-    try{
-
-      const response=
-        await fetch(
-          SPORT_CONFIG
-            .merchantLookupEndpoint,
-          {
-            method:"POST",
-            credentials:"include",
-            headers:{
-              "Content-Type":
-                "application/json"
-            },
-            body:
-              JSON.stringify({
-                clubRef:
-                  club.clubRef
-              })
-          }
-        );
-
-      if(!response.ok){
-        throw new Error();
-      }
-
-      const data=
-        await response.json();
-
-      if(
-        !data ||
-        !data.merchant
-      ){
-        throw new Error();
-      }
-
-      sportSupportFillMerchant(
-        data.merchant
-      );
-
-      sportSupportSaveMerchant();
-
-      if(status){
-
-        status.textContent=
-          "Commerce reconnu. Sa fiche est préremplie.";
-      }
-
-      return;
-
-    }catch(error){
-
-      if(status){
-
-        status.textContent=
-          "Le commerce n’a pas été retrouvé automatiquement. La saisie manuelle reste disponible.";
-      }
-
-      return;
-    }
-  }
-
-  if(
-    window
-      .BOCITEART_LAST_SPORT_MERCHANT_PROFILE
-  ){
-
-    sportSupportFillMerchant(
-      window
-        .BOCITEART_LAST_SPORT_MERCHANT_PROFILE
-    );
-
-    if(status){
-
-      status.textContent=
-        "Fiche commerce retrouvée.";
-    }
-
-    return;
-  }
-
-  if(status){
-
-    status.textContent=
-      "Aucun commerce scanné n’a été retrouvé. Utilisez la saisie manuelle.";
-  }
-}
-
-
-function sportSupportAmount(){
-
-  const value=
-    Number(
-      sportEl(
-        "sportSupportAmountHT"
-      )?.value ||
-      0
-    );
-
-  return Math.round(
-    value *
-    100
-  ) / 100;
-}
-
-
-function sportSupportChoice(){
-
-  return String(
-    document.querySelector(
-      'input[name="sportSupportAllocation"]:checked'
-    )?.value ||
-    "ALL_CLUB"
-  );
-}
-
-
-function sportSupportUpdatePreview(){
-
-  const amount=
-    sportSupportAmount();
-
-  const choice=
-    sportSupportChoice();
-
-  const preview=
-    sportEl(
-      "sportSupportPreview"
-    );
-
-  const associationBox=
-    sportEl(
-      "sportSupportAssociationBox"
-    );
-
-  if(associationBox){
-
-    associationBox.style.display=
-      choice ===
-        "HALF_HALF"
-        ? "block"
-        : "none";
-  }
-
-  if(!preview){
-    return;
-  }
-
-  if(
-    !Number.isFinite(amount) ||
-    amount <
-      Number(
-        SPORT_CONFIG.supportMinimumHT ||
-        50
-      )
-  ){
-
-    preview.textContent=
-      "Montant minimum : 50 € HT.";
-
-    return;
-  }
-
-  const allocation=
-    sportAllocation(
-      choice,
-      amount
-    );
-
-  if(!allocation){
-
-    preview.textContent=
-      "Choix de répartition invalide.";
-
-    return;
-  }
-
-  if(
-    choice ===
-      "ALL_CLUB"
-  ){
-
-    preview.innerHTML=
-
-      "<strong>" +
-      sportEsc(
-        amount.toFixed(2)
-      ) +
-      " € HT</strong>" +
-
-      " — 100 % destinés au club avant traitement du paiement.";
-
-    return;
-  }
-
-  preview.innerHTML=
-
-    "<strong>" +
-    sportEsc(
-      amount.toFixed(2)
-    ) +
-    " € HT</strong>" +
-
-    " — " +
-
-    sportEsc(
-      allocation.clubHT
-        .toFixed(2)
-    ) +
-
-    " € HT pour le club et " +
-
-    sportEsc(
-      allocation.associationHT
-        .toFixed(2)
-    ) +
-
-    " € HT pour l’association avant traitement du paiement.";
-}
-
-
-async function sportSupportStartPayment(){
-
-  const status=
-    sportEl(
-      "sportSupportStatus"
-    );
-
-  const club=
-    sportClub();
-
-  const amountHT=
-    sportSupportAmount();
-
-  const choice=
-    sportSupportChoice();
-
-  const merchant=
-    sportSupportReadMerchant();
-
-  const representative={
-
-    ref:
-      String(
-        sportSession.accountId ||
-        sportSession.role ||
-        ""
-      ),
-
-    name:
-      String(
-        sportSession.name ||
-        "Responsable du club"
-      ),
-
-    role:
-      String(
-        sportSession.role ||
-        ""
-      ),
-
-    team:
-      String(
-        sportSession.team ||
-        ""
-      )
-  };
-
-  if(!club.clubRef){
-
-    if(status){
-
-      status.textContent=
-        "La fiche d’identité du club doit être validée avant le paiement.";
-    }
-
-    return;
-  }
-
-  if(
-    !Number.isFinite(amountHT) ||
-    amountHT <
-      Number(
-        SPORT_CONFIG.supportMinimumHT ||
-        50
-      )
-  ){
-
-    if(status){
-
-      status.textContent=
-        "Le montant minimum est de 50 € HT.";
-    }
-
-    return;
-  }
-
-  if(
-    choice !== "ALL_CLUB" &&
-    choice !== "HALF_HALF"
-  ){
-
-    if(status){
-
-      status.textContent=
-        "Choisissez 100 % au club ou 50 / 50.";
-    }
-
-    return;
-  }
-
-  if(
-    !merchant.name ||
-    !merchant.sirenSiret ||
-    !merchant.address ||
-    !merchant.accountingEmail
-  ){
-
-    if(status){
-
-      status.textContent=
-        "Complétez le nom, le SIRET, l’adresse et l’email comptable du commerce.";
-    }
-
-    return;
-  }
-
-  let associationId="";
-
-  if(
-    choice ===
-      "HALF_HALF"
-  ){
-
-    associationId=
-      String(
-        sportEl(
-          "sportSupportAssociation"
-        )?.value ||
-        ""
-      );
-
-    const association=
-      sportAssociations()
-        .find(
-          x =>
-            String(x.id) ===
-            String(
-              associationId
-            )
-        );
-
-    if(
-      !association ||
-      !sportAssociationOK(
-        association
-      )
-    ){
-
-      if(status){
-
-        status.textContent=
-          "Choisissez une association partenaire validée.";
-      }
-
-      return;
-    }
-  }
-
-  sportSupportSaveMerchant();
-
-  const payload={
-
-    productCode:
-      SPORT_CONFIG
-        .billingProductCode,
-
-    amountHT:
-      amountHT,
-
-    clubRef:
-      club.clubRef,
-
-    representative:
-      representative,
-
-    allocationCode:
-      choice,
-
-    associationId:
-      associationId,
-
-    merchant:{
-
-      name:
-        merchant.name,
-
-      sirenSiret:
-        merchant.sirenSiret,
-
-      address:
-        merchant.address,
-
-      phone:
-        merchant.phone,
-
-      email:
-        merchant.email,
-
-      accountingEmail:
-        merchant.accountingEmail
-    },
-
-    returnUrl:
-      window.location.href,
-
-    cancelUrl:
-      window.location.href
-  };
-
-  if(
-    !SPORT_CONFIG
-      .checkoutEndpoint
-  ){
-
-    if(status){
-
-      status.textContent=
-        "Le paiement sécurisé n’est pas encore raccordé au service de paiement.";
-    }
-
-    return;
-  }
-
-  if(status){
-
-    status.textContent=
-      "Préparation du paiement sécurisé…";
-  }
-
-  try{
-
-    const response=
-      await fetch(
-        SPORT_CONFIG
-          .checkoutEndpoint,
-        {
-          method:
-            "POST",
-          credentials:
-            "include",
-          headers:{
-            "Content-Type":
-              "application/json"
-          },
-          body:
-            JSON.stringify(
-              payload
-            )
-        }
-      );
-
-    if(!response.ok){
-      throw new Error();
-    }
-
-    const data=
-      await response.json();
-
-    if(
-      !data ||
-      data.ok !== true ||
-      !data.paymentReference ||
-      !data.checkoutUrl
-    ){
-      throw new Error();
-    }
-
-    const payments=
-      sportPaymentRecords();
-
-    payments.push({
-
-      paymentReference:
-        String(
-          data.paymentReference
-        ),
-
-      clubRef:
-        club.clubRef,
-
-      representative:
-        representative,
-
-      merchantName:
-        merchant.name,
-
-      merchantSiret:
-        merchant.sirenSiret,
-
-      amountHT:
-        amountHT,
-
-      allocationCode:
-        choice,
-
-      associationId:
-        associationId,
-
-      status:
-        "checkout_created",
-
-      createdAt:
-        Date.now()
-    });
-
-    sportSavePaymentRecords(
-      payments
-    );
-
-    if(status){
-
-      status.textContent=
-        "Paiement sécurisé préparé.";
-    }
-
-    window.location.assign(
-      data.checkoutUrl
-    );
-
-  }catch(error){
-
-    if(status){
-
-      status.textContent=
-        "Le paiement sécurisé est momentanément indisponible.";
-    }
-  }
-}
-
-
-async function sportSupportCheckPayment(){
-
-  const status=
-    sportEl(
-      "sportSupportStatus"
-    );
-
-  const records=
-    sportPaymentRecords()
-      .slice()
-      .reverse();
-
-  const payment=
-    records.find(
-      x =>
-        x &&
-        x.paymentReference
-    );
-
-  if(!payment){
-
-    if(status){
-
-      status.textContent=
-        "Aucun paiement à vérifier.";
-    }
-
-    return;
-  }
-
-  if(
-    !SPORT_CONFIG
-      .paymentStatusEndpoint
-  ){
-
-    if(status){
-
-      status.textContent=
-        "La vérification automatique du paiement n’est pas encore raccordée.";
-    }
-
-    return;
-  }
-
-  if(status){
-
-    status.textContent=
-      "Vérification du paiement…";
-  }
-
-  try{
-
-    const response=
-      await fetch(
-        SPORT_CONFIG
-          .paymentStatusEndpoint,
-        {
-          method:
-            "POST",
-          credentials:
-            "include",
-          headers:{
-            "Content-Type":
-              "application/json"
-          },
-          body:
-            JSON.stringify({
-              paymentReference:
-                payment.paymentReference
-            })
-        }
-      );
-
-    if(!response.ok){
-      throw new Error();
-    }
-
-    const data=
-      await response.json();
-
-    if(
-      data &&
-      data.status ===
-        "paid"
-    ){
-
-      const all=
-        sportPaymentRecords();
-
-      const index=
-        all.findIndex(
-          x =>
-            String(
-              x.paymentReference
-            ) ===
-            String(
-              payment.paymentReference
-            )
-        );
-
-      if(index >= 0){
-
-        all[index].status=
-          "paid";
-
-        all[index].paidAt=
-          Date.now();
-
-        all[index].invoiceStatus=
-          data.invoiceSent === true
-            ? "sent"
-            : "processing";
-
-        sportSavePaymentRecords(
-          all
-        );
-      }
-
-      if(status){
-
-        status.textContent=
-          data.invoiceSent === true
-            ? "Paiement confirmé. La facture a été envoyée au commerce."
-            : "Paiement confirmé. La facture est en cours d’envoi au commerce.";
-      }
-
-      sportRenderPresidentHistory();
-
-      return;
-    }
-
-    if(status){
-
-      status.textContent=
-        "Le paiement n’est pas encore confirmé.";
-    }
-
-  }catch(error){
-
-    if(status){
-
-      status.textContent=
-        "La vérification du paiement est momentanément indisponible.";
-    }
-  }
-}
-
-
-function sportInitSupportPaymentUi(){
-
-  const amount=
-    sportEl(
-      "sportSupportAmountHT"
-    );
-
-  if(amount){
-
-    amount.oninput=
-      sportSupportUpdatePreview;
-
-    amount.onchange=
-      sportSupportUpdatePreview;
-  }
-
-  document
-    .querySelectorAll(
-      'input[name="sportSupportAllocation"]'
-    )
-    .forEach(
-      input=>{
-
-        input.onchange=
-          sportSupportUpdatePreview;
-      }
-    );
-
-  const findMerchant=
-    sportEl(
-      "sportSupportFindMerchant"
-    );
-
-  if(findMerchant){
-
-    findMerchant.onclick=
-      sportSupportFindMerchant;
-  }
-
-  const pay=
-    sportEl(
-      "sportSupportPayBtn"
-    );
-
-  if(pay){
-
-    pay.onclick=
-      sportSupportStartPayment;
-  }
-
-  const check=
-    sportEl(
-      "sportSupportCheckPayment"
-    );
-
-  if(check){
-
-    check.onclick=
-      sportSupportCheckPayment;
-  }
-
-  sportSupportUpdatePreview();
-}
-
-
-function sportSupportHtml(){
-
-  const associations=
-    sportAssociations()
-      .filter(
-        sportAssociationOK
-      );
-
-  return `
-
-    ${sportTitle(
-      "Publicité locale et soutien avec"
-    )}
-
-    <div class="sportCard">
-
-      <div class="sportText">
-
-        Le commerçant choisit librement
-        le montant de son soutien
-        à partir de
-        <strong>
-          50 € HT
-        </strong>.
-
-        <br><br>
-
-        Il dispose de deux choix :
-
-        <br>
-
-        <strong>
-          100 % pour le club
-        </strong>
-
-        ou
-
-        <strong>
-          50 % pour le club
-          et 50 % pour une association
-          de recherche partenaire.
-        </strong>
-
-        <br><br>
-
-        La petite publicité locale
-        est diffusée pendant
-        <strong>
-          5 jours consécutifs
-        </strong>
-        après confirmation du paiement.
-
-      </div>
-
-      <div class="sportCard">
-
-        <div class="sportSubTitle">
-          Commerce avec
-          ${sportBrandHtml()}
-        </div>
-
-        <div class="sportText">
-
-          Si le commerçant
-          vient de scanner
-          l’identité du club,
-          sa fiche est retrouvée
-          et préremplie.
-
-          <br><br>
-
-          La saisie manuelle reste disponible
-          en cas d’impossibilité de lecture.
-
-        </div>
-
-        <button
-          id="sportSupportFindMerchant"
-          class="sportBtn"
-          type="button"
-          style="
-            width:100%;
-            margin-top:12px;
-          "
-        >
-          Retrouver le commerce
-          qui vient de me scanner
-        </button>
-
-        <label class="sportLabel">
-          Nom du commerce / entreprise
-        </label>
-
-        <input
-          id="sportSupportMerchantName"
-          class="sportField"
-        >
-
-        <label class="sportLabel">
-          SIREN / SIRET
-        </label>
-
-        <input
-          id="sportSupportMerchantSiret"
-          class="sportField"
-        >
-
-        <label class="sportLabel">
-          Adresse
-        </label>
-
-        <input
-          id="sportSupportMerchantAddress"
-          class="sportField"
-        >
-
-        <label class="sportLabel">
-          Téléphone
-        </label>
-
-        <input
-          id="sportSupportMerchantPhone"
-          class="sportField"
-        >
-
-        <label class="sportLabel">
-          Email
-        </label>
-
-        <input
-          id="sportSupportMerchantEmail"
-          class="sportField"
-        >
-
-        <label class="sportLabel">
-          Email comptable
-        </label>
-
-        <input
-          id="sportSupportMerchantAccountingEmail"
-          class="sportField"
-        >
-
-      </div>
-
-      <div class="sportCard">
-
-        <div class="sportSubTitle">
-          Montant choisi avec
-          ${sportBrandHtml()}
-        </div>
-
-        <label class="sportLabel">
-          Montant du soutien en € HT
-        </label>
-
-        <input
-          id="sportSupportAmountHT"
-          class="sportField"
-          type="number"
-          min="50"
-          step="1"
-          value="50"
-        >
-
-        <div
-          class="sportText"
-          style="margin-top:8px;"
-        >
-          Montant minimum :
-          <strong>
-            50 € HT
-          </strong>.
-
-          Le commerçant peut choisir
-          librement un montant supérieur.
-        </div>
-
-      </div>
-
-      <div class="sportCard">
-
-        <div class="sportSubTitle">
-          Choix du commerçant avec
-          ${sportBrandHtml()}
-        </div>
-
-        <label class="sportCheck">
-
-          <input
-            type="radio"
-            name="sportSupportAllocation"
-            value="ALL_CLUB"
-            checked
-          >
-
-          <span>
-
-            <strong>
-              100 % pour le club
-            </strong>
-
-          </span>
-
-        </label>
-
-        <label class="sportCheck">
-
-          <input
-            type="radio"
-            name="sportSupportAllocation"
-            value="HALF_HALF"
-          >
-
-          <span>
-
-            <strong>
-              50 % pour le club
-              / 50 % pour l’association
-            </strong>
-
-          </span>
-
-        </label>
-
-        <div
-          id="sportSupportAssociationBox"
-          style="
-            display:none;
-            margin-top:12px;
-          "
-        >
-
-          <label class="sportLabel">
-            Association de recherche partenaire
-          </label>
-
-          <select
-            id="sportSupportAssociation"
-            class="sportField"
-          >
-
-            <option value="">
-              Choisir l’association
-            </option>
-
-            ${
-              associations.length
-                ? associations
-                    .map(
-                      x => `
-
-                        <option
-                          value="${sportEsc(x.id)}"
-                        >
-                          ${sportEsc(
-                            x.legalName ||
-                            x.label
-                          )}
-                        </option>
-
-                      `
-                    )
-                    .join("")
-                : `
-
-                    <option
-                      value=""
-                      disabled
-                    >
-                      Aucune association
-                      partenaire validée
-                    </option>
-
-                  `
-            }
-
-          </select>
-
-        </div>
-
-        <div
-          id="sportSupportPreview"
-          class="sportStatus"
-        ></div>
-
-      </div>
-
-      <div class="sportCard">
-
-        <div class="sportSubTitle">
-          Paiement sécurisé avec
-          ${sportBrandHtml()}
-        </div>
-
-        <div class="sportText">
-
-          Le commerçant règle
-          sur la page de paiement sécurisée.
-
-          <br><br>
-
-          Aucune donnée bancaire
-          n’est saisie
-          ni conservée
-          dans ${sportBrandHtml()}.
-
-          <br><br>
-
-          Après confirmation du paiement,
-          la facture correspondant
-          au montant réellement payé
-          est envoyée
-          à l’adresse comptable du commerce.
-
-          <br><br>
-
-          La publicité locale
-          n’est activée
-          qu’après confirmation effective
-          du paiement.
-
-        </div>
-
-        <div class="sportActions">
-
-          <button
-            id="sportSupportPayBtn"
-            class="sportBtn"
-            type="button"
-          >
-            Ouvrir le paiement sécurisé
-          </button>
-
-          <button
-            id="sportSupportCheckPayment"
-            class="sportBtn"
-            type="button"
-          >
-            Vérifier le paiement
-          </button>
-
-        </div>
-
-        <div
-          id="sportSupportStatus"
-          class="sportStatus"
-        >
-          Aucun paiement en cours.
-        </div>
-
-      </div>
-
-    </div>
-  `;
-}
-
+/* =========================================================
+   PARRAINAGE / PUBLICITÉ :
+   L'INTERFACE EST DÉSORMAIS PORTÉE PAR
+   entreprise/finance/bociteart-finance-sport.js
+   ========================================================= */
 
 /* =========================================================
    BLOC SPORT 8
    ACCÈS ENTRAÎNEURS — SÉANCES — CONTACTS
    ========================================================= */
+
 function sportResetCoachForm(){
 
   [
@@ -9950,19 +7625,6 @@ function sportResetCoachForm(){
     }
   );
 
-  [
-    "sportCoachSolidarityManage"
-  ].forEach(
-    id =>{
-
-      const field=
-        sportEl(id);
-
-      if(field){
-        field.checked=false;
-      }
-    }
-  );
 
   const editId=
     sportEl(
@@ -10069,22 +7731,6 @@ function sportEditCoach(id){
       }
     );
 
-  const solidarityManage=
-    sportEl(
-      "sportCoachSolidarityManage"
-    );
-
-  if(solidarityManage){
-
-    solidarityManage.checked=
-      Array.isArray(
-        coach.permissions
-      ) &&
-      coach.permissions.includes(
-        "solidarity_manage"
-      );
-  }
-
   const save=
     sportEl(
       "sportCoachCreate"
@@ -10137,7 +7783,7 @@ function sportEditCoach(id){
 }
    
 
-  function sportRenderAccessList(){
+function sportRenderAccessList(){
 
   const out=
     sportEl(
@@ -10163,10 +7809,6 @@ function sportEditCoach(id){
     return;
   }
 
-  /*
-    La liste des collaborateurs reste toujours visible
-    à la présidence pour permettre une désactivation immédiate.
-  */
   out.style.display=
     "block";
 
@@ -10304,36 +7946,6 @@ function sportEditCoach(id){
               }
             </div>
 
-            ${
-              Array.isArray(
-                x.permissions
-              ) &&
-              x.permissions.length
-                ? `
-
-                  <div
-                    class="sportStatus"
-                    style="margin-top:8px;"
-                  >
-                    Habilitations :
-                    ${
-                      x.permissions
-                        .map(
-                          permission =>
-                            permission ===
-                              "solidarity_manage"
-                              ? "orientation solidaire"
-                              : sportEsc(
-                                  permission
-                                )
-                        )
-                        .join(", ")
-                    }
-                  </div>
-
-                `
-                : ""
-            }
 
             <div class="sportActions">
 
@@ -10546,7 +8158,7 @@ function sportEditCoach(id){
             const code=
               String(
                 prompt(
-                  "Nouveau code d’accès temporaire  — 6 caractères minimum",
+                  "Nouveau code d’accès temporaire — 6 caractères minimum",
                   ""
                 ) ||
                 ""
@@ -10590,10 +8202,10 @@ function sportEditCoach(id){
               );
 
             access.coaches[index].passwordHash=
-  "";
+              "";
 
-access.coaches[index].passwordInitialized=
-  false;
+            access.coaches[index].passwordInitialized=
+              false;
 
             access.coaches[index].active=
               true;
@@ -10638,7 +8250,8 @@ access.coaches[index].passwordInitialized=
   sportRenderAccessHistory();
 }
 
- async function sportCreateCoach(){
+
+async function sportCreateCoach(){
 
   if(
     sportSession.role !==
@@ -10722,16 +8335,6 @@ access.coaches[index].passwordInitialized=
 
   const permissions=[];
 
-  if(
-    sportEl(
-      "sportCoachSolidarityManage"
-    )?.checked
-  ){
-    permissions.push(
-      "solidarity_manage"
-    );
-  }
-
   if(!name){
 
     alert(
@@ -10806,6 +8409,12 @@ access.coaches[index].passwordInitialized=
 
       access.coaches[index].codeHash=
         await sportHash(code);
+
+      access.coaches[index].passwordHash=
+        "";
+
+      access.coaches[index].passwordInitialized=
+        false;
 
       sportResetFail(
         access.coaches[index]
@@ -10882,10 +8491,10 @@ access.coaches[index].passwordInitialized=
         await sportHash(code),
 
       passwordHash:
-  "",
+        "",
 
-passwordInitialized:
-  false,
+      passwordInitialized:
+        false,
 
       active:
         true,
@@ -10907,7 +8516,7 @@ passwordInitialized:
     message=
       "Collaborateur enregistré. Identifiant : " +
       identifier +
-    ". Remettez-lui cet identifiant et le code d’accès temporaire que vous venez de choisir.";
+      ". Remettez-lui cet identifiant et le code d’accès temporaire que vous venez de choisir.";
 
     eventType=
       "created";
@@ -10978,7 +8587,6 @@ passwordInitialized:
 
   sportRenderAccessList();
 }
-
 
 function sportRenderTrainings(){
 
@@ -11362,182 +8970,6 @@ function sportRenderPrivateResults(){
       : '<div class="sportStatus">Aucun résultat enregistré.</div>';
 }
 
-
-function sportSaveSolidarityFromUi(){
-
-  if(
-    !sportHasPermission(
-      "solidarity_manage"
-    )
-  ){
-
-    alert(
-      "Cette orientation est réservée à la présidence ou à une personne officiellement habilitée."
-    );
-
-    return;
-  }
-
-  const mode=
-    String(
-      document.querySelector(
-        'input[name="sportDonMode"]:checked'
-      )?.value ||
-      "none"
-    );
-
-  const picks=
-    Array.from(
-      document.querySelectorAll(
-        ".sportAssoPick"
-      )
-    );
-
-  const map={};
-
-  if(
-    mode ===
-      "none"
-  ){
-
-    sportSave(
-      SPORT_KEYS.solidarity,
-      {
-        mode:
-          mode,
-        map:
-          map
-      }
-    );
-
-    const s=
-      sportEl(
-        "sportSolidarityStatus"
-      );
-
-    if(s){
-
-      s.textContent=
-        "Orientation enregistrée : 100 % pour le club.";
-    }
-
-    return;
-  }
-
-  const selected=
-    picks.filter(
-      x => x.checked
-    );
-
-  if(!selected.length){
-
-    alert(
-      "Sélectionnez au moins une association."
-    );
-
-    return;
-  }
-
-  if(
-    mode ===
-      "full"
-  ){
-
-    const base=
-      Math.floor(
-        100 /
-        selected.length
-      );
-
-    let rest=100;
-
-    selected.forEach(
-      (x,i)=>{
-
-        const id=
-          x.dataset.id;
-
-        map[id]=
-          i ===
-            selected.length-1
-            ? rest
-            : base;
-
-        rest -=
-          map[id];
-      }
-    );
-  }
-
-  if(
-    mode ===
-      "partial"
-  ){
-
-    let total=0;
-
-    selected.forEach(
-      x=>{
-
-        const id=
-          x.dataset.id;
-
-        const input=
-          document.querySelector(
-            '.sportAssoPct[data-id="' +
-            CSS.escape(id) +
-            '"]'
-          );
-
-        const v=
-          Math.max(
-            0,
-            Math.min(
-              100,
-              Number(
-                input?.value ||
-                0
-              )
-            )
-          );
-
-        map[id]=v;
-
-        total += v;
-      }
-    );
-
-    if(total !== 100){
-
-      alert(
-        "En partage partiel, le total doit être égal à 100 %."
-      );
-
-      return;
-    }
-  }
-
-  sportSave(
-    SPORT_KEYS.solidarity,
-    {
-      mode:
-        mode,
-      map:
-        map
-    }
-  );
-
-  const s=
-    sportEl(
-      "sportSolidarityStatus"
-    );
-
-  if(s){
-
-    s.textContent=
-      "Orientation enregistrée. Les destinations réelles restent soumises à la validation des associations proposées.";
-  }
-}
 
 function sportRefreshWallet(){
 
@@ -12336,7 +9768,6 @@ function openSportPublicResults(){
 window.openSportPublicResults=
   openSportPublicResults;
 
-
 /* =========================================================
    BLOC SPORT 9
    OUVERTURE DU MODULE — ACCÈS — EXPORT
@@ -12400,6 +9831,30 @@ function sportWalletHtml(){
         chaque Cabas accompagne
         un achat réel d’au moins
         <strong>10 €</strong>.
+
+        <br><br>
+
+        Si l’achat est personnel,
+        le bocitecoin gagné revient
+        au portefeuille personnel
+        de la personne qui achète.
+
+        Si l’achat est effectué pour le club,
+        le bocitecoin gagné revient
+        au portefeuille commun du club.
+
+        Un même achat ne crédite jamais
+        les deux portefeuilles.
+
+        <br><br>
+
+        Pour respecter le fonctionnement
+        du commerce, privilégiez les périodes calmes.
+        Pendant les fêtes, les fortes affluences
+        ou lorsque le magasin est très occupé,
+        le commerçant reste libre
+        de reporter l’échange
+        à un moment plus adapté.
 
         <br><br>
 
@@ -12477,7 +9932,7 @@ function sportWalletHtml(){
    ESPACE COMMUN PRÉSIDENT / COLLABORATEURS
    ========================================================= */
 
-   function sportCollaboratorSpaceHeaderHtml(){
+function sportCollaboratorSpaceHeaderHtml(){
 
   const isCollaborator=
     sportSession.role ===
@@ -12487,6 +9942,7 @@ function sportWalletHtml(){
     isCollaborator
       ? sportCurrentCoach()
       : null;
+
 
   return `
 
@@ -12561,17 +10017,17 @@ function sportWalletHtml(){
               </div>
 
               <button
-  id="sportCollaboratorPasswordChangeOpen"
-  class="sportBtn"
-  type="button"
-  style="
-    width:100%;
-    margin-top:12px;
-  "
->
-  Modifier mon mot de passe
-</button>
-             
+                id="sportCollaboratorPasswordChangeOpen"
+                class="sportBtn"
+                type="button"
+                style="
+                  width:100%;
+                  margin-top:12px;
+                "
+              >
+                Modifier mon mot de passe
+              </button>
+
               <button
                 class="sportBtn sportBtnDanger"
                 type="button"
@@ -12587,46 +10043,26 @@ function sportWalletHtml(){
                 Désactiver cet accès — réservé à la présidence
               </button>
 
-              <div
-  class="sportSubTitle"
-  style="margin-top:18px;"
->
-  Assistance sur mon accès
-</div>
-
-<div
-  class="sportText"
-  style="margin-top:8px;"
->
-  Cet espace est réservé aux collaborateurs
-  déjà identifiés.
-
-  <br><br>
-
-  Utilisez-le uniquement lorsqu’un problème important
-  concernant votre accès personnel
-  ne peut pas être résolu normalement.
-
-  <br><br>
-
             `
           : `
+
               <div
                 class="sportText"
                 style="margin-top:8px;"
               >
                 Les fonctions qui suivent
                 sont l’espace commun utilisé
-                par la présidence et les collaborateurs autorisés.
+                par la présidence
+                et les collaborateurs autorisés.
 
                 <br><br>
 
                 Chaque collaborateur dispose
                 de son propre identifiant
-                et de son propre code.
+                et de son propre mot de passe personnel.
                 La présidence conserve la maîtrise
-                de l’activation ou de la désactivation
-                de chaque accès.
+                de l’activation, de la désactivation
+                et du renouvellement des codes temporaires.
               </div>
 
             `
@@ -12636,6 +10072,7 @@ function sportWalletHtml(){
 
   `;
 }
+
 
 function sportPrivateAccessHelpHtml(){
 
@@ -12694,6 +10131,8 @@ function sportPrivateAccessHelpHtml(){
 
 `;
 }
+
+
 /* =========================================================
    ÇA COMMENCE ICI
    SPORT — VERROU DE L'ESPACE PRIVÉ DU CLUB
@@ -13082,22 +10521,8 @@ function openSportCollaboratorPasswordChange(){
    ÇA FINIT ICI
    SPORT — MODIFIER MON MOT DE PASSE COLLABORATEUR
    ========================================================= */
-  
+
 function openClubReserve(){
-
-  /*
-    L'espace complet Président / Club
-    ne doit jamais être construit
-    avant qu'un accès valable ait été obtenu.
-
-    Le mode présentation ne contourne pas
-    cette protection.
-  */
-
-
-  /* =====================================================
-     PRÉSIDENT / RESPONSABLE LÉGAL
-     ===================================================== */
 
   const presidentAuthorized=
     (
@@ -13109,28 +10534,18 @@ function openClubReserve(){
       Boolean(
         window.bociteartAdminSession
       )
-
       ||
-
       window
         .bociteartSportPresidentPrechecked ===
           true
-
       ||
-
       window
         .bociteartSportRecoveryVerified ===
           true
-
       ||
-
       sportGovernanceIsVerified()
     );
 
-
-  /* =====================================================
-     COLLABORATEUR
-     ===================================================== */
 
   let collaboratorAuthorized=
     false;
@@ -13147,13 +10562,6 @@ function openClubReserve(){
         "production"
     ){
 
-      /*
-        En production,
-        la session collaborateur
-        devra avoir été validée
-        côté serveur avant d'arriver ici.
-      */
-
       collaboratorAuthorized=
         true;
 
@@ -13167,7 +10575,6 @@ function openClubReserve(){
         Array.isArray(
           access.coaches
         )
-
           ? access.coaches.find(
               item =>
                 String(
@@ -13179,7 +10586,6 @@ function openClubReserve(){
                   ""
                 )
             )
-
           : null;
 
 
@@ -13193,17 +10599,12 @@ function openClubReserve(){
   }
 
 
-  /* =====================================================
-     AUCUN ACCÈS PRIVÉ VALIDE
-     ===================================================== */
-
   if(
     !presidentAuthorized &&
     !collaboratorAuthorized
   ){
 
     sportSession={
-
       role:"",
       accountId:"",
       name:"",
@@ -13215,24 +10616,11 @@ function openClubReserve(){
       sportSession;
 
 
-    /*
-    /*
-  Retour vers la porte générale.
-
-  Aucun espace d’assistance privé
-  n’est accessible sans connexion autorisée.
-*/
-
     openClubAccess();
 
     return;
   }
 
-
-  /* =====================================================
-     À PARTIR D'ICI SEULEMENT
-     L'ESPACE PRIVÉ EST AUTORISÉ
-     ===================================================== */
 
   const c=
     sportClub();
@@ -13302,7 +10690,7 @@ function openClubReserve(){
 
         ${sportWalletHtml()}
 
-        ${sportSolidarityHtml()}
+        ${sportYouthSponsorshipHtml()}
 
         ${sportBagHtml()}
 
@@ -13363,31 +10751,34 @@ function openClubReserve(){
 
       sportRenderContacts();
 
-      sportInitSupportPaymentUi();
-
       sportRenderPresidentHistory();
 
-const privateAccessHelp=
-  sportEl(
-    "sportPrivateAccessHelp"
-  );
+      sportBindYouthSponsorship();
 
-if(privateAccessHelp){
 
-  privateAccessHelp.onclick=
-    openSportContinuity;
-}
+      const privateAccessHelp=
+        sportEl(
+          "sportPrivateAccessHelp"
+        );
 
-     const collaboratorPasswordChange=
-  sportEl(
-    "sportCollaboratorPasswordChangeOpen"
-  );
+      if(privateAccessHelp){
 
-if(collaboratorPasswordChange){
+        privateAccessHelp.onclick=
+          openSportContinuity;
+      }
 
-  collaboratorPasswordChange.onclick=
-    openSportCollaboratorPasswordChange;
-} 
+
+      const collaboratorPasswordChange=
+        sportEl(
+          "sportCollaboratorPasswordChangeOpen"
+        );
+
+      if(collaboratorPasswordChange){
+
+        collaboratorPasswordChange.onclick=
+          openSportCollaboratorPasswordChange;
+      }
+
 
       const historyRefresh=
         sportEl(
@@ -13447,6 +10838,12 @@ if(collaboratorPasswordChange){
             "- aucun Cabas de 10, 20, 40 ou 50\n" +
 
             "- chez un commerçant partenaire : achat réel minimum de 10 € avant l’échange\n" +
+
+            "- achat personnel : le bocitecoin gagné reste personnel\n" +
+
+            "- achat pour le club : le bocitecoin gagné revient au portefeuille du club\n" +
+
+            "- en période de forte affluence, le commerçant peut reporter l’échange\n" +
 
             "- le commerçant partenaire ou la mairie scanne ensuite le club\n" +
 
@@ -13530,18 +10927,6 @@ if(collaboratorPasswordChange){
 
         mr.onclick=
           sportManualResult;
-      }
-
-
-      const sol=
-        sportEl(
-          "sportSolidaritySave"
-        );
-
-      if(sol){
-
-        sol.onclick=
-          sportSaveSolidarityFromUi;
       }
 
 
@@ -13633,10 +11018,8 @@ if(collaboratorPasswordChange){
   );
 }
 
-
 window.openClubReserve=
   openClubReserve;
-
 
 /* =========================================================
    SPORT — PREMIER CONTRÔLE PRÉSIDENT / RESPONSABLE LÉGAL
@@ -13645,7 +11028,7 @@ window.openClubReserve=
 let sportPresidentAccessChallenge =
   null;
 
-  function openSportPresidentPrecheck(){
+function openSportPresidentPrecheck(){
 
   openModal(
     "Vérification Président avec Bo'CitéArt",
@@ -14609,7 +11992,7 @@ function openSportPresidentCode(){
 
 }
 
-  /* =========================================================
+/* =========================================================
    ÇA COMMENCE ICI
    SPORT — CONTINUITÉ DU CLUB / CODE DE REPRISE
    ========================================================= */
@@ -15033,17 +12416,39 @@ function sportAddContinuityReply(
 
 async function sportSubmitContinuityRequest(){
 
-    const currentCollaborator=
-    sportCurrentCoach();
+  const currentCollaborator=
+    sportSession.role ===
+      "coach"
+      ? sportCurrentCoach()
+      : null;
 
-  if(
-    sportSession.role !==
-      "coach" ||
-    !currentCollaborator ||
-    currentCollaborator.active ===
-      false
-  ){
 
+  const authorized=
+    (
+      sportSession.role ===
+        "president" &&
+      (
+        Boolean(
+          window.bociteartAdminSession
+        ) ||
+        window.bociteartSportPresidentPrechecked ===
+          true ||
+        window.bociteartSportRecoveryVerified ===
+          true ||
+        sportGovernanceIsVerified()
+      )
+    )
+    ||
+    (
+      sportSession.role ===
+        "coach" &&
+      currentCollaborator &&
+      currentCollaborator.active !==
+        false
+    );
+
+
+  if(!authorized){
     return;
   }
 
@@ -15406,7 +12811,6 @@ async function sportSubmitContinuityRequest(){
   );
 }
 
-
 async function sportRefreshContinuityRequest(){
 
   const latest=
@@ -15737,16 +13141,6 @@ async function sportVerifyContinuityRecovery(){
 
   }else{
 
-    /*
-      CODE UNIQUEMENT POUR NOTRE PRÉSENTATION.
-
-      En production :
-      ce code est généré côté serveur,
-      temporaire,
-      personnel,
-      lié au dossier et au club.
-    */
-
     const demoCode=
       "141010";
 
@@ -15932,39 +13326,42 @@ async function sportVerifyContinuityRecovery(){
 
 function openSportContinuity(){
 
-   const currentCollaborator=
-  sportSession.role ===
-    "coach"
-    ? sportCurrentCoach()
-    : null;
-
-const authorized=
-  (
+  const currentCollaborator=
     sportSession.role ===
-      "president" &&
+      "coach"
+      ? sportCurrentCoach()
+      : null;
+
+
+  const authorized=
     (
-      Boolean(
-        window.bociteartAdminSession
-      ) ||
-      window.bociteartSportPresidentPrechecked ===
-        true ||
-      window.bociteartSportRecoveryVerified ===
-        true ||
-      sportGovernanceIsVerified()
+      sportSession.role ===
+        "president" &&
+      (
+        Boolean(
+          window.bociteartAdminSession
+        ) ||
+        window.bociteartSportPresidentPrechecked ===
+          true ||
+        window.bociteartSportRecoveryVerified ===
+          true ||
+        sportGovernanceIsVerified()
+      )
     )
-  )
-  ||
-  (
-    sportSession.role ===
-      "coach" &&
-    currentCollaborator &&
-    currentCollaborator.active !==
-      false
-  );
+    ||
+    (
+      sportSession.role ===
+        "coach" &&
+      currentCollaborator &&
+      currentCollaborator.active !==
+        false
+    );
 
-if(!authorized){
-  return;
-}
+
+  if(!authorized){
+    return;
+  }
+
 
   const latest=
     sportLatestContinuityRequest();
@@ -16124,7 +13521,7 @@ if(!authorized){
 
 
   openModal(
-  "Assistance sur mon accès",
+    "Assistance sur mon accès",
     `
 
       ${sportStyles()}
@@ -16184,10 +13581,8 @@ if(!authorized){
         <div class="sportCard">
 
           <div class="sportSubTitle">
-
             Nous permettre
             de vous recontacter
-
           </div>
 
           <label class="sportLabel">
@@ -16235,10 +13630,8 @@ if(!authorized){
 
 
           <label class="sportLabel">
-
             Votre fonction actuelle
             ou la nouvelle fonction déclarée
-
           </label>
 
           <input
@@ -16275,10 +13668,8 @@ if(!authorized){
 
 
           <label class="sportLabel">
-
             Référence
             d’un document officiel utile
-
           </label>
 
           <input
@@ -16289,10 +13680,8 @@ if(!authorized){
 
 
           <label class="sportLabel">
-
             Expliquez brièvement
             la situation
-
           </label>
 
           <textarea
@@ -16693,11 +14082,6 @@ window.BociteSportContinuity={
    SPORT — CONTINUITÉ DU CLUB / CODE DE REPRISE
    ========================================================= */
 
-  /* =========================================================
-   ÇA COMMENCE ICI
-   SPORT — ACCÈS RESPONSABLES + CONTINUITÉ INDÉPENDANTE
-   ========================================================= */
-
 /* =========================================================
    ÇA COMMENCE ICI
    SPORT — PREMIÈRE CONNEXION COLLABORATEUR
@@ -16934,12 +14318,6 @@ function openSportCollaboratorPasswordSetup(
               true;
 
 
-          /*
-            Le code temporaire
-            est neutralisé après
-            la création du mot de passe.
-          */
-
           access.coaches[index]
             .codeHash=
               "";
@@ -17002,7 +14380,8 @@ function openSportCollaboratorPasswordSetup(
    SPORT — PREMIÈRE CONNEXION COLLABORATEUR
    ========================================================= */
   
-  function openClubAccess(){
+
+function openClubAccess(){
 
   openModal(
     "Accès responsables avec Bo'CitéArt",
@@ -17053,6 +14432,7 @@ function openSportCollaboratorPasswordSetup(
 
         </div>
 
+
         <div class="sportCard">
 
           <div class="sportSubTitle">
@@ -17063,26 +14443,27 @@ function openSportCollaboratorPasswordSetup(
             class="sportText"
             style="margin-top:8px;"
           >
-            Le président attribue
+            Le Président attribue
             un accès individuel à chaque collaborateur.
 
             <br><br>
 
-           Lors de votre première connexion,
-utilisez l’identifiant personnel
-et le code d’accès temporaire
-qui vous ont été remis.
+            Lors de votre première connexion,
+            utilisez l’identifiant personnel
+            et le code d’accès temporaire
+            qui vous ont été remis.
 
-<br><br>
+            <br><br>
 
-Après avoir créé votre mot de passe personnel,
-utilisez ensuite votre identifiant
-et ce mot de passe pour vous connecter.
+            Après avoir créé votre mot de passe personnel,
+            utilisez ensuite votre identifiant
+            et ce mot de passe pour vous connecter.
 
-Chaque accès reste rattaché
-à la personne concernée
-et peut être désactivé immédiatement
-par la présidence.
+            Chaque accès reste rattaché
+            à la personne concernée
+            et peut être désactivé immédiatement
+            par la présidence.
+          </div>
 
           <label class="sportLabel">
             Identifiant personnel
@@ -17096,7 +14477,7 @@ par la présidence.
           >
 
           <label class="sportLabel">
-            Code d’accès ou mot de passe personnel 
+            Code d’accès ou mot de passe personnel
           </label>
 
           <input
@@ -17104,7 +14485,7 @@ par la présidence.
             class="sportField"
             type="password"
             autocomplete="current-password"
-            placeholder="Code d’accès"
+            placeholder="Code initial ou mot de passe"
           >
 
           <button
@@ -17126,12 +14507,16 @@ par la présidence.
 
         </div>
 
+      </div>
+
     `
   );
+
 
   sportSetModalHeader(
     "Accès responsables avec"
   );
+
 
   setTimeout(
     ()=>{
@@ -17142,9 +14527,11 @@ par la présidence.
         );
 
       if(presidentCheck){
+
         presidentCheck.onclick=
           openSportPresidentPrecheck;
       }
+
 
       const b=
         sportEl(
@@ -17154,6 +14541,7 @@ par la présidence.
       if(!b){
         return;
       }
+
 
       b.onclick=
         async ()=>{
@@ -17179,18 +14567,21 @@ par la présidence.
               "sportLoginStatus"
             );
 
+
           if(
             !id ||
             !code
           ){
 
             if(o){
+
               o.textContent=
                 "Renseignez l’identifiant et votre code d’accès ou mot de passe personnel.";
             }
 
             return;
           }
+
 
           if(
             sportLocked(
@@ -17199,12 +14590,14 @@ par la présidence.
           ){
 
             if(o){
+
               o.textContent=
-               "Accès temporairement indisponible. Contactez le président ou le responsable légal du club.";
+                "Accès temporairement indisponible. Contactez le président ou le responsable légal du club.";
             }
 
             return;
           }
+
 
           if(
             SPORT_CONFIG.mode ===
@@ -17238,29 +14631,31 @@ par la présidence.
                   }
                 );
 
+
               if(!r.ok){
                 throw 0;
               }
 
+
               const j=
                 await r.json();
 
-              /*
-                Le Président ne passe jamais
-                par la connexion collaborateur.
-              */
+
               if(
                 !j ||
-                j.ok !== true ||
+                j.ok !==
+                  true ||
                 j.role ===
                   "president"
               ){
                 throw 0;
               }
 
+
               sportResetFail(
                 id
               );
+
 
               sportSession={
                 role:
@@ -17282,8 +14677,10 @@ par la présidence.
                   )
               };
 
+
               window.bociteartSportSession=
                 sportSession;
+
 
               openClubReserve();
 
@@ -17297,6 +14694,7 @@ par la présidence.
                 );
 
               if(o){
+
                 o.textContent=
                   locked
                     ? "Accès temporairement indisponible. Contactez le président ou le responsable légal du club."
@@ -17306,6 +14704,7 @@ par la présidence.
               return;
             }
           }
+
 
           const access=
             sportAccess();
@@ -17317,109 +14716,95 @@ par la présidence.
                   sportNorm(
                     item.identifier
                   ) ===
-                  sportNorm(
-                    id
-                  ) &&
+                    sportNorm(
+                      id
+                    ) &&
                   item.active !==
                     false
               );
 
-        const enteredHash=
-  await sportHash(
-    code
-  );
+
+          const enteredHash=
+            await sportHash(
+              code
+            );
 
 
-const passwordAlreadyCreated=
-  collaborator &&
-  collaborator.passwordInitialized ===
-    true &&
-  !!collaborator.passwordHash;
+          const passwordAlreadyCreated=
+            collaborator &&
+            collaborator.passwordInitialized ===
+              true &&
+            !!collaborator.passwordHash;
 
 
-const validAccess=
-  collaborator &&
-  (
-    passwordAlreadyCreated
-
-      ? collaborator.passwordHash ===
-          enteredHash
-
-      : collaborator.codeHash ===
-          enteredHash
-  );
+          const validAccess=
+            collaborator &&
+            (
+              passwordAlreadyCreated
+                ? collaborator.passwordHash ===
+                    enteredHash
+                : collaborator.codeHash ===
+                    enteredHash
+            );
 
 
-if(validAccess){
+          if(validAccess){
 
-  sportResetFail(
-    id
-  );
-
-
-  sportRecordCollaboratorAccessEvent(
-    "login",
-    collaborator
-  );
+            sportResetFail(
+              id
+            );
 
 
-  /*
-    PREMIÈRE CONNEXION :
-    le code temporaire est correct,
-    mais le collaborateur doit maintenant
-    créer son mot de passe personnel.
-  */
-
-  if(
-    !passwordAlreadyCreated
-  ){
-
-    openSportCollaboratorPasswordSetup(
-      collaborator
-    );
-
-    return;
-  }
+            sportRecordCollaboratorAccessEvent(
+              "login",
+              collaborator
+            );
 
 
-  /*
-    CONNEXIONS SUIVANTES :
-    identifiant + mot de passe personnel.
-  */
+            if(
+              !passwordAlreadyCreated
+            ){
 
-  sportSession={
+              openSportCollaboratorPasswordSetup(
+                collaborator
+              );
 
-    role:
-      "coach",
-
-    accountId:
-      collaborator.id,
-
-    name:
-      collaborator.name ||
-      "Collaborateur",
-
-    team:
-      collaborator.team ||
-      ""
-  };
+              return;
+            }
 
 
-  window.bociteartSportSession=
-    sportSession;
+            sportSession={
+              role:
+                "coach",
+              accountId:
+                collaborator.id,
+              name:
+                collaborator.name ||
+                "Collaborateur",
+              team:
+                collaborator.team ||
+                ""
+            };
 
 
-  openClubReserve();
+            window.bociteartSportSession=
+              sportSession;
 
-  return;
-}
-          
+
+            openClubReserve();
+
+            return;
+          }
+
+
           const locked=
             sportFail(
               id
             );
 
+
           if(o){
+
             o.textContent=
               locked
                 ? "Accès temporairement indisponible. Contactez le président ou le responsable légal du club."
@@ -17499,6 +14884,72 @@ window.openSportPresidentPrivate=
   };
 
 
+
+function sportCabasSharedRulesHtml(){
+
+  return `
+
+    ${sportTitle(
+      "Bien choisir le moment de son échange avec"
+    )}
+
+    <div class="sportCard">
+
+      <div class="sportText">
+
+        Un achat réel d’au moins
+        <strong>10 €</strong>
+        est effectué avant l’échange
+        d’un Cabas de
+        <strong>30 bocitecoins</strong>.
+
+        <br><br>
+
+        Si cet achat est personnel,
+        le bocitecoin gagné revient
+        au portefeuille personnel de l’acheteur.
+
+        S’il est effectué pour le club,
+        le bocitecoin gagné revient
+        au portefeuille du club.
+
+        Un même achat ne crédite jamais
+        les deux portefeuilles.
+
+        L’achat et l’échange du Cabas
+        restent deux opérations distinctes.
+
+        <br><br>
+
+        Pour faciliter la vie de chacun,
+        les échanges se font de préférence
+        pendant les périodes plus calmes
+        du commerce.
+
+        <br><br>
+
+        Lors des fêtes,
+        des fortes affluences
+        ou lorsque le magasin est très occupé,
+        le commerçant reste libre
+        de reporter l’échange
+        à un moment plus adapté.
+
+        <br><br>
+
+        Clubs et commerçants connaissent
+        ainsi la règle dès le départ
+        et chacun peut s’organiser
+        dans de bonnes conditions.
+
+      </div>
+
+    </div>
+
+  `;
+}
+
+
 function openSportPanel(){
 
   if(
@@ -17555,6 +15006,8 @@ function openSportPanel(){
 
 
         ${sportBenefitsHtml()}
+
+        ${sportCabasSharedRulesHtml()}
 
 
         ${sportTitle(
@@ -17720,6 +15173,46 @@ window.BociteSportModule={
   getWallet:
     ()=>sportWallet(),
 
+  getYouthOrientation:
+    ()=>Object.assign(
+      {},
+      sportYouthOrientation()
+    ),
+
+  getAssociations:
+    ()=>
+      sportAssociations()
+        .filter(
+          item =>
+            sportAssociationOK(
+              item
+            )
+        )
+        .map(
+          item =>
+            Object.assign(
+              {},
+              item,
+              {
+                name:
+                  String(
+                    item.legalName ||
+                    item.label ||
+                    item.name ||
+                    ""
+                  ),
+                validated:true
+              }
+            )
+        ),
+
+  getSupportRules:
+    ()=>Object.assign(
+      {},
+      window.BociteSportSupportRules ||
+      {}
+    ),
+
   getConfig:
     ()=>Object.assign(
       {},
@@ -17735,6 +15228,8 @@ window.openSportPanel=
    ========================================================= */
 
 })();
+
+
 
 
 
