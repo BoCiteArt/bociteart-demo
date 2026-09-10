@@ -24,6 +24,9 @@
   const connectors = Object.create(null);
   const listeners = Object.create(null);
 
+/* Un seul lancement de paiement simultané par dossier. */
+const checkoutInFlight = Object.create(null);
+
   let config = {
     mode: "preproduction",
     apiBaseUrl: "",
@@ -176,38 +179,103 @@
     return financeClone(draft);
   }
 
-  function financeUpdateDraft(draftId, changes){
-    const id = financeText(draftId);
-    const drafts = financeReadDrafts();
-    const previous = drafts[id];
+ /* =========================================================
+   ÇA COMMENCE ICI — MODIFICATION SÉCURISÉE DU BROUILLON
+   ========================================================= */
 
-    if(!id || !previous){
-      throw new Error("Brouillon Finance introuvable.");
-    }
+function financeUpdateDraft(draftId, changes){
 
-    if(previous.status !== "draft"){
-      throw new Error("Cette opération n'est plus modifiable.");
-    }
+  const id =
+    financeText(
+      draftId
+    );
 
-    const draft = Object.assign(
+  const drafts =
+    financeReadDrafts();
+
+  const previous =
+    drafts[id];
+
+  if(
+    !id ||
+    !previous
+  ){
+    throw new Error(
+      "Brouillon Finance introuvable."
+    );
+  }
+
+  if(
+    previous.status !==
+      "draft"
+  ){
+    throw new Error(
+      "Cette opération n'est plus modifiable."
+    );
+  }
+
+  const draft =
+    Object.assign(
       {},
       previous,
-      financeClone(changes || {}),
+      financeClone(
+        changes ||
+        {}
+      ),
       {
-        draftId: id,
-        status: "draft",
-        updatedAt: financeNow(),
-        confirmedAt: null
+        draftId:
+          id,
+
+        status:
+          "draft",
+
+        updatedAt:
+          financeNow(),
+
+        confirmedAt:
+          null,
+
+        /*
+          Toute modification du brouillon
+          invalide une ancienne préparation
+          de paiement.
+        */
+
+        idempotencyKey:
+          null,
+
+        paymentReference:
+          null,
+
+        serverReference:
+          null,
+
+        paidAt:
+          null
       }
     );
 
-    drafts[id] = draft;
-    financeWriteDrafts(drafts);
-    financeEmit("draft-saved", draft);
+  drafts[id] =
+    draft;
 
-    return financeClone(draft);
-  }
+  financeWriteDrafts(
+    drafts
+  );
 
+  financeEmit(
+    "draft-saved",
+    draft
+  );
+
+  return financeClone(
+    draft
+  );
+}
+
+/* =========================================================
+   ÇA FINIT ICI — MODIFICATION SÉCURISÉE DU BROUILLON
+   ========================================================= */
+   
   function financeGetDraft(draftId){
     return financeClone(
       financeReadDrafts()[financeText(draftId)] || null
@@ -299,167 +367,990 @@
     return financeClone(frozen);
   }
 
-  async function financeStartCheckout(draftId){
-    const frozen = financeFreezeDraft(draftId);
-    const connector = financeConnector(frozen.connectorName);
+  /* =========================================================
+   ÇA COMMENCE ICI — DÉMARRAGE PAIEMENT SÉCURISÉ
+   ========================================================= */
 
-    if(!connector || typeof connector.startCheckout !== "function"){
-      throw new Error("Service de paiement non raccordé.");
-    }
+  async function financeStartCheckoutRun(draftId){
 
-    const request = {
-      draftId: frozen.draftId,
-      idempotencyKey: frozen.idempotencyKey || financeId("payment"),
-            flowType: frozen.flowType,
-      payerRef: frozen.payerRef,
+  const id =
+    financeText(
+      draftId
+    );
 
-      representativeRef:
-        financeText(
-          frozen.representativeRef
-        ),
+  let drafts =
+    financeReadDrafts();
 
-      representative:
-        financeClone(
-          frozen.representative ||
-          {}
-        ),
+  let current =
+    drafts[id];
 
-      presentedAt:
-        financeText(
-          frozen.presentedAt
-        ),
-
-      beneficiaryRefs:
-        financeClone(
-          frozen.beneficiaryRefs ||
-          []
-        ),
-      identityVersion: frozen.identityVersion,
-      amountHT: Number(frozen.amountHT),
-      allocationCode: financeText(frozen.allocationCode),
-      previewText: frozen.previewText,
-      returnUrl: window.location.href
-    };
-
-    const response = await connector.startCheckout(financeClone(request));
-
-    if(
-      !response ||
-      response.ok !== true ||
-      !financeText(response.paymentReference)
-    ){
-      throw new Error("Le paiement sécurisé n'a pas pu être préparé.");
-    }
-
-    const drafts = financeReadDrafts();
-    const current = drafts[frozen.draftId] || frozen;
-    const updated = Object.assign({}, current, {
-      status: "payment_pending",
-      idempotencyKey: request.idempotencyKey,
-      paymentReference: financeText(response.paymentReference),
-      updatedAt: financeNow()
-    });
-
-    drafts[frozen.draftId] = updated;
-    financeWriteDrafts(drafts);
-    financeEmit("payment-pending", updated);
-
-    return Object.assign({}, financeClone(response), {
-      draft: financeClone(updated)
-    });
+  if(
+    !id ||
+    !current
+  ){
+    throw new Error(
+      "Brouillon Finance introuvable."
+    );
   }
 
-    function financeApplyServerStatus(draftId, serverStatus){
-    const id = financeText(draftId);
-    const allowed = [
-      "payment_pending",
+  /*
+    Un paiement déjà en cours
+    ne doit jamais être démarré
+    une seconde fois.
+  */
+
+  if(
+    current.status ===
+      "payment_pending" &&
+    financeText(
+      current.paymentReference
+    )
+  ){
+    return {
+
+      ok:
+        true,
+
+      paymentReference:
+        financeText(
+          current.paymentReference
+        ),
+
+      checkoutUrl:
+        financeText(
+          current.checkoutUrl
+        ),
+
+      alreadyPending:
+        true,
+
+      draft:
+        financeClone(
+          current
+        )
+    };
+  }
+
+  /*
+    Ces états ne peuvent pas
+    redémarrer un nouveau paiement
+    sur le même dossier.
+  */
+
+  if(
+    [
       "paid",
       "refused",
       "cancelled",
       "refunded",
       "disputed"
-    ];
-    const status = financeText(serverStatus && serverStatus.status);
-    const drafts = financeReadDrafts();
-    const previous = drafts[id];
-
-    if(!previous){
-      throw new Error("Opération Finance introuvable.");
-    }
-
-    if(allowed.indexOf(status) === -1){
-      throw new Error("État de paiement refusé.");
-    }
-
-    const updated = Object.assign({}, previous, {
-      status: status,
-      updatedAt: financeNow(),
-      serverReference: financeText(
-        serverStatus && serverStatus.serverReference
-      ) || previous.serverReference || ""
-    });
-
-    if(status === "paid"){
-      updated.paidAt = financeText(serverStatus.paidAt) || financeNow();
-    }
-
-    drafts[id] = updated;
-    financeWriteDrafts(drafts);
-    financeEmit("payment-" + status, updated);
-
-    return financeClone(updated);
+    ]
+      .includes(
+        financeText(
+          current.status
+        )
+      )
+  ){
+    throw new Error(
+      "Cette opération de paiement est déjà terminée."
+    );
   }
 
-  function financeStatusLabel(status){
-    const labels = {
-      draft: "À vérifier",
-      confirmed: "Confirmé avant paiement",
-      payment_pending: "Paiement en cours",
-      paid: "Paiement confirmé",
-      refused: "Paiement refusé",
-      cancelled: "Paiement annulé",
-      refunded: "Paiement remboursé",
-      disputed: "Paiement contesté"
-    };
+  /*
+    Premier passage :
+    le brouillon est figé.
 
-    return labels[financeText(status)] || "État inconnu";
+    Après une réponse réseau incertaine,
+    le même dossier peut être repris
+    sans créer une nouvelle opération.
+  */
+
+  if(
+    current.status ===
+      "draft"
+  ){
+
+    current =
+      financeFreezeDraft(
+        id
+      );
+
+  }else if(
+    current.status ===
+      "confirmed" ||
+    current.status ===
+      "checkout_uncertain"
+  ){
+
+    const validation =
+      financeValidateDraft(
+        current
+      );
+
+    if(
+      !validation.ok
+    ){
+
+      const error =
+        new Error(
+          validation.errors.join(
+            " "
+          )
+        );
+
+      error.validationErrors =
+        validation.errors.slice();
+
+      throw error;
+    }
+
+  }else{
+
+    throw new Error(
+      "L’état actuel de cette opération ne permet pas de lancer le paiement."
+    );
   }
 
-  window.BociteFinance = {
-    version: VERSION,
-    ready: true,
-    configure: financeConfigure,
-    getConfig: function(){ return financeClone(config); },
-    registerConnector: financeRegisterConnector,
-    getConnector: financeConnector,
-    on: financeOn,
-    emit: financeEmit,
-    createDraft: financeCreateDraft,
-    updateDraft: financeUpdateDraft,
-    getDraft: financeGetDraft,
-    deleteDraft: financeDeleteDraft,
-    validateDraft: financeValidateDraft,
-    freezeDraft: financeFreezeDraft,
-    startCheckout: financeStartCheckout,
-    applyServerStatus: financeApplyServerStatus,
-    statusLabel: financeStatusLabel
+  const connector =
+    financeConnector(
+      current.connectorName
+    );
+
+  if(
+    !connector ||
+    typeof connector.startCheckout !==
+      "function"
+  ){
+    throw new Error(
+      "Service de paiement non raccordé."
+    );
+  }
+
+  /*
+    CRITIQUE :
+
+    La clé d’idempotence est créée
+    et enregistrée AVANT tout appel
+    au système de paiement.
+
+    En cas de coupure réseau,
+    la prochaine tentative reprend
+    exactement la même clé.
+  */
+
+  const idempotencyKey =
+    financeText(
+      current.idempotencyKey
+    ) ||
+    financeId(
+      "payment"
+    );
+
+  drafts =
+    financeReadDrafts();
+
+  current =
+    Object.assign(
+      {},
+      drafts[id] ||
+      current,
+      {
+        idempotencyKey:
+          idempotencyKey,
+
+        updatedAt:
+          financeNow()
+      }
+    );
+
+  drafts[id] =
+    current;
+
+  financeWriteDrafts(
+    drafts
+  );
+
+  const request = {
+
+    draftId:
+      current.draftId,
+
+    idempotencyKey:
+      idempotencyKey,
+
+    flowType:
+      current.flowType,
+
+    payerRef:
+      current.payerRef,
+
+    representativeRef:
+      financeText(
+        current.representativeRef
+      ),
+
+    representative:
+      financeClone(
+        current.representative ||
+        {}
+      ),
+
+    presentedAt:
+      financeText(
+        current.presentedAt
+      ),
+
+    beneficiaryRefs:
+      financeClone(
+        current.beneficiaryRefs ||
+        []
+      ),
+
+    identityVersion:
+      current.identityVersion,
+
+    amountHT:
+      Number(
+        current.amountHT
+      ),
+
+    allocationCode:
+      financeText(
+        current.allocationCode
+      ),
+
+    previewText:
+      current.previewText,
+
+    returnUrl:
+      window.location.href
   };
 
-  financeEmit("core-ready", {
-    version: VERSION,
-    mode: config.mode
-  });
+  let response;
 
-  console.info("✅ Bo'CitéArt Finance — cœur commun chargé");
+  try{
+
+    response =
+      await connector.startCheckout(
+        financeClone(
+          request
+        )
+      );
+
+  }catch(error){
+
+    drafts =
+      financeReadDrafts();
+
+    const previous =
+      drafts[id] ||
+      current;
+
+    const productionMode =
+      financeText(
+        config.mode
+      )
+        .toLowerCase() ===
+      "production";
+
+    /*
+      En production,
+      une coupure réseau ne signifie
+      jamais que le PSP n'a pas reçu
+      la demande.
+
+      La clé de paiement est conservée.
+    */
+
+    if(
+      productionMode
+    ){
+
+      drafts[id] =
+        Object.assign(
+          {},
+          previous,
+          {
+            status:
+              "checkout_uncertain",
+
+            idempotencyKey:
+              idempotencyKey,
+
+            updatedAt:
+              financeNow()
+          }
+        );
+
+    }else{
+
+      /*
+        En préproduction,
+        aucun argent réel n'est engagé.
+
+        On revient au brouillon.
+      */
+
+      drafts[id] =
+        Object.assign(
+          {},
+          previous,
+          {
+            status:
+              "draft",
+
+            confirmedAt:
+              null,
+
+            idempotencyKey:
+              null,
+
+            paymentReference:
+              null,
+
+            updatedAt:
+              financeNow()
+          }
+        );
+    }
+
+    financeWriteDrafts(
+      drafts
+    );
+
+    throw error;
+  }
+
+  if(
+    !response ||
+    response.ok !== true ||
+    !financeText(
+      response.paymentReference
+    )
+  ){
+    throw new Error(
+      "Le paiement sécurisé n'a pas pu être préparé."
+    );
+  }
+
+  const paymentReference =
+    financeText(
+      response.paymentReference
+    );
+
+  drafts =
+    financeReadDrafts();
+
+  current =
+    drafts[id] ||
+    current;
+
+  /*
+    Si un retour serveur est arrivé
+    très rapidement pendant
+    la préparation du paiement,
+    on ne revient jamais en arrière.
+  */
+
+  if(
+    [
+      "paid",
+      "refused",
+      "cancelled",
+      "refunded",
+      "disputed"
+    ]
+      .includes(
+        financeText(
+          current.status
+        )
+      )
+  ){
+
+    if(
+      financeText(
+        current.paymentReference
+      ) &&
+      financeText(
+        current.paymentReference
+      ) !==
+      paymentReference
+    ){
+      throw new Error(
+        "Incohérence de référence de paiement."
+      );
+    }
+
+    return Object.assign(
+      {},
+      financeClone(
+        response
+      ),
+      {
+        draft:
+          financeClone(
+            current
+          )
+      }
+    );
+  }
+
+  /*
+    Une même clé de sécurité
+    doit toujours correspondre
+    à une seule référence de paiement.
+  */
+
+  if(
+    financeText(
+      current.paymentReference
+    ) &&
+    financeText(
+      current.paymentReference
+    ) !==
+    paymentReference
+  ){
+    throw new Error(
+      "Incohérence de référence de paiement."
+    );
+  }
+
+  const updated =
+    Object.assign(
+      {},
+      current,
+      {
+        status:
+          "payment_pending",
+
+        idempotencyKey:
+          idempotencyKey,
+
+        paymentReference:
+          paymentReference,
+
+        checkoutUrl:
+          financeText(
+            response.checkoutUrl
+          ) ||
+          financeText(
+            current.checkoutUrl
+          ),
+
+        updatedAt:
+          financeNow()
+      }
+    );
+
+  drafts[id] =
+    updated;
+
+  financeWriteDrafts(
+    drafts
+  );
+
+  financeEmit(
+    "payment-pending",
+    updated
+  );
+
+  return Object.assign(
+    {},
+    financeClone(
+      response
+    ),
+    {
+      draft:
+        financeClone(
+          updated
+        )
+    }
+  );
+}
+
+   /* =========================================================
+   ÇA COMMENCE ICI — VERROU ANTI DOUBLE-CLIC
+   ========================================================= */
+
+function financeStartCheckout(draftId){
+
+  const id =
+    financeText(
+      draftId
+    );
+
+  if(
+    !id
+  ){
+    return Promise.reject(
+      new Error(
+        "Brouillon Finance introuvable."
+      )
+    );
+  }
+
+  /*
+    Si ce dossier est déjà en train
+    de lancer son paiement,
+    on reprend exactement
+    la même opération en cours.
+  */
+
+  if(
+    checkoutInFlight[id]
+  ){
+    return checkoutInFlight[id];
+  }
+
+  const operation =
+    financeStartCheckoutRun(
+      id
+    );
+
+  checkoutInFlight[id] =
+    operation;
+
+  operation.then(
+
+    function(){
+
+      if(
+        checkoutInFlight[id] ===
+        operation
+      ){
+        delete checkoutInFlight[id];
+      }
+    },
+
+    function(){
+
+      if(
+        checkoutInFlight[id] ===
+        operation
+      ){
+        delete checkoutInFlight[id];
+      }
+    }
+  );
+
+  return operation;
+}
+
+/* =========================================================
+   ÇA FINIT ICI — VERROU ANTI DOUBLE-CLIC
+   ========================================================= */
+
+/* =========================================================
+   ÇA FINIT ICI — DÉMARRAGE PAIEMENT SÉCURISÉ
+   ========================================================= */
+   
+/* =========================================================
+   ÇA COMMENCE ICI — CONTRÔLE DES ÉTATS DE PAIEMENT
+   ========================================================= */
+
+function financePaymentTransitionAllowed(
+  previousStatus,
+  nextStatus
+){
+
+  const previous =
+    financeText(
+      previousStatus
+    );
+
+  const next =
+    financeText(
+      nextStatus
+    );
+
+  if(
+    previous ===
+    next
+  ){
+    return true;
+  }
+
+  const transitions = {
+
+    confirmed:[
+      "payment_pending",
+      "paid",
+      "refused",
+      "cancelled"
+    ],
+
+    checkout_uncertain:[
+      "payment_pending",
+      "paid",
+      "refused",
+      "cancelled"
+    ],
+
+    payment_pending:[
+      "paid",
+      "refused",
+      "cancelled"
+    ],
+
+    paid:[
+      "refunded",
+      "disputed"
+    ],
+
+    disputed:[
+      "paid",
+      "refunded"
+    ],
+
+    refused:[],
+
+    cancelled:[],
+
+    refunded:[]
+  };
+
+  return !!(
+    transitions[previous] &&
+    transitions[previous]
+      .includes(
+        next
+      )
+  );
+}
+
+
+function financeApplyServerStatus(
+  draftId,
+  serverStatus
+){
+
+  const id =
+    financeText(
+      draftId
+    );
+
+  const source =
+    serverStatus &&
+    typeof serverStatus === "object"
+      ? serverStatus
+      : {};
+
+  const allowed = [
+    "payment_pending",
+    "paid",
+    "refused",
+    "cancelled",
+    "refunded",
+    "disputed"
+  ];
+
+  const status =
+    financeText(
+      source.status
+    );
+
+  const drafts =
+    financeReadDrafts();
+
+  const previous =
+    drafts[id];
+
+  if(
+    !previous
+  ){
+    throw new Error(
+      "Opération Finance introuvable."
+    );
+  }
+
+  if(
+    !allowed.includes(
+      status
+    )
+  ){
+    throw new Error(
+      "État de paiement refusé."
+    );
+  }
+
+  /*
+    Un retour ancien ou incohérent
+    ne doit jamais faire revenir
+    un paiement vers un état précédent.
+
+    Exemple interdit :
+    paid → payment_pending
+  */
+
+  if(
+    !financePaymentTransitionAllowed(
+      previous.status,
+      status
+    )
+  ){
+    throw new Error(
+      "Transition d’état de paiement refusée : " +
+      financeText(
+        previous.status
+      ) +
+      " → " +
+      status +
+      "."
+    );
+  }
+
+  const incomingPaymentReference =
+    financeText(
+      source.paymentReference
+    );
+
+  const existingPaymentReference =
+    financeText(
+      previous.paymentReference
+    );
+
+   /* =========================================================
+   ÇA COMMENCE ICI — RETOUR PSP DUPLIQUÉ
+   ========================================================= */
+
+if(
+  financeText(
+    previous.status
+  ) ===
+  status
+){
+
+  if(
+    incomingPaymentReference &&
+    existingPaymentReference &&
+    incomingPaymentReference !==
+      existingPaymentReference
+  ){
+    throw new Error(
+      "Incohérence de référence de paiement."
+    );
+  }
+
+  /*
+    Même état reçu une seconde fois :
+    on ne relance pas les traitements
+    financiers déjà effectués.
+  */
+
+  return financeClone(
+    previous
+  );
+}
+
+/* =========================================================
+   ÇA FINIT ICI — RETOUR PSP DUPLIQUÉ
+   ========================================================= */
+   
+  /*
+    Si le serveur fournit une référence
+    de paiement, elle doit correspondre
+    à celle déjà liée au dossier.
+  */
+
+  if(
+    incomingPaymentReference &&
+    existingPaymentReference &&
+    incomingPaymentReference !==
+      existingPaymentReference
+  ){
+    throw new Error(
+      "Incohérence de référence de paiement."
+    );
+  }
+
+  const updated =
+    Object.assign(
+      {},
+      previous,
+      {
+        status:
+          status,
+
+        paymentReference:
+          incomingPaymentReference ||
+          existingPaymentReference ||
+          "",
+
+        serverReference:
+          financeText(
+            source.serverReference
+          ) ||
+          financeText(
+            previous.serverReference
+          ),
+
+        updatedAt:
+          financeNow()
+      }
+    );
+
+  if(
+    status ===
+      "paid"
+  ){
+
+    updated.paidAt =
+      financeText(
+        source.paidAt
+      ) ||
+      financeText(
+        previous.paidAt
+      ) ||
+      financeNow();
+  }
+
+  drafts[id] =
+    updated;
+
+  financeWriteDrafts(
+    drafts
+  );
+
+  financeEmit(
+    "payment-" +
+    status,
+    updated
+  );
+
+  return financeClone(
+    updated
+  );
+}
+
+/* =========================================================
+   ÇA FINIT ICI — CONTRÔLE DES ÉTATS DE PAIEMENT
+   ========================================================= */
+   
+/* =========================================================
+   ÇA COMMENCE ICI — ÉTATS + EXPORT DU CŒUR FINANCE
+   ========================================================= */
+
+function financeStatusLabel(status){
+
+  const labels = {
+
+    draft:
+      "À vérifier",
+
+    confirmed:
+      "Confirmé avant paiement",
+
+    checkout_uncertain:
+      "Paiement à vérifier",
+
+    payment_pending:
+      "Paiement en cours",
+
+    paid:
+      "Paiement confirmé",
+
+    refused:
+      "Paiement refusé",
+
+    cancelled:
+      "Paiement annulé",
+
+    refunded:
+      "Paiement remboursé",
+
+    disputed:
+      "Paiement contesté"
+  };
+
+  return (
+    labels[
+      financeText(
+        status
+      )
+    ] ||
+    "État inconnu"
+  );
+}
+
+
+window.BociteFinance = {
+
+  version:
+    VERSION,
+
+  ready:
+    true,
+
+  configure:
+    financeConfigure,
+
+  getConfig:
+    function(){
+      return financeClone(
+        config
+      );
+    },
+
+  registerConnector:
+    financeRegisterConnector,
+
+  getConnector:
+    financeConnector,
+
+  on:
+    financeOn,
+
+  emit:
+    financeEmit,
+
+  createDraft:
+    financeCreateDraft,
+
+  updateDraft:
+    financeUpdateDraft,
+
+  getDraft:
+    financeGetDraft,
+
+  deleteDraft:
+    financeDeleteDraft,
+
+  validateDraft:
+    financeValidateDraft,
+
+  freezeDraft:
+    financeFreezeDraft,
+
+  startCheckout:
+    financeStartCheckout,
+
+  applyServerStatus:
+    financeApplyServerStatus,
+
+  statusLabel:
+    financeStatusLabel
+};
+
+
+financeEmit(
+  "core-ready",
+  {
+    version:
+      VERSION,
+
+    mode:
+      config.mode
+  }
+);
+
+
+console.info(
+  "✅ Bo'CitéArt Finance — cœur commun chargé"
+);
 
 })();
 
 /* =========================================================
-   ÇA FINIT ICI — BO'CITÉART — FINANCE — CŒUR COMMUN
+   ÇA FINIT ICI — ÉTATS + EXPORT DU CŒUR FINANCE
    ========================================================= */
 
-
-
-/* =========================================================
-   ÇA FINIT ICI — BO'CITÉART — FINANCE — INTERFACE COMMUNE
-   ========================================================= */
