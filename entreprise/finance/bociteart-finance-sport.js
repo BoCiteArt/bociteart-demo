@@ -2716,15 +2716,22 @@
       );
     }
 
-    if(
-      !/^image\//
-        .test(
-          file.type ||
-          ""
+        if(
+      ![
+        "image/png",
+        "image/jpeg",
+        "image/webp"
+      ]
+        .includes(
+          String(
+            file.type ||
+            ""
+          )
+            .toLowerCase()
         )
     ){
       throw new Error(
-        "Le logo doit être une image."
+        "Le logo doit être au format PNG, JPG ou WEBP."
       );
     }
 
@@ -3881,131 +3888,67 @@
     );
   }
 
+/* =========================================================
+   ÇA COMMENCE ICI — LIBÉRATION CRÉNEAU
+   ========================================================= */
 
-  async function sportFinanceReleaseHold(reason){
+async function sportFinanceReleaseHold(reason){
 
-    if(
-      !currentHold ||
-      !currentHold.slotHoldId
-    ){
-      return true;
-    }
+  if(
+    !currentHold ||
+    !currentHold.slotHoldId
+  ){
+    return true;
+  }
 
-    const holdId =
-      currentHold.slotHoldId;
+  const holdId =
+    currentHold.slotHoldId;
 
-    if(
-      sportFinanceIsProduction()
-    ){
+  if(
+    sportFinanceIsProduction()
+  ){
 
-      try{
+    try{
 
-        await sportFinanceServerPost(
+      await sportFinanceServerPost(
 
-          "/sport/publicity/hold/release",
+        "/sport/publicity/hold/release",
 
-          {
-
-            slotHoldId:
-              holdId,
-
-            reason:
-              sportFinanceText(
-                reason ||
-                "released"
-              )
-          }
-        );
-
-      }catch(error){
-
-        financeFoundationSaveAudit({
-
-          level:
-            "orange",
-
-          code:
-            "slot_release_server_pending",
-
-          message:
-            error.message,
+        {
 
           slotHoldId:
             holdId,
 
-          resolved:
-            false
-        });
-      }
-
-    }else{
-
-      const rows =
-        sportFinanceReadLocalSlots();
-
-      const index =
-        rows.findIndex(
-          function(item){
-            return (
-              sportFinanceText(
-                item.id
-              ) ===
-              holdId
-            );
-          }
-        );
-
-      if(
-        index >= 0 &&
-        rows[index].status ===
-          "held"
-      ){
-
-        rows[index].status =
-          "released";
-
-        rows[index].releasedAt =
-          Date.now();
-
-        rows[index].releaseReason =
-          sportFinanceText(
-            reason
-          );
-
-        sportFinanceWriteLocalSlots(
-          rows
-        );
-      }
-    }
-
-    currentHold =
-      null;
-
-    sportFinanceRenderHoldStatus();
-
-    return true;
-  }
-
-
-  function sportFinanceCommitLocalHold(draft){
-
-    if(
-      sportFinanceIsProduction()
-    ){
-      return;
-    }
-
-    const holdId =
-      sportFinanceText(
-        draft &&
-        draft.slotHoldId
+          reason:
+            sportFinanceText(
+              reason ||
+              "released"
+            )
+        }
       );
 
-    if(
-      !holdId
-    ){
-      return;
+    }catch(error){
+
+      financeFoundationSaveAudit({
+
+        level:
+          "orange",
+
+        code:
+          "slot_release_server_pending",
+
+        message:
+          error.message,
+
+        slotHoldId:
+          holdId,
+
+        resolved:
+          false
+      });
     }
+
+  }else{
 
     const rows =
       sportFinanceReadLocalSlots();
@@ -4016,6 +3959,7 @@
 
           return (
             sportFinanceText(
+              item &&
               item.id
             ) ===
             holdId
@@ -4024,14 +3968,28 @@
       );
 
     if(
-      index >= 0
+      index >= 0 &&
+      [
+        "held",
+        "payment_pending"
+      ]
+        .includes(
+          sportFinanceText(
+            rows[index].status
+          )
+        )
     ){
 
       rows[index].status =
-        "scheduled";
+        "released";
 
-      rows[index].paidAt =
+      rows[index].releasedAt =
         Date.now();
+
+      rows[index].releaseReason =
+        sportFinanceText(
+          reason
+        );
 
       sportFinanceWriteLocalSlots(
         rows
@@ -4039,10 +3997,192 @@
     }
   }
 
-  /* =========================================================
-     ÇA FINIT ICI — BLOC 3
-     ========================================================= */
+  currentHold =
+    null;
 
+  sportFinanceRenderHoldStatus();
+
+  return true;
+}
+
+/* =========================================================
+   ÇA FINIT ICI — LIBÉRATION CRÉNEAU
+   ========================================================= */
+
+/* =========================================================
+   ÇA COMMENCE ICI — CONFIRMATION CRÉNEAU PAYÉ
+   ========================================================= */
+
+function sportFinanceCommitLocalHold(draft){
+
+  if(
+    sportFinanceIsProduction()
+  ){
+    return true;
+  }
+
+  const holdId =
+    sportFinanceText(
+      draft &&
+      draft.slotHoldId
+    );
+
+  if(
+    !holdId
+  ){
+    return false;
+  }
+
+  const rows =
+    sportFinanceReadLocalSlots();
+
+  const index =
+    rows.findIndex(
+      function(item){
+
+        return (
+          sportFinanceText(
+            item &&
+            item.id
+          ) ===
+          holdId
+        );
+      }
+    );
+
+  if(
+    index < 0
+  ){
+
+    financeFoundationSaveAudit({
+
+      level:
+        "red",
+
+      code:
+        "paid_slot_missing",
+
+      operationRef:
+        sportFinanceText(
+          draft &&
+          draft.operationRef
+        ),
+
+      slotHoldId:
+        holdId,
+
+      message:
+        "Paiement confirmé mais réservation locale introuvable.",
+
+      resolved:
+        false
+    });
+
+    return false;
+  }
+
+  /*
+    Un même retour de paiement
+    peut arriver plusieurs fois.
+
+    Si le créneau est déjà programmé
+    avec la même référence,
+    on ne fait rien une seconde fois.
+  */
+
+  if(
+    sportFinanceText(
+      rows[index].status
+    ) ===
+    "scheduled" &&
+    (
+      !sportFinanceText(
+        draft &&
+        draft.paymentReference
+      ) ||
+      !sportFinanceText(
+        rows[index].paymentReference
+      ) ||
+      sportFinanceText(
+        rows[index].paymentReference
+      ) ===
+      sportFinanceText(
+        draft &&
+        draft.paymentReference
+      )
+    )
+  ){
+    return true;
+  }
+
+  if(
+    ![
+      "payment_pending",
+      "held"
+    ]
+      .includes(
+        sportFinanceText(
+          rows[index].status
+        )
+      )
+  ){
+
+    financeFoundationSaveAudit({
+
+      level:
+        "red",
+
+      code:
+        "paid_slot_invalid_state",
+
+      operationRef:
+        sportFinanceText(
+          draft &&
+          draft.operationRef
+        ),
+
+      slotHoldId:
+        holdId,
+
+      message:
+        "Paiement confirmé mais état du créneau incompatible : " +
+        sportFinanceText(
+          rows[index].status
+        ) +
+        ".",
+
+      resolved:
+        false
+    });
+
+    return false;
+  }
+
+  rows[index].status =
+    "scheduled";
+
+  rows[index].paidAt =
+    Date.now();
+
+  rows[index].paymentReference =
+    sportFinanceText(
+      draft &&
+      draft.paymentReference
+    ) ||
+    sportFinanceText(
+      rows[index].paymentReference
+    );
+
+  sportFinanceWriteLocalSlots(
+    rows
+  );
+
+  return true;
+}
+
+/* =========================================================
+   ÇA FINIT ICI — CONFIRMATION CRÉNEAU PAYÉ
+   ========================================================= */
    /* =========================================================
      BLOC 4
      SPORT — DOSSIERS — MONTANTS — DOCUMENTS — AGENT 1 / 2
@@ -6377,13 +6517,24 @@
           .slice(2,7)
           .toUpperCase();
 
-      const accountingDossier =
-        sportFinanceBuildAccountingDossier(
-          data,
-          operationRef,
-          ""
-        );
+    /* =========================================================
+   ÇA COMMENCE ICI — PRÉPARATION AGENT 1
+   ========================================================= */
 
+const accountingDossier =
+  sportFinancePrepareAgent1(
+    {
+      operationRef:
+        operationRef
+    },
+    data,
+    ""
+  );
+
+/* =========================================================
+   ÇA FINIT ICI — PRÉPARATION AGENT 1
+   ========================================================= */
+       
       const previewLines = [
 
         data.publicityText,
@@ -7197,175 +7348,323 @@
     );
   }
 
+/* =========================================================
+   ÇA COMMENCE ICI — DÉMARRAGE PAIEMENT SPORT
+   ========================================================= */
 
-  async function sportFinanceStartCheckout(request){
+async function sportFinanceStartCheckout(request){
+
+  if(
+    !sportFinanceCore()
+  ){
+    throw new Error(
+      "Le cœur Finance n'est pas chargé."
+    );
+  }
+
+  const payload =
+    sportFinanceCheckoutPayload(
+      request
+    );
+
+  if(
+    Number(
+      payload.slotHoldExpiresAt ||
+      0
+    ) > 0 &&
+    Number(
+      payload.slotHoldExpiresAt
+    ) <=
+    Date.now()
+  ){
+
+    await sportFinanceReleaseHold(
+      "hold_expired_before_checkout"
+    );
+
+    throw new Error(
+      "La réservation temporaire a expiré. Reprenez le créneau avant le paiement."
+    );
+  }
+
+  try{
+
+    let responseData;
+
+    /* =====================================================
+       PRODUCTION
+       ===================================================== */
 
     if(
-      !sportFinanceCore()
+      sportFinanceIsProduction()
     ){
-      throw new Error(
-        "Le cœur Finance n'est pas chargé."
-      );
-    }
 
-    const payload =
-      sportFinanceCheckoutPayload(
-        request
-      );
+      responseData =
+        await sportFinanceServerPost(
+          "/payments/checkout",
+          payload
+        );
 
-    if(
-      Number(
-        payload.slotHoldExpiresAt ||
-        0
-      ) > 0 &&
-      Number(
-        payload.slotHoldExpiresAt
-      ) <=
-      Date.now()
-    ){
-      await sportFinanceReleaseHold(
-        "hold_expired_before_checkout"
-      );
+    /* =====================================================
+       PRÉPRODUCTION
+       ===================================================== */
 
-      throw new Error(
-        "La réservation temporaire a expiré. Reprenez le créneau avant le paiement."
-      );
-    }
-
-    try{
-
-      let responseData;
+    }else{
 
       if(
-        sportFinanceIsProduction()
-      ){
-
-        responseData =
-          await sportFinanceServerPost(
-            "/payments/checkout",
-            payload
-          );
-
-      }else{
-
-        if(
-          !window.BociteFinanceTest ||
-          window.BociteFinanceTest.ready !== true
-        ){
-          throw new Error(
-            "Le test à blanc Finance n'est pas chargé."
-          );
-        }
-
-        responseData =
-          await window
-            .BociteFinanceTest
-            .startCheckout(
-              payload
-            );
-      }
-
-      if(
-        !responseData ||
-        responseData.ok !== true ||
-        !sportFinanceText(
-          responseData.paymentReference
-        )
+        !window.BociteFinanceTest ||
+        window.BociteFinanceTest.ready !== true
       ){
         throw new Error(
-          "Le paiement sécurisé n'a pas pu être préparé."
+          "Le test à blanc Finance n'est pas chargé."
         );
       }
 
-      sportFinanceUpsertOperation({
+      responseData =
+        await window
+          .BociteFinanceTest
+          .startCheckout(
+            payload
+          );
+    }
 
-        draftId:
-          sportFinanceText(
-            payload.draftId
-          ),
+    if(
+      !responseData ||
+      responseData.ok !== true ||
+      !sportFinanceText(
+        responseData.paymentReference
+      )
+    ){
+      throw new Error(
+        "Le paiement sécurisé n'a pas pu être préparé."
+      );
+    }
+
+    /*
+      En préproduction,
+      le créneau quitte immédiatement
+      l'état "held".
+
+      Il devient "payment_pending"
+      et continue donc à compter
+      dans la capacité maximale
+      de 6 publicités simultanées.
+    */
+
+    if(
+      !sportFinanceIsProduction()
+    ){
+
+      const rows =
+        sportFinanceCleanLocalSlots();
+
+      const index =
+        rows.findIndex(
+          function(item){
+
+            return (
+              sportFinanceText(
+                item &&
+                item.id
+              ) ===
+              sportFinanceText(
+                payload.slotHoldId
+              )
+            );
+          }
+        );
+
+      if(
+        index < 0 ||
+        rows[index].status !==
+          "held" ||
+        Number(
+          rows[index].expiresAt ||
+          0
+        ) <=
+        Date.now()
+      ){
+
+        throw new Error(
+          "La réservation temporaire n’est plus valide. Reprenez le créneau avant le paiement."
+        );
+      }
+
+      rows[index].status =
+        "payment_pending";
+
+      rows[index].paymentReference =
+        sportFinanceText(
+          responseData.paymentReference
+        );
+
+      rows[index].updatedAt =
+        Date.now();
+
+      sportFinanceWriteLocalSlots(
+        rows
+      );
+    }
+
+    sportFinanceUpsertOperation({
+
+      draftId:
+        sportFinanceText(
+          payload.draftId
+        ),
+
+      operationRef:
+        sportFinanceText(
+          payload.operationRef
+        ),
+
+      paymentReference:
+        sportFinanceText(
+          responseData.paymentReference
+        ),
+
+      status:
+        "payment_pending",
+
+      amountHT:
+        Number(
+          payload.amountHT ||
+          0
+        ),
+
+      extraResearchAmount:
+        Number(
+          payload.extraResearchAmount ||
+          0
+        ),
+
+      paymentBaseBeforeFinalTax:
+        Number(
+          payload.paymentBaseBeforeFinalTax ||
+          0
+        ),
+
+      finalPaymentAmount:
+        Number(
+          responseData.finalPaymentAmount ||
+          0
+        ) ||
+        null,
+
+      totalPaymentAmount:
+        Number(
+          responseData.finalPaymentAmount ||
+          payload.totalPaymentAmount ||
+          0
+        ),
+
+      totalPaymentAmountProvisional:
+        !Number(
+          responseData.finalPaymentAmount ||
+          0
+        ),
+
+      allocationCode:
+        sportFinanceText(
+          payload.allocationCode
+        ),
+
+      grossAllocation:
+        sportFinanceClone(
+          payload.grossAllocation
+        ),
+
+      clubRef:
+        sportFinanceText(
+          payload.clubRef
+        ),
+
+      associationId:
+        sportFinanceText(
+          payload.associationId
+        ),
+
+      publicationDurationHours:
+        72,
+
+      publicationStart:
+        sportFinanceText(
+          payload.publicationStart
+        ),
+
+      publicationEnd:
+        sportFinanceText(
+          payload.publicationEnd
+        ),
+
+      slotHoldId:
+        sportFinanceText(
+          payload.slotHoldId
+        ),
+
+      publicityText:
+        sportFinanceText(
+          payload.publicityText
+        ),
+
+      tariffVersion:
+        sportFinanceText(
+          payload.bociteArtTariffVersion
+        ),
+
+      feeRateHT:
+        Number(
+          payload.bociteArtFeeRateHT ||
+          0
+        )
+    });
+
+    /*
+      Dès que le paiement est lancé,
+      la prolongation manuelle
+      de la réservation n'est plus utile.
+
+      Le dossier de paiement prend
+      le relais du suivi.
+    */
+
+    currentHold =
+      null;
+
+    sportFinanceRenderHoldStatus();
+
+    sportFinanceRenderLatestOperation();
+
+    return responseData;
+
+  }catch(error){
+
+    /*
+      En production,
+      une erreur réseau ne prouve pas
+      que le PSP n'a pas reçu
+      la demande de paiement.
+
+      Le créneau ne doit donc jamais
+      être libéré automatiquement
+      dans ce cas.
+    */
+
+    if(
+      sportFinanceIsProduction()
+    ){
+
+      financeFoundationSaveAudit({
+
+        level:
+          "red",
+
+        code:
+          "checkout_state_to_reconcile",
 
         operationRef:
           sportFinanceText(
             payload.operationRef
-          ),
-
-        paymentReference:
-          sportFinanceText(
-            responseData.paymentReference
-          ),
-
-        status:
-          "payment_pending",
-
-        amountHT:
-          Number(
-            payload.amountHT ||
-            0
-          ),
-
-        extraResearchAmount:
-          Number(
-            payload.extraResearchAmount ||
-            0
-          ),
-
-        paymentBaseBeforeFinalTax:
-          Number(
-            payload.paymentBaseBeforeFinalTax ||
-            0
-          ),
-
-        finalPaymentAmount:
-          Number(
-            responseData.finalPaymentAmount ||
-            0
-          ) ||
-          null,
-
-        totalPaymentAmount:
-          Number(
-            responseData.finalPaymentAmount ||
-            payload.totalPaymentAmount ||
-            0
-          ),
-
-        totalPaymentAmountProvisional:
-          !Number(
-            responseData.finalPaymentAmount ||
-            0
-          ),
-
-        allocationCode:
-          sportFinanceText(
-            payload.allocationCode
-          ),
-
-        grossAllocation:
-          sportFinanceClone(
-            payload.grossAllocation
-          ),
-
-        clubRef:
-          sportFinanceText(
-            payload.clubRef
-          ),
-
-        associationId:
-          sportFinanceText(
-            payload.associationId
-          ),
-
-        publicationDurationHours:
-          72,
-
-        publicationStart:
-          sportFinanceText(
-            payload.publicationStart
-          ),
-
-        publicationEnd:
-          sportFinanceText(
-            payload.publicationEnd
           ),
 
         slotHoldId:
@@ -7373,37 +7672,31 @@
             payload.slotHoldId
           ),
 
-        publicityText:
-          sportFinanceText(
-            payload.publicityText
-          ),
+        message:
+          error &&
+          error.message
+            ? error.message
+            : "État du démarrage du paiement à rapprocher côté serveur.",
 
-        tariffVersion:
-          sportFinanceText(
-            payload.bociteArtTariffVersion
-          ),
-
-        feeRateHT:
-          Number(
-            payload.bociteArtFeeRateHT ||
-            0
-          )
+        resolved:
+          false
       });
 
-      sportFinanceRenderLatestOperation();
-
-      return responseData;
-
-    }catch(error){
+    }else{
 
       await sportFinanceReleaseHold(
         "checkout_failed"
       );
-
-      throw error;
     }
-  }
 
+    throw error;
+  }
+}
+
+/* =========================================================
+   ÇA FINIT ICI — DÉMARRAGE PAIEMENT SPORT
+   ========================================================= */
+ 
   /* =========================================================
      ÇA FINIT ICI — BLOC 5
      ========================================================= */
@@ -7469,112 +7762,145 @@
   }
 
 
-  function sportFinanceClubBrandingHtml(){
+ /* =========================================================
+   ÇA COMMENCE ICI — LOGO DU CLUB
+   ========================================================= */
 
-    const session =
-      sportFinanceSession();
+function sportFinanceClubBrandingHtml(){
 
-    if(
-      session.role !== "president"
-    ){
-      return "";
-    }
+  const session =
+    sportFinanceSession();
 
-    const branding =
-      sportFinanceBrandingStore();
+  if(
+    session.role !== "president"
+  ){
+    return "";
+  }
 
-    return `
+  const club =
+    sportFinanceClubSnapshot(
+      sportFinanceClub()
+    );
 
-      <div class="sportCard">
+  const brandingStore =
+    sportFinanceBrandingStore();
 
-        <div class="sportSubTitle">
+  const branding =
+    club.clubRef &&
+    brandingStore[
+      club.clubRef
+    ]
+      ? brandingStore[
+          club.clubRef
+        ]
+      : {};
 
-          Présentation des documents du club
+  return `
 
-        </div>
+    <div class="sportCard">
 
-        <div
-          class="sportText"
-          style="margin-top:8px;"
-        >
+      <div class="sportSubTitle">
 
-          Le logo est facultatif.
-
-          S’il n’est pas ajouté,
-          Bo'CitéArt prépare une présentation standard
-          à partir des coordonnées vérifiées du club.
-
-          Les documents définitifs
-          restent produits côté serveur.
-
-        </div>
-
-        <label class="sportLabel">
-
-          Logo du club
-
-        </label>
-
-        <input
-          id="bcfSportClubLogo"
-          class="sportField"
-          type="file"
-          accept="image/png,image/jpeg,image/webp,image/svg+xml"
-        >
-
-        <button
-          id="bcfSportClubLogoSave"
-          class="sportBtn"
-          type="button"
-          style="
-            width:100%;
-            margin-top:10px;
-          "
-        >
-
-          Enregistrer / remplacer le logo
-
-        </button>
-
-        <div
-          id="bcfSportClubLogoStatus"
-          class="sportStatus"
-        >
-
-          ${
-            branding &&
-            branding.logoName
-
-              ? "Logo enregistré : " +
-                sportFinanceEscape(
-                  branding.logoName
-                )
-
-              : "Aucun logo enregistré."
-          }
-
-        </div>
+        Présentation des documents du club
 
       </div>
 
-    `;
+      <div
+        class="sportText"
+        style="margin-top:8px;"
+      >
+
+        Le logo est facultatif.
+
+        S’il n’est pas ajouté,
+        Bo'CitéArt prépare une présentation standard
+        à partir des coordonnées vérifiées du club.
+
+        Les documents définitifs
+        restent produits côté serveur.
+
+      </div>
+
+      <label class="sportLabel">
+
+        Logo du club
+
+      </label>
+
+      <input
+        id="bcfSportClubLogo"
+        class="sportField"
+        type="file"
+        accept="image/png,image/jpeg,image/webp"
+      >
+
+      <button
+        id="bcfSportClubLogoSave"
+        class="sportBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-top:10px;
+        "
+      >
+
+        Enregistrer / remplacer le logo
+
+      </button>
+
+      <div
+        id="bcfSportClubLogoStatus"
+        class="sportStatus"
+      >
+
+        ${
+          branding &&
+          branding.fileName
+
+            ? "Logo enregistré : " +
+              sportFinanceEscape(
+                branding.fileName
+              )
+
+            : "Aucun logo enregistré."
+        }
+
+      </div>
+
+    </div>
+
+  `;
+}
+
+/* =========================================================
+   ÇA FINIT ICI — LOGO DU CLUB
+   ========================================================= */
+
+/* =========================================================
+   ÇA COMMENCE ICI — PROTECTION RENDU FINANCE SPORT
+   ========================================================= */
+
+function sportFinanceRender(){
+
+  const mount =
+    sportFinanceField(
+      MOUNT_ID
+    );
+
+  if(
+    !mount
+  ){
+    return;
   }
 
+  mount.dataset.financeReady =
+    "1";
 
-  function sportFinanceRender(){
+  /* =========================================================
+   ÇA FINIT ICI — PROTECTION RENDU FINANCE SPORT
+   ========================================================= */ 
 
-    const mount =
-      sportFinanceField(
-        MOUNT_ID
-      );
-
-    if(
-      !mount
-    ){
-      return;
-    }
-
-    const profile =
+  const profile =
       sportFinanceInitialProfile();
 
     const associations =
@@ -9984,43 +10310,65 @@
   }
 
 
-  function sportFinanceInstall(){
+  /* =========================================================
+   ÇA COMMENCE ICI — INSTALLATION FINANCE SPORT SANS BOUCLE
+   ========================================================= */
 
-    const core =
-      sportFinanceCore();
+function sportFinanceInstall(){
 
-    if(
-      core &&
-      core.ready === true &&
-      typeof core.getConnector ===
-        "function" &&
-      typeof core.registerConnector ===
-        "function" &&
-      !core.getConnector(
-        CONNECTOR_NAME
-      )
-    ){
+  const core =
+    sportFinanceCore();
 
-      core.registerConnector(
+  if(
+    core &&
+    core.ready === true &&
+    typeof core.getConnector ===
+      "function" &&
+    typeof core.registerConnector ===
+      "function" &&
+    !core.getConnector(
+      CONNECTOR_NAME
+    )
+  ){
 
-        CONNECTOR_NAME,
+    core.registerConnector(
 
-        {
+      CONNECTOR_NAME,
 
-          startCheckout:
-            sportFinanceStartCheckout,
+      {
 
-          editIdentity:
-            sportFinanceEditIdentity
-        }
-      );
-    }
+        startCheckout:
+          sportFinanceStartCheckout,
 
-    sportFinanceInstallEvents();
-
-    sportFinanceRender();
+        editIdentity:
+          sportFinanceEditIdentity
+      }
+    );
   }
 
+  sportFinanceInstallEvents();
+
+  const mount =
+    sportFinanceField(
+      MOUNT_ID
+    );
+
+  if(
+    mount &&
+    mount.dataset.financeReady !==
+      "1"
+  ){
+
+    sportFinanceRender();
+
+    mount.dataset.financeReady =
+      "1";
+  }
+}
+
+/* =========================================================
+   ÇA FINIT ICI — INSTALLATION FINANCE SPORT SANS BOUCLE
+   ========================================================= */
 
   if(
     document.readyState ===
@@ -10043,7 +10391,6 @@
     sportFinanceInstall();
   }
 
-
   const observer =
     new MutationObserver(
       function(){
@@ -10051,7 +10398,6 @@
         sportFinanceInstall();
       }
     );
-
 
   observer.observe(
 
@@ -10066,7 +10412,6 @@
         true
     }
   );
-
 
   window.BociteFinanceSport = {
 
@@ -10188,7 +10533,6 @@
         };
       }
   };
-
 
   console.info(
     "✅ Bo'CitéArt Finance — Sport prêt — publicité indépendante / 72 h / capacité 6 / Agent 1 + Agent 2"
