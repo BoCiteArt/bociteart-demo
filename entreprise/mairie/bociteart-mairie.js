@@ -46,7 +46,7 @@ window.__bociteMairieModuleLoaded =
    ========================================================= */
 
 const VERSION =
-  "2026-09-10-01";
+  "2026-09-11-01";
 
 
 const MAIRIE_STORE_KEY =
@@ -55,10 +55,6 @@ const MAIRIE_STORE_KEY =
 
 const SCHOOL_HISTORY_KEY =
   "bociteart_mairie_school_history_v2";
-
-
-const REFERRAL_HISTORY_KEY =
-  "bociteart_mairie_referral_history_v2";
 
 
 const STYLE_ID =
@@ -2726,267 +2722,6 @@ function mairieShowSportHistory(){
   );
 }
 
-
-/* =========================================================
-   PARRAINAGES
-   SUIVI ADMINISTRATIF MAIRIE
-   ========================================================= */
-
-function mairieReferralHistory(){
-
-  const rows =
-    mairieRead(
-      REFERRAL_HISTORY_KEY,
-      []
-    );
-
-
-  return Array.isArray(
-    rows
-  )
-
-    ? rows
-
-    : [];
-}
-
-
-function mairieSaveReferralHistory(
-  rows
-){
-
-  return mairieWrite(
-    REFERRAL_HISTORY_KEY,
-
-    Array.isArray(
-      rows
-    )
-
-      ? rows.slice(
-          -500
-        )
-
-      : []
-  );
-}
-
-
-function mairieReferralSave(){
-
-  const input =
-    mairieEl(
-      "mairieReferralInput"
-    );
-
-
-  const status =
-    mairieEl(
-      "mairieReferralStatus"
-    );
-
-
-  const note =
-    mairieText(
-
-      input
-        ? input.value
-        : ""
-    );
-
-
-  if(
-    !note
-  ){
-
-    if(
-      status
-    ){
-
-      status.dataset.state =
-        "warn";
-
-
-      status.textContent =
-        "Renseignez le suivi à enregistrer.";
-    }
-
-    return;
-  }
-
-
-  const rows =
-    mairieReferralHistory();
-
-
-  rows.push({
-
-    id:
-      mairieId(
-        "referral"
-      ),
-
-    note:
-      note,
-
-    createdAt:
-      mairieNow()
-
-  });
-
-
-  mairieSaveReferralHistory(
-    rows
-  );
-
-
-  if(
-    input
-  ){
-
-    input.value =
-      "";
-  }
-
-
-  if(
-    status
-  ){
-
-    status.dataset.state =
-      "ok";
-
-
-    status.textContent =
-      "Suivi du parrainage enregistré.";
-  }
-}
-
-
-function mairieReferralRead(){
-
-  const rows =
-    mairieReferralHistory()
-      .slice()
-      .reverse();
-
-
-  mairieOpenModal(
-    "Suivi des parrainages avec Bo'CitéArt",
-
-    `
-
-      <div class="bociteMairieRoot">
-
-        <div class="mairieCard">
-
-          ${mairieCardTitle(
-            "Suivi enregistré"
-          )}
-
-          <div class="mairieText">
-
-            ${
-
-              rows.length
-
-                ? rows
-
-                    .map(
-                      function(
-                        item
-                      ){
-
-                        return `
-
-                          <div
-                            style="
-                              margin-top:10px;
-                            "
-                          >
-
-                            ${mairieEsc(
-                              item.note
-                            )}
-
-                            <br>
-
-                            ${mairieEsc(
-
-                              item.createdAt
-
-                                ? new Date(
-                                    item.createdAt
-                                  )
-                                    .toLocaleString(
-                                      "fr-FR"
-                                    )
-
-                                : ""
-                            )}
-
-                          </div>
-
-                        `;
-                      }
-                    )
-
-                    .join("")
-
-                : "Aucun suivi de parrainage enregistré."
-            }
-
-          </div>
-
-        </div>
-
-      </div>
-
-    `
-  );
-
-
-  mairieSetModalHeader(
-    "Parrainages avec"
-  );
-}
-
-
-function mairieReferralReset(){
-
-  if(
-    !window.confirm(
-      "Réinitialiser le suivi des parrainages enregistré sur cet appareil ?"
-    )
-  ){
-    return;
-  }
-
-
-  mairieSaveReferralHistory(
-    []
-  );
-
-
-  const status =
-    mairieEl(
-      "mairieReferralStatus"
-    );
-
-
-  if(
-    status
-  ){
-
-    status.dataset.state =
-      "ok";
-
-
-    status.textContent =
-      "Suivi des parrainages réinitialisé.";
-  }
-}
-
-
 /* =========================================================
    FINANCE
    LECTURE DU MOTEUR COMMUN EXISTANT
@@ -3648,90 +3383,6 @@ function mairieMainHtml(){
 
 
         <!-- =================================================
-             PARRAINAGES
-             ================================================= -->
-
-        <div class="mairieCard">
-
-          <div class="mairieTitle">
-
-            Parrainages
-
-          </div>
-
-
-          <div class="mairieText">
-
-            Cet espace conserve
-            un suivi administratif
-            des opérations utiles à la mairie.
-
-            <br><br>
-
-            Le paiement
-            et la facturation
-            restent traités
-            par le moteur Finance commun.
-
-          </div>
-
-
-          <label
-            class="mairieLabel"
-            for="mairieReferralInput"
-          >
-            Suivi
-          </label>
-
-
-          <textarea
-            id="mairieReferralInput"
-            class="mairieField"
-            maxlength="1000"
-            placeholder="Nom, opération, date, contrôle ou commentaire utile"
-          ></textarea>
-
-
-          <div class="mairieActions">
-
-            <button
-              class="mairieBtn"
-              id="mairieReferralSaveBtn"
-              type="button"
-            >
-              Enregistrer le suivi du parrainage
-            </button>
-
-
-            <button
-              class="mairieBtn"
-              id="mairieReferralReadBtn"
-              type="button"
-            >
-              Consulter le suivi du parrainage
-            </button>
-
-
-            <button
-              class="mairieBtn"
-              id="mairieReferralResetBtn"
-              type="button"
-            >
-              Réinitialiser le suivi du parrainage
-            </button>
-
-          </div>
-
-
-          ${mairieStatus(
-            "mairieReferralStatus",
-            ""
-          )}
-
-        </div>
-
-
-        <!-- =================================================
              FINANCE
              ================================================= -->
 
@@ -3739,25 +3390,24 @@ function mairieMainHtml(){
 
           <div class="mairieTitle">
 
-            Contrôle Finance et comptabilité
+            État Finance de la commune
 
           </div>
 
 
           <div class="mairieText">
 
-            La Mairie lit ici
-            l’état du raccord Finance commun.
+            Cet espace présente
+            l’état des opérations financières
+            utiles à la commune
+            dans ${mairieBrandHtml()}.
 
             <br><br>
 
-            Les contrôles Agent 1 / Agent 2,
-            les paiements,
-            les factures
-            et la transmission comptable
-            restent centralisés
-            dans l’architecture Finance de
-            ${mairieBrandHtml()}.
+            Les informations affichées ici
+            permettent de vérifier
+            que les opérations concernées
+            sont correctement prises en compte.
 
           </div>
 
@@ -4483,55 +4133,6 @@ const identity =
 
     sportRemainder.onclick =
       mairieTransferSportRemainder;
-  }
-
-
-  /* =====================================================
-     PARRAINAGES
-     ===================================================== */
-
-  const referralSave =
-    mairieEl(
-      "mairieReferralSaveBtn"
-    );
-
-
-  if(
-    referralSave
-  ){
-
-    referralSave.onclick =
-      mairieReferralSave;
-  }
-
-
-  const referralRead =
-    mairieEl(
-      "mairieReferralReadBtn"
-    );
-
-
-  if(
-    referralRead
-  ){
-
-    referralRead.onclick =
-      mairieReferralRead;
-  }
-
-
-  const referralReset =
-    mairieEl(
-      "mairieReferralResetBtn"
-    );
-
-
-  if(
-    referralReset
-  ){
-
-    referralReset.onclick =
-      mairieReferralReset;
   }
 
 
