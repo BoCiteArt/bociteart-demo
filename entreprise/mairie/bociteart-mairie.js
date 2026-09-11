@@ -3927,21 +3927,19 @@ function mairieBindMainEvents(){
     institutionContinue.onclick =
       function(){
 
-        const account =
-          mairieText(
-            accountNumber
-              ? accountNumber.value
-              : ""
-          )
-          .toUpperCase();
+       const account =
+  accountNumber
+    ? String(accountNumber.value || "")
+        .trim()
+        .toUpperCase()
+    : "";
 
 
-        const identity =
-          mairieText(
-            personalId
-              ? personalId.value
-              : ""
-          );
+const identity =
+  personalId
+    ? String(personalId.value || "")
+        .trim()
+    : "";
 
 
         if(
