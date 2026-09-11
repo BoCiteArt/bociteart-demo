@@ -3265,12 +3265,15 @@ function mairieMainHtml(){
 
       </div>
 
+      <!-- =================================================
+           PORTE INSTITUTIONNELLE MAIRIE
+           ================================================= -->
 
       <div class="mairieCard">
 
         <div class="mairieTitle">
 
-          Accès interne mairie avec
+          Espace institutionnel de la commune avec
           ${mairieBrandHtml()}
 
         </div>
@@ -3278,27 +3281,86 @@ function mairieMainHtml(){
 
         <div class="mairieText">
 
-          Cet espace regroupe
-          le message de la tuile Mairie,
-          les échanges avec l’École
-          et le Sport,
-          les historiques,
-          les suivis de parrainage
-          et l’état du raccord Finance.
+          Cet espace est réservé
+          aux personnes habilitées
+          par la commune.
+
+          <br><br>
+
+          Chaque accès est personnel
+          et rattaché au compte permanent
+          de la commune.
 
         </div>
 
 
-        <button
-          id="toggleMairieAdminBtn"
-          class="mairieBtn mairieFull"
-          type="button"
+        <label
+          class="mairieLabel"
+          for="mairieAccountNumber"
+        >
+          Numéro de compte de la commune
+        </label>
+
+
+        <input
+          class="mairieField"
+          id="mairieAccountNumber"
+          type="text"
+          autocomplete="off"
+          placeholder="Ex. BCA-000001"
+        >
+
+
+        <label
+          class="mairieLabel"
+          for="mairiePersonalId"
           style="
             margin-top:10px;
           "
         >
-          Ouvrir l’espace interne mairie
+          Identifiant personnel
+        </label>
+
+
+        <input
+          class="mairieField"
+          id="mairiePersonalId"
+          type="text"
+          autocomplete="username"
+          placeholder="Votre identifiant personnel"
+        >
+
+
+        <button
+          id="mairieInstitutionContinueBtn"
+          class="mairieBtn mairieFull"
+          type="button"
+          style="
+            margin-top:12px;
+          "
+        >
+          Continuer
         </button>
+
+<button
+  id="mairieDevControlBtn"
+  class="mairieBtn mairieFull"
+  type="button"
+  style="
+    margin-top:10px;
+  "
+>
+  Contrôle Bo’CitéArt
+</button>
+
+        <div
+          id="mairieInstitutionAccessMsg"
+          class="mairieText"
+          style="
+            margin-top:10px;
+            display:none;
+          "
+        ></div>
 
       </div>
 
@@ -3307,7 +3369,6 @@ function mairieMainHtml(){
         id="mairieAdminPanel"
         class="mairieHidden"
       >
-
 
         <!-- =================================================
              MESSAGE BANDEAU
@@ -3375,8 +3436,7 @@ function mairieMainHtml(){
           )}
 
         </div>
-
-
+        
         <!-- =================================================
              ÉCOLE → MAIRIE
              ================================================= -->
@@ -3769,14 +3829,32 @@ function mairieBindMainEvents(){
       openHealthServices;
   }
 
-
   /* =====================================================
-     OUVERTURE DE L'ESPACE INTERNE
+     PORTE INSTITUTIONNELLE MAIRIE
+     ÉTAPE 1 — IDENTIFICATION DU COMPTE ET DE LA PERSONNE
      ===================================================== */
 
-  const toggle =
+  const institutionContinue =
     mairieEl(
-      "toggleMairieAdminBtn"
+      "mairieInstitutionContinueBtn"
+    );
+
+
+  const accountNumber =
+    mairieEl(
+      "mairieAccountNumber"
+    );
+
+
+  const personalId =
+    mairieEl(
+      "mairiePersonalId"
+    );
+
+
+  const accessMsg =
+    mairieEl(
+      "mairieInstitutionAccessMsg"
     );
 
 
@@ -3785,51 +3863,322 @@ function mairieBindMainEvents(){
       "mairieAdminPanel"
     );
 
+     const devControl =
+    mairieEl(
+      "mairieDevControlBtn"
+    );
+
 
   if(
-    toggle &&
+    devControl &&
     panel
   ){
 
-    toggle.onclick =
+    devControl.onclick =
       function(){
 
-        const hidden =
-          panel.classList
-            .contains(
-              "mairieHidden"
-            );
+        panel.classList.toggle(
+          "mairieHidden"
+        );
 
 
-        panel.classList
-          .toggle(
-            "mairieHidden",
-            !hidden
+        const isOpen =
+          !panel.classList.contains(
+            "mairieHidden"
           );
 
 
-        toggle.textContent =
-
-          hidden
-
-            ? "Fermer l’espace interne mairie"
-
-            : "Ouvrir l’espace interne mairie";
+        devControl.textContent =
+          isOpen
+            ? "Fermer le contrôle Bo’CitéArt"
+            : "Contrôle Bo’CitéArt";
 
 
         if(
-          hidden
+          isOpen
         ){
 
           mairieRenderFinanceStatus();
         }
+
       };
   }
 
+  /*
+   * L'espace interne reste fermé
+   * tant que le parcours d'identification
+   * n'est pas terminé.
+   */
 
-  /* =====================================================
-     MESSAGE TUILE MAIRIE
-     ===================================================== */
+  if(
+    panel
+  ){
+
+    panel.classList.add(
+      "mairieHidden"
+    );
+  }
+
+
+  if(
+    institutionContinue
+  ){
+
+    institutionContinue.onclick =
+      function(){
+
+        const account =
+          mairieText(
+            accountNumber
+              ? accountNumber.value
+              : ""
+          )
+          .toUpperCase();
+
+
+        const identity =
+          mairieText(
+            personalId
+              ? personalId.value
+              : ""
+          );
+
+
+        if(
+          accessMsg
+        ){
+
+          accessMsg.style.display =
+            "block";
+
+          accessMsg.innerHTML =
+            "";
+        }
+
+
+        if(
+          !account ||
+          !identity
+        ){
+
+          if(
+            accessMsg
+          ){
+
+            accessMsg.innerHTML = `
+              <div
+                style="
+                  color:#8b1e1e;
+                "
+              >
+                Renseignez le numéro de compte
+                de la commune
+                et votre identifiant personnel.
+              </div>
+            `;
+          }
+
+          return;
+        }
+
+
+        if(
+          !/^BCA-[0-9]{6}$/.test(
+            account
+          )
+        ){
+
+          if(
+            accessMsg
+          ){
+
+            accessMsg.innerHTML = `
+              <div
+                style="
+                  color:#8b1e1e;
+                "
+              >
+                Le numéro de compte
+                doit respecter le format
+                BCA-000001.
+              </div>
+            `;
+          }
+
+          return;
+        }
+
+
+        if(
+          accountNumber
+        ){
+
+          accountNumber.value =
+            account;
+        }
+
+
+        if(
+          accessMsg
+        ){
+
+          accessMsg.innerHTML = `
+
+            <div
+              class="mairieTitle"
+              style="
+                margin-top:4px;
+              "
+            >
+              Accès personnel
+            </div>
+
+
+            <div
+              class="mairieText"
+            >
+
+              Compte commune :
+              <strong>${account}</strong>
+
+              <br><br>
+
+              Identifiant :
+              <strong>${identity}</strong>
+
+              <br><br>
+
+              Choisissez la situation
+              correspondant à votre accès.
+
+            </div>
+
+
+            <div
+              class="mairieActions"
+              style="
+                margin-top:12px;
+              "
+            >
+
+              <button
+                id="mairieFirstAccessBtn"
+                class="mairieBtn"
+                type="button"
+              >
+                Premier accès
+              </button>
+
+
+              <button
+                id="mairieExistingAccessBtn"
+                class="mairieBtn"
+                type="button"
+              >
+                Accès déjà activé
+              </button>
+
+            </div>
+
+          `;
+        }
+
+
+        const firstAccess =
+          mairieEl(
+            "mairieFirstAccessBtn"
+          );
+
+
+        const existingAccess =
+          mairieEl(
+            "mairieExistingAccessBtn"
+          );
+
+
+        if(
+          firstAccess
+        ){
+
+          firstAccess.onclick =
+            function(){
+
+              if(
+                accessMsg
+              ){
+
+                accessMsg.innerHTML = `
+
+                  <div
+                    class="mairieTitle"
+                  >
+                    Premier accès
+                  </div>
+
+
+                  <div
+                    class="mairieText"
+                  >
+
+                    Le compte de la commune
+                    et l’identifiant personnel
+                    ont été renseignés.
+
+                    <br><br>
+
+                    L’étape suivante permettra
+                    de saisir l’accès provisoire
+                    transmis séparément,
+                    puis de créer
+                    le mot de passe personnel
+                    et d’activer le 2FA.
+
+                  </div>
+
+                `;
+              }
+            };
+        }
+
+
+        if(
+          existingAccess
+        ){
+
+          existingAccess.onclick =
+            function(){
+
+              if(
+                accessMsg
+              ){
+
+                accessMsg.innerHTML = `
+
+                  <div
+                    class="mairieTitle"
+                  >
+                    Accès déjà activé
+                  </div>
+
+
+                  <div
+                    class="mairieText"
+                  >
+
+                    L’étape suivante permettra
+                    de saisir le mot de passe personnel
+                    puis de confirmer l’accès
+                    avec le 2FA.
+
+                  </div>
+
+                `;
+              }
+            };
+        }
+
+      };
+  }
 
   const messageInput =
     mairieEl(
