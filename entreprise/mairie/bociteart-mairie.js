@@ -4342,7 +4342,126 @@ console.info(
   "✅ Bo'CitéArt Mairie — module externe chargé"
 );
 
+/* =========================================================
+   ÇA COMMENCE ICI — MAIRIE — CORRECTION BOUTONS PRINCIPAUX
+   ========================================================= */
 
+if(!window.__bociteMairieMainButtonsFixed){
+
+  window.__bociteMairieMainButtonsFixed = true;
+
+  document.addEventListener(
+    "click",
+    function(event){
+
+      const target =
+        event.target instanceof Element
+          ? event.target
+          : null;
+
+      if(!target){
+        return;
+      }
+
+
+      /* =====================================================
+         SERVICES MUNICIPAUX
+         ===================================================== */
+
+      const servicesButton =
+        target.closest(
+          "#openMairieServicesBtn"
+        );
+
+      if(servicesButton){
+
+        event.preventDefault();
+
+        const cityUrl =
+          String(
+            window.BOCITEART_CITY_OFFICIAL_URL ||
+            "https://www.wattignies.fr"
+          ).trim();
+
+        window.open(
+          cityUrl,
+          "_blank",
+          "noopener,noreferrer"
+        );
+
+        return;
+      }
+
+
+      /* =====================================================
+         ESPACE INTERNE MAIRIE
+         ===================================================== */
+
+      const adminButton =
+        target.closest(
+          "#toggleMairieAdminBtn"
+        );
+
+      if(adminButton){
+
+        event.preventDefault();
+
+        const panel =
+          document.getElementById(
+            "mairieAdminPanel"
+          );
+
+        if(!panel){
+
+          console.warn(
+            "Bo'CitéArt Mairie : panneau interne introuvable."
+          );
+
+          return;
+        }
+
+        const isHidden =
+          window
+            .getComputedStyle(panel)
+            .display ===
+          "none";
+
+        panel.style.display =
+          isHidden
+            ? "block"
+            : "none";
+
+        adminButton.textContent =
+          isHidden
+            ? "Fermer l’espace interne mairie"
+            : "Ouvrir l’espace interne mairie";
+
+        if(isHidden){
+
+          window.setTimeout(
+            function(){
+
+              panel.scrollIntoView({
+                behavior:"smooth",
+                block:"start"
+              });
+
+            },
+            50
+          );
+        }
+
+        return;
+      }
+
+    }
+  );
+}
+
+/* =========================================================
+   ÇA FINIT ICI — MAIRIE — CORRECTION BOUTONS PRINCIPAUX
+   ========================================================= */
+   
 })();
 
 /* =========================================================
