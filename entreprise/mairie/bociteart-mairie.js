@@ -2781,7 +2781,6 @@ function mairieHealthHtml(){
           Rechercher dans cet annuaire
         </label>
 
-
         <input
           id="mairieHealthSearchInput"
           class="mairieField"
@@ -2789,6 +2788,28 @@ function mairieHealthHtml(){
           placeholder="Nom, métier ou spécialité : cardiologue, pédiatre, pharmacie…"
         >
 
+        <!-- =====================================================
+     ÇA COMMENCE ICI — BOUTON RECHERCHER
+     ===================================================== -->
+
+<div
+  class="mairieActions"
+  style="margin-top:12px;"
+>
+
+  <button
+    id="mairieHealthSearchBtn"
+    class="mairieBtn"
+    type="button"
+  >
+    Rechercher
+  </button>
+
+</div>
+
+<!-- =====================================================
+     ÇA FINIT ICI — BOUTON RECHERCHER
+     ===================================================== -->
 
         <div class="mairieText">
 
