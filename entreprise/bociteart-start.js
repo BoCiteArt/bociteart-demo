@@ -6873,6 +6873,371 @@ window.setTimeout(
 
           </div>
 
+<!-- =========================================
+     CERCLE DE CONFIANCE ET AIDE ENTRE PROCHES
+     ========================================= -->
+
+<div
+  style="
+    margin:24px 0 18px 0;
+    padding:14px 12px;
+    border-top:3px solid #2f5d46;
+    border-bottom:3px solid #2f5d46;
+    text-align:center;
+    color:#2f5d46;
+    font-size:17px;
+    font-weight:700;
+    line-height:1.3;
+  "
+>
+  Cercle de confiance et aide entre proches
+</div>
+
+
+<div
+  class="box"
+  style="
+    background:#ffffff;
+    color:#111111;
+    font-size:14px;
+    font-weight:400;
+    line-height:1.5;
+  "
+>
+
+  <div
+    style="
+      color:#2f5d46;
+      font-size:17px;
+      font-weight:700;
+      margin-bottom:8px;
+    "
+  >
+    Cercle de confiance
+  </div>
+
+  L’abonné choisit les personnes
+  qu’il souhaite pouvoir prévenir
+  et leurs numéros de téléphone.
+
+  <br><br>
+
+  Deux contacts de confiance
+  sont inclus dans la première formule.
+
+</div>
+
+
+<div
+  class="box"
+  style="
+    background:#ffffff;
+    color:#111111;
+    font-size:14px;
+    font-weight:400;
+    line-height:1.5;
+  "
+>
+
+  <div
+    style="
+      color:#2f5d46;
+      font-size:17px;
+      font-weight:700;
+      margin-bottom:8px;
+    "
+  >
+    Exemple simple
+  </div>
+
+  Jean active l’option
+  pour sa mère.
+
+  <br><br>
+
+  Sur le téléphone de sa mère,
+  il enregistre un contact clair :
+
+  <br><br>
+
+  <strong>
+    Bo’CitéArt — appeler Jean
+  </strong>
+
+  <br><br>
+
+  avec le numéro de téléphone
+  de Jean.
+
+  <br><br>
+
+  Sa mère n’a pas besoin
+  de télécharger l’application.
+
+</div>
+
+
+<div
+  class="box"
+  style="
+    background:#ffffff;
+    color:#111111;
+    font-size:14px;
+    font-weight:400;
+    line-height:1.5;
+  "
+>
+
+  <div
+    style="
+      color:#2f5d46;
+      font-size:17px;
+      font-weight:700;
+      margin-bottom:8px;
+    "
+  >
+    Veille volontaire par message
+  </div>
+
+  Si la personne l’accepte,
+  un message peut être envoyé
+  à l’heure choisie :
+
+  <br><br>
+
+  « Tout va bien aujourd’hui ? »
+
+  <br><br>
+
+  Réponse simple :
+
+  <br>
+
+  Tout va bien /
+  Rappelez-moi /
+  Besoin d’aide.
+
+</div>
+
+
+<div
+  class="box"
+  style="
+    background:#ffffff;
+    color:#111111;
+    font-size:14px;
+    font-weight:400;
+    line-height:1.5;
+  "
+>
+
+  <div
+    style="
+      color:#2f5d46;
+      font-size:17px;
+      font-weight:700;
+      margin-bottom:10px;
+    "
+  >
+    Je choisis mon offre
+  </div>
+
+
+  <label
+    style="
+      display:block;
+      margin-bottom:12px;
+    "
+  >
+
+    <input
+      type="radio"
+      name="securePlan"
+      value="2.99"
+      data-contacts="2"
+      checked
+    >
+
+    2 contacts de confiance —
+    <strong>2,99 € TTC / mois</strong>
+
+  </label>
+
+
+  <label
+    style="
+      display:block;
+      margin-bottom:12px;
+    "
+  >
+
+    <input
+      type="radio"
+      name="securePlan"
+      value="3.99"
+      data-contacts="5"
+    >
+
+    Jusqu’à 5 contacts —
+    <strong>3,99 € TTC / mois</strong>
+
+  </label>
+
+
+  <label
+    style="
+      display:block;
+    "
+  >
+
+    <input
+      type="radio"
+      name="securePlan"
+      value="5"
+      data-contacts="10"
+    >
+
+    Jusqu’à 10 contacts —
+    <strong>5,00 € TTC / mois</strong>
+
+  </label>
+
+</div>
+
+
+<div
+  class="box"
+  style="
+    background:#ffffff;
+    color:#111111;
+    font-size:14px;
+    font-weight:400;
+    line-height:1.5;
+    border-left:6px solid #2f5d46;
+  "
+>
+
+  <div
+    style="
+      color:#2f5d46;
+      font-size:17px;
+      font-weight:700;
+      margin-bottom:8px;
+    "
+  >
+    Activation de votre abonnement
+  </div>
+
+  Par carte bancaire,
+  l’abonnement est activé
+  après confirmation effective
+  du paiement.
+
+  <br><br>
+
+  Par virement bancaire,
+  l’abonnement est activé
+  après réception
+  et confirmation effective
+  du règlement.
+
+</div>
+
+
+<div
+  class="box"
+  style="
+    background:#ffffff;
+    color:#111111;
+    font-size:14px;
+    font-weight:400;
+    line-height:1.5;
+  "
+>
+
+  <div
+    style="
+      color:#2f5d46;
+      font-size:17px;
+      font-weight:700;
+      margin-bottom:8px;
+    "
+  >
+    Validation avant paiement
+  </div>
+
+  <label>
+
+    <input
+      type="checkbox"
+      id="secureAccept"
+    >
+
+    Je comprends que cette option
+    est un outil volontaire
+    de notification entre proches
+    et non un service d’assistance,
+    de surveillance
+    ou d’urgence.
+
+  </label>
+
+</div>
+
+
+<button
+  id="secureContinuePaymentBtn"
+  class="choiceBtn"
+  type="button"
+  style="
+    width:100%;
+    background:#ffffff !important;
+    color:#111111 !important;
+    font-size:14px;
+    font-weight:400;
+  "
+>
+  Continuer vers le paiement
+</button>
+
+
+<div
+  class="box"
+  style="
+    margin-top:12px;
+    background:#ffffff;
+    color:#111111;
+    font-size:14px;
+    font-weight:400;
+    line-height:1.5;
+  "
+>
+
+  <div
+    style="
+      color:#2f5d46;
+      font-size:17px;
+      font-weight:700;
+      margin-bottom:8px;
+    "
+  >
+    Cadre important
+  </div>
+
+  Bo’CitéArt est un outil volontaire
+  de notification entre proches.
+
+  <br><br>
+
+  Ce n’est pas un service
+  d’assistance,
+  de téléassistance,
+  de surveillance,
+  d’urgence
+  ou d’intervention.
+
+</div>
+
         </div>
 
       `
