@@ -6553,6 +6553,528 @@ window.setTimeout(
     "✅ Introductions École / Sport / Mairie & Asso raccordées"
   );
 
+   /* =========================================================
+   ÇA COMMENCE ICI
+   BO'CITÉART — ANNUAIRE SANTÉ + AIDE
+   PORTE PRINCIPALE INDÉPENDANTE
+   ========================================================= */
+
+(function installBociteHealthHelpShortcut(){
+
+  "use strict";
+
+
+  if(
+    window.__bociteHealthHelpShortcutV1
+  ){
+    return;
+  }
+
+
+  window.__bociteHealthHelpShortcutV1 =
+    true;
+
+
+  /* =====================================================
+     AJOUT DES AIDES SOUS L'ANNUAIRE SANTÉ
+     ===================================================== */
+
+  function appendHealthHelpSections(){
+
+    const modalTitle =
+      document.getElementById(
+        "modalTitle"
+      );
+
+
+    const modalBody =
+      document.getElementById(
+        "modalBody"
+      );
+
+
+    if(
+      !modalTitle ||
+      !modalBody
+    ){
+      return;
+    }
+
+
+    /*
+     * Le moteur santé Mairie a déjà construit
+     * l'annuaire complet.
+     *
+     * On transforme seulement le titre
+     * et on ajoute les aides dessous.
+     */
+
+    modalTitle.textContent =
+      "Annuaire santé + aide";
+
+
+    if(
+      document.getElementById(
+        "bociteHealthHelpSections"
+      )
+    ){
+      return;
+    }
+
+
+    modalBody.insertAdjacentHTML(
+      "beforeend",
+      `
+
+        <div
+          id="bociteHealthHelpSections"
+          style="
+            margin-top:20px;
+          "
+        >
+
+          <!-- =========================================
+               SÉPARATION ANNUAIRE → AIDES
+               ========================================= -->
+
+          <div
+            style="
+              margin:24px 0 18px 0;
+              padding:14px 12px;
+              border-top:3px solid #2f5d46;
+              border-bottom:3px solid #2f5d46;
+              text-align:center;
+              color:#2f5d46;
+              font-size:17px;
+              font-weight:700;
+              line-height:1.3;
+            "
+          >
+            Aides de proximité et contacts utiles
+          </div>
+
+
+          <!-- =========================================
+               PERSONNES SEULES OU FRAGILES
+               ========================================= -->
+
+          <div
+            style="
+              background:#ffffff;
+              border:1px solid #dedede;
+              border-radius:12px;
+              padding:16px;
+              margin:0 0 14px 0;
+            "
+          >
+
+            <div
+              style="
+                color:#2f5d46;
+                font-size:17px;
+                font-weight:700;
+                margin-bottom:8px;
+              "
+            >
+              Personnes seules ou fragiles
+            </div>
+
+
+            <div
+              style="
+                color:#111111;
+                font-size:14px;
+                font-weight:400;
+                line-height:1.55;
+              "
+            >
+
+              Retrouvez ici les contacts,
+              services
+              et aides de proximité
+              permettant de mieux orienter
+              une personne seule,
+              fragile
+              ou momentanément en difficulté.
+
+              <br><br>
+
+              Les informations locales
+              validées pour la commune
+              seront regroupées dans cet espace.
+
+            </div>
+
+          </div>
+
+
+          <!-- =========================================
+               FAMILLES ET ENFANTS
+               ========================================= -->
+
+          <div
+            style="
+              background:#ffffff;
+              border:1px solid #dedede;
+              border-radius:12px;
+              padding:16px;
+              margin:0 0 14px 0;
+            "
+          >
+
+            <div
+              style="
+                color:#2f5d46;
+                font-size:17px;
+                font-weight:700;
+                margin-bottom:8px;
+              "
+            >
+              Familles et enfants
+            </div>
+
+
+            <div
+              style="
+                color:#111111;
+                font-size:14px;
+                font-weight:400;
+                line-height:1.55;
+              "
+            >
+
+              Retrouvez ici
+              les services,
+              repères
+              et contacts utiles
+              pour les familles
+              et les enfants.
+
+              <br><br>
+
+              <strong>
+                119 — Enfance en danger
+              </strong>
+
+            </div>
+
+          </div>
+
+
+          <!-- =========================================
+               URGENCES ET CONTACTS ESSENTIELS
+               ========================================= -->
+
+          <div
+            style="
+              background:#ffffff;
+              border:1px solid #dedede;
+              border-radius:12px;
+              padding:16px;
+              margin:0 0 14px 0;
+            "
+          >
+
+            <div
+              style="
+                color:#2f5d46;
+                font-size:17px;
+                font-weight:700;
+                margin-bottom:8px;
+              "
+            >
+              Urgences et contacts essentiels
+            </div>
+
+
+            <div
+              style="
+                color:#111111;
+                font-size:14px;
+                font-weight:400;
+                line-height:1.55;
+              "
+            >
+
+              <strong>
+                112 — Urgence
+              </strong>
+
+              <br><br>
+
+              <strong>
+                119 — Enfance en danger
+              </strong>
+
+              <br><br>
+
+              <strong>
+                3919 — Violences faites aux femmes
+              </strong>
+
+              <br>
+
+              Information et orientation.
+
+            </div>
+
+          </div>
+
+
+          <!-- =========================================
+               RÔLE DE BO'CITÉART
+               ========================================= -->
+
+          <div
+            style="
+              background:#ffffff;
+              border:1px solid #dedede;
+              border-radius:12px;
+              padding:16px;
+              margin:0;
+            "
+          >
+
+            <div
+              style="
+                color:#2f5d46;
+                font-size:17px;
+                font-weight:700;
+                margin-bottom:8px;
+              "
+            >
+              Retrouver la bonne porte
+            </div>
+
+
+            <div
+              style="
+                color:#111111;
+                font-size:14px;
+                font-weight:400;
+                line-height:1.55;
+              "
+            >
+
+              Bo’CitéArt aide à retrouver
+              rapidement un professionnel,
+              un service
+              ou un interlocuteur utile.
+
+              <br><br>
+
+              Bo’CitéArt ne remplace
+              ni les médecins,
+              ni les services d’urgence,
+              ni les travailleurs sociaux,
+              ni les organismes compétents.
+
+            </div>
+
+          </div>
+
+        </div>
+
+      `
+    );
+
+  }
+
+
+  /* =====================================================
+     OUVERTURE DU VÉRITABLE ANNUAIRE
+     ===================================================== */
+
+  function openHealthHelp(){
+
+    if(
+      !window.BociteMairieModule ||
+      typeof window.BociteMairieModule.openHealth
+        !== "function"
+    ){
+
+      if(
+        typeof window.openModal ===
+          "function"
+      ){
+
+        window.openModal(
+          "Annuaire santé + aide",
+          `
+
+            <div class="box">
+
+              <strong>
+                Annuaire santé momentanément indisponible
+              </strong>
+
+              <br><br>
+
+              Le moteur de l’annuaire
+              n’est pas encore chargé.
+
+            </div>
+
+          `
+        );
+
+      }
+
+
+      return;
+    }
+
+
+    /*
+     * Ouvre le moteur santé complet déjà existant :
+     * commune,
+     * recherche,
+     * professions,
+     * spécialités,
+     * fiches professionnelles.
+     */
+
+    window.BociteMairieModule
+      .openHealth();
+
+
+    /*
+     * Le module santé termine son affichage
+     * avant l'ajout des aides.
+     */
+
+    window.setTimeout(
+      appendHealthHelpSections,
+      180
+    );
+
+
+    window.setTimeout(
+      appendHealthHelpSections,
+      350
+    );
+
+  }
+
+
+  /* =====================================================
+     API PUBLIQUE
+     ===================================================== */
+
+  window.openHealthHelp =
+    openHealthHelp;
+
+
+  /* =====================================================
+     RACCORDEMENT DU BOUTON PRINCIPAL
+     ===================================================== */
+
+  function bindHealthHelpButton(){
+
+    const oldButton =
+      document.getElementById(
+        "openHealthHelp"
+      );
+
+
+    if(
+      !oldButton
+    ){
+
+      window.setTimeout(
+        bindHealthHelpButton,
+        300
+      );
+
+      return;
+    }
+
+
+    /*
+     * On remplace le bouton par son clone
+     * pour supprimer d'éventuels anciens
+     * événements incomplets.
+     */
+
+    const button =
+      oldButton.cloneNode(
+        true
+      );
+
+
+    oldButton.replaceWith(
+      button
+    );
+
+
+    button.addEventListener(
+      "click",
+      function(
+        event
+      ){
+
+        event.preventDefault();
+
+        openHealthHelp();
+
+      }
+    );
+
+
+    button.addEventListener(
+      "keydown",
+      function(
+        event
+      ){
+
+        if(
+          event.key === "Enter" ||
+          event.key === " "
+        ){
+
+          event.preventDefault();
+
+          openHealthHelp();
+
+        }
+
+      }
+    );
+
+
+    console.info(
+      "✅ Annuaire santé + aide — bouton raccordé"
+    );
+
+  }
+
+
+  if(
+    document.readyState ===
+      "loading"
+  ){
+
+    document.addEventListener(
+      "DOMContentLoaded",
+      bindHealthHelpButton,
+      {
+        once:true
+      }
+    );
+
+  }else{
+
+    bindHealthHelpButton();
+
+  }
+
+})();
+
+/* =========================================================
+   ÇA FINIT ICI
+   BO'CITÉART — ANNUAIRE SANTÉ + AIDE
+   ========================================================= */
+
 })();
 
 /* =========================================================
