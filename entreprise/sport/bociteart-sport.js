@@ -5657,6 +5657,168 @@ window.BociteSportMairie={
         false
     };
   },
+
+  history:
+    () =>
+      sportExchanges()
+        .slice(),
+
+  solidarityHistory:
+    () =>
+      sportMairieTransfers()
+        .slice()
+};
+
+
+/* =========================================================
+   ASSOCIATIONS — PASSERELLE SPORT
+   ========================================================= */
+
+window.BociteSportAssociation={
+
+  registerPartners(items){
+
+    const now=
+      sportAssociations();
+
+    const map={};
+
+    now.forEach(
+      x =>
+        map[
+          String(x.id)
+        ]=x
+    );
+
+    (
+      Array.isArray(items)
+        ? items
+        : []
+    ).forEach(
+      x=>{
+
+        if(
+          x &&
+          x.id
+        ){
+
+          map[
+            String(x.id)
+          ]=
+            Object.assign(
+              {},
+              map[
+                String(x.id)
+              ] || {},
+              x
+            );
+        }
+      }
+    );
+
+    const out=
+      Object
+        .keys(map)
+        .map(
+          k => map[k]
+        );
+
+    sportSaveAssociations(
+      out
+    );
+
+    return out;
+  },
+
+  receiptQueue:
+    () =>
+      sportReceipts()
+        .filter(
+          x =>
+            x &&
+            x.status !==
+              "received"
+        ),
+
+  validateAndReturnReceipt:
+    (
+      dossierId,
+      doc
+    ) =>
+      sportMarkReceiptReceived(
+        dossierId,
+        doc
+      ),
+
+  markReceiptMissingForRenewal:
+    dossierId =>
+      sportMarkReceiptMissing(
+        dossierId
+      ),
+
+  partners:
+    () =>
+      sportAssociations()
+        .slice()
+};
+
+
+/* =========================================================
+   RÈGLES DE SOUTIEN SPORT
+   ========================================================= */
+
+window.BociteSportSupportRules={
+
+  minimumHT:
+    50,
+
+  publicationDays:
+    3,
+
+  dailyCapacity:
+    6,
+
+  holdMinutes:
+    15,
+
+  manualExtensionMinutes:
+    5,
+
+  extraResearchMinimum:
+    10,
+
+  amountRule:
+    "free_amount_from_minimum",
+
+  choices:[
+
+    {
+      code:
+        "ALL_CLUB",
+
+      label:
+        "100 % pour le club"
+    },
+
+    {
+      code:
+        "HALF_HALF",
+
+      label:
+        "50 % pour le club / 50 % pour la recherche médicale"
+    }
+  ],
+
+  paymentProcessing:
+    "server_side",
+
+  beneficiarySettlement:
+    "server_side",
+
+  taxTreatment:
+    "validated_case_by_case"
+};
+  
 /* =========================================================
    BLOC SPORT 4
    IDENTITÉ — RÉSULTATS — SAISON — PRÉSENTATION PUBLIQUE
