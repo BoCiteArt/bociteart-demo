@@ -6736,6 +6736,309 @@ window.setTimeout(
      AJOUT DES AIDES SOUS L'ANNUAIRE SANTÉ
      ===================================================== */
 
+/* =====================================================
+   ÇA COMMENCE ICI
+   PAIEMENT CITOYEN — CERCLE DE CONFIANCE
+   ===================================================== */
+
+window.BociteCitizenSecurePayment =
+  function(
+    event
+  ){
+
+    if(
+      event
+    ){
+
+      event.preventDefault();
+
+    }
+
+
+    console.log(
+      "✅ Clic paiement citoyen reçu"
+    );
+
+
+    const acceptance =
+      document.getElementById(
+        "secureAccept"
+      );
+
+
+    if(
+      !acceptance ||
+      !acceptance.checked
+    ){
+
+      alert(
+        "Veuillez accepter le cadre du service avant de continuer."
+      );
+
+      return;
+
+    }
+
+
+    const plan =
+      document.querySelector(
+        'input[name="securePlan"]:checked'
+      );
+
+
+    if(
+      !plan
+    ){
+
+      alert(
+        "Choisissez une formule."
+      );
+
+      return;
+
+    }
+
+
+    const contacts =
+      Number(
+        plan.getAttribute(
+          "data-contacts"
+        ) || 0
+      );
+
+
+    const PLAN_PRICES_TTC = {
+
+      2:
+        2.99,
+
+      5:
+        3.99,
+
+      10:
+        5.00
+
+    };
+
+
+    const amountTTC =
+      PLAN_PRICES_TTC[
+        contacts
+      ];
+
+
+    if(
+      !Number.isFinite(
+        amountTTC
+      )
+    ){
+
+      alert(
+        "La formule sélectionnée n'est pas reconnue."
+      );
+
+      return;
+
+    }
+
+
+    const vatRate =
+      20;
+
+
+    const amountHT =
+      Math.round(
+        (
+          amountTTC /
+          (
+            1 +
+            vatRate / 100
+          )
+        ) *
+        1000000
+      ) /
+      1000000;
+
+
+    const financialModule =
+      window.BociteEntreprise;
+
+
+    if(
+      !financialModule ||
+      typeof financialModule
+        .createFinancialOrder !==
+        "function"
+    ){
+
+      alert(
+        "Le moteur de commande est momentanément indisponible."
+      );
+
+      return;
+
+    }
+
+
+    if(
+      typeof financialModule
+        .openCentralPaymentPage !==
+        "function"
+    ){
+
+      alert(
+        "La page de paiement est momentanément indisponible."
+      );
+
+      return;
+
+    }
+
+
+    try{
+
+      const serviceLabel =
+
+        contacts === 2
+
+          ? "Cercle de confiance Bo'CitéArt — 2 contacts"
+
+          : contacts === 5
+
+            ? "Cercle de confiance Bo'CitéArt — jusqu'à 5 contacts"
+
+            : "Cercle de confiance Bo'CitéArt — jusqu'à 10 contacts";
+
+
+      const order =
+        financialModule
+          .createFinancialOrder({
+
+            productCode:
+              "CITIZEN_SECURE_" +
+              contacts,
+
+            serviceType:
+              "citizen_subscription",
+
+            serviceLabel:
+              serviceLabel,
+
+            customerType:
+              "citizen",
+
+            customerId:
+              String(
+                localStorage.getItem(
+                  "bociteart_installation_id_v1"
+                ) ||
+                ""
+              ),
+
+            customerName:
+              "",
+
+            customerEmail:
+              "",
+
+            customerSiret:
+              "",
+
+            amountHT:
+              amountHT,
+
+            vatRate:
+              vatRate,
+
+            paymentMethod:
+              ""
+
+          });
+
+
+      if(
+        !order
+      ){
+
+        alert(
+          "La commande n'a pas pu être créée."
+        );
+
+        return;
+
+      }
+
+
+      localStorage.setItem(
+
+        "bociteart_citizen_subscription_pending_v1",
+
+        JSON.stringify({
+
+          orderId:
+            order.id,
+
+          contacts:
+            contacts,
+
+          monthlyPriceTTC:
+            amountTTC,
+
+          amountHT:
+            amountHT,
+
+          vatRate:
+            vatRate,
+
+          status:
+            "waiting_payment",
+
+          createdAt:
+            Date.now()
+
+        })
+
+      );
+
+
+      financialModule
+        .openCentralPaymentPage({
+
+          order:
+            order,
+
+          allowCard:
+            true,
+
+          allowBankTransfer:
+            true
+
+        });
+
+
+    }catch(
+      error
+    ){
+
+      console.error(
+        "Bo'CitéArt — paiement citoyen :",
+        error
+      );
+
+
+      alert(
+        "Le paiement n'a pas pu être préparé. Réessayez."
+      );
+
+    }
+
+  };
+
+/* =====================================================
+   ÇA FINIT ICI
+   PAIEMENT CITOYEN — CERCLE DE CONFIANCE
+   ===================================================== */
+   
   function appendHealthHelpSections(){
 
     const modalTitle =
@@ -7346,6 +7649,7 @@ window.setTimeout(
   id="secureContinuePaymentBtn"
   class="choiceBtn"
   type="button"
+  onclick="window.BociteCitizenSecurePayment(event)"
   style="
     width:100%;
     background:#ffffff !important;
