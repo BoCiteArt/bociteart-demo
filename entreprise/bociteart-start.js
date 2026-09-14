@@ -6754,12 +6754,6 @@ window.BociteCitizenSecurePayment =
 
     }
 
-
-    console.log(
-      "✅ Clic paiement citoyen reçu"
-    );
-
-
     const acceptance =
       document.getElementById(
         "secureAccept"
