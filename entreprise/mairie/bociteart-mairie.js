@@ -5617,18 +5617,21 @@ if(
     openMairieServices;
 }
 
+/* =====================================================
+   SANTÉ — SIMPLE ORIENTATION
+   ===================================================== */
 
-const openHealth =
+const openHealthButton =
   mairieEl(
     "openHealthServicesBtn"
   );
 
 
 if(
-  openHealth
+  openHealthButton
 ){
 
-  openHealth.onclick =
+  openHealthButton.onclick =
     function(){
 
       mairieOpenModal(
