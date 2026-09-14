@@ -2356,7 +2356,7 @@ function installCompteAideHook(){
       </p>
 
       <p>
-        Vous pourrez simplement les relire plus tard, si vous le souhaitez, dans le petit onglet <strong>« Compte + aide »</strong>, situé en bas à droite de l’application, où vous trouverez également d’autres points utiles et importants pour <strong>mieux protéger votre accès, vous accompagner et découvrir progressivement les différents services mis à votre disposition.</strong>
+        Vous pourrez simplement les relire plus tard, si vous le souhaitez, dans le petit onglet <strong>« Compte »</strong>, situé en bas à droite de l’application, où vous trouverez également d’autres points utiles et importants pour <strong>mieux protéger votre accès, vous accompagner et découvrir progressivement les différents services mis à votre disposition.</strong>
       </p>
 
       <p>
@@ -2537,7 +2537,7 @@ function installCompteAideHook(){
      ===================================================== -->
 
 <p>
-  <strong>Si vous souhaitez relire cette fiche à tout moment, ouvrez simplement l’onglet « Compte + aide », situé en bas à droite de l’application. En descendant un peu dans la page, vous retrouverez cette fiche ainsi que toutes les autres, présentées à la suite selon les différentes rubriques, tuiles ou univers concernés.</strong>
+  <strong>Si vous souhaitez relire cette fiche à tout moment, ouvrez simplement l’onglet « Compte », situé en bas à droite de l’application. En descendant un peu dans la page, vous retrouverez cette fiche ainsi que toutes les autres, présentées à la suite selon les différentes rubriques, tuiles ou univers concernés.</strong>
 </p>
 
 <!-- =====================================================
@@ -3892,7 +3892,7 @@ function installCompteAideHook(){
       </p>
 
       <p>
-  <strong>Tu peux relire cette fiche quand tu le souhaites, mais aussi découvrir les autres. Pour cela, ouvre simplement l’onglet « Compte + aide », situé en bas à droite de l’application, puis descends un peu dans la page : tu y retrouveras toutes les fiches à la suite.</strong>
+  <strong>Tu peux relire cette fiche quand tu le souhaites, mais aussi découvrir les autres. Pour cela, ouvre simplement l’onglet « Compte », situé en bas à droite de l’application, puis descends un peu dans la page : tu y retrouveras toutes les fiches à la suite.</strong>
 </p>
 
 <p>
