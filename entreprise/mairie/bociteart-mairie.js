@@ -2029,6 +2029,10 @@ function mairieHealthRender(){
       "mairieHealthSearchInput"
     );
 
+ const searchButton =
+  mairieEl(
+    "mairieHealthSearchBtn"
+  );  
 
   const out =
     mairieEl(
@@ -2938,22 +2942,46 @@ function mairieBindHealthDirectory(){
   }
 
 
-  if(
-    searchInput
-  ){
+ if(
+  searchButton
+){
 
-    searchInput.addEventListener(
+  searchButton.onclick =
+    function(){
 
-      "input",
+      mairieHealthRender();
 
-      function(){
+    };
+}
+
+
+if(
+  searchInput
+){
+
+  searchInput.addEventListener(
+
+    "keydown",
+
+    function(
+      event
+    ){
+
+      if(
+        event.key ===
+          "Enter"
+      ){
+
+        event.preventDefault();
 
         mairieHealthRender();
 
       }
 
-    );
-  }
+    }
+
+  );
+}
 
 
   if(
