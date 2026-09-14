@@ -1364,192 +1364,575 @@
      COMPTE + AIDE → MON PROFIL
      ===================================================== */
 
-  function injectProfileCard(){
+ function injectProfileCard(){
 
-    const modalTitle =
-      document.getElementById(
-        "modalTitle"
-      );
-
-
-    const modalBody =
-      document.getElementById(
-        "modalBody"
-      );
-
-
-    if(
-      !modalTitle ||
-      !modalBody
-    ){
-
-      return;
-
-    }
-
-
-    if(
-      String(
-        modalTitle.textContent ||
-        ""
-      ).trim() !==
-        "Compte + aide"
-    ){
-
-      return;
-
-    }
-
-
-    if(
-      document.getElementById(
-        PROFILE_CARD_ID
-      )
-    ){
-
-      return;
-
-    }
-
-
-    ensureStyles();
-
-
-    const card =
-      document.createElement(
-        "div"
-      );
-
-
-    card.id =
-      PROFILE_CARD_ID;
-
-
-    if(
-      hasIdentity()
-    ){
-
-      const account =
-        getAccount() ||
-        {};
-
-
-      card.innerHTML = `
-
-        <div class="bociteAccessTitle">
-          Mon profil et mes coordonnées
-        </div>
-
-        <p>
-          Retrouvez ici votre fiche pour modifier
-          vos coordonnées et les informations autorisées
-          sans recommencer votre inscription.
-        </p>
-
-        <p>
-          Profil actuel :
-          <strong>
-            ${esc(account.displayName || "Utilisateur")}
-          </strong>
-        </p>
-
-        <button
-          id="bociteCompteAideOpenProfile"
-          type="button">
-
-          Ouvrir mon profil
-
-        </button>
-
-      `;
-
-    }else{
-
-      card.innerHTML = `
-
-        <div class="bociteAccessTitle">
-          Mon profil
-        </div>
-
-        <p>
-          Vous pouvez découvrir librement les parties
-          publiques de ${brandHtml()}.
-          Créez votre profil seulement lorsque vous
-          souhaitez utiliser un service personnel
-          ou réservé.
-        </p>
-
-        <button
-          id="bociteCompteAideCreateProfile"
-          type="button">
-
-          M’identifier / créer mon profil
-
-        </button>
-
-      `;
-
-    }
-
-
-    modalBody.insertBefore(
-      card,
-      modalBody.firstChild
+  const modalTitle =
+    document.getElementById(
+      "modalTitle"
     );
 
 
-    const openProfileButton =
-
-      card.querySelector(
-        "#bociteCompteAideOpenProfile"
-      );
-
-
-    if(
-      openProfileButton
-    ){
-
-      openProfileButton.onclick =
-        openProfile;
-
-    }
+  const modalBody =
+    document.getElementById(
+      "modalBody"
+    );
 
 
-    const createProfileButton =
+  if(
+    !modalTitle ||
+    !modalBody
+  ){
 
-      card.querySelector(
-        "#bociteCompteAideCreateProfile"
-      );
-
-
-    if(
-      createProfileButton
-    ){
-
-      createProfileButton.onclick =
-        function(){
-
-          const api =
-            registrationApi();
-
-
-          if(
-            api &&
-            typeof api.open ===
-              "function"
-          ){
-
-            api.open();
-
-          }
-
-        };
-
-    }
-
+    return;
   }
 
 
+  if(
+    String(
+      modalTitle.textContent ||
+      ""
+    ).trim() !==
+      "Compte + aide"
+  ){
+
+    return;
+  }
+
+
+  if(
+    document.getElementById(
+      PROFILE_CARD_ID
+    )
+  ){
+
+    return;
+  }
+
+
+  ensureStyles();
+
+
+  const card =
+    document.createElement(
+      "div"
+    );
+
+
+  card.id =
+    PROFILE_CARD_ID;
+
+
+  const account =
+    getAccount() ||
+    {};
+
+
+  const commune =
+    String(
+      account.commune ||
+      ""
+    ).trim();
+
+
+  /* =====================================================
+     CONTENU COMPTE + AIDE
+     ===================================================== */
+
+  card.innerHTML = `
+
+    ${
+      hasIdentity()
+
+        ? `
+
+          <div class="bociteAccessTitle">
+            Mon profil et mes coordonnées
+          </div>
+
+          <p>
+            Retrouvez ici votre fiche
+            pour modifier vos coordonnées
+            et les informations autorisées
+            sans recommencer votre inscription.
+          </p>
+
+          <p>
+            Profil actuel :
+            <strong>
+              ${esc(
+                account.displayName ||
+                "Utilisateur"
+              )}
+            </strong>
+          </p>
+
+          <button
+            id="bociteCompteAideOpenProfile"
+            type="button">
+
+            Ouvrir mon profil
+
+          </button>
+
+        `
+
+        : `
+
+          <div class="bociteAccessTitle">
+            Mon profil
+          </div>
+
+          <p>
+            Vous pouvez découvrir librement
+            les parties publiques de
+            ${brandHtml()}.
+
+            Créez votre profil seulement
+            lorsque vous souhaitez utiliser
+            un service personnel ou réservé.
+          </p>
+
+          <button
+            id="bociteCompteAideCreateProfile"
+            type="button">
+
+            M’identifier / créer mon profil
+
+          </button>
+
+        `
+    }
+
+
+    <!-- =================================================
+         SANTÉ & AIDES DE PROXIMITÉ
+         ================================================= -->
+
+    <div
+      style="
+        height:1px;
+        background:rgba(47,93,70,.25);
+        margin:22px 0;
+      "
+    ></div>
+
+
+    <div class="bociteAccessTitle">
+      Santé & aides de proximité
+    </div>
+
+
+    <p>
+      Vous cherchez un médecin,
+      un spécialiste,
+      une pharmacie,
+      un infirmier,
+      un kinésithérapeute
+      ou une aide près de chez vous ?
+    </p>
+
+
+    <p>
+      Retrouvez ici les portes utiles
+      de votre commune,
+      ainsi que des repères pour les personnes seules,
+      les familles,
+      les enfants
+      et certaines situations nécessitant
+      une aide particulière.
+    </p>
+
+
+    <div class="bociteAccessPath">
+
+      ${
+        commune
+
+          ? "Annuaire santé de " +
+            esc(commune)
+
+          : "Annuaire santé de votre ville"
+      }
+
+    </div>
+
+
+    <div class="bociteAccessActions">
+
+      <button
+        id="bociteCompteAideHealthDirectory"
+        type="button">
+
+        Annuaire santé de votre ville
+
+      </button>
+
+
+      <button
+        id="bociteCompteAideIsolatedHelp"
+        type="button"
+        class="bociteAccessSecondary">
+
+        Personnes seules ou fragiles
+
+      </button>
+
+
+      <button
+        id="bociteCompteAideFamilyHelp"
+        type="button"
+        class="bociteAccessSecondary">
+
+        Familles et enfants
+
+      </button>
+
+
+      <button
+        id="bociteCompteAideEmergencyHelp"
+        type="button"
+        class="bociteAccessSecondary">
+
+        Urgences et contacts essentiels
+
+      </button>
+
+    </div>
+
+
+    <div
+      id="bociteCompteAideHealthStatus"
+      class="bociteAccessMessage"
+      role="status">
+    </div>
+
+
+    <p
+      style="
+        margin-top:14px;
+      "
+    >
+      ${brandHtml()}
+      ne remplace jamais
+      les professionnels,
+      les services d’urgence
+      ou les organismes compétents.
+
+      Il aide à retrouver
+      plus rapidement la bonne porte.
+    </p>
+
+  `;
+
+
+  modalBody.insertBefore(
+    card,
+    modalBody.firstChild
+  );
+
+
+  /* =====================================================
+     MON PROFIL
+     ===================================================== */
+
+  const openProfileButton =
+    card.querySelector(
+      "#bociteCompteAideOpenProfile"
+    );
+
+
+  if(
+    openProfileButton
+  ){
+
+    openProfileButton.onclick =
+      openProfile;
+  }
+
+
+  const createProfileButton =
+    card.querySelector(
+      "#bociteCompteAideCreateProfile"
+    );
+
+
+  if(
+    createProfileButton
+  ){
+
+    createProfileButton.onclick =
+      function(){
+
+        const api =
+          registrationApi();
+
+
+        if(
+          api &&
+          typeof api.open ===
+            "function"
+        ){
+
+          api.open();
+        }
+      };
+  }
+
+
+  /* =====================================================
+     ANNUAIRE SANTÉ
+
+     UTILISE LE VRAI ANNUAIRE
+     DÉJÀ PRÉSENT DANS LE MODULE MAIRIE.
+     ===================================================== */
+
+  const healthButton =
+    card.querySelector(
+      "#bociteCompteAideHealthDirectory"
+    );
+
+
+  if(
+    healthButton
+  ){
+
+    healthButton.onclick =
+      function(){
+
+        const status =
+          card.querySelector(
+            "#bociteCompteAideHealthStatus"
+          );
+
+
+        if(
+          window.BociteMairieModule &&
+          typeof window.BociteMairieModule
+            .openHealth ===
+            "function"
+        ){
+
+          window.BociteMairieModule
+            .openHealth();
+
+          return;
+        }
+
+
+        if(status){
+
+          status.textContent =
+            "L’annuaire santé est momentanément indisponible.";
+
+          status.style.display =
+            "block";
+        }
+      };
+  }
+
+
+  /* =====================================================
+     PETITE FONCTION D'AIDE
+     ===================================================== */
+
+  function openHelpInformation(
+    title,
+    html
+  ){
+
+    const overlay =
+      showCard(`
+
+        <div class="bociteAccessTitle">
+          ${esc(title)}
+        </div>
+
+        ${html}
+
+        <div class="bociteAccessActions">
+
+          <button
+            id="bociteHelpInformationClose"
+            type="button">
+
+            Retour à Compte + aide
+
+          </button>
+
+        </div>
+
+      `);
+
+
+    const close =
+      overlay.querySelector(
+        "#bociteHelpInformationClose"
+      );
+
+
+    if(close){
+
+      close.onclick =
+        closeOverlay;
+    }
+  }
+
+
+  /* =====================================================
+     PERSONNES SEULES OU FRAGILES
+     ===================================================== */
+
+  const isolatedHelp =
+    card.querySelector(
+      "#bociteCompteAideIsolatedHelp"
+    );
+
+
+  if(
+    isolatedHelp
+  ){
+
+    isolatedHelp.onclick =
+      function(){
+
+        openHelpInformation(
+          "Personnes seules ou fragiles",
+
+          `
+
+            <p>
+              Une personne en difficulté
+              ne doit pas rester seule
+              simplement parce qu’elle
+              ne sait pas vers quelle porte
+              se tourner.
+            </p>
+
+            <p>
+              ${brandHtml()}
+              rassemble progressivement
+              les contacts et services utiles
+              permettant de retrouver
+              un proche,
+              une personne de confiance,
+              un organisme
+              ou un interlocuteur adapté.
+            </p>
+
+            <p>
+              Les informations locales
+              validées pour votre commune
+              seront regroupées ici.
+            </p>
+
+          `
+        );
+      };
+  }
+
+
+  /* =====================================================
+     FAMILLES ET ENFANTS
+     ===================================================== */
+
+  const familyHelp =
+    card.querySelector(
+      "#bociteCompteAideFamilyHelp"
+    );
+
+
+  if(
+    familyHelp
+  ){
+
+    familyHelp.onclick =
+      function(){
+
+        openHelpInformation(
+          "Familles et enfants",
+
+          `
+
+            <p>
+              Retrouvez ici les repères
+              et contacts utiles
+              pour les familles
+              et les enfants.
+            </p>
+
+            <p>
+              <strong>
+                Enfance en danger :
+                119
+              </strong>
+            </p>
+
+            <p>
+              Les aides et interlocuteurs locaux
+              validés pour la commune
+              seront également regroupés ici.
+            </p>
+
+          `
+        );
+      };
+  }
+
+
+  /* =====================================================
+     URGENCES ET CONTACTS ESSENTIELS
+     ===================================================== */
+
+  const emergencyHelp =
+    card.querySelector(
+      "#bociteCompteAideEmergencyHelp"
+    );
+
+
+  if(
+    emergencyHelp
+  ){
+
+    emergencyHelp.onclick =
+      function(){
+
+        openHelpInformation(
+          "Urgences et contacts essentiels",
+
+          `
+
+            <p>
+              <strong>
+                112 — urgence
+              </strong>
+            </p>
+
+            <p>
+              <strong>
+                119 — enfance en danger
+              </strong>
+            </p>
+
+            <p>
+              <strong>
+                3919 — violences faites aux femmes,
+                information et orientation
+              </strong>
+            </p>
+
+            <p>
+              En situation d’urgence,
+              utilisez directement
+              le service compétent.
+            </p>
+
+          `
+        );
+      };
+  }
+
+}
+   
   function installCompteAideHook(){
 
     document.addEventListener(
