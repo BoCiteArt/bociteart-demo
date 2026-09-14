@@ -3306,6 +3306,77 @@ if(
 }
 
 
+function launchHealthSearch(){
+
+  const connectedRows =
+    mairieHealthCollectRows();
+
+
+  if(
+    !Array.isArray(
+      connectedRows
+    ) ||
+    connectedRows.length === 0
+  ){
+
+    if(
+      results
+    ){
+
+      results.innerHTML = `
+
+        <div class="mairieCard">
+
+          <div class="mairieTitle">
+            Annuaire en cours de raccordement
+          </div>
+
+          <div class="mairieText">
+
+            La recherche des professionnels de santé
+            est prête dans Bo’CitéArt.
+
+            <br><br>
+
+            Les données officielles des professionnels
+            de la commune ne sont pas encore raccordées
+            à cet annuaire.
+
+            <br><br>
+
+            Dès le raccordement effectué,
+            vous pourrez rechercher ici
+            un médecin,
+            un spécialiste,
+            une pharmacie
+            ou un autre professionnel de santé.
+
+          </div>
+
+        </div>
+
+      `;
+
+    }
+
+    return;
+  }
+
+
+  mairieHealthRender();
+
+}
+
+
+if(
+  searchButton
+){
+
+  searchButton.onclick =
+    launchHealthSearch;
+}
+
+
 if(
   searchInput
 ){
