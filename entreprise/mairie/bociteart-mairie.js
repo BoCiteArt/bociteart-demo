@@ -4715,12 +4715,18 @@ function mairieMainHtml(){
 
         <div class="mairieText">
 
-          Les informations d’urgence
-          ou d’intérêt général
-          diffusées par la mairie
-          restent immédiatement visibles
-          dans le petit bandeau rouge
-          de la tuile Mairie.
+         Les informations d’urgence ou d’intérêt général
+diffusées par la mairie restent immédiatement visibles
+dans le
+<span
+  style="
+    color:#b3282d;
+    font-weight:400;
+  "
+>
+  petit bandeau rouge
+</span>
+de la tuile Mairie.
 
         </div>
 
