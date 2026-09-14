@@ -3975,27 +3975,36 @@ function installCompteAideHook(){
 
     }
 
+ openSecure.addEventListener(
+  "click",
+  function(){
 
-    openSecure.addEventListener(
-      "click",
-      function(){
+    /*
+      Le contenu Compte s'affiche d'abord.
 
-        /*
-          Le contenu Compte + aide existant
-          s'affiche d'abord.
+      Ensuite seulement
+      l'introduction générale
+      et les 9 courriers
+      sont ajoutés à la suite.
+    */
 
-          Ensuite seulement les introductions
-          sont ajoutées en dessous.
-        */
-
-        window.setTimeout(
-          injectCourriersDansCompteAide,
-          0
-        );
-
-      }
+    window.setTimeout(
+      injectCourriersDansCompteAide,
+      0
     );
 
+    window.setTimeout(
+      injectCourriersDansCompteAide,
+      80
+    );
+
+    window.setTimeout(
+      injectCourriersDansCompteAide,
+      180
+    );
+
+  }
+);
 
     console.log(
       "✅ Compte + aide — introduction générale et 9 courriers complets chargés"
