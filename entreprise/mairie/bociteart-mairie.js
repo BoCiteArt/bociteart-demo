@@ -2848,20 +2848,23 @@ function mairieBindHealthDirectory(){
       "mairieHealthOpenCommuneBtn"
     );
 
-   const ownCommune =
-  mairieEl(
-    "mairieHealthOwnCommuneBtn"
-  );
+
+  const ownCommune =
+    mairieEl(
+      "mairieHealthOwnCommuneBtn"
+    );
+
 
   const searchInput =
     mairieEl(
       "mairieHealthSearchInput"
     );
 
-const searchButton =
-  mairieEl(
-    "mairieHealthSearchBtn"
-  );
+
+  const searchButton =
+    mairieEl(
+      "mairieHealthSearchBtn"
+    );
 
 
   const results =
@@ -2869,6 +2872,193 @@ const searchButton =
       "mairieHealthResults"
     );
 
+
+  /* =====================================================
+     RECHERCHE
+     ===================================================== */
+
+  function launchHealthSearch(){
+
+    const commune =
+      mairieText(
+        communeInput
+          ? communeInput.value
+          : mairieHealthState.commune
+      );
+
+
+    const query =
+      mairieText(
+        searchInput
+          ? searchInput.value
+          : mairieHealthState.query
+      );
+
+
+    if(
+      !commune
+    ){
+
+      if(
+        results
+      ){
+
+        results.innerHTML = `
+
+          <div class="mairieCard">
+
+            <div class="mairieTitle">
+              Commune nécessaire
+            </div>
+
+            <div class="mairieText">
+
+              Indiquez d’abord
+              la commune dans laquelle
+              vous souhaitez effectuer
+              votre recherche.
+
+            </div>
+
+          </div>
+
+        `;
+
+      }
+
+
+      return;
+    }
+
+
+    mairieHealthState.commune =
+      commune;
+
+
+    mairieHealthState.query =
+      query;
+
+
+    const currentCity =
+      mairieEl(
+        "mairieHealthCurrentCity"
+      );
+
+
+    if(
+      currentCity
+    ){
+
+      currentCity.textContent =
+        "Annuaire santé de " +
+        commune;
+    }
+
+
+    const connectedRows =
+      mairieHealthCollectRows();
+
+
+    /*
+     * Aucune source officielle raccordée :
+     * on confirme la demande
+     * sans inventer de professionnels.
+     */
+
+    if(
+      !Array.isArray(
+        connectedRows
+      ) ||
+      connectedRows.length === 0
+    ){
+
+      if(
+        results
+      ){
+
+        results.innerHTML = `
+
+          <div class="mairieCard">
+
+            <div class="mairieTitle">
+              Annuaire en cours de raccordement
+            </div>
+
+            <div class="mairieText">
+
+              ${
+                query
+
+                  ? `
+                    Votre recherche
+                    <strong>
+                      « ${mairieEsc(query)} »
+                    </strong>
+                    pour la commune de
+                    <strong>
+                      ${mairieEsc(commune)}
+                    </strong>
+                    est bien prise en compte.
+                  `
+
+                  : `
+                    La commune de
+                    <strong>
+                      ${mairieEsc(commune)}
+                    </strong>
+                    est bien sélectionnée.
+                  `
+              }
+
+              <br><br>
+
+              Les données officielles
+              des professionnels de santé
+              ne sont pas encore raccordées
+              à l’annuaire Bo’CitéArt.
+
+              <br><br>
+
+              Dès ce raccordement effectué,
+              cette recherche affichera
+              les professionnels correspondant
+              à votre demande.
+
+            </div>
+
+          </div>
+
+        `;
+
+
+        results.scrollIntoView({
+          behavior:
+            "smooth",
+
+          block:
+            "start"
+        });
+
+      }
+
+
+      return;
+    }
+
+
+    /*
+     * Une source réelle existe :
+     * utilisation du vrai moteur.
+     */
+
+    mairieHealthRender();
+
+  }
+
+
+  /* =====================================================
+     CHOIX DE LA COMMUNE
+     ===================================================== */
 
   if(
     openCommune
@@ -2903,12 +3093,19 @@ const searchButton =
           event.preventDefault();
 
           mairieHealthRender();
+
         }
+
       }
 
     );
+
   }
 
+
+  /* =====================================================
+     RETOUR À MA COMMUNE
+     ===================================================== */
 
   if(
     ownCommune
@@ -2927,6 +3124,7 @@ const searchButton =
 
           communeInput.value =
             commune;
+
         }
 
 
@@ -2936,656 +3134,69 @@ const searchButton =
 
           searchInput.value =
             "";
+
         }
 
 
         mairieHealthRender();
 
       };
+
   }
 
 
- if(
-  searchButton
-){
-
-  searchButton.onclick =
-    function(){
-
-      mairieHealthRender();
-
-    };
-}
-
-
-function launchHealthSearch(){
-
-  const commune =
-    mairieText(
-      communeInput
-        ? communeInput.value
-        : ""
-    );
-
-
-  const query =
-    mairieText(
-      searchInput
-        ? searchInput.value
-        : ""
-    );
-
+  /* =====================================================
+     BOUTON RECHERCHER
+     ===================================================== */
 
   if(
-    !commune
+    searchButton
   ){
 
-    if(
-      results
-    ){
+    searchButton.onclick =
+      launchHealthSearch;
 
-      results.innerHTML = `
-
-        <div class="mairieCard">
-
-          <div class="mairieTitle">
-            Commune nécessaire
-          </div>
-
-          <div class="mairieText">
-
-            Indiquez d’abord
-            la commune dans laquelle
-            vous souhaitez effectuer
-            votre recherche.
-
-          </div>
-
-        </div>
-
-      `;
-
-    }
-
-    return;
   }
 
 
-  mairieHealthState.commune =
-    commune;
-
-
-  mairieHealthState.query =
-    query;
-
-
-  const currentCity =
-    mairieEl(
-      "mairieHealthCurrentCity"
-    );
-
+  /* =====================================================
+     TOUCHE ENTRÉE DANS LA RECHERCHE
+     ===================================================== */
 
   if(
-    currentCity
+    searchInput
   ){
 
-    currentCity.textContent =
-      "Annuaire santé de " +
-      commune;
-  }
+    searchInput.addEventListener(
 
+      "keydown",
 
-  if(
-    results
-  ){
-
-    results.innerHTML = `
-
-      <div class="mairieCard">
-
-        <div class="mairieTitle">
-          Annuaire en cours de raccordement
-        </div>
-
-        <div class="mairieText">
-
-          ${
-            query
-
-              ? `
-                Votre recherche
-                <strong>
-                  « ${mairieEsc(query)} »
-                </strong>
-                pour la commune de
-                <strong>
-                  ${mairieEsc(commune)}
-                </strong>
-                est bien prise en compte.
-              `
-
-              : `
-                La commune de
-                <strong>
-                  ${mairieEsc(commune)}
-                </strong>
-                est bien sélectionnée.
-              `
-          }
-
-          <br><br>
-
-          Les données officielles
-          des professionnels de santé
-          ne sont pas encore raccordées
-          à l’annuaire Bo’CitéArt.
-
-          <br><br>
-
-          Dès ce raccordement effectué,
-          cette recherche affichera
-          les médecins,
-          spécialistes,
-          pharmacies
-          et autres professionnels
-          correspondant à votre demande.
-
-        </div>
-
-      </div>
-
-    `;
-
-
-    results.scrollIntoView({
-      behavior:
-        "smooth",
-
-      block:
-        "start"
-    });
-
-  }
-
-}
-
-
-if(
-  searchButton
-){
-
-  searchButton.onclick =
-    launchHealthSearch;
-}
-
-
-if(
-  searchInput
-){
-
-  searchInput.addEventListener(
-
-    "keydown",
-
-    function(
-      event
-    ){
-
-      if(
-        event.key ===
-          "Enter"
+      function(
+        event
       ){
 
-        event.preventDefault();
+        if(
+          event.key ===
+            "Enter"
+        ){
 
-        launchHealthSearch();
+          event.preventDefault();
+
+          launchHealthSearch();
+
+        }
 
       }
 
-    }
+    );
 
-  );
-}
-
-   if(
-  results
-){
-      
-      results.innerHTML = `
-
-        <div class="mairieCard">
-
-          <div class="mairieTitle">
-            Annuaire en cours de raccordement
-          </div>
-
-          <div class="mairieText">
-
-            La recherche des professionnels de santé
-            est prête dans Bo’CitéArt.
-
-            <br><br>
-
-            Les données officielles des professionnels
-            de la commune ne sont pas encore raccordées
-            à cet annuaire.
-
-            <br><br>
-
-            Dès le raccordement effectué,
-            vous pourrez rechercher ici
-            un médecin,
-            un spécialiste,
-            une pharmacie
-            ou un autre professionnel de santé.
-
-          </div>
-
-        </div>
-
-      `;
-
-    }
-
-    return;
   }
 
 
-  mairieHealthRender();
+  /* =====================================================
+     FICHES PROFESSIONNELLES
+     ===================================================== */
 
-}
-
-
-if(
-  searchButton
-){
-
-  searchButton.onclick =
-    launchHealthSearch;
-}
-
-function launchHealthSearch(){
-
-  const connectedRows =
-    mairieHealthCollectRows();
-
-
-  if(
-    !Array.isArray(
-      connectedRows
-    ) ||
-    connectedRows.length === 0
-  ){
-
-    if(
-      results
-    ){
-
-      results.innerHTML = `
-
-        <div class="mairieCard">
-
-          <div class="mairieTitle">
-            Annuaire en cours de raccordement
-          </div>
-
-          <div class="mairieText">
-
-            La recherche des professionnels de santé
-            est prête dans Bo’CitéArt.
-
-            <br><br>
-
-            Les données officielles des professionnels
-            de la commune ne sont pas encore raccordées
-            à cet annuaire.
-
-            <br><br>
-
-            Dès le raccordement effectué,
-            vous pourrez rechercher ici
-            un médecin,
-            un spécialiste,
-            une pharmacie
-            ou un autre professionnel de santé.
-
-          </div>
-
-        </div>
-
-      `;
-
-    }
-
-    return;
-  }
-
-
-  mairieHealthRender();
-
-}
-
-
-if(
-  searchButton
-){
-
-  searchButton.onclick =
-    launchHealthSearch;
-}
-
-function launchHealthSearch(){
-
-  const connectedRows =
-    mairieHealthCollectRows();
-
-
-  if(
-    !Array.isArray(
-      connectedRows
-    ) ||
-    connectedRows.length === 0
-  ){
-
-    if(
-      results
-    ){
-
-      results.innerHTML = `
-
-        <div class="mairieCard">
-
-          <div class="mairieTitle">
-            Annuaire en cours de raccordement
-          </div>
-
-          <div class="mairieText">
-
-            La recherche des professionnels de santé
-            est prête dans Bo’CitéArt.
-
-            <br><br>
-
-            Les données officielles des professionnels
-            de la commune ne sont pas encore raccordées
-            à cet annuaire.
-
-            <br><br>
-
-            Dès le raccordement effectué,
-            vous pourrez rechercher ici
-            un médecin,
-            un spécialiste,
-            une pharmacie
-            ou un autre professionnel de santé.
-
-          </div>
-
-        </div>
-
-      `;
-
-    }
-
-    return;
-  }
-
-
-  mairieHealthRender();
-
-}
-
-
-if(
-  searchButton
-){
-
-  searchButton.onclick =
-    launchHealthSearch;
-}
-
-
-function launchHealthSearch(){
-
-  const connectedRows =
-    mairieHealthCollectRows();
-
-
-  if(
-    !Array.isArray(
-      connectedRows
-    ) ||
-    connectedRows.length === 0
-  ){
-
-    if(
-      results
-    ){
-
-      results.innerHTML = `
-
-        <div class="mairieCard">
-
-          <div class="mairieTitle">
-            Annuaire en cours de raccordement
-          </div>
-
-          <div class="mairieText">
-
-            La recherche des professionnels de santé
-            est prête dans Bo’CitéArt.
-
-            <br><br>
-
-            Les données officielles des professionnels
-            de la commune ne sont pas encore raccordées
-            à cet annuaire.
-
-            <br><br>
-
-            Dès le raccordement effectué,
-            vous pourrez rechercher ici
-            un médecin,
-            un spécialiste,
-            une pharmacie
-            ou un autre professionnel de santé.
-
-          </div>
-
-        </div>
-
-      `;
-
-    }
-
-    return;
-  }
-
-
-  mairieHealthRender();
-
-}
-
-
-if(
-  searchButton
-){
-
-  searchButton.onclick =
-    launchHealthSearch;
-}
-
-
-function launchHealthSearch(){
-
-  const connectedRows =
-    mairieHealthCollectRows();
-
-
-  if(
-    !Array.isArray(
-      connectedRows
-    ) ||
-    connectedRows.length === 0
-  ){
-
-    if(
-      results
-    ){
-
-      results.innerHTML = `
-
-        <div class="mairieCard">
-
-          <div class="mairieTitle">
-            Annuaire en cours de raccordement
-          </div>
-
-          <div class="mairieText">
-
-            La recherche des professionnels de santé
-            est prête dans Bo’CitéArt.
-
-            <br><br>
-
-            Les données officielles des professionnels
-            de la commune ne sont pas encore raccordées
-            à cet annuaire.
-
-            <br><br>
-
-            Dès le raccordement effectué,
-            vous pourrez rechercher ici
-            un médecin,
-            un spécialiste,
-            une pharmacie
-            ou un autre professionnel de santé.
-
-          </div>
-
-        </div>
-
-      `;
-
-    }
-
-    return;
-  }
-
-
-  mairieHealthRender();
-
-}
-
-
-if(
-  searchButton
-){
-
-  searchButton.onclick =
-    launchHealthSearch;
-}
-
-
-function launchHealthSearch(){
-
-  const connectedRows =
-    mairieHealthCollectRows();
-
-
-  if(
-    !Array.isArray(
-      connectedRows
-    ) ||
-    connectedRows.length === 0
-  ){
-
-    if(
-      results
-    ){
-
-      results.innerHTML = `
-
-        <div class="mairieCard">
-
-          <div class="mairieTitle">
-            Annuaire en cours de raccordement
-          </div>
-
-          <div class="mairieText">
-
-            La recherche des professionnels de santé
-            est prête dans Bo’CitéArt.
-
-            <br><br>
-
-            Les données officielles des professionnels
-            de la commune ne sont pas encore raccordées
-            à cet annuaire.
-
-            <br><br>
-
-            Dès le raccordement effectué,
-            vous pourrez rechercher ici
-            un médecin,
-            un spécialiste,
-            une pharmacie
-            ou un autre professionnel de santé.
-
-          </div>
-
-        </div>
-
-      `;
-
-    }
-
-    return;
-  }
-
-
-  mairieHealthRender();
-
-}
-
-
-if(
-  searchButton
-){
-
-  searchButton.onclick =
-    launchHealthSearch;
-}
-
-
-if(
-  searchInput
-){
-
-  searchInput.addEventListener(
-
-    "keydown",
-
-    function(
-      event
-    ){
-
-      if(
-        event.key ===
-          "Enter"
-      ){
-
-        event.preventDefault();
-
-        launchHealthSearch();
-
-      }
-
-    }
-
-  );
-}
-   
   if(
     results
   ){
@@ -3616,6 +3227,7 @@ if(
 
           );
 
+
           return;
         }
 
@@ -3631,19 +3243,19 @@ if(
         ){
 
           mairieHealthRender();
+
         }
 
       }
 
     );
+
   }
 
 
   mairieHealthRender();
 
 }
-
-
 /* =========================================================
    OUVERTURE DE L'ANNUAIRE
    ========================================================= */
