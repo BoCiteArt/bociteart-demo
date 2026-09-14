@@ -1041,38 +1041,6 @@ function openMairieServices(){
    ANNUAIRE SANTÉ
    ========================================================= */
 
-function mairieHealthDirectory(){
-
-  const shared =
-    window.BOCITEART_HEALTH_DIRECTORY;
-
-
-  if(
-    shared &&
-    typeof shared ===
-      "object"
-  ){
-
-    return shared;
-  }
-
-
-  return {
-
-    medecins:[],
-
-    specialistes:[],
-
-    kines:[],
-
-    infirmieres:[],
-
-    pharmacies:[]
-
-  };
-}
-
-
 function mairieHealthBlock(
   title,
   list
@@ -1205,7 +1173,6 @@ function mairieHealthDirectory(){
 
   };
 }
-
 
 /* =========================================================
    ANNUAIRE SANTÉ — OUTILS
@@ -5459,6 +5426,53 @@ de la tuile Mairie.
 
           </div>
 
+          <!-- =============================================
+     ÉTAT DU SERVICE
+     ============================================= -->
+
+<div
+  style="
+    margin-top:16px;
+    padding:14px;
+    background:#ffffff;
+    border:2px solid rgba(0,0,0,.08);
+    border-radius:12px;
+  "
+>
+
+  <div class="mairieTitle">
+    État du service
+  </div>
+
+  <div class="mairieText">
+
+    ✓ Registre des associations :
+    <strong>actif</strong>
+
+    <br><br>
+
+    ○ Recherche automatique :
+    <strong>en attente de raccordement</strong>
+
+    <br><br>
+
+    ○ Contrôle Mairie :
+    <strong>en attente de raccordement</strong>
+
+    <br><br>
+
+    ○ Second contrôle Bo’CitéArt :
+    <strong>en attente de raccordement</strong>
+
+    <br><br>
+
+    ○ Versements sécurisés :
+    <strong>en attente de raccordement</strong>
+
+  </div>
+
+</div>
+
 
           <!-- =============================================
                NOMBRE D'ASSOCIATIONS
@@ -5518,16 +5532,15 @@ de la tuile Mairie.
 
           </div>
 
-
-          <button
-            id="mairieResearchSearchBtn"
-            class="mairieBtn mairieFull"
-            type="button"
-            style="margin-top:10px;"
-          >
-            Rechercher des associations
-          </button>
-
+       <button
+  id="mairieResearchSearchBtn"
+  class="mairieBtn mairieFull"
+  type="button"
+  disabled
+  style="margin-top:10px;"
+>
+  Recherche automatique — raccordement en cours
+</button>
 
           <!-- =============================================
                ASSOCIATION CONNUE PAR LA MAIRIE
@@ -5550,14 +5563,15 @@ de la tuile Mairie.
           >
 
 
-          <button
-            id="mairieResearchCheckBtn"
-            class="mairieBtn mairieFull"
-            type="button"
-            style="margin-top:10px;"
-          >
-            Rechercher et contrôler cette association
-          </button>
+         <button
+  id="mairieResearchCheckBtn"
+  class="mairieBtn mairieFull"
+  type="button"
+  disabled
+  style="margin-top:10px;"
+>
+  Contrôle automatique — raccordement en cours
+</button>
 
 
           ${mairieStatus(
@@ -5595,13 +5609,14 @@ de la tuile Mairie.
                ============================================= -->
 
           <button
-            id="mairieResearchConfirmSelectionBtn"
-            class="mairieBtn mairieFull"
-            type="button"
-            style="margin-top:14px;"
-          >
-            Confirmer les associations retenues
-          </button>
+  id="mairieResearchConfirmSelectionBtn"
+  class="mairieBtn mairieFull"
+  type="button"
+  disabled
+  style="margin-top:14px;"
+>
+  Confirmation — raccordement en cours
+</button>
 
 
           ${mairieStatus(
@@ -5710,13 +5725,14 @@ de la tuile Mairie.
 
 
           <button
-            id="mairieResearchPreviewDistributionBtn"
-            class="mairieBtn mairieFull"
-            type="button"
-            style="margin-top:10px;"
-          >
-            Calculer la répartition
-          </button>
+  id="mairieResearchPreviewDistributionBtn"
+  class="mairieBtn mairieFull"
+  type="button"
+  disabled
+  style="margin-top:10px;"
+>
+  Calcul de la répartition — raccordement en cours
+</button>
 
 
           <div
@@ -5731,14 +5747,15 @@ de la tuile Mairie.
           </div>
 
 
-          <button
-            id="mairieResearchValidateEnvelopeBtn"
-            class="mairieBtn mairieFull"
-            type="button"
-            style="margin-top:10px;"
-          >
-            Valider cette répartition
-          </button>
+        <button
+  id="mairieResearchValidateEnvelopeBtn"
+  class="mairieBtn mairieFull"
+  type="button"
+  disabled
+  style="margin-top:10px;"
+>
+  Validation — raccordement en cours
+</button>
 
 
           ${mairieStatus(
