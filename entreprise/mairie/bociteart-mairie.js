@@ -1994,12 +1994,7 @@ function mairieHealthRender(){
   const queryInput =
     mairieEl(
       "mairieHealthSearchInput"
-    );
-
- const searchButton =
-  mairieEl(
-    "mairieHealthSearchBtn"
-  );  
+    ); 
 
   const out =
     mairieEl(
