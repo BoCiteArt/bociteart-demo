@@ -1274,7 +1274,7 @@
         </p>
 
         <div class="bociteAccessPath">
-          Compte + aide → Mon profil
+          Compte → Mon profil
         </div>
 
         <p>
@@ -1364,7 +1364,12 @@
      COMPTE + AIDE → MON PROFIL
      ===================================================== */
 
- function injectProfileCard(){
+/* =====================================================
+   COMPTE → MON PROFIL
+   SANTÉ ET AIDES SORTIES DU COMPTE
+   ===================================================== */
+
+function injectProfileCard(){
 
   const modalTitle =
     document.getElementById(
@@ -1392,7 +1397,7 @@
       modalTitle.textContent ||
       ""
     ).trim() !==
-      "Compte + aide"
+      "Compte"
   ){
 
     return;
@@ -1427,15 +1432,8 @@
     {};
 
 
-  const commune =
-    String(
-      account.commune ||
-      ""
-    ).trim();
-
-
   /* =====================================================
-     CONTENU COMPTE + AIDE
+     CONTENU DU COMPTE UNIQUEMENT
      ===================================================== */
 
   card.innerHTML = `
@@ -1468,10 +1466,9 @@
 
           <button
             id="bociteCompteAideOpenProfile"
-            type="button">
-
+            type="button"
+          >
             Ouvrir mon profil
-
           </button>
 
         `
@@ -1486,7 +1483,9 @@
             Vous pouvez découvrir librement
             les parties publiques de
             ${brandHtml()}.
+          </p>
 
+          <p>
             Créez votre profil seulement
             lorsque vous souhaitez utiliser
             un service personnel ou réservé.
@@ -1494,133 +1493,13 @@
 
           <button
             id="bociteCompteAideCreateProfile"
-            type="button">
-
+            type="button"
+          >
             M’identifier / créer mon profil
-
           </button>
 
         `
     }
-
-
-    <!-- =================================================
-         SANTÉ & AIDES DE PROXIMITÉ
-         ================================================= -->
-
-    <div
-      style="
-        height:1px;
-        background:rgba(47,93,70,.25);
-        margin:22px 0;
-      "
-    ></div>
-
-
-    <div class="bociteAccessTitle">
-      Santé & aides de proximité
-    </div>
-
-
-    <p>
-      Vous cherchez un médecin,
-      un spécialiste,
-      une pharmacie,
-      un infirmier,
-      un kinésithérapeute
-      ou une aide près de chez vous ?
-    </p>
-
-
-    <p>
-      Retrouvez ici les portes utiles
-      de votre commune,
-      ainsi que des repères pour les personnes seules,
-      les familles,
-      les enfants
-      et certaines situations nécessitant
-      une aide particulière.
-    </p>
-
-
-    <div class="bociteAccessPath">
-
-      ${
-        commune
-
-          ? "Annuaire santé de " +
-            esc(commune)
-
-          : "Annuaire santé de votre ville"
-      }
-
-    </div>
-
-
-    <div class="bociteAccessActions">
-
-      <button
-        id="bociteCompteAideHealthDirectory"
-        type="button">
-
-        Annuaire santé de votre ville
-
-      </button>
-
-
-      <button
-        id="bociteCompteAideIsolatedHelp"
-        type="button"
-        class="bociteAccessSecondary">
-
-        Personnes seules ou fragiles
-
-      </button>
-
-
-      <button
-        id="bociteCompteAideFamilyHelp"
-        type="button"
-        class="bociteAccessSecondary">
-
-        Familles et enfants
-
-      </button>
-
-
-      <button
-        id="bociteCompteAideEmergencyHelp"
-        type="button"
-        class="bociteAccessSecondary">
-
-        Urgences et contacts essentiels
-
-      </button>
-
-    </div>
-
-
-    <div
-      id="bociteCompteAideHealthStatus"
-      class="bociteAccessMessage"
-      role="status">
-    </div>
-
-
-    <p
-      style="
-        margin-top:14px;
-      "
-    >
-      ${brandHtml()}
-      ne remplace jamais
-      les professionnels,
-      les services d’urgence
-      ou les organismes compétents.
-
-      Il aide à retrouver
-      plus rapidement la bonne porte.
-    </p>
 
   `;
 
@@ -1632,7 +1511,7 @@
 
 
   /* =====================================================
-     MON PROFIL
+     OUVRIR LE PROFIL
      ===================================================== */
 
   const openProfileButton =
@@ -1649,6 +1528,10 @@
       openProfile;
   }
 
+
+  /* =====================================================
+     CRÉER LE PROFIL
+     ===================================================== */
 
   const createProfileButton =
     card.querySelector(
@@ -1675,264 +1558,534 @@
 
           api.open();
         }
-      };
-  }
 
-
-  /* =====================================================
-     ANNUAIRE SANTÉ
-
-     UTILISE LE VRAI ANNUAIRE
-     DÉJÀ PRÉSENT DANS LE MODULE MAIRIE.
-     ===================================================== */
-
-  const healthButton =
-    card.querySelector(
-      "#bociteCompteAideHealthDirectory"
-    );
-
-
-  if(
-    healthButton
-  ){
-
-    healthButton.onclick =
-      function(){
-
-        const status =
-          card.querySelector(
-            "#bociteCompteAideHealthStatus"
-          );
-
-
-        if(
-          window.BociteMairieModule &&
-          typeof window.BociteMairieModule
-            .openHealth ===
-            "function"
-        ){
-
-          window.BociteMairieModule
-            .openHealth();
-
-          return;
-        }
-
-
-        if(status){
-
-          status.textContent =
-            "L’annuaire santé est momentanément indisponible.";
-
-          status.style.display =
-            "block";
-        }
-      };
-  }
-
-
-  /* =====================================================
-     PETITE FONCTION D'AIDE
-     ===================================================== */
-
-  function openHelpInformation(
-    title,
-    html
-  ){
-
-    const overlay =
-      showCard(`
-
-        <div class="bociteAccessTitle">
-          ${esc(title)}
-        </div>
-
-        ${html}
-
-        <div class="bociteAccessActions">
-
-          <button
-            id="bociteHelpInformationClose"
-            type="button">
-
-            Retour à Compte + aide
-
-          </button>
-
-        </div>
-
-      `);
-
-
-    const close =
-      overlay.querySelector(
-        "#bociteHelpInformationClose"
-      );
-
-
-    if(close){
-
-      close.onclick =
-        closeOverlay;
-    }
-  }
-
-
-  /* =====================================================
-     PERSONNES SEULES OU FRAGILES
-     ===================================================== */
-
-  const isolatedHelp =
-    card.querySelector(
-      "#bociteCompteAideIsolatedHelp"
-    );
-
-
-  if(
-    isolatedHelp
-  ){
-
-    isolatedHelp.onclick =
-      function(){
-
-        openHelpInformation(
-          "Personnes seules ou fragiles",
-
-          `
-
-            <p>
-              Une personne en difficulté
-              ne doit pas rester seule
-              simplement parce qu’elle
-              ne sait pas vers quelle porte
-              se tourner.
-            </p>
-
-            <p>
-              ${brandHtml()}
-              rassemble progressivement
-              les contacts et services utiles
-              permettant de retrouver
-              un proche,
-              une personne de confiance,
-              un organisme
-              ou un interlocuteur adapté.
-            </p>
-
-            <p>
-              Les informations locales
-              validées pour votre commune
-              seront regroupées ici.
-            </p>
-
-          `
-        );
-      };
-  }
-
-
-  /* =====================================================
-     FAMILLES ET ENFANTS
-     ===================================================== */
-
-  const familyHelp =
-    card.querySelector(
-      "#bociteCompteAideFamilyHelp"
-    );
-
-
-  if(
-    familyHelp
-  ){
-
-    familyHelp.onclick =
-      function(){
-
-        openHelpInformation(
-          "Familles et enfants",
-
-          `
-
-            <p>
-              Retrouvez ici les repères
-              et contacts utiles
-              pour les familles
-              et les enfants.
-            </p>
-
-            <p>
-              <strong>
-                Enfance en danger :
-                119
-              </strong>
-            </p>
-
-            <p>
-              Les aides et interlocuteurs locaux
-              validés pour la commune
-              seront également regroupés ici.
-            </p>
-
-          `
-        );
-      };
-  }
-
-
-  /* =====================================================
-     URGENCES ET CONTACTS ESSENTIELS
-     ===================================================== */
-
-  const emergencyHelp =
-    card.querySelector(
-      "#bociteCompteAideEmergencyHelp"
-    );
-
-
-  if(
-    emergencyHelp
-  ){
-
-    emergencyHelp.onclick =
-      function(){
-
-        openHelpInformation(
-          "Urgences et contacts essentiels",
-
-          `
-
-            <p>
-              <strong>
-                112 — urgence
-              </strong>
-            </p>
-
-            <p>
-              <strong>
-                119 — enfance en danger
-              </strong>
-            </p>
-
-            <p>
-              <strong>
-                3919 — violences faites aux femmes,
-                information et orientation
-              </strong>
-            </p>
-
-            <p>
-              En situation d’urgence,
-              utilisez directement
-              le service compétent.
-            </p>
-
-          `
-        );
       };
   }
 
 }
-   
+
+
+/* =====================================================
+   ANNUAIRE SANTÉ + AIDE
+   PORTE PUBLIQUE INDÉPENDANTE
+   ===================================================== */
+
+function openHealthHelp(){
+
+  /*
+   * On réutilise le véritable moteur
+   * d'annuaire déjà présent dans
+   * le module Mairie.
+   *
+   * Aucune donnée professionnelle
+   * fictive n'est créée ici.
+   */
+
+  if(
+    !window.BociteMairieModule ||
+    typeof window.BociteMairieModule
+      .openHealth !==
+      "function"
+  ){
+
+    if(
+      typeof window.openModal ===
+        "function"
+    ){
+
+      window.openModal(
+        "Annuaire santé + aide",
+        `
+
+          <div
+            class="box"
+            style="
+              background:#ffffff;
+              color:#111111;
+              font-size:14px;
+              font-weight:400;
+              line-height:1.55;
+            "
+          >
+
+            <div
+              style="
+                color:#2f5d46;
+                font-size:17px;
+                font-weight:700;
+                margin-bottom:8px;
+              "
+            >
+              Annuaire santé
+            </div>
+
+            L’annuaire santé
+            est momentanément indisponible.
+
+          </div>
+
+        `
+      );
+
+    }
+
+
+    return;
+  }
+
+
+  window.BociteMairieModule
+    .openHealth();
+
+
+  /*
+   * Le module Mairie construit d'abord
+   * le véritable annuaire.
+   *
+   * Nous ajoutons ensuite les aides
+   * sous l'annuaire sans toucher
+   * à son moteur.
+   */
+
+  const completeHealthHelp =
+    function(){
+
+      const modalTitle =
+        document.getElementById(
+          "modalTitle"
+        );
+
+
+      const modalBody =
+        document.getElementById(
+          "modalBody"
+        );
+
+
+      if(
+        !modalTitle ||
+        !modalBody
+      ){
+
+        return;
+      }
+
+
+      modalTitle.textContent =
+        "Annuaire santé + aide";
+
+
+      if(
+        document.getElementById(
+          "bociteHealthHelpSections"
+        )
+      ){
+
+        return;
+      }
+
+
+      modalBody.insertAdjacentHTML(
+        "beforeend",
+        `
+
+          <div
+            id="bociteHealthHelpSections"
+            style="
+              margin-top:18px;
+            "
+          >
+
+
+            <!-- =========================================
+                 PERSONNES SEULES OU FRAGILES
+                 ========================================= -->
+
+            <div
+              style="
+                background:#ffffff;
+                border:1px solid #dedede;
+                border-radius:12px;
+                padding:16px;
+                margin:0 0 14px 0;
+              "
+            >
+
+              <div
+                style="
+                  color:#2f5d46;
+                  font-size:17px;
+                  font-weight:700;
+                  line-height:1.35;
+                  margin-bottom:8px;
+                "
+              >
+                Personnes seules ou fragiles
+              </div>
+
+              <div
+                style="
+                  color:#111111;
+                  font-size:14px;
+                  font-weight:400;
+                  line-height:1.55;
+                "
+              >
+
+                Une personne en difficulté
+                ne doit pas rester seule
+                simplement parce qu’elle
+                ne sait pas vers quelle porte
+                se tourner.
+
+                <br><br>
+
+                Bo’CitéArt rassemble progressivement
+                les contacts et services utiles
+                permettant de retrouver
+                un proche,
+                une personne de confiance,
+                un organisme
+                ou un interlocuteur adapté.
+
+                <br><br>
+
+                Les informations locales
+                validées pour la commune
+                seront regroupées ici.
+
+              </div>
+
+            </div>
+
+
+            <!-- =========================================
+                 FAMILLES ET ENFANTS
+                 ========================================= -->
+
+            <div
+              style="
+                background:#ffffff;
+                border:1px solid #dedede;
+                border-radius:12px;
+                padding:16px;
+                margin:0 0 14px 0;
+              "
+            >
+
+              <div
+                style="
+                  color:#2f5d46;
+                  font-size:17px;
+                  font-weight:700;
+                  line-height:1.35;
+                  margin-bottom:8px;
+                "
+              >
+                Familles et enfants
+              </div>
+
+              <div
+                style="
+                  color:#111111;
+                  font-size:14px;
+                  font-weight:400;
+                  line-height:1.55;
+                "
+              >
+
+                Retrouvez ici
+                les repères,
+                services
+                et contacts utiles
+                pour les familles
+                et les enfants.
+
+                <br><br>
+
+                119 — Enfance en danger
+
+                <br><br>
+
+                Les aides
+                et interlocuteurs locaux
+                validés pour la commune
+                seront également regroupés ici.
+
+              </div>
+
+            </div>
+
+
+            <!-- =========================================
+                 URGENCES ET CONTACTS ESSENTIELS
+                 ========================================= -->
+
+            <div
+              style="
+                background:#ffffff;
+                border:1px solid #dedede;
+                border-radius:12px;
+                padding:16px;
+                margin:0 0 14px 0;
+              "
+            >
+
+              <div
+                style="
+                  color:#2f5d46;
+                  font-size:17px;
+                  font-weight:700;
+                  line-height:1.35;
+                  margin-bottom:8px;
+                "
+              >
+                Urgences et contacts essentiels
+              </div>
+
+              <div
+                style="
+                  color:#111111;
+                  font-size:14px;
+                  font-weight:400;
+                  line-height:1.55;
+                "
+              >
+
+                112 — Urgence
+
+                <br><br>
+
+                119 — Enfance en danger
+
+                <br><br>
+
+                3919 — Violences faites aux femmes,
+                information et orientation
+
+                <br><br>
+
+                En situation d’urgence,
+                utilisez directement
+                le service compétent.
+
+              </div>
+
+            </div>
+
+
+            <!-- =========================================
+                 RÔLE DE BO'CITÉART
+                 ========================================= -->
+
+            <div
+              style="
+                background:#ffffff;
+                border:1px solid #dedede;
+                border-radius:12px;
+                padding:16px;
+                margin:0;
+              "
+            >
+
+              <div
+                style="
+                  color:#2f5d46;
+                  font-size:17px;
+                  font-weight:700;
+                  line-height:1.35;
+                  margin-bottom:8px;
+                "
+              >
+                Retrouver la bonne porte
+              </div>
+
+              <div
+                style="
+                  color:#111111;
+                  font-size:14px;
+                  font-weight:400;
+                  line-height:1.55;
+                "
+              >
+
+                Bo’CitéArt aide à retrouver
+                rapidement un professionnel,
+                un service
+                ou un interlocuteur utile.
+
+                <br><br>
+
+                Bo’CitéArt ne remplace
+                ni les médecins,
+                ni les services d’urgence,
+                ni les travailleurs sociaux,
+                ni les organismes compétents.
+
+              </div>
+
+            </div>
+
+
+          </div>
+
+        `
+      );
+
+    };
+
+
+  window.setTimeout(
+    completeHealthHelp,
+    180
+  );
+
+
+  window.setTimeout(
+    completeHealthHelp,
+    320
+  );
+
+}
+
+
+/* =====================================================
+   RACCORDEMENT
+   COMPTE + ANNUAIRE SANTÉ + AIDE
+   ===================================================== */
+
+function installCompteAideHook(){
+
+  document.addEventListener(
+
+    "click",
+
+    function(
+      event
+    ){
+
+      const target =
+
+        event.target &&
+        event.target.closest
+
+          ? event.target
+
+          : null;
+
+
+      if(
+        !target
+      ){
+
+        return;
+      }
+
+
+      /* ===============================================
+         COMPTE
+         =============================================== */
+
+      const accountButton =
+        target.closest(
+          "#openSecure"
+        );
+
+
+      if(
+        accountButton
+      ){
+
+        window.setTimeout(
+          injectProfileCard,
+          0
+        );
+
+
+        window.setTimeout(
+          injectProfileCard,
+          80
+        );
+
+
+        return;
+      }
+
+
+      /* ===============================================
+         ANNUAIRE SANTÉ + AIDE
+         =============================================== */
+
+      const healthHelpButton =
+        target.closest(
+          "#openHealthHelp"
+        );
+
+
+      if(
+        healthHelpButton
+      ){
+
+        event.preventDefault();
+
+        openHealthHelp();
+
+      }
+
+    },
+
+    true
+
+  );
+
+
+  /*
+   * Le nouveau raccourci est actuellement
+   * un élément role="button".
+   * On conserve donc aussi l'accès clavier.
+   */
+
+  const healthHelpButton =
+    document.getElementById(
+      "openHealthHelp"
+    );
+
+
+  if(
+    healthHelpButton
+  ){
+
+    healthHelpButton.addEventListener(
+
+      "keydown",
+
+      function(
+        event
+      ){
+
+        if(
+          event.key ===
+            "Enter" ||
+          event.key ===
+            " "
+        ){
+
+          event.preventDefault();
+
+          openHealthHelp();
+
+        }
+
+      }
+
+    );
+
+  }
+
+  window.openHealthHelp =
+    openHealthHelp;
+
+}
   function installCompteAideHook(){
 
     document.addEventListener(
@@ -3775,13 +3928,13 @@
     }
 
 
-    if(
-      String(modalTitle.textContent || "").trim()
-      !==
-      "Compte + aide"
-    ){
-      return;
-    }
+   if(
+  String(modalTitle.textContent || "").trim()
+  !==
+  "Compte"
+){
+  return;
+}
 
 
     if(
