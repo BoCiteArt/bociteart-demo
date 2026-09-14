@@ -1564,7 +1564,6 @@ function injectProfileCard(){
 
 }
 
-
 /* =====================================================
    ANNUAIRE SANTÉ + AIDE
    PORTE PUBLIQUE INDÉPENDANTE
@@ -1932,6 +1931,300 @@ function openHealthHelp(){
         `
       );
 
+      /* =====================================================
+   ÇA COMMENCE ICI — PAIEMENT CERCLE DE CONFIANCE
+   ===================================================== */
+
+const paymentButton =
+  document.getElementById(
+    "secureContinuePaymentBtn"
+  );
+
+
+if(
+  paymentButton
+){
+
+  paymentButton.onclick =
+    function(){
+
+      const acceptance =
+        document.getElementById(
+          "secureAccept"
+        );
+
+
+      const plan =
+        document.querySelector(
+          'input[name="securePlan"]:checked'
+        );
+
+
+      if(
+        !acceptance ||
+        !acceptance.checked
+      ){
+
+        alert(
+          "Veuillez accepter le cadre du service avant de continuer."
+        );
+
+        return;
+      }
+
+
+      if(
+        !plan
+      ){
+
+        alert(
+          "Choisissez une formule."
+        );
+
+        return;
+      }
+
+
+      const contacts =
+        Number(
+          plan.getAttribute(
+            "data-contacts"
+          ) || 0
+        );
+
+
+      /*
+       * TARIFS OFFICIELS TTC
+       * On ne fait pas confiance
+       * à la valeur HTML du bouton radio.
+       */
+
+      const PLAN_PRICES_TTC = {
+
+        2:
+          2.99,
+
+        5:
+          3.99,
+
+        10:
+          5.00
+
+      };
+
+
+      const amountTTC =
+        PLAN_PRICES_TTC[
+          contacts
+        ];
+
+
+      if(
+        !Number.isFinite(
+          amountTTC
+        )
+      ){
+
+        alert(
+          "La formule sélectionnée n'est pas reconnue."
+        );
+
+        return;
+      }
+
+
+      const vatRate =
+        20;
+
+
+      const amountHT =
+        Math.round(
+          (
+            amountTTC /
+            (
+              1 +
+              vatRate / 100
+            )
+          ) *
+          1000000
+        ) /
+        1000000;
+
+
+      const financialModule =
+        window.BociteEntreprise;
+
+
+      if(
+        !financialModule ||
+        typeof financialModule
+          .createFinancialOrder !==
+          "function"
+      ){
+
+        alert(
+          "Le moteur de commande est momentanément indisponible."
+        );
+
+        return;
+      }
+
+
+      if(
+        typeof financialModule
+          .openCentralPaymentPage !==
+          "function"
+      ){
+
+        alert(
+          "La page de paiement est momentanément indisponible."
+        );
+
+        return;
+      }
+
+
+      const serviceLabel =
+
+        contacts === 2
+
+          ? "Cercle de confiance Bo'CitéArt — 2 contacts"
+
+          : (
+
+              contacts === 5
+
+                ? "Cercle de confiance Bo'CitéArt — jusqu'à 5 contacts"
+
+                : "Cercle de confiance Bo'CitéArt — jusqu'à 10 contacts"
+
+            );
+
+
+      const order =
+        financialModule
+          .createFinancialOrder({
+
+            productCode:
+              "CITIZEN_SECURE_" +
+              contacts,
+
+            serviceType:
+              "citizen_subscription",
+
+            serviceLabel:
+              serviceLabel,
+
+            customerType:
+              "citizen",
+
+            customerId:
+              String(
+                localStorage.getItem(
+                  "bociteart_installation_id_v1"
+                ) ||
+                ""
+              ),
+
+            customerName:
+              "",
+
+            customerEmail:
+              "",
+
+            customerSiret:
+              "",
+
+            amountHT:
+              amountHT,
+
+            vatRate:
+              vatRate,
+
+            paymentMethod:
+              ""
+
+          });
+
+
+      if(
+        !order
+      ){
+
+        alert(
+          "La commande n'a pas pu être créée."
+        );
+
+        return;
+      }
+
+
+      try{
+
+        localStorage.setItem(
+          "bociteart_citizen_subscription_pending_v1",
+
+          JSON.stringify({
+
+            orderId:
+              order.id,
+
+            contacts:
+              contacts,
+
+            monthlyPriceTTC:
+              amountTTC,
+
+            amountHT:
+              amountHT,
+
+            vatRate:
+              vatRate,
+
+            status:
+              "waiting_payment",
+
+            createdAt:
+              Date.now()
+
+          })
+
+        );
+
+      }catch(
+        error
+      ){
+
+        console.warn(
+          "Bo'CitéArt : préparation de l'abonnement impossible.",
+          error
+        );
+
+      }
+
+
+      financialModule
+        .openCentralPaymentPage({
+
+          order:
+            order,
+
+          allowCard:
+            true,
+
+          allowBankTransfer:
+            true
+
+        });
+
+    };
+
+}
+
+/* =====================================================
+   ÇA FINIT ICI — PAIEMENT CERCLE DE CONFIANCE
+   ===================================================== */ 
+
     };
 
 
@@ -1948,10 +2241,8 @@ function openHealthHelp(){
 
 }
 
-
 /* =====================================================
-   RACCORDEMENT
-   COMPTE + ANNUAIRE SANTÉ + AIDE
+   RACCORDEMENT COMPTE
    ===================================================== */
 
 function installCompteAideHook(){
@@ -1969,7 +2260,9 @@ function installCompteAideHook(){
         event.target &&
         event.target.closest
 
-          ? event.target
+          ? event.target.closest(
+              "#openSecure"
+            )
 
           : null;
 
@@ -1982,55 +2275,16 @@ function installCompteAideHook(){
       }
 
 
-      /* ===============================================
-         COMPTE
-         =============================================== */
-
-      const accountButton =
-        target.closest(
-          "#openSecure"
-        );
+      window.setTimeout(
+        injectProfileCard,
+        0
+      );
 
 
-      if(
-        accountButton
-      ){
-
-        window.setTimeout(
-          injectProfileCard,
-          0
-        );
-
-
-        window.setTimeout(
-          injectProfileCard,
-          80
-        );
-
-
-        return;
-      }
-
-
-      /* ===============================================
-         ANNUAIRE SANTÉ + AIDE
-         =============================================== */
-
-      const healthHelpButton =
-        target.closest(
-          "#openHealthHelp"
-        );
-
-
-      if(
-        healthHelpButton
-      ){
-
-        event.preventDefault();
-
-        openHealthHelp();
-
-      }
+      window.setTimeout(
+        injectProfileCard,
+        80
+      );
 
     },
 
@@ -2038,104 +2292,7 @@ function installCompteAideHook(){
 
   );
 
-
-  /*
-   * Le nouveau raccourci est actuellement
-   * un élément role="button".
-   * On conserve donc aussi l'accès clavier.
-   */
-
-  const healthHelpButton =
-    document.getElementById(
-      "openHealthHelp"
-    );
-
-
-  if(
-    healthHelpButton
-  ){
-
-    healthHelpButton.addEventListener(
-
-      "keydown",
-
-      function(
-        event
-      ){
-
-        if(
-          event.key ===
-            "Enter" ||
-          event.key ===
-            " "
-        ){
-
-          event.preventDefault();
-
-          openHealthHelp();
-
-        }
-
-      }
-
-    );
-
-  }
-
-  window.openHealthHelp =
-    openHealthHelp;
-
 }
-  function installCompteAideHook(){
-
-    document.addEventListener(
-
-      "click",
-
-      function(
-        event
-      ){
-
-        const target =
-
-          event.target &&
-          event.target.closest
-
-            ? event.target.closest(
-                "#openSecure"
-              )
-
-            : null;
-
-
-        if(
-          !target
-        ){
-
-          return;
-
-        }
-
-
-        window.setTimeout(
-          injectProfileCard,
-          0
-        );
-
-
-        window.setTimeout(
-          injectProfileCard,
-          80
-        );
-
-      },
-
-      true
-
-    );
-
-  }
-
 
   /* =====================================================
      FIN D'IDENTIFICATION
@@ -2706,11 +2863,11 @@ function installCompteAideHook(){
 
 <!-- =====================================================
      ÇA COMMENCE ICI
-     RAPPEL COMPTE + AIDE
+     RAPPEL COMPTE 
      ===================================================== -->
 
 <p>
-  <strong>Si vous souhaitez relire cette fiche à tout moment, ouvrez simplement l’onglet « Compte + aide », situé en bas à droite de l’application. En descendant un peu dans la page, vous retrouverez cette fiche ainsi que toutes les autres, présentées à la suite selon les différentes rubriques, tuiles ou univers concernés.</strong>
+  <strong>Si vous souhaitez relire cette fiche à tout moment, ouvrez simplement l’onglet « Compte », situé en bas à droite de l’application. En descendant un peu dans la page, vous retrouverez cette fiche ainsi que toutes les autres, présentées à la suite selon les différentes rubriques, tuiles ou univers concernés.</strong>
 </p>
 
 <!-- =====================================================
@@ -2839,7 +2996,7 @@ function installCompteAideHook(){
      ===================================================== -->
 
 <p>
-  <strong>Si vous souhaitez relire cette fiche à tout moment, ouvrez simplement l’onglet « Compte + aide », situé en bas à droite de l’application. En descendant un peu dans la page, vous retrouverez cette fiche ainsi que toutes les autres, présentées à la suite selon les différentes rubriques, tuiles ou univers concernés.</strong>
+  <strong>Si vous souhaitez relire cette fiche à tout moment, ouvrez simplement l’onglet « Compte », situé en bas à droite de l’application. En descendant un peu dans la page, vous retrouverez cette fiche ainsi que toutes les autres, présentées à la suite selon les différentes rubriques, tuiles ou univers concernés.</strong>
 </p>
 
 <!-- =====================================================
@@ -2984,7 +3141,7 @@ function installCompteAideHook(){
      ===================================================== -->
 
 <p>
-  <strong>Si vous souhaitez relire cette fiche à tout moment, ouvrez simplement l’onglet « Compte + aide », situé en bas à droite de l’application. En descendant un peu dans la page, vous retrouverez cette fiche ainsi que toutes les autres, présentées à la suite selon les différentes rubriques, tuiles ou univers concernés.</strong>
+  <strong>Si vous souhaitez relire cette fiche à tout moment, ouvrez simplement l’onglet « Compte », situé en bas à droite de l’application. En descendant un peu dans la page, vous retrouverez cette fiche ainsi que toutes les autres, présentées à la suite selon les différentes rubriques, tuiles ou univers concernés.</strong>
 </p>
 
 <!-- =====================================================
@@ -3153,7 +3310,7 @@ function installCompteAideHook(){
      ===================================================== -->
 
 <p>
-  <strong>Si vous souhaitez relire cette fiche à tout moment, ouvrez simplement l’onglet « Compte + aide », situé en bas à droite de l’application. En descendant un peu dans la page, vous retrouverez cette fiche ainsi que toutes les autres, présentées à la suite selon les différentes rubriques, tuiles ou univers concernés.</strong>
+  <strong>Si vous souhaitez relire cette fiche à tout moment, ouvrez simplement l’onglet « Compte », situé en bas à droite de l’application. En descendant un peu dans la page, vous retrouverez cette fiche ainsi que toutes les autres, présentées à la suite selon les différentes rubriques, tuiles ou univers concernés.</strong>
 </p>
 
 <!-- =====================================================
@@ -3318,7 +3475,7 @@ function installCompteAideHook(){
      ===================================================== -->
 
 <p>
-  <strong>Si vous souhaitez relire cette fiche à tout moment, ouvrez simplement l’onglet « Compte + aide », situé en bas à droite de l’application. En descendant un peu dans la page, vous retrouverez cette fiche ainsi que toutes les autres, présentées à la suite selon les différentes rubriques, tuiles ou univers concernés.</strong>
+  <strong>Si vous souhaitez relire cette fiche à tout moment, ouvrez simplement l’onglet « Compte », situé en bas à droite de l’application. En descendant un peu dans la page, vous retrouverez cette fiche ainsi que toutes les autres, présentées à la suite selon les différentes rubriques, tuiles ou univers concernés.</strong>
 </p>
 
 <!-- =====================================================
@@ -3503,7 +3660,7 @@ function installCompteAideHook(){
      ===================================================== -->
 
 <p>
-  <strong>Si vous souhaitez relire cette fiche à tout moment, ouvrez simplement l’onglet « Compte + aide », situé en bas à droite de l’application. En descendant un peu dans la page, vous retrouverez cette fiche ainsi que toutes les autres, présentées à la suite selon les différentes rubriques, tuiles ou univers concernés.</strong>
+  <strong>Si vous souhaitez relire cette fiche à tout moment, ouvrez simplement l’onglet « Compte », situé en bas à droite de l’application. En descendant un peu dans la page, vous retrouverez cette fiche ainsi que toutes les autres, présentées à la suite selon les différentes rubriques, tuiles ou univers concernés.</strong>
 </p>
 
 <!-- =====================================================
@@ -3672,7 +3829,7 @@ function installCompteAideHook(){
      ===================================================== -->
 
 <p>
-  <strong>Si vous souhaitez relire cette fiche à tout moment, ouvrez simplement l’onglet « Compte + aide », situé en bas à droite de l’application. En descendant un peu dans la page, vous retrouverez cette fiche ainsi que toutes les autres, présentées à la suite selon les différentes rubriques, tuiles ou univers concernés.</strong>
+  <strong>Si vous souhaitez relire cette fiche à tout moment, ouvrez simplement l’onglet « Compte », situé en bas à droite de l’application. En descendant un peu dans la page, vous retrouverez cette fiche ainsi que toutes les autres, présentées à la suite selon les différentes rubriques, tuiles ou univers concernés.</strong>
 </p>
 
 <!-- =====================================================
