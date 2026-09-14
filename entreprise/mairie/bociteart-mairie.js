@@ -2750,78 +2750,71 @@ function mairieHealthHtml(){
 
       </div>
 
+<!-- =============================================
+     RECHERCHE DANS LA COMMUNE
+     ============================================= -->
 
-      <!-- =============================================
-           RECHERCHE DANS LA COMMUNE
-           ============================================= -->
+<div class="mairieCard">
 
-      <div class="mairieCard">
-
-        <div
-          id="mairieHealthCurrentCity"
-          class="mairieTitle"
-        >
-          ${
-            ownCommune
-
-              ? "Annuaire santé de " +
-                mairieEsc(
-                  ownCommune
-                )
-
-              : "Choisissez une commune"
-          }
-        </div>
-
-
-        <label
-          class="mairieLabel"
-          for="mairieHealthSearchInput"
-        >
-          Rechercher dans cet annuaire
-        </label>
-
-        <input
-          id="mairieHealthSearchInput"
-          class="mairieField"
-          type="search"
-          placeholder="Nom, métier ou spécialité : cardiologue, pédiatre, pharmacie…"
-        >
-
-        <!-- =====================================================
-     ÇA COMMENCE ICI — BOUTON RECHERCHER
-     ===================================================== -->
-
-<div
-  class="mairieActions"
-  style="margin-top:12px;"
->
-
-  <button
-    id="mairieHealthSearchBtn"
-    class="mairieBtn"
-    type="button"
+  <div
+    id="mairieHealthCurrentCity"
+    class="mairieTitle"
   >
-    Rechercher
-  </button>
+    ${
+      ownCommune
+
+        ? "Annuaire santé de " +
+          mairieEsc(
+            ownCommune
+          )
+
+        : "Choisissez une commune"
+    }
+  </div>
+
+
+  <label
+    class="mairieLabel"
+    for="mairieHealthSearchInput"
+  >
+    Rechercher dans cet annuaire
+  </label>
+
+
+  <input
+    id="mairieHealthSearchInput"
+    class="mairieField"
+    type="search"
+    placeholder="Nom, métier ou spécialité : cardiologue, pédiatre, pharmacie…"
+  >
+
+
+  <div
+    class="mairieActions"
+    style="margin-top:12px;"
+  >
+
+    <button
+      id="mairieHealthSearchBtn"
+      class="mairieBtn"
+      type="button"
+    >
+      Rechercher
+    </button>
+
+  </div>
+
+
+  <div class="mairieText">
+
+    Vous pouvez rechercher directement
+    le nom d’un professionnel,
+    son métier
+    ou une spécialité médicale.
+
+  </div>
 
 </div>
-
-<!-- =====================================================
-     ÇA FINIT ICI — BOUTON RECHERCHER
-     ===================================================== -->
-
-        <div class="mairieText">
-
-          Vous pouvez rechercher directement
-          le nom d’un professionnel,
-          son métier
-          ou une spécialité médicale.
-
-        </div>
-
-      </div>
-
 
       <div
         id="mairieHealthResults"
