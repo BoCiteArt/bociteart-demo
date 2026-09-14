@@ -5599,31 +5599,34 @@ de la tuile Mairie.
 
 function mairieBindMainEvents(){
 
-  /* =====================================================
-     SERVICES
-     ===================================================== */
+/* =====================================================
+   SERVICES
+   ===================================================== */
 
-  const openServices =
-    mairieEl(
-      "openMairieServicesBtn"
-    );
+const openServices =
+  mairieEl(
+    "openMairieServicesBtn"
+  );
 
-  if(
-    openServices
-  ){
 
-    openServices.onclick =
-      openMairieServices;
-  }
-
- if(
-  openHealth
+if(
+  openServices
 ){
 
-   const openHealth =
+  openServices.onclick =
+    openMairieServices;
+}
+
+
+const openHealth =
   mairieEl(
     "openHealthServicesBtn"
-  ); 
+  );
+
+
+if(
+  openHealth
+){
 
   openHealth.onclick =
     function(){
@@ -5671,85 +5674,6 @@ function mairieBindMainEvents(){
 
     };
 }
-
-   if(
-  openHealth
-){
-
-  openHealth.onclick =
-    function(){
-
-      mairieOpenModal(
-        "Santé et professionnels utiles",
-        `
-          <div class="bociteMairieRoot">
-
-            <div class="mairieCard">
-
-              <div class="mairieTitle">
-                Vous recherchez un médecin ou un professionnel de santé ?
-              </div>
-
-              <div class="mairieText">
-
-                Retrouvez les médecins,
-                spécialistes,
-                pharmacies
-                et autres professionnels de santé
-                directement dans l’espace
-
-                <strong>
-                  « Annuaire santé + aide »
-                </strong>
-
-                situé en bas de l’application.
-
-                <br><br>
-
-                Vous y trouverez également
-                les aides de proximité
-                et les contacts utiles.
-
-              </div>
-
-            </div>
-
-          </div>
-
-        `
-      );
-
-    };
-}
-
- if(
-  openHealth
-){
-
-  openHealth.onclick =
-    function(){
-
-      if(
-        typeof window.openHealthHelp ===
-          "function"
-      ){
-
-        window.openHealthHelp();
-
-        return;
-      }
-
-      /*
-       * Sécurité :
-       * si le nouvel espace n'est pas encore chargé,
-       * on conserve l'ancien annuaire disponible.
-       */
-
-      openHealthServices();
-
-    };
-}
-
   /* =====================================================
      PORTE INSTITUTIONNELLE MAIRIE
      ÉTAPE 1 — IDENTIFICATION DU COMPTE ET DE LA PERSONNE
