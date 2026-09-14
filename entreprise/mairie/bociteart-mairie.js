@@ -4944,14 +4944,13 @@ function mairieMainHtml(){
           >
             Services municipaux
           </button>
-
-
-         <button
+       
+       <button
   id="openHealthServicesBtn"
   class="mairieBtn"
   type="button"
 >
-  Annuaire santé + aide
+  Santé et professionnels utiles
 </button>
 
         </div>
