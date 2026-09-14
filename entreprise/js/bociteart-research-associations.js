@@ -1,4 +1,4 @@
-/* =========================================================
+/* ========================================================= 
    BO'CITÉART — REGISTRE CENTRAL RECHERCHE MÉDICALE
    Fichier : js/bociteart-research-associations.js
 
