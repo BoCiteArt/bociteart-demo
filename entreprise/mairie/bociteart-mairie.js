@@ -2848,6 +2848,11 @@ function mairieBindHealthDirectory(){
       "mairieHealthOpenCommuneBtn"
     );
 
+   const ownCommune =
+  mairieEl(
+    "mairieHealthOwnCommuneBtn"
+  );
+
   const searchInput =
     mairieEl(
       "mairieHealthSearchInput"
