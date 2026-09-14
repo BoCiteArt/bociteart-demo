@@ -2297,7 +2297,7 @@ function installCompteAideHook(){
   "
 >
   Introductions et courriers à relire
-</div>
+</div> 
 
 
 <div id="bociteCompteAideCourriersCompletsV1">
