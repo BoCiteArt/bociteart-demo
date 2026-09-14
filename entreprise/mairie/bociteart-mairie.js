@@ -5625,6 +5625,57 @@ function mairieBindMainEvents(){
       "openHealthServicesBtn"
     );
 
+   if(
+  openHealth
+){
+
+  openHealth.onclick =
+    function(){
+
+      mairieOpenModal(
+        "Santé et professionnels utiles",
+        `
+
+          <div class="bociteMairieRoot">
+
+            <div class="mairieCard">
+
+              <div class="mairieTitle">
+                Vous recherchez un médecin ou un professionnel de santé ?
+              </div>
+
+              <div class="mairieText">
+
+                Retrouvez les médecins,
+                spécialistes,
+                pharmacies
+                et autres professionnels de santé
+                directement dans l’espace
+
+                <strong>
+                  « Annuaire santé + aide »
+                </strong>
+
+                situé en bas de l’application.
+
+                <br><br>
+
+                Vous y trouverez également
+                les aides de proximité
+                et les contacts utiles.
+
+              </div>
+
+            </div>
+
+          </div>
+
+        `
+      );
+
+    };
+}
+
 
  if(
   openHealth
