@@ -4580,6 +4580,9 @@ window.BociteMairieModule = {
   open:
     openMairiePanel,
 
+    openHealth:
+    openHealthServices,
+
   renderTicker:
     renderMairieTicker,
 
