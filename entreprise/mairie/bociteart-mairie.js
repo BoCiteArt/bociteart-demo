@@ -2844,184 +2844,230 @@ function mairieBindHealthDirectory(){
      RECHERCHE
      ===================================================== */
 
-  function launchHealthSearch(){
+async function launchHealthSearch(){
 
-    const commune =
-      mairieText(
-        communeInput
-          ? communeInput.value
-          : mairieHealthState.commune
-      );
+  const commune =
+    mairieText(
+      communeInput
+        ? communeInput.value
+        : ""
+    );
 
 
-    const query =
-      mairieText(
-        searchInput
-          ? searchInput.value
-          : mairieHealthState.query
-      );
+  const query =
+    mairieText(
+      searchInput
+        ? searchInput.value
+        : ""
+    );
 
+
+  if(
+    !commune
+  ){
 
     if(
-      !commune
+      results
     ){
 
-      if(
-        results
-      ){
+      results.innerHTML = `
 
-        results.innerHTML = `
+        <div class="mairieCard">
 
-          <div class="mairieCard">
-
-            <div class="mairieTitle">
-              Commune nécessaire
-            </div>
-
-            <div class="mairieText">
-
-              Indiquez d’abord
-              la commune dans laquelle
-              vous souhaitez effectuer
-              votre recherche.
-
-            </div>
-
+          <div class="mairieTitle">
+            Commune nécessaire
           </div>
 
-        `;
+          <div class="mairieText">
+            Indiquez d’abord la commune
+            dans laquelle vous souhaitez
+            effectuer votre recherche.
+          </div>
 
-      }
+        </div>
 
+      `;
 
-      return;
     }
 
+    return;
+  }
 
-    mairieHealthState.commune =
+
+  mairieHealthState.commune =
+    commune;
+
+  mairieHealthState.query =
+    query;
+
+
+  const currentCity =
+    mairieEl(
+      "mairieHealthCurrentCity"
+    );
+
+
+  if(
+    currentCity
+  ){
+
+    currentCity.textContent =
+      "Annuaire santé de " +
       commune;
-
-
-    mairieHealthState.query =
-      query;
-
-
-    const currentCity =
-      mairieEl(
-        "mairieHealthCurrentCity"
-      );
-
-
-    if(
-      currentCity
-    ){
-
-      currentCity.textContent =
-        "Annuaire santé de " +
-        commune;
-    }
-
-
-    const connectedRows =
-      mairieHealthCollectRows();
-
-
-    /*
-     * Aucune source officielle raccordée :
-     * on confirme la demande
-     * sans inventer de professionnels.
-     */
-
-    if(
-      !Array.isArray(
-        connectedRows
-      ) ||
-      connectedRows.length === 0
-    ){
-
-      if(
-        results
-      ){
-
-        results.innerHTML = `
-
-          <div class="mairieCard">
-
-            <div class="mairieTitle">
-              Annuaire en cours de raccordement
-            </div>
-
-            <div class="mairieText">
-
-              ${
-                query
-
-                  ? `
-                    Votre recherche
-                    <strong>
-                      « ${mairieEsc(query)} »
-                    </strong>
-                    pour la commune de
-                    <strong>
-                      ${mairieEsc(commune)}
-                    </strong>
-                    est bien prise en compte.
-                  `
-
-                  : `
-                    La commune de
-                    <strong>
-                      ${mairieEsc(commune)}
-                    </strong>
-                    est bien sélectionnée.
-                  `
-              }
-
-              <br><br>
-
-              Les données officielles
-              des professionnels de santé
-              ne sont pas encore raccordées
-              à l’annuaire Bo’CitéArt.
-
-              <br><br>
-
-              Dès ce raccordement effectué,
-              cette recherche affichera
-              les professionnels correspondant
-              à votre demande.
-
-            </div>
-
-          </div>
-
-        `;
-
-
-        results.scrollIntoView({
-          behavior:
-            "smooth",
-
-          block:
-            "start"
-        });
-
-      }
-
-
-      return;
-    }
-
-
-    /*
-     * Une source réelle existe :
-     * utilisation du vrai moteur.
-     */
-
-    mairieHealthRender();
 
   }
 
+
+  if(
+    results
+  ){
+
+    results.innerHTML = `
+
+      <div class="mairieCard">
+
+        <div class="mairieTitle">
+          Recherche en cours
+        </div>
+
+        <div class="mairieText">
+          Recherche des professionnels
+          correspondant à votre demande…
+        </div>
+
+      </div>
+
+    `;
+
+  }
+
+
+  const healthApi =
+    window.BociteHealthAPI;
+
+
+  if(
+    !healthApi ||
+    typeof healthApi.search !==
+      "function"
+  ){
+
+    showHealthNotConnected();
+
+    return;
+  }
+
+
+  const response =
+    await healthApi.search({
+
+      commune:
+        commune,
+
+      query:
+        query
+
+    });
+
+
+  if(
+    !response ||
+    response.connected !== true ||
+    !Array.isArray(
+      response.rows
+    )
+  ){
+
+    showHealthNotConnected();
+
+    return;
+  }
+
+
+  window.BOCITEART_HEALTH_DIRECTORY = {
+
+    professionnels:
+      response.rows,
+
+    communes:{}
+
+  };
+
+
+  mairieHealthRender();
+
+
+  function showHealthNotConnected(){
+
+    if(
+      !results
+    ){
+      return;
+    }
+
+
+    results.innerHTML = `
+
+      <div class="mairieCard">
+
+        <div class="mairieTitle">
+          Annuaire en cours de raccordement
+        </div>
+
+        <div class="mairieText">
+
+          ${
+            query
+
+              ? `
+                Votre recherche
+                <strong>« ${mairieEsc(query)} »</strong>
+                pour la commune de
+                <strong>${mairieEsc(commune)}</strong>
+                est bien prise en compte.
+              `
+
+              : `
+                La commune de
+                <strong>${mairieEsc(commune)}</strong>
+                est bien sélectionnée.
+              `
+          }
+
+          <br><br>
+
+          Les données officielles
+          des professionnels de santé
+          ne sont pas encore raccordées
+          à l’annuaire Bo’CitéArt.
+
+          <br><br>
+
+          Dès ce raccordement effectué,
+          cette recherche affichera
+          les professionnels correspondant
+          à votre demande.
+
+        </div>
+
+      </div>
+
+    `;
+
+
+    results.scrollIntoView({
+
+      behavior:
+        "smooth",
+
+      block:
+        "start"
+
+    });
+
+  }
+
+}
 
   /* =====================================================
      CHOIX DE LA COMMUNE
