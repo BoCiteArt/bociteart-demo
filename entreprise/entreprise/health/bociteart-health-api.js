@@ -55,8 +55,25 @@
      * au serveur Bo'CitéArt.
      */
 
-    const endpoint =
-      "/api/health/search";
+  const endpoint =
+  String(
+    window.BOCITEART_HEALTH_API_ENDPOINT ||
+    ""
+  ).trim();
+
+
+if(
+  !endpoint
+){
+
+  return {
+    ok:false,
+    connected:false,
+    rows:[],
+    reason:"not_configured"
+  };
+
+}
 
 
     try{
