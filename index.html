@@ -20303,19 +20303,36 @@ if(openSecureBtn){
               }
 
 
-              const amountHT =
-                Number(
-                  plan.value || 0
-                );
+             const amountTTC =
+  Number(
+    plan.value || 0
+  );
 
 
-              const contacts =
-                Number(
-                  plan.getAttribute(
-                    "data-contacts"
-                  ) || 2
-                );
+const vatRate =
+  20;
 
+
+const amountHT =
+  Math.round(
+    (
+      amountTTC /
+      (
+        1 +
+        vatRate / 100
+      )
+    ) *
+    1000000
+  ) /
+  1000000;
+
+
+const contacts =
+  Number(
+    plan.getAttribute(
+      "data-contacts"
+    ) || 2
+  );
 
               const financialModule =
                 window.BociteEntreprise;
@@ -20397,8 +20414,8 @@ if(openSecureBtn){
                     amountHT:
                       amountHT,
 
-                    vatRate:
-                      20,
+                   vatRate:
+                    vatRate,
 
                     paymentMethod:
                       ""
@@ -20428,9 +20445,15 @@ if(openSecureBtn){
                     contacts:
                       contacts,
 
-                    monthlyPriceHT:
-                      amountHT,
+                  monthlyPriceTTC:
+                        amountTTC,
 
+                        amountHT:
+                        amountHT,
+
+                     vatRate:
+                      vatRate,
+                   
                     status:
                       "waiting_payment",
 
