@@ -2955,21 +2955,197 @@ const searchButton =
 
 function launchHealthSearch(){
 
-  const connectedRows =
-    mairieHealthCollectRows();
+  const commune =
+    mairieText(
+      communeInput
+        ? communeInput.value
+        : ""
+    );
+
+
+  const query =
+    mairieText(
+      searchInput
+        ? searchInput.value
+        : ""
+    );
 
 
   if(
-    !Array.isArray(
-      connectedRows
-    ) ||
-    connectedRows.length === 0
+    !commune
   ){
 
     if(
       results
     ){
 
+      results.innerHTML = `
+
+        <div class="mairieCard">
+
+          <div class="mairieTitle">
+            Commune nécessaire
+          </div>
+
+          <div class="mairieText">
+
+            Indiquez d’abord
+            la commune dans laquelle
+            vous souhaitez effectuer
+            votre recherche.
+
+          </div>
+
+        </div>
+
+      `;
+
+    }
+
+    return;
+  }
+
+
+  mairieHealthState.commune =
+    commune;
+
+
+  mairieHealthState.query =
+    query;
+
+
+  const currentCity =
+    mairieEl(
+      "mairieHealthCurrentCity"
+    );
+
+
+  if(
+    currentCity
+  ){
+
+    currentCity.textContent =
+      "Annuaire santé de " +
+      commune;
+  }
+
+
+  if(
+    results
+  ){
+
+    results.innerHTML = `
+
+      <div class="mairieCard">
+
+        <div class="mairieTitle">
+          Annuaire en cours de raccordement
+        </div>
+
+        <div class="mairieText">
+
+          ${
+            query
+
+              ? `
+                Votre recherche
+                <strong>
+                  « ${mairieEsc(query)} »
+                </strong>
+                pour la commune de
+                <strong>
+                  ${mairieEsc(commune)}
+                </strong>
+                est bien prise en compte.
+              `
+
+              : `
+                La commune de
+                <strong>
+                  ${mairieEsc(commune)}
+                </strong>
+                est bien sélectionnée.
+              `
+          }
+
+          <br><br>
+
+          Les données officielles
+          des professionnels de santé
+          ne sont pas encore raccordées
+          à l’annuaire Bo’CitéArt.
+
+          <br><br>
+
+          Dès ce raccordement effectué,
+          cette recherche affichera
+          les médecins,
+          spécialistes,
+          pharmacies
+          et autres professionnels
+          correspondant à votre demande.
+
+        </div>
+
+      </div>
+
+    `;
+
+
+    results.scrollIntoView({
+      behavior:
+        "smooth",
+
+      block:
+        "start"
+    });
+
+  }
+
+}
+
+
+if(
+  searchButton
+){
+
+  searchButton.onclick =
+    launchHealthSearch;
+}
+
+
+if(
+  searchInput
+){
+
+  searchInput.addEventListener(
+
+    "keydown",
+
+    function(
+      event
+    ){
+
+      if(
+        event.key ===
+          "Enter"
+      ){
+
+        event.preventDefault();
+
+        launchHealthSearch();
+
+      }
+
+    }
+
+  );
+}
+
+   if(
+  results
+){
+      
       results.innerHTML = `
 
         <div class="mairieCard">
