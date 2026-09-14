@@ -2053,27 +2053,30 @@ function sportDebitBag(
   };
 }
 
-
 /* =========================================================
    RELIQUAT DE FIN DE SAISON
+   ORIENTATION SOLIDAIRE — SANS CONVERSION MONÉTAIRE
    ========================================================= */
 
-function sportDebitRemainder(
-  associationId
-){
+function sportDebitRemainder(){
 
   const wallet=
     sportWallet();
 
-  const amount=
+  const points=
     Number(
       wallet.vert ||
       0
     );
 
+
+  /* =======================================================
+     AUCUN POINT DISPONIBLE
+     ======================================================= */
+
   if(
-    amount <=
-    0
+    !Number.isFinite(points) ||
+    points <= 0
   ){
 
     return {
@@ -2084,13 +2087,23 @@ function sportDebitRemainder(
         "empty_balance",
 
       balance:
-        amount
+        Math.max(
+          0,
+          Number.isFinite(points)
+            ? points
+            : 0
+        )
     };
   }
 
+
+  /* =======================================================
+     À PARTIR DE 30 POINTS :
+     UN CABAS RESTE ENCORE POSSIBLE
+     ======================================================= */
+
   if(
-    amount >=
-    30
+    points >= 30
   ){
 
     return {
@@ -2101,42 +2114,121 @@ function sportDebitRemainder(
         "bag_still_available",
 
       balance:
-        amount
+        points
     };
   }
+
+
+  /* =======================================================
+     CRÉATION D'UNE RÉFÉRENCE UNIQUE
+
+     IMPORTANT :
+     - aucun bénéficiaire financier ;
+     - aucune association destinataire ;
+     - aucune valeur en euros ;
+     - aucune conversion.
+     ======================================================= */
+
+  const operationRef=
+    "BCA-SPORT-SOLIDARITY-" +
+    Date.now() +
+    "-" +
+    Math.random()
+      .toString(36)
+      .slice(2,7)
+      .toUpperCase();
+
+
+  /* =======================================================
+     ANNULATION DES POINTS
+
+     Les points cessent d'exister dans le portefeuille.
+     Ils ne sont transférés à personne.
+     ======================================================= */
 
   wallet.vert=
     0;
 
-  sportSaveWallet(
-    wallet
-  );
+
+  if(
+    !sportSaveWallet(
+      wallet
+    )
+  ){
+
+    return {
+
+      ok:false,
+
+      reason:
+        "wallet_save_failed",
+
+      balance:
+        points
+    };
+  }
+
+
+  /* =======================================================
+     TRACE DE PARTICIPATION SOLIDAIRE
+
+     Cette ligne constitue volontairement la preuve que :
+
+     POINT ≠ EURO
+
+     Les points sont uniquement annulés
+     et comptabilisés comme participation.
+     ======================================================= */
 
   const ledger=
     sportLedger();
+
 
   ledger.push({
 
     id:
       sportId(
-        "solidarity"
+        "solidarity-orientation"
       ),
+
+    operationRef:
+      operationRef,
 
     direction:
-      "solidarity_transfer",
+      "solidarity_orientation",
 
+    pointsCancelled:
+      points,
+
+    /*
+      Conservé temporairement
+      pour compatibilité avec les écrans existants.
+      "amount" signifie ici NOMBRE DE POINTS,
+      jamais une somme d'argent.
+    */
     amount:
-      amount,
+      points,
 
-    associationId:
-      String(
-        associationId ||
-        ""
-      ),
+    pointNature:
+      "non_monetary_participation",
 
-    municipalAccountCode:
-      SPORT_CONFIG
-        .mairieSportAccountCode,
+    financialConversion:
+      false,
+
+    cashValue:
+      null,
+
+    currency:
+      null,
+
+    beneficiaryType:
+      "none",
+
+    reason:
+      "Orientation solidaire de fin de saison — points annulés sans conversion monétaire",
+
+    status:
+      "recorded",
 
     ts:
       Date.now(),
@@ -2148,19 +2240,85 @@ function sportDebitRemainder(
         )
   });
 
-  sportSaveLedger(
-    ledger
+
+  /* =======================================================
+     SI L'HISTORIQUE NE PEUT PAS ÊTRE SAUVEGARDÉ,
+     ON RESTAURE LES POINTS POUR ÉVITER UNE PERTE.
+     ======================================================= */
+
+  if(
+    !sportSaveLedger(
+      ledger
+    )
+  ){
+
+    wallet.vert=
+      points;
+
+    sportSaveWallet(
+      wallet
+    );
+
+    return {
+
+      ok:false,
+
+      reason:
+        "ledger_save_failed",
+
+      balance:
+        points
+    };
+  }
+
+
+  /* =======================================================
+     NOTIFICATION TECHNIQUE
+
+     AUCUN MONTANT EN EUROS N'EST TRANSMIS.
+     ======================================================= */
+
+  sportNotifyEvent(
+    "sport_solidarity_orientation_recorded",
+    {
+
+      operationRef:
+        operationRef,
+
+      pointsCancelled:
+        points,
+
+      financialConversion:
+        false,
+
+      balance:
+        0
+    }
   );
+
 
   return {
 
     ok:true,
 
+    operationRef:
+      operationRef,
+
+    pointsCancelled:
+      points,
+
+    /*
+      Temporairement conservé
+      pour compatibilité avec le reste du fichier.
+    */
     amount:
-      amount,
+      points,
 
     balance:
-      0
+      0,
+
+    financialConversion:
+      false
   };
 }
 
@@ -5211,6 +5369,21 @@ window.BociteSportMairie={
         }
       ),
 
+  /* =========================================================
+     RELIQUAT SPORT — ORIENTATION SOLIDAIRE
+
+     IMPORTANT :
+     - aucun point n'est transféré à une association ;
+     - aucune association ne reçoit de bocitecoins ;
+     - aucune conversion en euros ;
+     - les points sont annulés ;
+     - la participation solidaire est simplement enregistrée.
+
+     Le paramètre associationId est conservé temporairement
+     uniquement pour ne pas casser les anciens appels.
+     Il n'est volontairement plus utilisé.
+     ========================================================= */
+
   transferRemainderToAssociation(
     scan,
     associationId
@@ -5218,6 +5391,11 @@ window.BociteSportMairie={
 
     const c=
       sportClub();
+
+
+    /* =======================================================
+       VÉRIFICATION DU CLUB
+       ======================================================= */
 
     if(
       !scan ||
@@ -5234,75 +5412,131 @@ window.BociteSportMairie={
     ){
 
       return {
+
         ok:false,
+
         reason:
           "invalid_scan"
       };
     }
 
-    const a=
-      sportAssociations()
-        .find(
-          x =>
-            String(x.id) ===
-            String(
-              associationId ||
-              ""
-            )
-        );
 
-    if(
-      !sportAssociationOK(a)
-    ){
+    /*
+      Ancien paramètre conservé
+      uniquement pour compatibilité technique.
 
-      return {
-        ok:false,
-        reason:
-          "association_not_eligible"
-      };
-    }
+      Il ne détermine plus aucun bénéficiaire
+      et n'est jamais enregistré comme destinataire.
+    */
+    void associationId;
+
+
+    /* =======================================================
+       ANNULATION DU RELIQUAT
+
+       sportDebitRemainder() :
+       - annule les points ;
+       - ne transmet rien ;
+       - ne crée aucune valeur euro.
+       ======================================================= */
 
     const r=
-      sportDebitRemainder(
-        a.id
-      );
+      sportDebitRemainder();
 
-    if(!r.ok){
+
+    if(
+      !r.ok
+    ){
+
       return r;
     }
 
+
+    /* =======================================================
+       ENREGISTREMENT DE L'ORIENTATION SOLIDAIRE
+
+       Ce registre ne constitue PAS
+       un registre de paiement.
+
+       Aucune association bénéficiaire.
+       Aucun montant en euros.
+       Aucun taux de conversion.
+       ======================================================= */
+
     const all=
       sportMairieTransfers();
+
 
     const x={
 
       id:
         sportId(
-          "mairie-transfer"
+          "solidarity-orientation"
         ),
 
-      municipalAccountCode:
-        SPORT_CONFIG
-          .mairieSportAccountCode,
+      operationRef:
+        String(
+          r.operationRef ||
+          ""
+        ),
+
+      recordType:
+        "solidarity_orientation",
 
       clubRef:
-        c.clubRef,
+        String(
+          c.clubRef ||
+          ""
+        ),
 
       clubName:
-        c.name,
+        String(
+          c.name ||
+          ""
+        ),
+
+      commune:
+        String(
+          c.commune ||
+          ""
+        ),
+
+      pointsCancelled:
+        Number(
+          r.pointsCancelled ||
+          r.amount ||
+          0
+        ),
+
+      pointNature:
+        "non_monetary_participation",
+
+      financialConversion:
+        false,
+
+      cashValue:
+        null,
+
+      currency:
+        null,
+
+      beneficiaryType:
+        "none",
 
       associationId:
-        a.id,
+        null,
 
       associationName:
-        a.legalName ||
-        a.label,
+        null,
 
-      bocitecoins:
-        r.amount,
+      financialSettlement:
+        "separate_process",
+
+      validatedBy:
+        "mairie",
 
       status:
-        "validated",
+        "orientation_recorded",
 
       createdAt:
         Date.now(),
@@ -5314,175 +5548,115 @@ window.BociteSportMairie={
           )
     };
 
-    all.push(x);
 
-    sportSaveMairieTransfers(
-      all
+    all.push(
+      x
     );
+
+
+    /* =======================================================
+       SÉCURITÉ :
+       SI L'HISTORIQUE NE PEUT PAS ÊTRE ENREGISTRÉ,
+       ON RESTAURE LES POINTS ET ON RETIRE
+       L'ÉCRITURE D'ANNULATION DU LEDGER.
+       ======================================================= */
+
+    if(
+      !sportSaveMairieTransfers(
+        all
+      )
+    ){
+
+      const points=
+        Number(
+          x.pointsCancelled ||
+          0
+        );
+
+
+      sportSaveWallet({
+        vert:
+          points
+      });
+
+
+      const ledger=
+        sportLedger()
+          .filter(
+            item =>
+              String(
+                item.operationRef ||
+                ""
+              ) !==
+              String(
+                r.operationRef ||
+                ""
+              )
+          );
+
+
+      sportSaveLedger(
+        ledger
+      );
+
+
+      return {
+
+        ok:false,
+
+        reason:
+          "solidarity_history_save_failed",
+
+        balance:
+          points
+      };
+    }
+
+
+    /* =======================================================
+       NOTIFICATION TECHNIQUE
+
+       Là encore :
+       PAS DE MONTANT EURO.
+       PAS D'ASSOCIATION DESTINATAIRE.
+       ======================================================= */
+
+    sportNotifyEvent(
+      "sport_solidarity_orientation_validated",
+      {
+
+        operationRef:
+          x.operationRef,
+
+        clubRef:
+          x.clubRef,
+
+        pointsCancelled:
+          x.pointsCancelled,
+
+        financialConversion:
+          false
+      }
+    );
+
 
     return {
 
       ok:true,
 
-      transfer:
+      orientation:
         x,
 
+      pointsCancelled:
+        x.pointsCancelled,
+
       balance:
-        0
+        0,
+
+      financialConversion:
+        false
     };
   },
-
-  history:
-    () =>
-      sportExchanges()
-        .slice(),
-
-  solidarityHistory:
-    () =>
-      sportMairieTransfers()
-        .slice()
-};
-
-
-window.BociteSportAssociation={
-
-  registerPartners(items){
-
-    const now=
-      sportAssociations();
-
-    const map={};
-
-    now.forEach(
-      x =>
-        map[
-          String(x.id)
-        ]=x
-    );
-
-    (
-      Array.isArray(items)
-        ? items
-        : []
-    ).forEach(
-      x=>{
-
-        if(
-          x &&
-          x.id
-        ){
-
-          map[
-            String(x.id)
-          ]=
-            Object.assign(
-              {},
-              map[
-                String(x.id)
-              ] || {},
-              x
-            );
-        }
-      }
-    );
-
-    const out=
-      Object
-        .keys(map)
-        .map(
-          k => map[k]
-        );
-
-    sportSaveAssociations(
-      out
-    );
-
-    return out;
-  },
-
-  receiptQueue:
-    () =>
-      sportReceipts()
-        .filter(
-          x =>
-            x &&
-            x.status !==
-            "received"
-        ),
-
-  validateAndReturnReceipt:
-    (
-      dossierId,
-      doc
-    ) =>
-      sportMarkReceiptReceived(
-        dossierId,
-        doc
-      ),
-
-  markReceiptMissingForRenewal:
-    dossierId =>
-      sportMarkReceiptMissing(
-        dossierId
-      ),
-
-  partners:
-    () =>
-      sportAssociations()
-        .slice()
-};
-
-
-window.BociteSportSupportRules={
-
-  minimumHT:
-    50,
-
-  publicationDays:
-    3,
-
-  dailyCapacity:
-    6,
-
-  holdMinutes:
-    15,
-
-  manualExtensionMinutes:
-    5,
-
-  extraResearchMinimum:
-    10,
-
-  amountRule:
-    "free_amount_from_minimum",
-
-  choices:[
-
-    {
-      code:
-        "ALL_CLUB",
-      label:
-        "100 % au club"
-    },
-
-    {
-      code:
-        "HALF_HALF",
-      label:
-        "50 % au club / 50 % à l’association"
-    }
-  ],
-
-  paymentProcessing:
-    "server_side",
-
-  beneficiarySettlement:
-    "server_side",
-
-  taxTreatment:
-    "validated_case_by_case"
-};
-
 /* =========================================================
    BLOC SPORT 4
    IDENTITÉ — RÉSULTATS — SAISON — PRÉSENTATION PUBLIQUE
@@ -8528,20 +8702,24 @@ function sportYouthOrientation(){
   );
 }
 
+/* =========================================================
+   CHOIX COLLECTIF DES JEUNES
+   ORIENTATION DES PROCHAINS PARRAINAGES
+
+   IMPORTANT :
+   - les jeunes choisissent uniquement l'orientation ;
+   - aucune association précise n'est choisie ici ;
+   - aucun paiement n'est déclenché ici ;
+   - aucun point n'est converti en euros ;
+   - le commerçant devra confirmer le financement
+     dans le parcours de paiement.
+   ========================================================= */
 
 function sportYouthSponsorshipHtml(){
 
   const saved=
     sportYouthOrientation();
 
-  const associations=
-    sportAssociations()
-      .filter(
-        item =>
-          sportAssociationOK(
-            item
-          )
-      );
 
   const currentGroup=
     String(
@@ -8551,9 +8729,12 @@ function sportYouthSponsorshipHtml(){
     ).trim();
 
 
+  /* =======================================================
+     CHOIX DÉJÀ ENREGISTRÉ
+     ======================================================= */
+
   if(
-    saved.locked ===
-      true
+    saved.locked === true
   ){
 
     const label=
@@ -8572,7 +8753,7 @@ function sportYouthSponsorshipHtml(){
       <div class="sportCard">
 
         <div class="sportSubTitle">
-          Choix enregistré et verrouillé
+          Choix du groupe enregistré
         </div>
 
         <div
@@ -8599,34 +8780,49 @@ function sportYouthSponsorshipHtml(){
             )}
           </strong>.
 
+          <br><br>
+
+          Ce choix exprime
+          l’orientation souhaitée
+          par le groupe.
+
+          <br><br>
+
+          Il ne déclenche aucun paiement
+          et ne transforme aucun point
+          ${sportBrandHtml()}
+          en euros.
+
+          <br><br>
+
+          Lorsqu’un commerçant décidera
+          de soutenir le club,
+          la répartition financière
+          lui sera présentée clairement
+          avant son paiement
+          et devra être confirmée par lui.
+
           ${
-            saved.associationName
+            saved.choice ===
+              "club_research"
               ? `
 
                 <br><br>
 
-                Association retenue :
-
-                <strong>
-                  ${sportEsc(
-                    saved.associationName
-                  )}
-                </strong>.
+                La partie destinée
+                à la recherche médicale
+                sera traitée séparément
+                dans le parcours financier,
+                au bénéfice d’une association
+                appartenant au panel
+                préalablement validé.
 
               `
               : ""
           }
 
-          <br><br>
-
-          Ce choix a été confirmé
-          avec le groupe.
-
-          Il n’est plus modifiable
-          pour les parrainages
-          auxquels il est rattaché.
-
         </div>
+
 
         ${
           sportSession.role ===
@@ -8654,6 +8850,10 @@ function sportYouthSponsorshipHtml(){
   }
 
 
+  /* =======================================================
+     NOUVEAU CHOIX
+     ======================================================= */
+
   return `
 
     ${sportTitle(
@@ -8666,19 +8866,37 @@ function sportYouthSponsorshipHtml(){
 
         Prenez quelques instants
         avec les jeunes pour leur expliquer
-        qu’un soutien peut aussi aider
-        la recherche médicale
-        et les personnes concernées.
+        qu’un soutien obtenu pour le club
+        peut aussi permettre
+        de soutenir la recherche médicale.
 
         <br><br>
 
-        Leur choix donne une dimension collective
-        à l’action du groupe,
-        au-delà du sport.
+        Le groupe choisit uniquement
+        l’orientation qu’il souhaite donner
+        aux prochains parrainages
+        qui lui seront rattachés.
 
-        C’est leur décision commune :
-        le Président ou le collaborateur
-        l’enregistre sans la choisir à leur place.
+        <br><br>
+
+        C’est une décision collective.
+
+        Le Président ou le collaborateur
+        l’enregistre sans choisir
+        à la place des jeunes.
+
+        <br><br>
+
+        Ce choix ne constitue pas
+        un paiement.
+
+        Il n’attribue aucune valeur en euros
+        aux points ${sportBrandHtml()}.
+
+        Le commerçant restera libre
+        de confirmer son soutien
+        et la répartition financière
+        avant tout paiement.
 
       </div>
 
@@ -8737,84 +8955,29 @@ function sportYouthSponsorshipHtml(){
       </label>
 
 
-      <div
-        id="sportYouthResearchAssociationBox"
-        style="
-          display:none;
-          margin-top:10px;
-        "
-      >
-
-        <label class="sportLabel">
-          Association de recherche médicale retenue
-        </label>
-
-        <select
-          id="sportYouthResearchAssociation"
-          class="sportField"
-        >
-
-          <option value="">
-            Choisir l’association
-          </option>
-
-          ${
-            associations
-              .map(
-                item => `
-
-                  <option
-                    value="${sportEsc(
-                      item.id
-                    )}"
-                  >
-                    ${sportEsc(
-                      item.legalName ||
-                      item.label ||
-                      item.name ||
-                      "Association"
-                    )}
-                  </option>
-
-                `
-              )
-              .join("")
-          }
-
-        </select>
-
-      </div>
-
-
-      ${
-        !associations.length
-          ? `
-
-            <div class="sportStatus">
-
-              Aucune association
-              de recherche validée
-              n’est encore disponible.
-
-              Le choix 50/50
-              ne pourra pas être verrouillé
-              tant qu’une association
-              n’est pas validée.
-
-            </div>
-
-          `
-          : ""
-      }
-
-
       <div class="sportStatus">
 
-        <strong>Attention :</strong>
-        une fois ce choix confirmé,
-        il ne pourra plus être effacé
-        ou remplacé
-        pour les parrainages concernés.
+        <strong>Important :</strong>
+
+        le choix 50/50
+        ne désigne pas ici
+        une association particulière.
+
+        <br><br>
+
+        Les associations de recherche
+        sont sélectionnées,
+        vérifiées
+        et renouvelées séparément
+        dans le dispositif
+        prévu avec la collectivité.
+
+        <br><br>
+
+        Une fois confirmé,
+        le choix du groupe
+        reste attaché
+        aux parrainages concernés.
 
       </div>
 
@@ -8828,8 +8991,7 @@ function sportYouthSponsorshipHtml(){
           margin-top:12px;
         "
       >
-        Confirmer définitivement
-        le choix du groupe
+        Confirmer le choix du groupe
       </button>
 
 
@@ -8844,6 +9006,10 @@ function sportYouthSponsorshipHtml(){
 
 
 function sportBindYouthSponsorship(){
+
+  /* =======================================================
+     PRÉPARER UN AUTRE GROUPE
+     ======================================================= */
 
   const another=
     sportEl(
@@ -8867,51 +9033,30 @@ function sportBindYouthSponsorship(){
         const store=
           sportYouthSponsorshipStore();
 
+
         store.activeRecordId=
           "";
+
 
         sportSaveYouthSponsorshipStore(
           store
         );
+
 
         openClubReserve();
       };
   }
 
 
-  document
-    .querySelectorAll(
-      'input[name="sportYouthSponsorshipChoice"]'
-    )
-    .forEach(
-      radio =>{
-
-        radio.onchange=
-          ()=>{
-
-            const box=
-              sportEl(
-                "sportYouthResearchAssociationBox"
-              );
-
-            if(box){
-
-              box.style.display=
-                radio.checked &&
-                radio.value ===
-                  "club_research"
-                  ? "block"
-                  : "none";
-            }
-          };
-      }
-    );
-
+  /* =======================================================
+     ENREGISTRER LE CHOIX
+     ======================================================= */
 
   const save=
     sportEl(
       "sportYouthSponsorshipSave"
     );
+
 
   if(!save){
     return;
@@ -8955,6 +9100,10 @@ function sportBindYouthSponsorship(){
         );
 
 
+      /* =====================================================
+         GROUPE OBLIGATOIRE
+         ===================================================== */
+
       if(!groupName){
 
         alert(
@@ -8964,6 +9113,10 @@ function sportBindYouthSponsorship(){
         return;
       }
 
+
+      /* =====================================================
+         UN CHOIX EXISTANT NE PEUT PAS ÊTRE ÉCRASÉ
+         ===================================================== */
 
       const alreadyLocked=
         sportYouthFindGroup(
@@ -8981,11 +9134,13 @@ function sportBindYouthSponsorship(){
           const store=
             sportYouthSponsorshipStore();
 
+
           store.activeRecordId=
             String(
               alreadyLocked.id ||
               ""
             );
+
 
           sportSaveYouthSponsorshipStore(
             store
@@ -8994,14 +9149,19 @@ function sportBindYouthSponsorship(){
 
 
         alert(
-          "Le choix de ce groupe est déjà enregistré et verrouillé."
+          "Le choix de ce groupe est déjà enregistré."
         );
+
 
         openClubReserve();
 
         return;
       }
 
+
+      /* =====================================================
+         SEULES DEUX ORIENTATIONS SONT POSSIBLES
+         ===================================================== */
 
       if(
         ![
@@ -9020,58 +9180,6 @@ function sportBindYouthSponsorship(){
       }
 
 
-      let associationId="";
-      let associationName="";
-
-
-      if(
-        choice ===
-          "club_research"
-      ){
-
-        associationId=
-          String(
-            sportEl(
-              "sportYouthResearchAssociation"
-            )?.value ||
-            ""
-          ).trim();
-
-
-        const association=
-          sportAssociations()
-            .find(
-              item =>
-                String(
-                  item.id
-                ) ===
-                  associationId &&
-                sportAssociationOK(
-                  item
-                )
-            );
-
-
-        if(!association){
-
-          alert(
-            "Choisissez une association de recherche médicale validée."
-          );
-
-          return;
-        }
-
-
-        associationName=
-          String(
-            association.legalName ||
-            association.label ||
-            association.name ||
-            ""
-          ).trim();
-      }
-
-
       const phrase=
         choice ===
           "club_research"
@@ -9079,54 +9187,105 @@ function sportBindYouthSponsorship(){
           : "100 % pour le club";
 
 
+      /* =====================================================
+         CONFIRMATION HUMAINE
+         ===================================================== */
+
       if(
         !window.confirm(
           "Le groupe a choisi : " +
           phrase +
-          (
-            associationName
-              ? "\nAssociation : " +
-                associationName
-              : ""
-          ) +
-          "\n\nConfirmer définitivement ce choix ?"
+          "\n\n" +
+          "Ce choix enregistre uniquement l’orientation du groupe." +
+          "\n" +
+          "Il ne déclenche aucun paiement." +
+          "\n\n" +
+          "Confirmer ce choix ?"
         )
       ){
         return;
       }
 
 
+      /* =====================================================
+         ENREGISTREMENT
+
+         Les anciens champs associationId
+         et associationName sont conservés vides
+         uniquement pour compatibilité
+         avec d'anciens enregistrements.
+
+         Ils ne désignent aucun bénéficiaire.
+         ===================================================== */
+
       const record={
+
         id:
           sportId(
             "youth-choice"
           ),
-        locked:true,
+
+        locked:
+          true,
+
         choice:
           choice,
-        associationId:
-          associationId,
-        associationName:
-          associationName,
+
         groupName:
           groupName,
+
+        choiceNature:
+          "collective_orientation",
+
+        paymentTriggered:
+          false,
+
+        merchantConfirmationRequired:
+          true,
+
+        financialConversion:
+          false,
+
+        pointCashValue:
+          null,
+
+        researchBeneficiaryMode:
+          choice ===
+            "club_research"
+              ? "validated_research_panel"
+              : "none",
+
+        /*
+          Compatibilité temporaire
+          avec les anciennes données.
+        */
+        associationId:
+          "",
+
+        associationName:
+          "",
+
         recordedBy:{
+
           accountId:
             String(
               sportSession.accountId ||
               ""
             ),
+
           name:
             String(
               sportSession.name ||
               ""
             ),
+
           role:
             String(
               sportSession.role ||
               ""
             )
         },
+
         lockedAt:
           Date.now()
       };
@@ -9135,9 +9294,11 @@ function sportBindYouthSponsorship(){
       const store=
         sportYouthSponsorshipStore();
 
+
       store.records.push(
         record
       );
+
 
       store.activeRecordId=
         record.id;
@@ -9148,19 +9309,40 @@ function sportBindYouthSponsorship(){
       );
 
 
+      /* =====================================================
+         JOURNALISATION
+
+         AUCUN MONTANT EN EUROS.
+         AUCUNE ASSOCIATION DESTINATAIRE.
+         ===================================================== */
+
       sportNotifyEvent(
         "sport_youth_sponsorship_choice_locked",
         {
+
           recordId:
             record.id,
+
           choice:
             choice,
-          associationId:
-            associationId,
-          associationName:
-            associationName,
+
           groupName:
-            groupName
+            groupName,
+
+          choiceNature:
+            "collective_orientation",
+
+          paymentTriggered:
+            false,
+
+          merchantConfirmationRequired:
+            true,
+
+          financialConversion:
+            false,
+
+          researchBeneficiaryMode:
+            record.researchBeneficiaryMode
         }
       );
 
@@ -9168,7 +9350,6 @@ function sportBindYouthSponsorship(){
       openClubReserve();
     };
 }
-
 
 function sportBagHtml(){
 
