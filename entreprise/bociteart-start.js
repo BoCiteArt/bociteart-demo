@@ -2276,10 +2276,31 @@ function installCompteAideHook(){
         font-weight:400;
       }
 
-    </style>
+  </style>
 
 
-    <div id="bociteCompteAideCourriersCompletsV1">
+<!-- =====================================================
+     SÉPARATION COMPTE → INTRODUCTIONS
+     ===================================================== -->
+
+<div
+  style="
+    margin:28px 0 18px 0;
+    padding:14px 12px;
+    border-top:3px solid #2f5d46;
+    border-bottom:3px solid #2f5d46;
+    text-align:center;
+    color:#2f5d46;
+    font-size:17px;
+    font-weight:700;
+    line-height:1.3;
+  "
+>
+  Introductions et courriers à relire
+</div>
+
+
+<div id="bociteCompteAideCourriersCompletsV1">
 
 
       <!-- =====================================================
