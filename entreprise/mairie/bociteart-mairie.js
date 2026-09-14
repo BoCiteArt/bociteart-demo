@@ -4690,13 +4690,13 @@ function mairieMainHtml(){
           </button>
 
 
-          <button
-            id="openHealthServicesBtn"
-            class="mairieBtn"
-            type="button"
-          >
-            Santé et professionnels utiles
-          </button>
+         <button
+  id="openHealthServicesBtn"
+  class="mairieBtn"
+  type="button"
+>
+  Annuaire santé + aide
+</button>
 
         </div>
 
@@ -5626,13 +5626,34 @@ function mairieBindMainEvents(){
     );
 
 
-  if(
-    openHealth
-  ){
+ if(
+  openHealth
+){
 
-    openHealth.onclick =
-      openHealthServices;
-  }
+  openHealth.onclick =
+    function(){
+
+      if(
+        typeof window.openHealthHelp ===
+          "function"
+      ){
+
+        window.openHealthHelp();
+
+        return;
+      }
+
+
+      /*
+       * Sécurité :
+       * si le nouvel espace n'est pas encore chargé,
+       * on conserve l'ancien annuaire disponible.
+       */
+
+      openHealthServices();
+
+    };
+}
 
   /* =====================================================
      PORTE INSTITUTIONNELLE MAIRIE
