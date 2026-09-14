@@ -5566,7 +5566,6 @@ de la tuile Mairie.
 
           </div>
 
-
           <button
             id="mairieFinanceRefreshBtn"
             class="mairieBtn mairieFull"
@@ -5594,7 +5593,6 @@ de la tuile Mairie.
   `;
 }
 
-
 /* =========================================================
    ÉVÉNEMENTS DE L'ÉCRAN MAIRIE
    ========================================================= */
@@ -5610,7 +5608,6 @@ function mairieBindMainEvents(){
       "openMairieServicesBtn"
     );
 
-
   if(
     openServices
   ){
@@ -5619,15 +5616,14 @@ function mairieBindMainEvents(){
       openMairieServices;
   }
 
-
-  const openHealth =
-    mairieEl(
-      "openHealthServicesBtn"
-    );
-
-   if(
+ if(
   openHealth
 ){
+
+   const openHealth =
+  mairieEl(
+    "openHealthServicesBtn"
+  ); 
 
   openHealth.onclick =
     function(){
@@ -5676,6 +5672,55 @@ function mairieBindMainEvents(){
     };
 }
 
+   if(
+  openHealth
+){
+
+  openHealth.onclick =
+    function(){
+
+      mairieOpenModal(
+        "Santé et professionnels utiles",
+        `
+          <div class="bociteMairieRoot">
+
+            <div class="mairieCard">
+
+              <div class="mairieTitle">
+                Vous recherchez un médecin ou un professionnel de santé ?
+              </div>
+
+              <div class="mairieText">
+
+                Retrouvez les médecins,
+                spécialistes,
+                pharmacies
+                et autres professionnels de santé
+                directement dans l’espace
+
+                <strong>
+                  « Annuaire santé + aide »
+                </strong>
+
+                situé en bas de l’application.
+
+                <br><br>
+
+                Vous y trouverez également
+                les aides de proximité
+                et les contacts utiles.
+
+              </div>
+
+            </div>
+
+          </div>
+
+        `
+      );
+
+    };
+}
 
  if(
   openHealth
@@ -5693,7 +5738,6 @@ function mairieBindMainEvents(){
 
         return;
       }
-
 
       /*
        * Sécurité :
@@ -5716,12 +5760,10 @@ function mairieBindMainEvents(){
       "mairieInstitutionContinueBtn"
     );
 
-
   const accountNumber =
     mairieEl(
       "mairieAccountNumber"
     );
-
 
   const personalId =
     mairieEl(
