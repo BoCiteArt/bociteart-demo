@@ -1171,11 +1171,1435 @@ function mairieHealthBlock(
   `;
 }
 
+function mairieHealthDirectory(){
 
-function mairieHealthHtml(){
+  const shared =
+    window.BOCITEART_HEALTH_DIRECTORY;
+
+
+  if(
+    shared &&
+    typeof shared ===
+      "object"
+  ){
+
+    return shared;
+  }
+
+
+  return {
+
+    medecins:[],
+
+    specialistes:[],
+
+    kines:[],
+
+    infirmieres:[],
+
+    pharmacies:[],
+
+    professionnels:[],
+
+    communes:{}
+
+  };
+}
+
+
+/* =========================================================
+   ANNUAIRE SANTÉ — OUTILS
+   ========================================================= */
+
+let mairieHealthVisibleRows =
+  [];
+
+
+let mairieHealthState = {
+
+  commune:"",
+
+  query:""
+
+};
+
+
+function mairieHealthNorm(
+  value
+){
+
+  return String(
+    value == null
+      ? ""
+      : value
+  )
+
+  .normalize(
+    "NFD"
+  )
+
+  .replace(
+    /[\u0300-\u036f]/g,
+    ""
+  )
+
+  .toLowerCase()
+
+  .trim();
+}
+
+
+function mairieHealthDefaultCommune(){
+
+  try{
+
+    if(
+      window.BociteAccess &&
+      typeof window.BociteAccess
+        .getAccount ===
+        "function"
+    ){
+
+      const account =
+        window.BociteAccess
+          .getAccount();
+
+
+      if(
+        account &&
+        mairieText(
+          account.commune
+        )
+      ){
+
+        return mairieText(
+          account.commune
+        );
+      }
+    }
+
+  }catch(_){}
+
+
+  return (
+
+    mairieText(
+      window.BOCITEART_CITY_NAME
+    ) ||
+
+    ""
+
+  );
+}
+
+
+function mairieHealthSpeciality(
+  item
+){
+
+  if(
+    Array.isArray(
+      item &&
+      item.specialites
+    )
+  ){
+
+    return item.specialites
+      .map(
+        mairieText
+      )
+      .filter(Boolean)
+      .join(", ");
+  }
+
+
+  return mairieText(
+
+    item &&
+    (
+      item.specialite ||
+      item.speciality ||
+      item.specialty
+    )
+
+  );
+}
+
+
+function mairieHealthNormalizeItem(
+  item,
+  defaultProfession,
+  defaultCommune
+){
+
+  item =
+    item &&
+    typeof item ===
+      "object"
+
+      ? item
+
+      : {};
+
+
+  return {
+
+    nom:
+      mairieText(
+        item.nom ||
+        item.name ||
+        item.displayName
+      ) ||
+      "Professionnel de santé",
+
+    profession:
+      mairieText(
+        item.profession ||
+        item.metier ||
+        item.job ||
+        defaultProfession
+      ) ||
+      "Professionnels de santé",
+
+    specialite:
+      mairieHealthSpeciality(
+        item
+      ),
+
+    commune:
+      mairieText(
+        item.commune ||
+        item.ville ||
+        item.city ||
+        defaultCommune
+      ),
+
+    adresse:
+      mairieText(
+        item.adresse ||
+        item.address
+      ),
+
+    telephone:
+      mairieText(
+        item.telephone ||
+        item.phone
+      ),
+
+    email:
+      mairieText(
+        item.email
+      ),
+
+    site:
+      mairieText(
+        item.site ||
+        item.website ||
+        item.url
+      ),
+
+    rendezVous:
+      mairieText(
+        item.rendezVous ||
+        item.appointmentUrl ||
+        item.bookingUrl
+      ),
+
+    horaires:
+      mairieText(
+        item.horaires ||
+        item.hours
+      ),
+
+    accessibilite:
+      mairieText(
+        item.accessibilite ||
+        item.accessibility
+      ),
+
+    informations:
+      mairieText(
+        item.informations ||
+        item.description ||
+        item.details
+      )
+
+  };
+}
+
+
+function mairieHealthCollectRows(){
 
   const data =
     mairieHealthDirectory();
+
+
+  const defaultCommune =
+    mairieHealthDefaultCommune();
+
+
+  const rows =
+    [];
+
+
+  function addList(
+    list,
+    profession,
+    commune
+  ){
+
+    if(
+      !Array.isArray(
+        list
+      )
+    ){
+
+      return;
+    }
+
+
+    list.forEach(
+      function(
+        item
+      ){
+
+        rows.push(
+
+          mairieHealthNormalizeItem(
+
+            item,
+
+            profession,
+
+            commune ||
+            defaultCommune
+
+          )
+
+        );
+      }
+    );
+  }
+
+
+  /* =====================================================
+     ANCIEN FORMAT — CONSERVÉ
+     ===================================================== */
+
+  addList(
+    data.medecins,
+    "Médecins généralistes",
+    defaultCommune
+  );
+
+
+  addList(
+    data.specialistes,
+    "Médecins spécialistes",
+    defaultCommune
+  );
+
+
+  addList(
+    data.kines,
+    "Kinésithérapeutes",
+    defaultCommune
+  );
+
+
+  addList(
+    data.infirmieres,
+    "Infirmières / infirmiers",
+    defaultCommune
+  );
+
+
+  addList(
+    data.pharmacies,
+    "Pharmacies",
+    defaultCommune
+  );
+
+
+  addList(
+    data.professionnels,
+    "Professionnels de santé",
+    defaultCommune
+  );
+
+
+  /* =====================================================
+     NOUVEAU FORMAT — PLUSIEURS COMMUNES
+     ===================================================== */
+
+  if(
+    data.communes &&
+    typeof data.communes ===
+      "object"
+  ){
+
+    Object.keys(
+      data.communes
+    )
+    .forEach(
+      function(
+        communeName
+      ){
+
+        const communeData =
+          data.communes[
+            communeName
+          ];
+
+
+        if(
+          !communeData
+        ){
+
+          return;
+        }
+
+
+        if(
+          Array.isArray(
+            communeData
+          )
+        ){
+
+          addList(
+            communeData,
+            "Professionnels de santé",
+            communeName
+          );
+
+          return;
+        }
+
+
+        addList(
+          communeData.professionnels,
+          "Professionnels de santé",
+          communeName
+        );
+
+
+        addList(
+          communeData.medecins,
+          "Médecins généralistes",
+          communeName
+        );
+
+
+        addList(
+          communeData.specialistes,
+          "Médecins spécialistes",
+          communeName
+        );
+
+
+        addList(
+          communeData.kines,
+          "Kinésithérapeutes",
+          communeName
+        );
+
+
+        addList(
+          communeData.infirmieres,
+          "Infirmières / infirmiers",
+          communeName
+        );
+
+
+        addList(
+          communeData.pharmacies,
+          "Pharmacies",
+          communeName
+        );
+
+
+        addList(
+          communeData.dentistes,
+          "Chirurgiens-dentistes",
+          communeName
+        );
+
+
+        addList(
+          communeData.sagesFemmes,
+          "Sages-femmes",
+          communeName
+        );
+
+
+        addList(
+          communeData.orthophonistes,
+          "Orthophonistes",
+          communeName
+        );
+
+
+        addList(
+          communeData.psychologues,
+          "Psychologues",
+          communeName
+        );
+
+
+        addList(
+          communeData.laboratoires,
+          "Laboratoires",
+          communeName
+        );
+
+
+        addList(
+          communeData.imagerie,
+          "Imagerie médicale",
+          communeName
+        );
+
+      }
+    );
+  }
+
+
+  /* =====================================================
+     SUPPRESSION DES DOUBLONS
+     ===================================================== */
+
+  const seen =
+    new Set();
+
+
+  return rows.filter(
+    function(
+      item
+    ){
+
+      const key =
+        [
+
+          mairieHealthNorm(
+            item.nom
+          ),
+
+          mairieHealthNorm(
+            item.profession
+          ),
+
+          mairieHealthNorm(
+            item.specialite
+          ),
+
+          mairieHealthNorm(
+            item.commune
+          ),
+
+          mairieHealthNorm(
+            item.adresse
+          )
+
+        ].join("|");
+
+
+      if(
+        seen.has(
+          key
+        )
+      ){
+
+        return false;
+      }
+
+
+      seen.add(
+        key
+      );
+
+
+      return true;
+    }
+  );
+}
+
+
+function mairieHealthKnownCommunes(){
+
+  const names =
+    [];
+
+
+  mairieHealthCollectRows()
+    .forEach(
+      function(
+        item
+      ){
+
+        const commune =
+          mairieText(
+            item.commune
+          );
+
+
+        if(
+          commune &&
+          !names.some(
+            function(
+              existing
+            ){
+
+              return (
+                mairieHealthNorm(
+                  existing
+                ) ===
+                mairieHealthNorm(
+                  commune
+                )
+              );
+            }
+          )
+        ){
+
+          names.push(
+            commune
+          );
+        }
+      }
+    );
+
+
+  return names.sort(
+    function(
+      a,
+      b
+    ){
+
+      return a.localeCompare(
+        b,
+        "fr"
+      );
+    }
+  );
+}
+
+
+function mairieHealthSafeUrl(
+  value
+){
+
+  const url =
+    mairieText(
+      value
+    );
+
+
+  if(
+    /^https?:\/\//i.test(
+      url
+    )
+  ){
+
+    return url;
+  }
+
+
+  return "";
+}
+
+
+/* =========================================================
+   FICHE PROFESSIONNEL
+   ========================================================= */
+
+function mairieHealthProfessionalCard(
+  item,
+  index
+){
+
+  return `
+
+    <button
+      type="button"
+      class="mairieBtn mairieFull"
+      data-mairie-health-open="${index}"
+      style="
+        margin-top:8px;
+        text-align:left;
+      "
+    >
+
+      <strong>
+        ${mairieEsc(
+          item.nom
+        )}
+      </strong>
+
+      ${
+        item.specialite
+
+          ? "<br>" +
+            mairieEsc(
+              item.specialite
+            )
+
+          : ""
+      }
+
+      ${
+        item.adresse
+
+          ? "<br><span style='font-weight:400;'>" +
+            mairieEsc(
+              item.adresse
+            ) +
+            "</span>"
+
+          : ""
+      }
+
+    </button>
+
+  `;
+}
+
+
+function mairieHealthGroupHtml(
+  profession,
+  rows
+){
+
+  const specialities =
+    {};
+
+
+  rows.forEach(
+    function(
+      row
+    ){
+
+      const speciality =
+        mairieText(
+          row.specialite
+        ) ||
+        "";
+
+
+      if(
+        !specialities[
+          speciality
+        ]
+      ){
+
+        specialities[
+          speciality
+        ]=[];
+      }
+
+
+      specialities[
+        speciality
+      ].push(
+        row
+      );
+    }
+  );
+
+
+  let content =
+    "";
+
+
+  Object.keys(
+    specialities
+  )
+  .sort(
+    function(
+      a,
+      b
+    ){
+
+      return a.localeCompare(
+        b,
+        "fr"
+      );
+    }
+  )
+  .forEach(
+    function(
+      speciality
+    ){
+
+      const specialityRows =
+        specialities[
+          speciality
+        ];
+
+
+      if(
+        speciality
+      ){
+
+        content += `
+
+          <div
+            style="
+              color:#2f5d46;
+              font-size:14px;
+              font-weight:700;
+              margin-top:12px;
+            "
+          >
+            ${mairieEsc(
+              speciality
+            )}
+          </div>
+
+        `;
+      }
+
+
+      specialityRows
+        .sort(
+          function(
+            a,
+            b
+          ){
+
+            return a.nom.localeCompare(
+              b.nom,
+              "fr"
+            );
+          }
+        )
+        .forEach(
+          function(
+            row
+          ){
+
+            const index =
+              mairieHealthVisibleRows
+                .indexOf(
+                  row
+                );
+
+
+            content +=
+              mairieHealthProfessionalCard(
+                row,
+                index
+              );
+          }
+        );
+
+    }
+  );
+
+
+  return `
+
+    <div class="mairieCard">
+
+      ${mairieCardTitle(
+        profession
+      )}
+
+      ${content}
+
+    </div>
+
+  `;
+}
+
+
+/* =========================================================
+   AFFICHAGE DE L'ANNUAIRE
+   ========================================================= */
+
+function mairieHealthRender(){
+
+  const communeInput =
+    mairieEl(
+      "mairieHealthCommuneInput"
+    );
+
+
+  const queryInput =
+    mairieEl(
+      "mairieHealthSearchInput"
+    );
+
+
+  const out =
+    mairieEl(
+      "mairieHealthResults"
+    );
+
+
+  const title =
+    mairieEl(
+      "mairieHealthCurrentCity"
+    );
+
+
+  if(
+    !out
+  ){
+
+    return;
+  }
+
+
+  const commune =
+    mairieText(
+
+      communeInput
+        ? communeInput.value
+        : mairieHealthState.commune
+
+    );
+
+
+  const query =
+    mairieText(
+
+      queryInput
+        ? queryInput.value
+        : mairieHealthState.query
+
+    );
+
+
+  mairieHealthState.commune =
+    commune;
+
+
+  mairieHealthState.query =
+    query;
+
+
+  if(
+    title
+  ){
+
+    title.textContent =
+      commune
+
+        ? "Annuaire santé de " +
+          commune
+
+        : "Choisissez une commune";
+  }
+
+
+  if(
+    !commune
+  ){
+
+    mairieHealthVisibleRows =
+      [];
+
+
+    out.innerHTML = `
+
+      <div class="mairieCard">
+
+        <div class="mairieText">
+
+          Indiquez d’abord
+          la commune que vous souhaitez consulter.
+
+        </div>
+
+      </div>
+
+    `;
+
+
+    return;
+  }
+
+
+  let rows =
+    mairieHealthCollectRows()
+      .filter(
+        function(
+          item
+        ){
+
+          return (
+
+            mairieHealthNorm(
+              item.commune
+            ) ===
+            mairieHealthNorm(
+              commune
+            )
+
+          );
+        }
+      );
+
+
+  if(
+    query
+  ){
+
+    const needle =
+      mairieHealthNorm(
+        query
+      );
+
+
+    rows =
+      rows.filter(
+        function(
+          item
+        ){
+
+          const haystack =
+            mairieHealthNorm(
+
+              [
+
+                item.nom,
+
+                item.profession,
+
+                item.specialite,
+
+                item.adresse,
+
+                item.informations
+
+              ].join(" ")
+
+            );
+
+
+          return haystack.includes(
+            needle
+          );
+        }
+      );
+  }
+
+
+  mairieHealthVisibleRows =
+    rows.slice();
+
+
+  if(
+    !rows.length
+  ){
+
+    out.innerHTML = `
+
+      <div class="mairieCard">
+
+        ${mairieCardTitle(
+          commune
+            ? "Aucun résultat pour " +
+              commune
+            : "Aucun résultat"
+        )}
+
+        <div class="mairieText">
+
+          Aucun professionnel correspondant
+          n’est actuellement présent
+          dans les données raccordées
+          à l’annuaire.
+
+          <br><br>
+
+          ${
+            query
+
+              ? "Modifiez votre recherche ou consultez une autre commune."
+
+              : "L’annuaire de cette commune doit encore être alimenté ou raccordé."
+          }
+
+        </div>
+
+      </div>
+
+    `;
+
+
+    return;
+  }
+
+
+  const groups =
+    {};
+
+
+  rows.forEach(
+    function(
+      item
+    ){
+
+      const profession =
+        mairieText(
+          item.profession
+        ) ||
+        "Professionnels de santé";
+
+
+      if(
+        !groups[
+          profession
+        ]
+      ){
+
+        groups[
+          profession
+        ]=[];
+      }
+
+
+      groups[
+        profession
+      ].push(
+        item
+      );
+    }
+  );
+
+
+  out.innerHTML =
+
+    Object.keys(
+      groups
+    )
+
+    .sort(
+      function(
+        a,
+        b
+      ){
+
+        return a.localeCompare(
+          b,
+          "fr"
+        );
+      }
+    )
+
+    .map(
+      function(
+        profession
+      ){
+
+        return mairieHealthGroupHtml(
+          profession,
+          groups[
+            profession
+          ]
+        );
+      }
+    )
+
+    .join("");
+
+}
+
+
+/* =========================================================
+   FICHE DÉTAILLÉE
+   ========================================================= */
+
+function mairieHealthShowProfessional(
+  index
+){
+
+  const item =
+    mairieHealthVisibleRows[
+      Number(
+        index
+      )
+    ];
+
+
+  const out =
+    mairieEl(
+      "mairieHealthResults"
+    );
+
+
+  if(
+    !item ||
+    !out
+  ){
+
+    return;
+  }
+
+
+  const site =
+    mairieHealthSafeUrl(
+      item.site
+    );
+
+
+  const rendezVous =
+    mairieHealthSafeUrl(
+      item.rendezVous
+    );
+
+
+  out.innerHTML = `
+
+    <div class="mairieCard">
+
+      ${mairieCardTitle(
+        item.nom
+      )}
+
+
+      <div class="mairieText">
+
+        <strong>
+          ${mairieEsc(
+            item.profession
+          )}
+        </strong>
+
+        ${
+          item.specialite
+
+            ? "<br>" +
+              mairieEsc(
+                item.specialite
+              )
+
+            : ""
+        }
+
+
+        ${
+          item.adresse
+
+            ? "<br><br><strong>Adresse</strong><br>" +
+              mairieEsc(
+                item.adresse
+              )
+
+            : ""
+        }
+
+
+        ${
+          item.commune
+
+            ? "<br>" +
+              mairieEsc(
+                item.commune
+              )
+
+            : ""
+        }
+
+
+        ${
+          item.telephone
+
+            ? "<br><br><strong>Téléphone</strong><br>" +
+              mairieEsc(
+                item.telephone
+              )
+
+            : ""
+        }
+
+
+        ${
+          item.email
+
+            ? "<br><br><strong>Contact</strong><br>" +
+              mairieEsc(
+                item.email
+              )
+
+            : ""
+        }
+
+
+        ${
+          item.horaires
+
+            ? "<br><br><strong>Horaires</strong><br>" +
+              mairieEsc(
+                item.horaires
+              )
+
+            : ""
+        }
+
+
+        ${
+          item.accessibilite
+
+            ? "<br><br><strong>Informations pratiques</strong><br>" +
+              mairieEsc(
+                item.accessibilite
+              )
+
+            : ""
+        }
+
+
+        ${
+          item.informations
+
+            ? "<br><br>" +
+              mairieEsc(
+                item.informations
+              )
+
+            : ""
+        }
+
+      </div>
+
+
+      <div
+        class="mairieActions"
+        style="
+          margin-top:14px;
+        "
+      >
+
+        ${
+          item.telephone
+
+            ? `
+
+              <a
+                class="mairieBtn"
+                href="tel:${mairieEsc(
+                  item.telephone
+                    .replace(
+                      /[^0-9+]/g,
+                      ""
+                    )
+                )}"
+              >
+                Appeler
+              </a>
+
+            `
+
+            : ""
+        }
+
+
+        ${
+          item.email
+
+            ? `
+
+              <a
+                class="mairieBtn"
+                href="mailto:${mairieEsc(
+                  item.email
+                )}"
+              >
+                Contacter
+              </a>
+
+            `
+
+            : ""
+        }
+
+
+        ${
+          rendezVous
+
+            ? `
+
+              <a
+                class="mairieBtn"
+                href="${mairieEsc(
+                  rendezVous
+                )}"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Prendre rendez-vous
+              </a>
+
+            `
+
+            : ""
+        }
+
+
+        ${
+          site
+
+            ? `
+
+              <a
+                class="mairieBtn"
+                href="${mairieEsc(
+                  site
+                )}"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Site du professionnel
+              </a>
+
+            `
+
+            : ""
+        }
+
+      </div>
+
+
+      <button
+        id="mairieHealthBackToResults"
+        class="mairieBtn mairieFull"
+        type="button"
+        style="
+          margin-top:14px;
+        "
+      >
+        Retour à l’annuaire
+      </button>
+
+    </div>
+
+  `;
+
+}
+
+
+/* =========================================================
+   HTML PRINCIPAL
+   ========================================================= */
+
+function mairieHealthHtml(){
+
+  const ownCommune =
+    mairieHealthDefaultCommune();
+
+
+  mairieHealthState.commune =
+    ownCommune;
+
+
+  mairieHealthState.query =
+    "";
+
+
+  const communes =
+    mairieHealthKnownCommunes();
 
 
   return `
@@ -1186,52 +2610,201 @@ function mairieHealthHtml(){
       <div class="mairieCard">
 
         ${mairieCardTitle(
-          "Santé et professionnels utiles"
+          "Annuaire santé"
         )}
+
 
         <div class="mairieText">
 
-          Cet annuaire pratique
-          reste séparé
-          des données médicales personnelles.
+          Recherchez les professionnels
+          et services de santé
+          d’une commune.
 
-          Il sert uniquement
-          à retrouver des coordonnées utiles
-          dans la commune.
+          <br><br>
+
+          Cet annuaire contient uniquement
+          des informations professionnelles
+          et pratiques.
+
+          Il ne contient aucune donnée médicale
+          personnelle.
 
         </div>
 
       </div>
 
 
-      ${mairieHealthBlock(
-        "Médecins généralistes",
-        data.medecins
-      )}
+      <!-- =============================================
+           CHOIX DE LA COMMUNE
+           ============================================= -->
+
+      <div class="mairieCard">
+
+        ${mairieCardTitle(
+          "Choisir la commune"
+        )}
 
 
-      ${mairieHealthBlock(
-        "Spécialistes",
-        data.specialistes
-      )}
+        ${
+          ownCommune
+
+            ? `
+
+              <div class="mairieText">
+
+                Votre commune :
+
+                <strong>
+                  ${mairieEsc(
+                    ownCommune
+                  )}
+                </strong>
+
+              </div>
+
+            `
+
+            : ""
+        }
 
 
-      ${mairieHealthBlock(
-        "Kinésithérapeutes",
-        data.kines
-      )}
+        <label
+          class="mairieLabel"
+          for="mairieHealthCommuneInput"
+        >
+          Commune à consulter
+        </label>
 
 
-      ${mairieHealthBlock(
-        "Infirmières / infirmiers",
-        data.infirmieres
-      )}
+        <input
+          id="mairieHealthCommuneInput"
+          class="mairieField"
+          type="text"
+          list="mairieHealthCommuneList"
+          autocomplete="address-level2"
+          value="${mairieEsc(
+            ownCommune
+          )}"
+          placeholder="Exemple : Wattignies, Lille, Seclin…"
+        >
 
 
-      ${mairieHealthBlock(
-        "Pharmacies",
-        data.pharmacies
-      )}
+        <datalist
+          id="mairieHealthCommuneList"
+        >
+
+          ${
+            communes
+              .map(
+                function(
+                  commune
+                ){
+
+                  return `
+
+                    <option
+                      value="${mairieEsc(
+                        commune
+                      )}"
+                    ></option>
+
+                  `;
+                }
+              )
+              .join("")
+          }
+
+        </datalist>
+
+
+        <div class="mairieActions">
+
+          <button
+            id="mairieHealthOpenCommuneBtn"
+            class="mairieBtn"
+            type="button"
+          >
+            Afficher cette commune
+          </button>
+
+
+          ${
+            ownCommune
+
+              ? `
+
+                <button
+                  id="mairieHealthOwnCommuneBtn"
+                  class="mairieBtn"
+                  type="button"
+                >
+                  Revenir à ma commune
+                </button>
+
+              `
+
+              : ""
+          }
+
+        </div>
+
+      </div>
+
+
+      <!-- =============================================
+           RECHERCHE DANS LA COMMUNE
+           ============================================= -->
+
+      <div class="mairieCard">
+
+        <div
+          id="mairieHealthCurrentCity"
+          class="mairieTitle"
+        >
+          ${
+            ownCommune
+
+              ? "Annuaire santé de " +
+                mairieEsc(
+                  ownCommune
+                )
+
+              : "Choisissez une commune"
+          }
+        </div>
+
+
+        <label
+          class="mairieLabel"
+          for="mairieHealthSearchInput"
+        >
+          Rechercher dans cet annuaire
+        </label>
+
+
+        <input
+          id="mairieHealthSearchInput"
+          class="mairieField"
+          type="search"
+          placeholder="Nom, métier ou spécialité : cardiologue, pédiatre, pharmacie…"
+        >
+
+
+        <div class="mairieText">
+
+          Vous pouvez rechercher directement
+          le nom d’un professionnel,
+          son métier
+          ou une spécialité médicale.
+
+        </div>
+
+      </div>
+
+
+      <div
+        id="mairieHealthResults"
+      ></div>
 
 
     </div>
@@ -1240,20 +2813,224 @@ function mairieHealthHtml(){
 }
 
 
+/* =========================================================
+   ÉVÉNEMENTS DE L'ANNUAIRE
+   ========================================================= */
+
+function mairieBindHealthDirectory(){
+
+  const communeInput =
+    mairieEl(
+      "mairieHealthCommuneInput"
+    );
+
+
+  const openCommune =
+    mairieEl(
+      "mairieHealthOpenCommuneBtn"
+    );
+
+
+  const ownCommune =
+    mairieEl(
+      "mairieHealthOwnCommuneBtn"
+    );
+
+
+  const searchInput =
+    mairieEl(
+      "mairieHealthSearchInput"
+    );
+
+
+  const results =
+    mairieEl(
+      "mairieHealthResults"
+    );
+
+
+  if(
+    openCommune
+  ){
+
+    openCommune.onclick =
+      function(){
+
+        mairieHealthRender();
+
+      };
+  }
+
+
+  if(
+    communeInput
+  ){
+
+    communeInput.addEventListener(
+
+      "keydown",
+
+      function(
+        event
+      ){
+
+        if(
+          event.key ===
+            "Enter"
+        ){
+
+          event.preventDefault();
+
+          mairieHealthRender();
+        }
+      }
+
+    );
+  }
+
+
+  if(
+    ownCommune
+  ){
+
+    ownCommune.onclick =
+      function(){
+
+        const commune =
+          mairieHealthDefaultCommune();
+
+
+        if(
+          communeInput
+        ){
+
+          communeInput.value =
+            commune;
+        }
+
+
+        if(
+          searchInput
+        ){
+
+          searchInput.value =
+            "";
+        }
+
+
+        mairieHealthRender();
+
+      };
+  }
+
+
+  if(
+    searchInput
+  ){
+
+    searchInput.addEventListener(
+
+      "input",
+
+      function(){
+
+        mairieHealthRender();
+
+      }
+
+    );
+  }
+
+
+  if(
+    results
+  ){
+
+    results.addEventListener(
+
+      "click",
+
+      function(
+        event
+      ){
+
+        const open =
+          event.target.closest(
+            "[data-mairie-health-open]"
+          );
+
+
+        if(
+          open
+        ){
+
+          mairieHealthShowProfessional(
+
+            open.getAttribute(
+              "data-mairie-health-open"
+            )
+
+          );
+
+          return;
+        }
+
+
+        const back =
+          event.target.closest(
+            "#mairieHealthBackToResults"
+          );
+
+
+        if(
+          back
+        ){
+
+          mairieHealthRender();
+        }
+
+      }
+
+    );
+  }
+
+
+  mairieHealthRender();
+
+}
+
+
+/* =========================================================
+   OUVERTURE DE L'ANNUAIRE
+   ========================================================= */
+
 function openHealthServices(){
 
   mairieEnsureStyles();
 
 
   mairieOpenModal(
-    "Santé avec Bo'CitéArt",
+
+    "Annuaire santé",
+
     mairieHealthHtml()
+
   );
 
 
   mairieSetModalHeader(
-    "Santé avec"
+    "Annuaire santé"
   );
+
+
+  window.setTimeout(
+
+    mairieBindHealthDirectory,
+
+    0
+
+  );
+
 }
 
 
