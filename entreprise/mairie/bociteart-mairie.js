@@ -3381,6 +3381,378 @@ function mairieMainHtml(){
 
         </div>
 
+        <!-- =================================================
+             RECHERCHE MÉDICALE — ESPACE PRIVÉ MAIRIE
+             ================================================= -->
+
+        <div class="mairieCard">
+
+          <div class="mairieTitle">
+            Recherche médicale — associations retenues
+          </div>
+
+
+          <div class="mairieText">
+
+            La commune sélectionne les associations
+            qu’elle souhaite soutenir.
+
+            <br><br>
+
+            Un premier contrôle automatique
+            vérifie les informations disponibles,
+            les comptes,
+            les activités de recherche
+            et la cohérence de l’utilisation
+            des ressources.
+
+            <br><br>
+
+            Après le choix de la commune,
+            un second contrôle Bo’CitéArt
+            est effectué automatiquement.
+
+            <br><br>
+
+            Seules les associations
+            ayant satisfait aux deux contrôles
+            peuvent être retenues
+            pour une durée d’un an.
+
+          </div>
+
+
+          <!-- =============================================
+               NOMBRE D'ASSOCIATIONS
+               ============================================= -->
+
+          <label
+            class="mairieLabel"
+            for="mairieResearchTargetCount"
+          >
+            Nombre d’associations à retenir
+          </label>
+
+
+          <select
+            id="mairieResearchTargetCount"
+            class="mairieField"
+          >
+
+            <option value="1">
+              1 association
+            </option>
+
+            <option value="2">
+              2 associations
+            </option>
+
+            <option value="3">
+              3 associations
+            </option>
+
+            <option
+              value="4"
+              selected
+            >
+              4 associations
+            </option>
+
+          </select>
+
+
+          <!-- =============================================
+               RECHERCHE AUTOMATIQUE
+               ============================================= -->
+
+          <div
+            class="mairieText"
+            style="margin-top:14px;"
+          >
+
+            Bo’CitéArt recherche en priorité
+            les structures engagées
+            dans la recherche pédiatrique,
+            les maladies rares
+            ou orphelines,
+            puis élargit la recherche
+            lorsque cela est nécessaire.
+
+          </div>
+
+
+          <button
+            id="mairieResearchSearchBtn"
+            class="mairieBtn mairieFull"
+            type="button"
+            style="margin-top:10px;"
+          >
+            Rechercher des associations
+          </button>
+
+
+          <!-- =============================================
+               ASSOCIATION CONNUE PAR LA MAIRIE
+               ============================================= -->
+
+          <label
+            class="mairieLabel"
+            for="mairieResearchAssociationName"
+            style="margin-top:14px;"
+          >
+            Vérifier une association proposée par la commune
+          </label>
+
+
+          <input
+            id="mairieResearchAssociationName"
+            class="mairieField"
+            maxlength="160"
+            placeholder="Nom de l’association"
+          >
+
+
+          <button
+            id="mairieResearchCheckBtn"
+            class="mairieBtn mairieFull"
+            type="button"
+            style="margin-top:10px;"
+          >
+            Rechercher et contrôler cette association
+          </button>
+
+
+          ${mairieStatus(
+            "mairieResearchAgentStatus",
+            "Aucune association contrôlée pour le moment."
+          )}
+
+
+          <!-- =============================================
+               CANDIDATURES TROUVÉES
+               ============================================= -->
+
+          <div
+            class="mairieTitle"
+            style="margin-top:18px;"
+          >
+            Associations proposées et contrôlées
+          </div>
+
+
+          <div
+            id="mairieResearchCandidates"
+            class="mairieText"
+            style="margin-top:10px;"
+          >
+
+            Aucune association proposée
+            pour le moment.
+
+          </div>
+
+
+          <!-- =============================================
+               SÉLECTION 1 À 4
+               ============================================= -->
+
+          <button
+            id="mairieResearchConfirmSelectionBtn"
+            class="mairieBtn mairieFull"
+            type="button"
+            style="margin-top:14px;"
+          >
+            Confirmer les associations retenues
+          </button>
+
+
+          ${mairieStatus(
+            "mairieResearchSelectionStatus",
+            "Aucune sélection annuelle validée."
+          )}
+
+
+          <!-- =============================================
+               SECOND CONTRÔLE BO'CITÉART
+               ============================================= -->
+
+          <div
+            class="mairieTitle"
+            style="margin-top:18px;"
+          >
+            Contrôle Bo’CitéArt
+          </div>
+
+
+          <div
+            id="mairieResearchBociteartReview"
+            class="mairieText"
+            style="margin-top:10px;"
+          >
+
+            Le second contrôle démarre
+            automatiquement après confirmation
+            de la sélection par la commune.
+
+          </div>
+
+
+          <!-- =============================================
+               ASSOCIATIONS ACTIVES
+               ============================================= -->
+
+          <div
+            class="mairieTitle"
+            style="margin-top:18px;"
+          >
+            Associations validées pour l’année
+          </div>
+
+
+          <div
+            id="mairieResearchActiveList"
+            class="mairieText"
+            style="margin-top:10px;"
+          >
+
+            Aucune association active
+            pour le moment.
+
+          </div>
+
+
+          <!-- =============================================
+               ENVELOPPE ANNUELLE
+               ============================================= -->
+
+          <div
+            class="mairieTitle"
+            style="margin-top:18px;"
+          >
+            Enveloppe annuelle de soutien
+          </div>
+
+
+          <div class="mairieText">
+
+            La commune indique uniquement
+            le montant total qu’elle souhaite consacrer
+            à cette action.
+
+            <br><br>
+
+            La répartition entre les associations
+            validées est calculée automatiquement.
+
+            <br><br>
+
+            Cette enveloppe financière
+            est indépendante des points Bo’CitéArt.
+
+          </div>
+
+
+          <label
+            class="mairieLabel"
+            for="mairieResearchEnvelopeAmount"
+          >
+            Montant total annuel en euros
+          </label>
+
+
+          <input
+            id="mairieResearchEnvelopeAmount"
+            class="mairieField"
+            type="number"
+            min="0"
+            step="0.01"
+            inputmode="decimal"
+            placeholder="Exemple : 20000"
+          >
+
+
+          <button
+            id="mairieResearchPreviewDistributionBtn"
+            class="mairieBtn mairieFull"
+            type="button"
+            style="margin-top:10px;"
+          >
+            Calculer la répartition
+          </button>
+
+
+          <div
+            id="mairieResearchDistributionPreview"
+            class="mairieText"
+            style="margin-top:12px;"
+          >
+
+            La répartition apparaîtra ici
+            avant validation.
+
+          </div>
+
+
+          <button
+            id="mairieResearchValidateEnvelopeBtn"
+            class="mairieBtn mairieFull"
+            type="button"
+            style="margin-top:10px;"
+          >
+            Valider cette répartition
+          </button>
+
+
+          ${mairieStatus(
+            "mairieResearchEnvelopeStatus",
+            ""
+          )}
+
+
+          <!-- =============================================
+               REMERCIEMENTS OFFICIELS
+               ============================================= -->
+
+          <div
+            class="mairieTitle"
+            style="margin-top:18px;"
+          >
+            Confirmations et remerciements
+          </div>
+
+
+          <div class="mairieText">
+
+            Après réception du versement,
+            l’association confirme les fonds reçus,
+            transmet le justificatif demandé
+            et adresse son message de remerciement.
+
+            <br><br>
+
+            Le message validé rejoint ensuite
+            le fil officiel Bo’CitéArt
+            destiné aux espaces concernés.
+
+          </div>
+
+
+          <div
+            id="mairieResearchThanksFeed"
+            class="mairieText"
+            style="margin-top:10px;"
+          >
+
+            ✨ Aucun remerciement reçu
+            pour le moment.
+
+          </div>
+
+        </div>
+
+        <!-- =================================================
+             FIN — RECHERCHE MÉDICALE
+             ================================================= -->
 
         <!-- =================================================
              FINANCE
