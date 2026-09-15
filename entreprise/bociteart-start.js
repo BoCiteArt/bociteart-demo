@@ -7028,6 +7028,2170 @@ window.BociteCitizenSecurePayment =
    ÇA FINIT ICI
    PAIEMENT CITOYEN — CERCLE DE CONFIANCE
    ===================================================== */
+
+   /* =====================================================
+   ÇA COMMENCE ICI
+   ABONNEMENT CITOYEN ACTIF
+   CONTACTS DE CONFIANCE 2 / 5 / 10
+   ===================================================== */
+
+function getCitizenActiveSubscription(){
+
+  try{
+
+    const raw =
+      localStorage.getItem(
+        "bociteart_citizen_subscription_active_v1"
+      );
+
+
+    if(
+      !raw
+    ){
+
+      return null;
+
+    }
+
+
+    const subscription =
+      JSON.parse(
+        raw
+      );
+
+
+    if(
+      !subscription ||
+      subscription.status !==
+        "active"
+    ){
+
+      return null;
+
+    }
+
+
+    return subscription;
+
+  }catch(
+    error
+  ){
+
+    console.warn(
+      "Bo'CitéArt : lecture de l'abonnement citoyen impossible.",
+      error
+    );
+
+
+    return null;
+
+  }
+
+}
+
+
+function getCitizenContactsLimit(
+  subscription
+){
+
+  const contacts =
+    Number(
+      subscription &&
+      subscription.contacts
+        ? subscription.contacts
+        : 2
+    );
+
+
+  if(
+    contacts === 5
+  ){
+
+    return 5;
+
+  }
+
+
+  if(
+    contacts === 10
+  ){
+
+    return 10;
+
+  }
+
+
+  return 2;
+
+}
+
+
+function loadCitizenTrustedContacts(
+  subscription
+){
+
+  try{
+
+    const raw =
+      localStorage.getItem(
+        "bociteart_citizen_trusted_contacts_v1"
+      );
+
+
+    if(
+      !raw
+    ){
+
+      return [];
+
+    }
+
+
+    const saved =
+      JSON.parse(
+        raw
+      );
+
+
+    if(
+      !saved ||
+      !Array.isArray(
+        saved.phones
+      )
+    ){
+
+      return [];
+
+    }
+
+
+    /*
+     * Si un identifiant utilisateur existe,
+     * on vérifie que les contacts lui appartiennent.
+     */
+
+    if(
+      saved.customerId &&
+      subscription &&
+      subscription.customerId &&
+      String(
+        saved.customerId
+      ) !==
+      String(
+        subscription.customerId
+      )
+    ){
+
+      return [];
+
+    }
+
+
+    return saved.phones.map(
+      function(
+        phone
+      ){
+
+        return String(
+          phone || ""
+        ).trim();
+
+      }
+    );
+
+  }catch(
+    error
+  ){
+
+    console.warn(
+      "Bo'CitéArt : lecture des contacts de confiance impossible.",
+      error
+    );
+
+
+    return [];
+
+  }
+
+}
+
+
+function normalizeCitizenPhone(
+  value
+){
+
+  return String(
+    value || ""
+  )
+  .trim()
+  .replace(
+    /\s+/g,
+    " "
+  );
+
+}
+
+
+function citizenPhoneDigits(
+  value
+){
+
+  return String(
+    value || ""
+  )
+  .replace(
+    /\D/g,
+    ""
+  );
+
+}
+
+
+function isCitizenPhoneValid(
+  value
+){
+
+  const phone =
+    normalizeCitizenPhone(
+      value
+    );
+
+
+  /*
+   * Un emplacement vide reste autorisé.
+   */
+
+  if(
+    !phone
+  ){
+
+    return true;
+
+  }
+
+
+  if(
+    !/^\+?[0-9][0-9\s().-]*$/.test(
+      phone
+    )
+  ){
+
+    return false;
+
+  }
+
+
+  const digits =
+    citizenPhoneDigits(
+      phone
+    );
+
+
+  return (
+    digits.length >= 8 &&
+    digits.length <= 15
+  );
+
+}
+
+
+function escapeCitizenContactValue(
+  value
+){
+
+  return String(
+    value == null
+      ? ""
+      : value
+  )
+
+  .replace(
+    /&/g,
+    "&amp;"
+  )
+
+  .replace(
+    /</g,
+    "&lt;"
+  )
+
+  .replace(
+    />/g,
+    "&gt;"
+  )
+
+  .replace(
+    /"/g,
+    "&quot;"
+  )
+
+  .replace(
+    /'/g,
+    "&#039;"
+  );
+
+}
+
+
+function openCitizenTrustedContacts(){
+
+  const subscription =
+    getCitizenActiveSubscription();
+
+
+  if(
+    !subscription
+  ){
+
+    alert(
+      "Votre abonnement n'est pas encore actif."
+    );
+
+    return;
+
+  }
+
+
+  const limit =
+    getCitizenContactsLimit(
+      subscription
+    );
+
+
+  const savedPhones =
+    loadCitizenTrustedContacts(
+      subscription
+    );
+
+
+  let fieldsHtml =
+    "";
+
+
+  for(
+    let index = 0;
+    index < limit;
+    index++
+  ){
+
+    const phone =
+      savedPhones[
+        index
+      ] || "";
+
+
+    fieldsHtml += `
+
+      <div
+        style="
+          margin-top:14px;
+        "
+      >
+
+        <label
+          for="citizenTrustedPhone${index + 1}"
+          style="
+            display:block;
+            color:#2f5d46;
+            font-size:14px;
+            font-weight:700;
+            margin-bottom:6px;
+          "
+        >
+          Contact ${index + 1} — téléphone
+        </label>
+
+
+        <input
+          id="citizenTrustedPhone${index + 1}"
+          type="tel"
+          inputmode="tel"
+          autocomplete="tel"
+          value="${escapeCitizenContactValue(
+            phone
+          )}"
+          placeholder="Ex. 06 12 34 56 78"
+          style="
+            width:100%;
+            box-sizing:border-box;
+            padding:11px 10px;
+            border:1px solid #bdbdbd;
+            border-radius:8px;
+            background:#ffffff;
+            color:#111111;
+            font-size:14px;
+            font-weight:400;
+          "
+        >
+
+      </div>
+
+    `;
+
+  }
+
+
+  const html = `
+
+    <div
+      class="box"
+      style="
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.5;
+        border-left:6px solid #2f5d46;
+      "
+    >
+
+      <div
+        style="
+          color:#2f5d46;
+          font-size:17px;
+          font-weight:700;
+          margin-bottom:8px;
+        "
+      >
+        Mes contacts de confiance
+      </div>
+
+      Votre abonnement comprend
+      jusqu’à
+      <strong>
+        ${limit} contacts de confiance
+      </strong>.
+
+      <br><br>
+
+      Saisissez simplement
+      les numéros de téléphone
+      des personnes que vous souhaitez
+      enregistrer.
+
+      <br><br>
+
+      Vous n’êtes pas obligé
+      de remplir tous les emplacements.
+
+    </div>
+
+
+    <div
+      class="box"
+      style="
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.5;
+      "
+    >
+
+      ${fieldsHtml}
+
+    </div>
+
+
+    <button
+      id="citizenTrustedContactsSaveBtn"
+      class="choiceBtn"
+      type="button"
+      style="
+        width:100%;
+        background:#ffffff !important;
+        color:#111111 !important;
+        font-size:14px;
+        font-weight:700;
+      "
+    >
+      Enregistrer mes contacts de confiance
+    </button>
+
+
+    <button
+      id="citizenTrustedContactsCancelBtn"
+      class="choiceBtn"
+      type="button"
+      style="
+        width:100%;
+        margin-top:8px;
+        background:#ffffff !important;
+        color:#111111 !important;
+        font-size:14px;
+        font-weight:400;
+      "
+    >
+      Retour à Annuaire santé + aide
+    </button>
+
+  `;
+
+
+  if(
+    typeof window.openModal !==
+      "function"
+  ){
+
+    alert(
+      "La gestion des contacts est momentanément indisponible."
+    );
+
+    return;
+
+  }
+
+
+  window.openModal(
+    "Mes contacts de confiance",
+    html
+  );
+
+
+  window.setTimeout(
+    function(){
+
+      const saveButton =
+        document.getElementById(
+          "citizenTrustedContactsSaveBtn"
+        );
+
+
+      const cancelButton =
+        document.getElementById(
+          "citizenTrustedContactsCancelBtn"
+        );
+
+
+      if(
+        cancelButton
+      ){
+
+        cancelButton.onclick =
+          function(){
+
+          openHealthHelp();
+          };
+
+      }
+
+
+      if(
+        !saveButton
+      ){
+
+        return;
+
+      }
+
+
+      saveButton.onclick =
+        function(){
+
+          const phones =
+            [];
+
+
+          const invalid =
+            [];
+
+
+          for(
+            let index = 0;
+            index < limit;
+            index++
+          ){
+
+            const input =
+              document.getElementById(
+                "citizenTrustedPhone" +
+                (
+                  index + 1
+                )
+              );
+
+
+            const phone =
+              normalizeCitizenPhone(
+                input
+                  ? input.value
+                  : ""
+              );
+
+
+            if(
+              !isCitizenPhoneValid(
+                phone
+              )
+            ){
+
+              invalid.push(
+                index + 1
+              );
+
+            }
+
+
+            phones.push(
+              phone
+            );
+
+          }
+
+
+          if(
+            invalid.length
+          ){
+
+            alert(
+              "Vérifiez le numéro du contact " +
+              invalid.join(
+                ", "
+              ) +
+              "."
+            );
+
+            return;
+
+          }
+
+
+          const usedDigits =
+            phones
+
+            .filter(
+              function(
+                phone
+              ){
+
+                return Boolean(
+                  phone
+                );
+
+              }
+            )
+
+            .map(
+              citizenPhoneDigits
+            );
+
+
+          const uniqueDigits =
+            new Set(
+              usedDigits
+            );
+
+
+          if(
+            uniqueDigits.size !==
+            usedDigits.length
+          ){
+
+            alert(
+              "Un même numéro ne peut pas être enregistré plusieurs fois."
+            );
+
+            return;
+
+          }
+
+
+          const filledCount =
+            phones.filter(
+              function(
+                phone
+              ){
+
+                return Boolean(
+                  phone
+                );
+
+              }
+            ).length;
+
+
+          if(
+            filledCount === 0
+          ){
+
+            alert(
+              "Renseignez au moins un numéro de téléphone."
+            );
+
+            return;
+
+          }
+
+
+          const data = {
+
+            customerId:
+              subscription.customerId ||
+              "",
+
+            orderId:
+              subscription.orderId ||
+              "",
+
+            maxContacts:
+              limit,
+
+            phones:
+              phones,
+
+            updatedAt:
+              Date.now(),
+
+            updatedAtFr:
+              new Date()
+                .toLocaleString(
+                  "fr-FR"
+                )
+
+          };
+
+
+          try{
+
+            localStorage.setItem(
+
+              "bociteart_citizen_trusted_contacts_v1",
+
+              JSON.stringify(
+                data
+              )
+
+            );
+
+          }catch(
+            error
+          ){
+
+            console.error(
+              "Bo'CitéArt : enregistrement des contacts impossible.",
+              error
+            );
+
+
+            alert(
+              "Les contacts n'ont pas pu être enregistrés."
+            );
+
+            return;
+
+          }
+
+
+          alert(
+            "Vos contacts de confiance sont enregistrés.\n\n" +
+            "Vous pourrez les modifier à tout moment depuis Annuaire santé + aide."
+          );
+
+
+        openHealthHelp();
+
+        };
+
+    },
+    0
+  );
+
+}
+
+
+/* =====================================================
+   ÇA COMMENCE ICI
+   SÉCURITÉ ABONNEMENT CITOYEN
+   MOT DE PASSE — JAMAIS STOCKÉ EN CLAIR
+   ===================================================== */
+
+const CITIZEN_SECURITY_KEY =
+  "bociteart_citizen_subscription_security_v1";
+
+
+function citizenBytesToBase64(
+  bytes
+){
+
+  let binary =
+    "";
+
+
+  bytes.forEach(
+    function(
+      value
+    ){
+
+      binary +=
+        String.fromCharCode(
+          value
+        );
+
+    }
+  );
+
+
+  return btoa(
+    binary
+  );
+
+}
+
+
+function citizenBase64ToBytes(
+  value
+){
+
+  const binary =
+    atob(
+      String(
+        value || ""
+      )
+    );
+
+
+  const bytes =
+    new Uint8Array(
+      binary.length
+    );
+
+
+  for(
+    let index = 0;
+    index < binary.length;
+    index++
+  ){
+
+    bytes[index] =
+      binary.charCodeAt(
+        index
+      );
+
+  }
+
+
+  return bytes;
+
+}
+
+
+async function citizenPasswordHash(
+  password,
+  saltBase64,
+  iterations
+){
+
+  if(
+    !window.crypto ||
+    !window.crypto.subtle
+  ){
+
+    throw new Error(
+      "secure_crypto_unavailable"
+    );
+
+  }
+
+
+  const encoder =
+    new TextEncoder();
+
+
+  const keyMaterial =
+    await window.crypto.subtle
+      .importKey(
+
+        "raw",
+
+        encoder.encode(
+          String(
+            password || ""
+          )
+        ),
+
+        {
+          name:
+            "PBKDF2"
+        },
+
+        false,
+
+        [
+          "deriveBits"
+        ]
+
+      );
+
+
+  const bits =
+    await window.crypto.subtle
+      .deriveBits(
+
+        {
+
+          name:
+            "PBKDF2",
+
+          salt:
+            citizenBase64ToBytes(
+              saltBase64
+            ),
+
+          iterations:
+            Number(
+              iterations ||
+              180000
+            ),
+
+          hash:
+            "SHA-256"
+
+        },
+
+        keyMaterial,
+
+        256
+
+      );
+
+
+  return citizenBytesToBase64(
+    new Uint8Array(
+      bits
+    )
+  );
+
+}
+
+
+function getCitizenSecurity(
+  subscription
+){
+
+  try{
+
+    const raw =
+      localStorage.getItem(
+        CITIZEN_SECURITY_KEY
+      );
+
+
+    if(
+      !raw
+    ){
+
+      return null;
+
+    }
+
+
+    const security =
+      JSON.parse(
+        raw
+      );
+
+
+    if(
+      !security ||
+      !security.salt ||
+      !security.passwordHash
+    ){
+
+      return null;
+
+    }
+
+
+    /*
+     * Si un identifiant utilisateur existe,
+     * le mot de passe doit appartenir
+     * au même utilisateur.
+     */
+
+    if(
+      subscription &&
+      subscription.customerId &&
+      security.customerId &&
+      String(
+        subscription.customerId
+      ) !==
+      String(
+        security.customerId
+      )
+    ){
+
+      return null;
+
+    }
+
+
+    return security;
+
+  }catch(
+    error
+  ){
+
+    console.warn(
+      "Bo'CitéArt : lecture de la sécurité citoyenne impossible.",
+      error
+    );
+
+
+    return null;
+
+  }
+
+}
+
+
+async function createCitizenSecurity(
+  subscription,
+  password
+){
+
+  if(
+    !window.crypto ||
+    !window.crypto.subtle
+  ){
+
+    return {
+      ok:false,
+      reason:"crypto_unavailable"
+    };
+
+  }
+
+
+  const salt =
+    new Uint8Array(
+      16
+    );
+
+
+  window.crypto
+    .getRandomValues(
+      salt
+    );
+
+
+  const saltBase64 =
+    citizenBytesToBase64(
+      salt
+    );
+
+
+  const iterations =
+    180000;
+
+
+  const passwordHash =
+    await citizenPasswordHash(
+      password,
+      saltBase64,
+      iterations
+    );
+
+
+  const security = {
+
+    customerId:
+      subscription &&
+      subscription.customerId
+        ? subscription.customerId
+        : "",
+
+    orderId:
+      subscription &&
+      subscription.orderId
+        ? subscription.orderId
+        : "",
+
+    salt:
+      saltBase64,
+
+    iterations:
+      iterations,
+
+    passwordHash:
+      passwordHash,
+
+    createdAt:
+      Date.now(),
+
+    createdAtFr:
+      new Date()
+        .toLocaleString(
+          "fr-FR"
+        )
+
+  };
+
+
+  try{
+
+    localStorage.setItem(
+
+      CITIZEN_SECURITY_KEY,
+
+      JSON.stringify(
+        security
+      )
+
+    );
+
+
+    return {
+      ok:true,
+      security:
+        security
+    };
+
+  }catch(
+    error
+  ){
+
+    console.error(
+      "Bo'CitéArt : création du mot de passe impossible.",
+      error
+    );
+
+
+    return {
+      ok:false,
+      reason:"storage_failed"
+    };
+
+  }
+
+}
+
+
+async function verifyCitizenPassword(
+  subscription,
+  password
+){
+
+  const security =
+    getCitizenSecurity(
+      subscription
+    );
+
+
+  if(
+    !security
+  ){
+
+    return false;
+
+  }
+
+
+  try{
+
+    const candidate =
+      await citizenPasswordHash(
+
+        password,
+
+        security.salt,
+
+        security.iterations
+
+      );
+
+
+    return (
+      candidate ===
+      security.passwordHash
+    );
+
+  }catch(
+    error
+  ){
+
+    console.error(
+      "Bo'CitéArt : contrôle du mot de passe impossible.",
+      error
+    );
+
+
+    return false;
+
+  }
+
+}
+
+
+function openCitizenPasswordCreation(
+  subscription,
+  afterUnlock
+){
+
+  const html = `
+
+    <div
+      class="box"
+      style="
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.5;
+        border-left:6px solid #2f5d46;
+      "
+    >
+
+      <div
+        style="
+          color:#2f5d46;
+          font-size:17px;
+          font-weight:700;
+          margin-bottom:8px;
+        "
+      >
+        Sécurisez votre espace
+      </div>
+
+      Votre abonnement est actif.
+
+      <br><br>
+
+      Avant d'enregistrer
+      vos contacts de confiance,
+      créez le mot de passe
+      qui protégera cet espace.
+
+      <br><br>
+
+      <strong>
+        Ce mot de passe ne sera pas
+        enregistré en clair.
+      </strong>
+
+    </div>
+
+
+    <div
+      class="box"
+      style="
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.5;
+      "
+    >
+
+      <label
+        for="citizenCreatePassword"
+        style="
+          display:block;
+          color:#2f5d46;
+          font-weight:700;
+          margin-bottom:6px;
+        "
+      >
+        Créez votre mot de passe
+      </label>
+
+
+      <input
+        id="citizenCreatePassword"
+        type="password"
+        autocomplete="new-password"
+        placeholder="8 caractères minimum"
+        style="
+          width:100%;
+          box-sizing:border-box;
+          padding:11px;
+          border:1px solid #bdbdbd;
+          border-radius:8px;
+          background:#ffffff;
+          color:#111111;
+          font-size:14px;
+        "
+      >
+
+
+      <label
+        for="citizenConfirmPassword"
+        style="
+          display:block;
+          color:#2f5d46;
+          font-weight:700;
+          margin:14px 0 6px 0;
+        "
+      >
+        Confirmez votre mot de passe
+      </label>
+
+
+      <input
+        id="citizenConfirmPassword"
+        type="password"
+        autocomplete="new-password"
+        placeholder="Retapez votre mot de passe"
+        style="
+          width:100%;
+          box-sizing:border-box;
+          padding:11px;
+          border:1px solid #bdbdbd;
+          border-radius:8px;
+          background:#ffffff;
+          color:#111111;
+          font-size:14px;
+        "
+      >
+
+    </div>
+
+
+    <button
+      id="citizenCreatePasswordBtn"
+      class="choiceBtn"
+      type="button"
+      style="
+        width:100%;
+        background:#ffffff !important;
+        color:#111111 !important;
+        font-weight:700;
+      "
+    >
+      Créer mon mot de passe
+    </button>
+
+
+    <button
+      id="citizenCreatePasswordCancelBtn"
+      class="choiceBtn"
+      type="button"
+      style="
+        width:100%;
+        margin-top:8px;
+        background:#ffffff !important;
+        color:#111111 !important;
+      "
+    >
+      Retour à Annuaire santé + aide
+    </button>
+
+  `;
+
+
+  window.openModal(
+    "Sécuriser mon abonnement",
+    html
+  );
+
+
+  window.setTimeout(
+    function(){
+
+      const password =
+        document.getElementById(
+          "citizenCreatePassword"
+        );
+
+
+      const confirmation =
+        document.getElementById(
+          "citizenConfirmPassword"
+        );
+
+
+      const createButton =
+        document.getElementById(
+          "citizenCreatePasswordBtn"
+        );
+
+
+      const cancelButton =
+        document.getElementById(
+          "citizenCreatePasswordCancelBtn"
+        );
+
+
+      if(
+        cancelButton
+      ){
+
+        cancelButton.onclick =
+          function(){
+
+            openHealthHelp();
+
+          };
+
+      }
+
+
+      if(
+        !createButton
+      ){
+
+        return;
+
+      }
+
+
+      createButton.onclick =
+        async function(){
+
+          const first =
+            String(
+              password
+                ? password.value
+                : ""
+            );
+
+
+          const second =
+            String(
+              confirmation
+                ? confirmation.value
+                : ""
+            );
+
+
+          if(
+            first.length < 8
+          ){
+
+            alert(
+              "Votre mot de passe doit contenir au moins 8 caractères."
+            );
+
+            return;
+
+          }
+
+
+          if(
+            first !==
+            second
+          ){
+
+            alert(
+              "Les deux mots de passe ne sont pas identiques."
+            );
+
+            return;
+
+          }
+
+
+          createButton.disabled =
+            true;
+
+
+          const result =
+            await createCitizenSecurity(
+              subscription,
+              first
+            );
+
+
+          createButton.disabled =
+            false;
+
+
+          if(
+            !result ||
+            result.ok !== true
+          ){
+
+            alert(
+              "Le mot de passe n'a pas pu être créé."
+            );
+
+            return;
+
+          }
+
+
+          alert(
+            "Votre espace est maintenant protégé."
+          );
+
+
+          if(
+            typeof afterUnlock ===
+            "function"
+          ){
+
+            afterUnlock();
+
+          }
+
+        };
+
+    },
+    0
+  );
+
+}
+
+
+function openCitizenPasswordVerification(
+  subscription,
+  afterUnlock
+){
+
+  const html = `
+
+    <div
+      class="box"
+      style="
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.5;
+        border-left:6px solid #2f5d46;
+      "
+    >
+
+      <div
+        style="
+          color:#2f5d46;
+          font-size:17px;
+          font-weight:700;
+          margin-bottom:8px;
+        "
+      >
+        Espace protégé
+      </div>
+
+      Saisissez votre mot de passe
+      pour accéder
+      à vos contacts de confiance.
+
+    </div>
+
+
+    <div
+      class="box"
+      style="
+        background:#ffffff;
+      "
+    >
+
+      <input
+        id="citizenAccessPassword"
+        type="password"
+        autocomplete="current-password"
+        placeholder="Votre mot de passe"
+        style="
+          width:100%;
+          box-sizing:border-box;
+          padding:11px;
+          border:1px solid #bdbdbd;
+          border-radius:8px;
+          background:#ffffff;
+          color:#111111;
+          font-size:14px;
+        "
+      >
+
+    </div>
+
+
+    <button
+      id="citizenAccessPasswordBtn"
+      class="choiceBtn"
+      type="button"
+      style="
+        width:100%;
+        background:#ffffff !important;
+        color:#111111 !important;
+        font-weight:700;
+      "
+    >
+      Ouvrir mon espace protégé
+    </button>
+
+
+    <button
+      id="citizenAccessPasswordCancelBtn"
+      class="choiceBtn"
+      type="button"
+      style="
+        width:100%;
+        margin-top:8px;
+        background:#ffffff !important;
+        color:#111111 !important;
+      "
+    >
+      Retour
+    </button>
+
+  `;
+
+
+  window.openModal(
+    "Mon espace protégé",
+    html
+  );
+
+
+  window.setTimeout(
+    function(){
+
+      const input =
+        document.getElementById(
+          "citizenAccessPassword"
+        );
+
+
+      const button =
+        document.getElementById(
+          "citizenAccessPasswordBtn"
+        );
+
+
+      const cancel =
+        document.getElementById(
+          "citizenAccessPasswordCancelBtn"
+        );
+
+
+      if(
+        cancel
+      ){
+
+        cancel.onclick =
+          function(){
+
+            openHealthHelp();
+
+          };
+
+      }
+
+
+      async function validatePassword(){
+
+        const value =
+          String(
+            input
+              ? input.value
+              : ""
+          );
+
+
+        if(
+          !value
+        ){
+
+          alert(
+            "Saisissez votre mot de passe."
+          );
+
+          return;
+
+        }
+
+
+        button.disabled =
+          true;
+
+
+        const valid =
+          await verifyCitizenPassword(
+            subscription,
+            value
+          );
+
+
+        button.disabled =
+          false;
+
+
+        if(
+          !valid
+        ){
+
+          alert(
+            "Mot de passe incorrect."
+          );
+
+
+          if(
+            input
+          ){
+
+            input.value =
+              "";
+
+            input.focus();
+
+          }
+
+
+          return;
+
+        }
+
+
+        if(
+          typeof afterUnlock ===
+          "function"
+        ){
+
+          afterUnlock();
+
+        }
+
+      }
+
+
+      if(
+        button
+      ){
+
+        button.onclick =
+          validatePassword;
+
+      }
+
+
+      if(
+        input
+      ){
+
+        input.addEventListener(
+          "keydown",
+          function(
+            event
+          ){
+
+            if(
+              event.key ===
+              "Enter"
+            ){
+
+              event.preventDefault();
+
+              validatePassword();
+
+            }
+
+          }
+        );
+
+
+        input.focus();
+
+      }
+
+    },
+    0
+  );
+
+}
+
+
+function openCitizenSecureAccess(
+  afterUnlock
+){
+
+  const subscription =
+    getCitizenActiveSubscription();
+
+
+  if(
+    !subscription
+  ){
+
+    alert(
+      "Votre abonnement n'est pas encore actif."
+    );
+
+    return;
+
+  }
+
+
+  const security =
+    getCitizenSecurity(
+      subscription
+    );
+
+
+  /*
+   * Premier accès après paiement :
+   * création obligatoire du mot de passe.
+   */
+
+  if(
+    !security
+  ){
+
+    openCitizenPasswordCreation(
+      subscription,
+      afterUnlock
+    );
+
+    return;
+
+  }
+
+
+  /*
+   * Accès suivants :
+   * le mot de passe est demandé.
+   */
+
+  openCitizenPasswordVerification(
+    subscription,
+    afterUnlock
+  );
+
+}
+
+/* =====================================================
+   ÇA FINIT ICI
+   SÉCURITÉ ABONNEMENT CITOYEN
+   ===================================================== */
+   
+function renderCitizenSubscriptionAccess(){
+
+  const root =
+    document.getElementById(
+      "bociteHealthHelpSections"
+    );
+
+
+  if(
+    !root
+  ){
+
+    return;
+
+  }
+
+
+  const subscription =
+    getCitizenActiveSubscription();
+
+
+  /*
+   * Pas encore abonné :
+   * on conserve l'offre et le paiement actuels.
+   */
+
+  if(
+    !subscription
+  ){
+
+    return;
+
+  }
+
+
+  const limit =
+    getCitizenContactsLimit(
+      subscription
+    );
+
+
+  const savedPhones =
+    loadCitizenTrustedContacts(
+      subscription
+    );
+
+
+  const filledCount =
+    savedPhones.filter(
+      function(
+        phone
+      ){
+
+        return Boolean(
+          String(
+            phone || ""
+          ).trim()
+        );
+
+      }
+    ).length;
+
+
+  /*
+   * On masque les éléments d'achat
+   * puisque l'abonnement est déjà actif.
+   */
+
+  const planRadio =
+    root.querySelector(
+      'input[name="securePlan"]'
+    );
+
+
+  if(
+    planRadio
+  ){
+
+    const planBox =
+      planRadio.closest(
+        ".box"
+      );
+
+
+    if(
+      planBox
+    ){
+
+      planBox.style.display =
+        "none";
+
+    }
+
+  }
+
+
+  const acceptance =
+    root.querySelector(
+      "#secureAccept"
+    );
+
+
+  if(
+    acceptance
+  ){
+
+    const acceptanceBox =
+      acceptance.closest(
+        ".box"
+      );
+
+
+    if(
+      acceptanceBox
+    ){
+
+      acceptanceBox.style.display =
+        "none";
+
+    }
+
+  }
+
+
+  const paymentButton =
+    root.querySelector(
+      "#secureContinuePaymentBtn"
+    );
+
+
+  if(
+    paymentButton
+  ){
+
+    paymentButton.style.display =
+      "none";
+
+  }
+
+
+  /*
+   * On masque également
+   * l'ancien bloc d'activation.
+   */
+
+  root.querySelectorAll(
+    ".box"
+  )
+  .forEach(
+    function(
+      box
+    ){
+
+      const text =
+        String(
+          box.textContent || ""
+        );
+
+
+      if(
+        text.includes(
+          "Activation de votre abonnement"
+        )
+      ){
+
+        box.style.display =
+          "none";
+
+      }
+
+    }
+  );
+
+
+  if(
+    document.getElementById(
+      "bociteCitizenActiveSubscriptionCard"
+    )
+  ){
+
+    return;
+
+  }
+
+
+  const card =
+    document.createElement(
+      "div"
+    );
+
+
+  card.id =
+    "bociteCitizenActiveSubscriptionCard";
+
+
+  card.className =
+    "box";
+
+
+  card.style.cssText =
+
+    "background:#ffffff;" +
+    "color:#111111;" +
+    "font-size:14px;" +
+    "font-weight:400;" +
+    "line-height:1.5;" +
+    "border-left:6px solid #2f5d46;";
+
+
+  card.innerHTML = `
+
+    <div
+      style="
+        color:#2f5d46;
+        font-size:17px;
+        font-weight:700;
+        margin-bottom:8px;
+      "
+    >
+      Mon abonnement
+    </div>
+
+
+    <strong>
+      Abonnement actif
+    </strong>
+
+    <br><br>
+
+    Votre formule comprend
+    jusqu’à
+    <strong>
+      ${limit} contacts de confiance
+    </strong>.
+
+    <br><br>
+
+    Contacts actuellement renseignés :
+    <strong>
+      ${filledCount} / ${limit}
+    </strong>.
+
+    <br><br>
+
+    <strong>
+      Sauvegarde des bocitecoins :
+    </strong>
+
+    raccordement en cours.
+
+    <br><br>
+
+
+    <button
+      id="citizenTrustedContactsManageBtn"
+      class="choiceBtn"
+      type="button"
+      style="
+        width:100%;
+        background:#ffffff !important;
+        color:#111111 !important;
+        font-size:14px;
+        font-weight:700;
+      "
+    >
+      ${
+        filledCount > 0
+
+          ? "Modifier mes contacts de confiance"
+
+          : "Configurer mes contacts de confiance"
+      }
+    </button>
+
+  `;
+
+
+  if(
+    planRadio
+  ){
+
+    const planBox =
+      planRadio.closest(
+        ".box"
+      );
+
+
+    if(
+      planBox &&
+      planBox.parentNode
+    ){
+
+      planBox.parentNode.insertBefore(
+        card,
+        planBox
+      );
+
+    }
+    else{
+
+      root.appendChild(
+        card
+      );
+
+    }
+
+  }
+  else{
+
+    root.appendChild(
+      card
+    );
+
+  }
+
+
+  const manageButton =
+    document.getElementById(
+      "citizenTrustedContactsManageBtn"
+    );
+
+
+  if(
+    manageButton
+  ){
+
+    manageButton.onclick =
+      openCitizenTrustedContacts;
+
+  }
+
+}
+
+/* =====================================================
+   ÇA FINIT ICI
+   ABONNEMENT CITOYEN ACTIF
+   CONTACTS DE CONFIANCE 2 / 5 / 10
+   ===================================================== */
    
 function appendHealthHelpSections(){
 
