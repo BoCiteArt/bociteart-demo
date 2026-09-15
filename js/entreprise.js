@@ -44694,7 +44694,6 @@ document.addEventListener(
       data
     );
 
-
     if(
       typeof module.addFinancialEvent ===
       "function"
@@ -44730,10 +44729,8 @@ document.addEventListener(
       );
     }
 
-
     return true;
   }
-
 
   /* =======================================================
      FINALISATION FINANCIÈRE CENTRALE
@@ -44753,14 +44750,12 @@ document.addEventListener(
       };
     }
 
-
     /* =====================================================
        1. FACTURE CENTRALE BO'CITÉART
        ===================================================== */
 
     let invoice =
       null;
-
 
     if(order.invoiceId){
 
@@ -44771,7 +44766,6 @@ document.addEventListener(
         )
           ? module.getBillingInvoices()
           : [];
-
 
       if(
         Array.isArray(
@@ -44810,7 +44804,6 @@ document.addEventListener(
           payment
         );
     }
-
 
     /* =====================================================
        2. RECHARGER LA COMMANDE ACTUELLE
