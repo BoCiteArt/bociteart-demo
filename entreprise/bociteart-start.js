@@ -9323,19 +9323,24 @@ function renderCitizenSubscriptionAccess(){
     );
 
 
-  if(
-    manageButton
-  ){
+ if(
+  manageButton
+){
 
- manageButton.onclick =
-  function(){
+  manageButton.onclick =
+    function(){
 
-    openCitizenSecureAccess(
-      openCitizenTrustedContacts
-    );
+      openCitizenSecureAccess(
+        openCitizenTrustedContacts
+      );
 
-  };
+    };
 
+}
+
+/*
+ * Fin de renderCitizenSubscriptionAccess()
+ */
 }
 
 /* =====================================================
