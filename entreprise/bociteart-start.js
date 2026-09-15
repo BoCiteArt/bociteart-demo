@@ -7393,7 +7393,7 @@ function appendHealthHelpSections(){
 </div>
 
 <!-- =========================================
-     CERCLE DE CONFIANCE
+     ABONNEMENT — PROTECTION DES BOCITECOINS
      ========================================= -->
 
 <div
@@ -7409,7 +7409,7 @@ function appendHealthHelpSections(){
     line-height:1.3;
   "
 >
-  Cercle de confiance et aide entre proches
+  Protéger vos bocitecoins
 </div>
 
 
@@ -7432,23 +7432,44 @@ function appendHealthHelpSections(){
       margin-bottom:8px;
     "
   >
-    Cercle de confiance
+    Garder ce que vous avez gagné
   </div>
 
-  L’abonné choisit les personnes
-  qu’il souhaite pouvoir prévenir
-  et leurs numéros de téléphone.
+  Les bocitecoins que vous gagnez
+  sont conservés sur votre téléphone.
 
   <br><br>
 
-  Deux contacts de confiance
-  sont inclus dans la première formule.
+  Sans abonnement,
+  si votre téléphone est perdu,
+  endommagé,
+  remplacé
+  ou devient inaccessible,
+  les bocitecoins qui y sont conservés
+  peuvent être perdus.
+
+  <br><br>
+
+  Si vous souhaitez les protéger,
+  l’abonnement permet leur sauvegarde
+  afin de pouvoir les retrouver
+  lorsque vous changez de téléphone
+  ou lorsque votre ancien appareil
+  n’est plus accessible.
+
+  <br><br>
+
+  <strong>
+    Pour quelques euros par mois,
+    vous protégez ainsi
+    les bocitecoins que vous avez gagnés.
+  </strong>
 
 </div>
 
 
 <!-- =========================================
-     PROTECTION DES BOCITECOINS
+     BO'CITÉART VA PLUS LOIN
      ========================================= -->
 
 <div
@@ -7470,64 +7491,50 @@ function appendHealthHelpSections(){
       margin-bottom:8px;
     "
   >
-    Protéger aussi vos bocitecoins
+    Bo’CitéArt va plus loin
   </div>
 
-  L’abonnement ne sert pas uniquement
-  au Cercle de confiance.
+  Cet abonnement ne se limite pas
+  à la sauvegarde de vos bocitecoins.
 
   <br><br>
 
-  Il permet également de sauvegarder
-  les bocitecoins gagnés
-  afin de pouvoir les retrouver
-  en cas de perte,
-  de panne
-  ou de changement de téléphone.
-
-  <br><br>
-
-  Sans abonnement,
-  les bocitecoins restent conservés
-  sur l’appareil.
-  Si celui-ci devient inaccessible,
-  ils peuvent être perdus.
-
-  <br><br>
-
-  L’abonnement apporte donc
-  une protection supplémentaire
-  pour ce que vous avez gagné,
-  tout en donnant accès
-  à ce petit service d’aide
-  entre proches.
+  Bo’CitéArt y associe également
+  un autre service utile :
 
   <br><br>
 
   <strong>
-    Pour quelques euros par mois,
-    vous protégez vos bocitecoins
-    et vous disposez également
-    d’un moyen simple
-    pour rester relié
-    aux personnes de confiance
-    que vous avez choisies.
+    le Cercle de confiance.
   </strong>
 
   <br><br>
 
-  Cette fonction peut accompagner
+  Vous choisissez les personnes
+  que vous souhaitez pouvoir prévenir
+  ou qui pourront être informées
+  lorsqu’un proche demande
+  à être rappelé
+  ou signale qu’il a besoin d’aide.
+
+  <br><br>
+
+  Deux contacts de confiance
+  sont inclus dans la première formule.
+
+  <br><br>
+
+  Ce service peut accompagner
   un enfant,
   une personne âgée,
   une personne seule,
   une personne fragile
   ou simplement une famille
-  qui souhaite conserver
-  un lien supplémentaire
+  qui souhaite disposer
+  d’un lien supplémentaire
   entre ses proches.
 
 </div>
-
 <!-- =========================================
      EXEMPLE
      ========================================= -->
