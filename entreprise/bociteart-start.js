@@ -6679,6 +6679,12 @@ function enterCitizenHealthContext(){
   window.BOCITEART_MODAL_CONTEXT =
     "citizen_health_help";
 
+  window.currentModule =
+    "citizen_health_help";
+
+  window.currentEntrepriseScreen =
+    null;
+
 
   if(
     Array.isArray(
@@ -8235,10 +8241,19 @@ function openCitizenPasswordVerification(
 
 }
 
-
 function openCitizenSecureAccess(
   afterUnlock
 ){
+
+     enterCitizenHealthContext();
+
+  if(
+    Array.isArray(
+      window.modalHistory
+    )
+  ){
+    window.modalHistory.length = 0;
+  }
 
   const subscription =
     getCitizenActiveSubscription();
@@ -9124,7 +9139,14 @@ function appendHealthHelpSections(){
 
   <br><br>
 
-  Bo’CitéArt y associe également
+<span
+  style="
+    white-space:nowrap;
+    font-size:14px;
+    font-weight:700;
+  "
+><span style="color:#2f5d46;">Bo’Cité</span><span style="color:#b3282d;">Art</span></span>
+y associe également
   un autre service utile :
 
   <br><br>
@@ -9964,85 +9986,121 @@ function appendHealthHelpSections(){
   );
 
 }
-
+   
 function openHealthHelp(){
 
-  /*
-   * Porte principale citoyenne indépendante.
-   * Le contexte Santé reste actif pendant
-   * toute cette navigation.
-   */
-
   enterCitizenHealthContext();
-
 
   if(
     Array.isArray(
       window.modalHistory
     )
   ){
-
-    window.modalHistory.length =
-      0;
-
+    window.modalHistory.length = 0;
   }
-
 
   if(
     !window.BociteMairieModule ||
-    typeof window.BociteMairieModule.openHealth
-      !== "function"
+    typeof window.BociteMairieModule.openHealth !==
+      "function"
   ){
 
-    openCitizenHealthModal(
-      "Annuaire santé + aide",
-      `
+    if(
+      typeof window.openModal ===
+        "function"
+    ){
 
-        <div
-          class="box"
-          style="
-            background:#ffffff;
-            color:#111111;
-            font-size:14px;
-            font-weight:400;
-            line-height:1.55;
-          "
-        >
+      window.openModal(
+        "Annuaire santé + aide",
+        `
 
-          <div
-            style="
-              color:#2f5d46;
-              font-size:17px;
-              font-weight:700;
-              margin-bottom:8px;
-            "
-          >
-            Annuaire santé
+          <div class="box">
+
+            <strong>
+              Annuaire santé momentanément indisponible
+            </strong>
+
+            <br><br>
+
+            Le moteur de l’annuaire
+            n’est pas encore chargé.
+
           </div>
 
-          L’annuaire santé
-          est momentanément indisponible.
+        `,
+        {
+          noHistory:true,
+          context:"citizen_health_help",
+          suppressAutoBack:true
+        }
+      );
 
-        </div>
-
-      `
-    );
+    }
 
     return;
   }
 
-
-  window.BociteMairieModule
-    .openHealth();
-
-
-  enterCitizenHealthContext();
-
+  window.BociteMairieModule.openHealth();
 
   window.setTimeout(
     function(){
 
       enterCitizenHealthContext();
+
+      const modalTitle =
+        document.getElementById(
+          "modalTitle"
+        );
+
+      if(
+        modalTitle
+      ){
+        modalTitle.textContent =
+          "Annuaire santé + aide";
+      }
+
+      document
+        .querySelectorAll(
+          '[data-bociteart-auto-back="1"]'
+        )
+        .forEach(
+          function(btn){
+            btn.remove();
+          }
+        );
+
+      appendHealthHelpSections();
+
+    },
+    0
+  );
+
+  window.setTimeout(
+    function(){
+
+      enterCitizenHealthContext();
+
+      const modalTitle =
+        document.getElementById(
+          "modalTitle"
+        );
+
+      if(
+        modalTitle
+      ){
+        modalTitle.textContent =
+          "Annuaire santé + aide";
+      }
+
+      document
+        .querySelectorAll(
+          '[data-bociteart-auto-back="1"]'
+        )
+        .forEach(
+          function(btn){
+            btn.remove();
+          }
+        );
 
       appendHealthHelpSections();
 
@@ -10050,11 +10108,32 @@ function openHealthHelp(){
     180
   );
 
-
   window.setTimeout(
     function(){
 
-      enterCitizenHealthContext();
+     enterCitizenHealthContext();
+
+      const modalTitle =
+        document.getElementById(
+          "modalTitle"
+        );
+
+      if(
+        modalTitle
+      ){
+        modalTitle.textContent =
+          "Annuaire santé + aide";
+      }
+
+      document
+        .querySelectorAll(
+          '[data-bociteart-auto-back="1"]'
+        )
+        .forEach(
+          function(btn){
+            btn.remove();
+          }
+        );
 
       appendHealthHelpSections();
 
