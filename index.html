@@ -2715,120 +2715,377 @@ let calMonth = new Date().getMonth();
 
 window.PUB_STORE_KEY = window.PUB_STORE_KEY || "bociteart_pub_bookings_v1";
 window.PUB_MAX_PER_DAY = window.PUB_MAX_PER_DAY || 10;
-
 function ensureModalHelpers(){
 
-  window.modalHistory = window.modalHistory || [];
+  window.modalHistory =
+    window.modalHistory || [];
 
-  function cleanAutoBackButton(html){
-    const temp = document.createElement("div");
-    temp.innerHTML = html || "";
 
-    temp.querySelectorAll('[data-bociteart-auto-back="1"]').forEach(btn=>{
-      btn.remove();
-    });
+  function cleanAutoBackButton(
+    html
+  ){
+
+    const temp =
+      document.createElement(
+        "div"
+      );
+
+
+    temp.innerHTML =
+      html || "";
+
+
+    temp
+      .querySelectorAll(
+        '[data-bociteart-auto-back="1"]'
+      )
+      .forEach(
+        function(btn){
+
+          btn.remove();
+
+        }
+      );
+
 
     return temp.innerHTML;
+
   }
 
-  window.openModal = function(title, html, options){
-    if(!modal || !modalTitle || !modalBody){
-      alert("Fenêtre modale introuvable dans le HTML.");
-      return;
-    }
 
-    options = options || {};
+  function isCitizenHealthContext(
+    options
+  ){
 
-    if(!options.noHistory && modal.classList.contains("open")){
-      window.modalHistory.push({
-        title: modalTitle.textContent || "",
-        html: cleanAutoBackButton(modalBody.innerHTML || "")
-      });
-    }
+    options =
+      options || {};
 
-    modalTitle.textContent = title || "";
 
-    let backBtn = "";
+    return (
 
-    if(
-      window.currentModule === "entreprise" &&
-      window.currentEntrepriseScreen &&
-      window.currentEntrepriseScreen !== "home"
-    ){
-      backBtn = `
-        <button
-          data-bociteart-auto-back="1"
-          class="choiceBtn"
-          style="margin-bottom:12px;"
-          onclick="openEntrepriseHome()">
-          Retour
-        </button>`;
-    }
-    else if(
-      window.modalHistory.length &&
-      !String(html || "").includes("bociteEntrepriseProtectedBackBtn")
-    ){
-      backBtn = `
-        <button
-          data-bociteart-auto-back="1"
-          class="choiceBtn"
-          style="margin-bottom:12px;"
-          onclick="window.backModal()">
-          Retour
-        </button>`;
-    }
+      options.context ===
+        "citizen_health_help"
 
-    modalBody.innerHTML = backBtn + (html || "");
+      ||
 
-    modal.classList.add("open");
-    modal.setAttribute("aria-hidden", "false");
+      options.suppressAutoBack ===
+        true
 
-    if(typeof lockScroll === "function") lockScroll(true);
-  };
+      ||
 
-  window.backModal = function(){
-    if(!modal || !modalTitle || !modalBody) return;
+      window.BOCITEART_MODAL_CONTEXT ===
+        "citizen_health_help"
 
-    const previous = window.modalHistory.pop();
+    );
 
-    if(!previous){
-      window.closeModal();
-      return;
-    }
-
-    modalTitle.textContent = previous.title || "";
-
-    const backBtn = window.modalHistory.length
-      ? `
-        <button
-          data-bociteart-auto-back="1"
-          class="choiceBtn"
-          style="margin-bottom:12px;"
-          onclick="window.backModal()">
-          Retour
-        </button>`
-      : "";
-
-    modalBody.innerHTML =
-      backBtn + cleanAutoBackButton(previous.html || "");
-  };
-
-  window.closeModal = function(){
-    if(!modal) return;
-
-    window.modalHistory = [];
-
-    modal.classList.remove("open");
-    modal.setAttribute("aria-hidden", "true");
-
-    if(typeof lockScroll === "function") lockScroll(false);
-  };
-
-  const closeBtn = $("xBtn");
-
-  if(closeBtn){
-    closeBtn.onclick = window.closeModal;
   }
+
+
+  window.openModal =
+    function(
+      title,
+      html,
+      options
+    ){
+
+      if(
+        !modal ||
+        !modalTitle ||
+        !modalBody
+      ){
+
+        alert(
+          "Fenêtre modale introuvable dans le HTML."
+        );
+
+        return;
+
+      }
+
+
+      options =
+        options || {};
+
+
+      const citizenHealth =
+        isCitizenHealthContext(
+          options
+        );
+
+
+      /*
+       * Santé + aide possède sa propre navigation.
+       * On ne conserve donc aucun ancien historique
+       * Commerce / Entreprise.
+       */
+
+      if(
+        citizenHealth
+      ){
+
+        window.modalHistory =
+          [];
+
+      }
+      else if(
+        !options.noHistory &&
+        modal.classList.contains(
+          "open"
+        )
+      ){
+
+        window.modalHistory.push({
+
+          title:
+            modalTitle.textContent ||
+            "",
+
+          html:
+            cleanAutoBackButton(
+              modalBody.innerHTML ||
+              ""
+            )
+
+        });
+
+      }
+
+
+      modalTitle.textContent =
+        title || "";
+
+
+      let backBtn =
+        "";
+
+
+      /*
+       * Aucun bouton Retour automatique
+       * dans Annuaire santé + aide.
+       */
+
+      if(
+        !citizenHealth
+      ){
+
+        if(
+          window.currentModule ===
+            "entreprise" &&
+          window.currentEntrepriseScreen &&
+          window.currentEntrepriseScreen !==
+            "home"
+        ){
+
+          backBtn = `
+
+            <button
+              data-bociteart-auto-back="1"
+              class="choiceBtn"
+              style="margin-bottom:12px;"
+              onclick="openEntrepriseHome()"
+            >
+              Retour
+            </button>
+
+          `;
+
+        }
+        else if(
+          window.modalHistory.length &&
+          !String(
+            html || ""
+          ).includes(
+            "bociteEntrepriseProtectedBackBtn"
+          )
+        ){
+
+          backBtn = `
+
+            <button
+              data-bociteart-auto-back="1"
+              class="choiceBtn"
+              style="margin-bottom:12px;"
+              onclick="window.backModal()"
+            >
+              Retour
+            </button>
+
+          `;
+
+        }
+
+      }
+
+
+      modalBody.innerHTML =
+        backBtn +
+        (
+          html || ""
+        );
+
+
+      modal.classList.add(
+        "open"
+      );
+
+
+      modal.setAttribute(
+        "aria-hidden",
+        "false"
+      );
+
+
+      if(
+        typeof lockScroll ===
+          "function"
+      ){
+
+        lockScroll(
+          true
+        );
+
+      }
+
+    };
+
+
+  window.backModal =
+    function(){
+
+      if(
+        !modal ||
+        !modalTitle ||
+        !modalBody
+      ){
+
+        return;
+
+      }
+
+
+      /*
+       * Le contexte Santé ne doit jamais
+       * repartir vers Commerce / Entreprise.
+       */
+
+      if(
+        window.BOCITEART_MODAL_CONTEXT ===
+          "citizen_health_help"
+      ){
+
+        window.modalHistory =
+          [];
+
+        return;
+
+      }
+
+
+      const previous =
+        window.modalHistory.pop();
+
+
+      if(
+        !previous
+      ){
+
+        window.closeModal();
+
+        return;
+
+      }
+
+
+      modalTitle.textContent =
+        previous.title || "";
+
+
+      const backBtn =
+        window.modalHistory.length
+
+          ? `
+
+            <button
+              data-bociteart-auto-back="1"
+              class="choiceBtn"
+              style="margin-bottom:12px;"
+              onclick="window.backModal()"
+            >
+              Retour
+            </button>
+
+          `
+
+          : "";
+
+
+      modalBody.innerHTML =
+        backBtn +
+        cleanAutoBackButton(
+          previous.html || ""
+        );
+
+    };
+
+
+  window.closeModal =
+    function(){
+
+      if(
+        !modal
+      ){
+
+        return;
+
+      }
+
+
+      window.modalHistory =
+        [];
+
+
+      window.BOCITEART_MODAL_CONTEXT =
+        null;
+
+
+      modal.classList.remove(
+        "open"
+      );
+
+
+      modal.setAttribute(
+        "aria-hidden",
+        "true"
+      );
+
+
+      if(
+        typeof lockScroll ===
+          "function"
+      ){
+
+        lockScroll(
+          false
+        );
+
+      }
+
+    };
+
+
+  const closeBtn =
+    $("xBtn");
+
+
+  if(
+    closeBtn
+  ){
+
+    closeBtn.onclick =
+      window.closeModal;
+
+  }
+
 }
 
 ensureModalHelpers();
