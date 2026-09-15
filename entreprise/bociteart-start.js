@@ -9655,7 +9655,7 @@ function appendHealthHelpSections(){
       margin-bottom:8px;
     "
   >
-    Bo’CitéArt va plus loin
+   <span style="white-space:nowrap;"><span style="color:#2f5d46;">Bo’Cité</span><span style="color:#b3282d;">Art</span></span> va plus loin
   </div>
 
   Cet abonnement ne se limite pas
