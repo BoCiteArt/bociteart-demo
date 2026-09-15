@@ -7451,7 +7451,82 @@ function appendHealthHelpSections(){
 
         </div>
 
+         <!-- =========================================
+     PROTECTION DES BOCITECOINS
+     ========================================= -->
 
+<div
+  class="box"
+  style="
+    background:#ffffff;
+    color:#111111;
+    font-size:14px;
+    font-weight:400;
+    line-height:1.5;
+  "
+>
+
+  <div
+    style="
+      color:#2f5d46;
+      font-size:17px;
+      font-weight:700;
+      margin-bottom:8px;
+    "
+  >
+    Un abonnement qui protège aussi vos bocitecoins
+  </div>
+
+  Cet abonnement ne sert pas uniquement
+  au Cercle de confiance.
+
+  <br><br>
+
+  Il protège également
+  les bocitecoins que vous avez gagnés
+  en permettant leur sauvegarde
+  et leur récupération
+  en cas de perte,
+  de panne
+  ou de changement de téléphone.
+
+  <br><br>
+
+  Sans cette protection,
+  les bocitecoins conservés uniquement
+  sur le téléphone
+  restent liés à cet appareil
+  et peuvent être perdus
+  s’il n’est plus accessible.
+
+  <br><br>
+
+  Pour quelques euros par mois,
+  l’abonnement réunit ainsi
+  deux services utiles :
+
+  <br><br>
+
+  <strong>
+    protéger ce que vous avez gagné
+    et disposer d’un petit espace d’aide
+    pour rester relié à des proches de confiance.
+  </strong>
+
+  <br><br>
+
+  Ce service peut être utile
+  pour un enfant,
+  une personne âgée,
+  une personne seule,
+  une personne fragile
+  ou simplement pour toute famille
+  souhaitant disposer
+  d’un moyen simple
+  pour rester en contact.
+
+</div>
+         
         <!-- =========================================
              EXEMPLE
              ========================================= -->
