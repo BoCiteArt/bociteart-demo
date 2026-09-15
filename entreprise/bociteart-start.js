@@ -10669,82 +10669,145 @@ function appendHealthHelpSections(){
      * et on ajoute les aides dessous.
      */
 
-  /* =====================================================
-     OUVERTURE DU VÉRITABLE ANNUAIRE
-     ===================================================== */
+ function openHealthHelp(){
 
-  function openHealthHelp(){
+  /*
+   * SANTÉ + AIDE EST UNE PORTE PRINCIPALE INDÉPENDANTE.
+   *
+   * On supprime tout ancien historique de modale
+   * et tout ancien contexte Commerce / Entreprise.
+   */
 
-    if(
-      !window.BociteMairieModule ||
-      typeof window.BociteMairieModule.openHealth
-        !== "function"
-    ){
+  if(
+    typeof window.closeModal ===
+      "function"
+  ){
 
-      if(
-        typeof window.openModal ===
-          "function"
-      ){
-
-        window.openModal(
-          "Annuaire santé + aide",
-          `
-
-            <div class="box">
-
-              <strong>
-                Annuaire santé momentanément indisponible
-              </strong>
-
-              <br><br>
-
-              Le moteur de l’annuaire
-              n’est pas encore chargé.
-
-            </div>
-
-          `
-        );
-
-      }
-
-
-      return;
-    }
-
-
-    /*
-     * Ouvre le moteur santé complet déjà existant :
-     * commune,
-     * recherche,
-     * professions,
-     * spécialités,
-     * fiches professionnelles.
-     */
-
-    window.BociteMairieModule
-      .openHealth();
-
-
-    /*
-     * Le module santé termine son affichage
-     * avant l'ajout des aides.
-     */
-
-    window.setTimeout(
-      appendHealthHelpSections,
-      180
-    );
-
-
-    window.setTimeout(
-      appendHealthHelpSections,
-      350
-    );
+    window.closeModal();
 
   }
 
 
+  if(
+    Array.isArray(
+      window.modalHistory
+    )
+  ){
+
+    window.modalHistory.length =
+      0;
+
+  }
+
+
+  window.currentModule =
+    "citizen_health_help";
+
+
+  window.currentEntrepriseScreen =
+    null;
+
+
+  if(
+    !window.BociteMairieModule ||
+    typeof window.BociteMairieModule
+      .openHealth !==
+      "function"
+  ){
+
+    if(
+      typeof window.openModal ===
+        "function"
+    ){
+
+      window.openModal(
+        "Annuaire santé + aide",
+        `
+
+          <div class="box">
+
+            <strong>
+              Annuaire santé momentanément indisponible
+            </strong>
+
+            <br><br>
+
+            Le moteur de l’annuaire
+            n’est pas encore chargé.
+
+          </div>
+
+        `,
+        {
+          noHistory:true
+        }
+      );
+
+    }
+
+
+    return;
+
+  }
+
+
+  window.BociteMairieModule
+    .openHealth();
+
+
+  /*
+   * Sécurité supplémentaire :
+   * aucun ancien bouton automatique
+   * Commerce / Entreprise ne doit rester.
+   */
+
+  const removeWrongBack =
+    function(){
+
+      document
+        .querySelectorAll(
+          '[data-bociteart-auto-back="1"]'
+        )
+        .forEach(
+          function(
+            button
+          ){
+
+            button.remove();
+
+          }
+        );
+
+    };
+
+
+  removeWrongBack();
+
+
+  window.setTimeout(
+    function(){
+
+      removeWrongBack();
+
+      appendHealthHelpSections();
+
+    },
+    180
+  );
+
+
+  window.setTimeout(
+    function(){
+
+      removeWrongBack();
+
+      appendHealthHelpSections();
+
+    },
+    350
+  );
+
+}
   /* =====================================================
      API PUBLIQUE
      ===================================================== */
