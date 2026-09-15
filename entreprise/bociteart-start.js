@@ -1633,8 +1633,14 @@ function openHealthHelp(){
   }
 
 
-  window.BociteMairieModule
-    .openHealth();
+  runCitizenHealthModalContext(
+  function(){
+
+    window.BociteMairieModule
+      .openHealth();
+
+  }
+);
 
 
   /*
