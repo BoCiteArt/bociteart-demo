@@ -10602,7 +10602,6 @@ function appendHealthHelpSections(){
     }
   );
 
-
   /* =====================================================
      TOUCHE ENTRÉE
      ===================================================== */
@@ -10622,7 +10621,6 @@ function appendHealthHelpSections(){
           id
         );
 
-
       if(
         !input
       ){
@@ -10630,7 +10628,6 @@ function appendHealthHelpSections(){
         return;
 
       }
-
 
       input.addEventListener(
         "keydown",
@@ -10661,58 +10658,12 @@ function appendHealthHelpSections(){
 
 }
 
-    /*
-     * Le moteur santé Mairie a déjà construit
-     * l'annuaire complet.
-     *
-     * On transforme seulement le titre
-     * et on ajoute les aides dessous.
-     */
-
  function openHealthHelp(){
-
-  /*
-   * SANTÉ + AIDE EST UNE PORTE PRINCIPALE INDÉPENDANTE.
-   *
-   * On supprime tout ancien historique de modale
-   * et tout ancien contexte Commerce / Entreprise.
-   */
-
-  if(
-    typeof window.closeModal ===
-      "function"
-  ){
-
-    window.closeModal();
-
-  }
-
-
-  if(
-    Array.isArray(
-      window.modalHistory
-    )
-  ){
-
-    window.modalHistory.length =
-      0;
-
-  }
-
-
-  window.currentModule =
-    "citizen_health_help";
-
-
-  window.currentEntrepriseScreen =
-    null;
-
 
   if(
     !window.BociteMairieModule ||
-    typeof window.BociteMairieModule
-      .openHealth !==
-      "function"
+    typeof window.BociteMairieModule.openHealth
+      !== "function"
   ){
 
     if(
@@ -10737,17 +10688,13 @@ function appendHealthHelpSections(){
 
           </div>
 
-        `,
-        {
-          noHistory:true
-        }
+        `
       );
 
     }
 
 
     return;
-
   }
 
 
@@ -10755,55 +10702,14 @@ function appendHealthHelpSections(){
     .openHealth();
 
 
-  /*
-   * Sécurité supplémentaire :
-   * aucun ancien bouton automatique
-   * Commerce / Entreprise ne doit rester.
-   */
-
-  const removeWrongBack =
-    function(){
-
-      document
-        .querySelectorAll(
-          '[data-bociteart-auto-back="1"]'
-        )
-        .forEach(
-          function(
-            button
-          ){
-
-            button.remove();
-
-          }
-        );
-
-    };
-
-
-  removeWrongBack();
-
-
   window.setTimeout(
-    function(){
-
-      removeWrongBack();
-
-      appendHealthHelpSections();
-
-    },
+    appendHealthHelpSections,
     180
   );
 
 
   window.setTimeout(
-    function(){
-
-      removeWrongBack();
-
-      appendHealthHelpSections();
-
-    },
+    appendHealthHelpSections,
     350
   );
 
