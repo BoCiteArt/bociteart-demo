@@ -7091,20 +7091,17 @@ function appendHealthHelpSections(){
 
   }
 
-
   modalBody.insertAdjacentHTML(
 
     "beforeend",
 
     `
-
       <div
         id="bociteHealthHelpSections"
         style="
           margin-top:20px;
         "
       >
-
 
         <!-- =========================================
              SÉPARATION ANNUAIRE → AIDES
@@ -7149,309 +7146,331 @@ function appendHealthHelpSections(){
         </div>
 
 
-        <!-- =========================================
-             PERSONNES SEULES OU FRAGILES
-             ========================================= -->
-
-        <div
-          style="
-            background:#ffffff;
-            border:1px solid #dedede;
-            border-radius:12px;
-            padding:16px;
-            margin:0 0 14px 0;
-          "
-        >
-
-          <div
-            style="
-              color:#2f5d46;
-              font-size:17px;
-              font-weight:700;
-              margin-bottom:8px;
-            "
-          >
-            Personnes seules ou fragiles
-          </div>
-
-
-          <div
-            style="
-              color:#111111;
-              font-size:14px;
-              font-weight:400;
-              line-height:1.55;
-            "
-          >
-
-            Retrouvez ici les contacts,
-            services
-            et aides de proximité
-            permettant de mieux orienter
-            une personne seule,
-            fragile
-            ou momentanément en difficulté.
-
-            <br><br>
-
-            Les informations locales
-            validées pour la commune
-            seront regroupées dans cet espace.
-
-
-            <div
-              id="bociteLocalHelpFragileData"
-              style="
-                margin-top:12px;
-              "
-            ></div>
-
-          </div>
-
-        </div>
-
-
-        <!-- =========================================
-             FAMILLES ET ENFANTS
-             ========================================= -->
-
-        <div
-          style="
-            background:#ffffff;
-            border:1px solid #dedede;
-            border-radius:12px;
-            padding:16px;
-            margin:0 0 14px 0;
-          "
-        >
-
-          <div
-            style="
-              color:#2f5d46;
-              font-size:17px;
-              font-weight:700;
-              margin-bottom:8px;
-            "
-          >
-            Familles et enfants
-          </div>
-
-
-          <div
-            style="
-              color:#111111;
-              font-size:14px;
-              font-weight:400;
-              line-height:1.55;
-            "
-          >
-
-            Retrouvez ici
-            les services,
-            repères
-            et contacts utiles
-            pour les familles
-            et les enfants.
-
-            <br><br>
-
-            <strong>
-              119 — Enfance en danger
-            </strong>
-
-
-            <div
-              id="bociteLocalHelpFamiliesData"
-              style="
-                margin-top:12px;
-              "
-            ></div>
-
-          </div>
-
-        </div>
-
-
-        <!-- =========================================
-             URGENCES ET CONTACTS ESSENTIELS
-             ========================================= -->
-
-        <div
-          style="
-            background:#ffffff;
-            border:1px solid #dedede;
-            border-radius:12px;
-            padding:16px;
-            margin:0 0 14px 0;
-          "
-        >
-
-          <div
-            style="
-              color:#2f5d46;
-              font-size:17px;
-              font-weight:700;
-              margin-bottom:8px;
-            "
-          >
-            Urgences et contacts essentiels
-          </div>
-
-
-          <div
-            style="
-              color:#111111;
-              font-size:14px;
-              font-weight:400;
-              line-height:1.55;
-            "
-          >
-
-            <strong>
-              112 — Urgence
-            </strong>
-
-            <br><br>
-
-            <strong>
-              119 — Enfance en danger
-            </strong>
-
-            <br><br>
-
-            <strong>
-              3919 — Violences faites aux femmes
-            </strong>
-
-            <br>
-
-            Information et orientation.
-
-
-            <div
-              id="bociteLocalHelpContactsData"
-              style="
-                margin-top:12px;
-              "
-            ></div>
-
-          </div>
-
-        </div>
-
-
-        <!-- =========================================
-             RÔLE DE BO'CITÉART
-             ========================================= -->
-
-        <div
-          style="
-            background:#ffffff;
-            border:1px solid #dedede;
-            border-radius:12px;
-            padding:16px;
-            margin:0;
-          "
-        >
-
-          <div
-            style="
-              color:#2f5d46;
-              font-size:17px;
-              font-weight:700;
-              margin-bottom:8px;
-            "
-          >
-            Retrouver la bonne porte
-          </div>
-
-
-          <div
-            style="
-              color:#111111;
-              font-size:14px;
-              font-weight:400;
-              line-height:1.55;
-            "
-          >
-
-            Bo’CitéArt aide à retrouver
-            rapidement un professionnel,
-            un service
-            ou un interlocuteur utile.
-
-            <br><br>
-
-            Bo’CitéArt ne remplace
-            ni les médecins,
-            ni les services d’urgence,
-            ni les travailleurs sociaux,
-            ni les organismes compétents.
-
-          </div>
-
-        </div>
-
-
-        <!-- =========================================
-             CERCLE DE CONFIANCE
-             ========================================= -->
-
-        <div
-          style="
-            margin:24px 0 18px 0;
-            padding:14px 12px;
-            border-top:3px solid #2f5d46;
-            border-bottom:3px solid #2f5d46;
-            text-align:center;
-            color:#2f5d46;
-            font-size:17px;
-            font-weight:700;
-            line-height:1.3;
-          "
-        >
-          Cercle de confiance et aide entre proches
-        </div>
-
-
-        <!-- =========================================
-             PRÉSENTATION
-             ========================================= -->
-
-        <div
-          class="box"
-          style="
-            background:#ffffff;
-            color:#111111;
-            font-size:14px;
-            font-weight:400;
-            line-height:1.5;
-          "
-        >
-
-          <div
-            style="
-              color:#2f5d46;
-              font-size:17px;
-              font-weight:700;
-              margin-bottom:8px;
-            "
-          >
-            Cercle de confiance
-          </div>
-
-          L’abonné choisit les personnes
-          qu’il souhaite pouvoir prévenir
-          et leurs numéros de téléphone.
-
-          <br><br>
-
-          Deux contacts de confiance
-          sont inclus dans la première formule.
-
-        </div>
-
-         <!-- =========================================
+     <!-- =========================================
+     AIDES DE PROXIMITÉ — BLOC UNIQUE
+     ========================================= -->
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #dedede;
+    border-radius:12px;
+    overflow:hidden;
+    margin:0 0 14px 0;
+  "
+>
+
+
+ <!-- =========================================
+     AIDES DE PROXIMITÉ — BLOC UNIQUE
+     ========================================= -->
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #dedede;
+    border-radius:12px;
+    overflow:hidden;
+    margin:0 0 14px 0;
+  "
+>
+
+
+  <!-- =======================================
+       PERSONNES SEULES OU FRAGILES
+       ======================================= -->
+
+  <div
+    style="
+      padding:16px;
+    "
+  >
+
+    <div
+      style="
+        color:#2f5d46;
+        font-size:17px;
+        font-weight:700;
+        margin-bottom:8px;
+      "
+    >
+      Personnes seules ou fragiles
+    </div>
+
+    <div
+      style="
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.55;
+      "
+    >
+
+      Retrouvez ici les contacts,
+      services
+      et aides de proximité
+      permettant de mieux orienter
+      une personne seule,
+      fragile
+      ou momentanément en difficulté.
+
+      <br><br>
+
+      Les informations locales
+      validées pour la commune
+      seront regroupées dans cet espace.
+
+      <div
+        id="bociteLocalHelpFragileData"
+        style="
+          margin-top:12px;
+        "
+      ></div>
+
+    </div>
+
+  </div>
+
+
+  <div
+    style="
+      height:1px;
+      background:#dedede;
+      margin:0 16px;
+    "
+  ></div>
+
+
+  <!-- =======================================
+       FAMILLES ET ENFANTS
+       ======================================= -->
+
+  <div
+    style="
+      padding:16px;
+    "
+  >
+
+    <div
+      style="
+        color:#2f5d46;
+        font-size:17px;
+        font-weight:700;
+        margin-bottom:8px;
+      "
+    >
+      Familles et enfants
+    </div>
+
+    <div
+      style="
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.55;
+      "
+    >
+
+      Retrouvez ici
+      les services,
+      repères
+      et contacts utiles
+      pour les familles
+      et les enfants.
+
+      <div
+        id="bociteLocalHelpFamiliesData"
+        style="
+          margin-top:12px;
+        "
+      ></div>
+
+    </div>
+
+  </div>
+
+
+  <div
+    style="
+      height:1px;
+      background:#dedede;
+      margin:0 16px;
+    "
+  ></div>
+
+
+  <!-- =======================================
+       URGENCES ET CONTACTS ESSENTIELS
+       ======================================= -->
+
+  <div
+    style="
+      padding:16px;
+    "
+  >
+
+    <div
+      style="
+        color:#2f5d46;
+        font-size:17px;
+        font-weight:700;
+        margin-bottom:12px;
+      "
+    >
+      Urgences et contacts essentiels
+    </div>
+
+    <div
+      style="
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.55;
+      "
+    >
+
+      <strong>
+        112 — Urgence
+      </strong>
+
+      <br><br>
+
+      <strong>
+        119 — Enfance en danger
+      </strong>
+
+      <br><br>
+
+      <strong>
+        3919 — Violences faites aux femmes
+      </strong>
+
+      <br>
+
+      Information et orientation.
+
+      <div
+        id="bociteLocalHelpContactsData"
+        style="
+          margin-top:12px;
+        "
+      ></div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- =========================================
+     RÔLE DE BO'CITÉART
+     ========================================= -->
+
+<div
+  style="
+    background:#ffffff;
+    border:1px solid #dedede;
+    border-radius:12px;
+    padding:16px;
+    margin:0;
+  "
+>
+
+  <div
+    style="
+      color:#2f5d46;
+      font-size:17px;
+      font-weight:700;
+      margin-bottom:8px;
+    "
+  >
+    Retrouver la bonne porte
+  </div>
+
+  <div
+    style="
+      color:#111111;
+      font-size:14px;
+      font-weight:400;
+      line-height:1.55;
+    "
+  >
+
+    Bo’CitéArt aide à retrouver
+    rapidement un professionnel,
+    un service
+    ou un interlocuteur utile.
+
+    <br><br>
+
+    Bo’CitéArt ne remplace
+    ni les médecins,
+    ni les services d’urgence,
+    ni les travailleurs sociaux,
+    ni les organismes compétents.
+
+  </div>
+
+</div>
+
+
+<!-- =========================================
+     CERCLE DE CONFIANCE
+     ========================================= -->
+
+<div
+  style="
+    margin:24px 0 18px 0;
+    padding:14px 12px;
+    border-top:3px solid #2f5d46;
+    border-bottom:3px solid #2f5d46;
+    text-align:center;
+    color:#2f5d46;
+    font-size:17px;
+    font-weight:700;
+    line-height:1.3;
+  "
+>
+  Cercle de confiance et aide entre proches
+</div>
+
+
+<div
+  class="box"
+  style="
+    background:#ffffff;
+    color:#111111;
+    font-size:14px;
+    font-weight:400;
+    line-height:1.5;
+  "
+>
+
+  <div
+    style="
+      color:#2f5d46;
+      font-size:17px;
+      font-weight:700;
+      margin-bottom:8px;
+    "
+  >
+    Cercle de confiance
+  </div>
+
+  L’abonné choisit les personnes
+  qu’il souhaite pouvoir prévenir
+  et leurs numéros de téléphone.
+
+  <br><br>
+
+  Deux contacts de confiance
+  sont inclus dans la première formule.
+
+</div>
+
+
+<!-- =========================================
      PROTECTION DES BOCITECOINS
      ========================================= -->
 
@@ -7474,63 +7493,68 @@ function appendHealthHelpSections(){
       margin-bottom:8px;
     "
   >
-    Un abonnement qui protège aussi vos bocitecoins
+    Protéger aussi vos bocitecoins
   </div>
 
-  Cet abonnement ne sert pas uniquement
+  L’abonnement ne sert pas uniquement
   au Cercle de confiance.
 
   <br><br>
 
-  Il protège également
-  les bocitecoins que vous avez gagnés
-  en permettant leur sauvegarde
-  et leur récupération
+  Il permet également de sauvegarder
+  les bocitecoins gagnés
+  afin de pouvoir les retrouver
   en cas de perte,
   de panne
   ou de changement de téléphone.
 
   <br><br>
 
-  Sans cette protection,
-  les bocitecoins conservés uniquement
-  sur le téléphone
-  restent liés à cet appareil
-  et peuvent être perdus
-  s’il n’est plus accessible.
+  Sans abonnement,
+  les bocitecoins restent conservés
+  sur l’appareil.
+  Si celui-ci devient inaccessible,
+  ils peuvent être perdus.
 
   <br><br>
 
-  Pour quelques euros par mois,
-  l’abonnement réunit ainsi
-  deux services utiles :
+  L’abonnement apporte donc
+  une protection supplémentaire
+  pour ce que vous avez gagné,
+  tout en donnant accès
+  à ce petit service d’aide
+  entre proches.
 
   <br><br>
 
   <strong>
-    protéger ce que vous avez gagné
-    et disposer d’un petit espace d’aide
-    pour rester relié à des proches de confiance.
+    Pour quelques euros par mois,
+    vous protégez vos bocitecoins
+    et vous disposez également
+    d’un moyen simple
+    pour rester relié
+    aux personnes de confiance
+    que vous avez choisies.
   </strong>
 
   <br><br>
 
-  Ce service peut être utile
-  pour un enfant,
+  Cette fonction peut accompagner
+  un enfant,
   une personne âgée,
   une personne seule,
   une personne fragile
-  ou simplement pour toute famille
-  souhaitant disposer
-  d’un moyen simple
-  pour rester en contact.
+  ou simplement une famille
+  qui souhaite conserver
+  un lien supplémentaire
+  entre ses proches.
 
 </div>
-         
-        <!-- =========================================
-             EXEMPLE
-             ========================================= -->
 
+<!-- =========================================
+     EXEMPLE
+     ========================================= -->
+      
         <div
           class="box"
           style="
