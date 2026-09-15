@@ -6727,10 +6727,8 @@ window.setTimeout(
     return;
   }
 
-
   window.__bociteHealthHelpShortcutV1 =
     true;
-
 
   /* =====================================================
      AJOUT DES AIDES SOUS L'ANNUAIRE SANTÉ
@@ -6888,7 +6886,6 @@ window.BociteCitizenSecurePayment =
 
     }
 
-
     try{
 
       const serviceLabel =
@@ -6902,7 +6899,6 @@ window.BociteCitizenSecurePayment =
             ? "Cercle de confiance Bo'CitéArt — jusqu'à 5 contacts"
 
             : "Cercle de confiance Bo'CitéArt — jusqu'à 10 contacts";
-
 
       const order =
         financialModule
@@ -7281,7 +7277,6 @@ function appendHealthHelpSections(){
     "
   ></div>
 
-
   <!-- =======================================
        URGENCES ET CONTACTS ESSENTIELS
        ======================================= -->
@@ -7396,7 +7391,6 @@ function appendHealthHelpSections(){
   </div>
 
 </div>
-
 
 <!-- =========================================
      CERCLE DE CONFIANCE
@@ -7537,102 +7531,137 @@ function appendHealthHelpSections(){
 <!-- =========================================
      EXEMPLE
      ========================================= -->
-      
-        <div
-          class="box"
-          style="
-            background:#ffffff;
-            color:#111111;
-            font-size:14px;
-            font-weight:400;
-            line-height:1.5;
-          "
-        >
 
-          <div
-            style="
-              color:#2f5d46;
-              font-size:17px;
-              font-weight:700;
-              margin-bottom:8px;
-            "
-          >
-            Exemple simple
-          </div>
+<div
+  class="box"
+  style="
+    background:#ffffff;
+    color:#111111;
+    font-size:14px;
+    font-weight:400;
+    line-height:1.5;
+  "
+>
 
-          Jean active l’option
-          pour sa mère.
+  <div
+    style="
+      color:#2f5d46;
+      font-size:17px;
+      font-weight:700;
+      margin-bottom:8px;
+    "
+  >
+    Un exemple concret
+  </div>
 
-          <br><br>
+  Jean souscrit à l’option
+  pour aider sa mère
+  et indique son propre numéro
+  comme contact de confiance.
 
-          Sur le téléphone de sa mère,
-          il enregistre un contact clair :
+  <br><br>
 
-          <br><br>
+  Sa mère n’a pas besoin
+  d’installer Bo’CitéArt.
 
-          <strong>
-            Bo’CitéArt — appeler Jean
-          </strong>
+  <br><br>
 
-          <br><br>
+  Si elle demande
+  à être rappelée
+  ou indique qu’elle a besoin d’aide,
+  Jean reçoit l’information
+  et peut la contacter directement.
 
-          avec le numéro de téléphone
-          de Jean.
+  <br><br>
 
-          <br><br>
+  Le même principe peut servir
+  pour un parent,
+  un enfant,
+  une personne âgée,
+  une personne seule
+  ou toute personne
+  que l’on souhaite pouvoir
+  accompagner simplement.
 
-          Sa mère n’a pas besoin
-          de télécharger l’application.
-
-        </div>
+</div>
 
 
-        <!-- =========================================
-             VEILLE VOLONTAIRE
-             ========================================= -->
+<!-- =========================================
+     VEILLE VOLONTAIRE
+     ========================================= -->
 
-        <div
-          class="box"
-          style="
-            background:#ffffff;
-            color:#111111;
-            font-size:14px;
-            font-weight:400;
-            line-height:1.5;
-          "
-        >
+<div
+  class="box"
+  style="
+    background:#ffffff;
+    color:#111111;
+    font-size:14px;
+    font-weight:400;
+    line-height:1.5;
+  "
+>
 
-          <div
-            style="
-              color:#2f5d46;
-              font-size:17px;
-              font-weight:700;
-              margin-bottom:8px;
-            "
-          >
-            Veille volontaire par message
-          </div>
+  <div
+    style="
+      color:#2f5d46;
+      font-size:17px;
+      font-weight:700;
+      margin-bottom:8px;
+    "
+  >
+    Un message simple pour garder le lien
+  </div>
 
-          Si la personne l’accepte,
-          un message peut être envoyé
-          à l’heure choisie :
+  Avec l’accord de la personne concernée,
+  un message peut lui être envoyé
+  à l’heure choisie.
 
-          <br><br>
+  <br><br>
 
-          « Tout va bien aujourd’hui ? »
+  <strong>
+    « Tout va bien aujourd’hui ? »
+  </strong>
 
-          <br><br>
+  <br><br>
 
-          Réponse simple :
+  Elle répond simplement :
 
-          <br>
+  <br><br>
 
-          Tout va bien /
-          Rappelez-moi /
-          Besoin d’aide.
+  <strong>
+    Tout va bien
+  </strong>
 
-        </div>
+  <br>
 
+  ou
+
+  <br>
+
+  <strong>
+    Rappelez-moi
+  </strong>
+
+  <br>
+
+  ou
+
+  <br>
+
+  <strong>
+    Besoin d’aide
+  </strong>
+
+  <br><br>
+
+  Lorsqu’elle demande
+  à être rappelée
+  ou signale un besoin d’aide,
+  le contact de confiance prévu
+  peut immédiatement savoir
+  qu’il doit reprendre contact avec elle.
+
+</div>
 
         <!-- =========================================
              OFFRES
