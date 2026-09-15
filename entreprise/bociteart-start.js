@@ -7145,22 +7145,6 @@ function appendHealthHelpSections(){
           Informations locales en cours de raccordement.
         </div>
 
-
-     <!-- =========================================
-     AIDES DE PROXIMITÉ — BLOC UNIQUE
-     ========================================= -->
-
-<div
-  style="
-    background:#ffffff;
-    border:1px solid #dedede;
-    border-radius:12px;
-    overflow:hidden;
-    margin:0 0 14px 0;
-  "
->
-
-
  <!-- =========================================
      AIDES DE PROXIMITÉ — BLOC UNIQUE
      ========================================= -->
@@ -7174,7 +7158,6 @@ function appendHealthHelpSections(){
     margin:0 0 14px 0;
   "
 >
-
 
   <!-- =======================================
        PERSONNES SEULES OU FRAGILES
