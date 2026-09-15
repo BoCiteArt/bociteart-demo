@@ -7332,7 +7332,153 @@ function escapeCitizenContactValue(
 
 }
 
+/* =====================================================
+   ÇA COMMENCE ICI
+   MODALES CITOYEN — INDÉPENDANTES D'ENTREPRISE
+   ===================================================== */
 
+function runCitizenHealthModalContext(
+  callback
+){
+
+  const previousModule =
+    window.currentModule;
+
+
+  const previousEntrepriseScreen =
+    window.currentEntrepriseScreen;
+
+
+  /*
+   * L'annuaire Santé + aide
+   * est indépendant de l'espace Entreprise.
+   *
+   * On vide aussi l'ancien historique
+   * de la modale afin qu'un ancien écran
+   * Commerce ne puisse jamais devenir
+   * le bouton Retour de cet espace.
+   */
+
+  if(
+    Array.isArray(
+      window.modalHistory
+    )
+  ){
+
+    window.modalHistory.length =
+      0;
+
+  }
+
+
+  window.currentModule =
+    "citizen_health_help";
+
+
+  window.currentEntrepriseScreen =
+    null;
+
+
+  try{
+
+    return callback();
+
+  }
+  finally{
+
+    window.currentModule =
+      previousModule;
+
+
+    window.currentEntrepriseScreen =
+      previousEntrepriseScreen;
+
+  }
+
+}
+
+
+function openCitizenHealthModal(
+  title,
+  html
+){
+
+  if(
+    typeof window.openModal !==
+      "function"
+  ){
+
+    return false;
+
+  }
+
+
+  runCitizenHealthModalContext(
+    function(){
+
+      window.openModal(
+        title,
+        html,
+        {
+          noHistory:true
+        }
+      );
+
+    }
+  );
+
+
+  return true;
+
+}
+
+
+function returnToCitizenHealthHelp(){
+
+  /*
+   * On ferme d'abord proprement
+   * la sous-page protégée.
+   *
+   * closeModal efface également
+   * l'ancien historique de navigation.
+   */
+
+  if(
+    typeof window.closeModal ===
+      "function"
+  ){
+
+    window.closeModal();
+
+  }
+  else if(
+    Array.isArray(
+      window.modalHistory
+    )
+  ){
+
+    window.modalHistory.length =
+      0;
+
+  }
+
+
+  window.setTimeout(
+    function(){
+
+      openHealthHelp();
+
+    },
+    0
+  );
+
+}
+
+/* =====================================================
+   ÇA FINIT ICI
+   MODALES CITOYEN — INDÉPENDANTES D'ENTREPRISE
+   ===================================================== */
+   
 function openCitizenTrustedContacts(){
 
   const subscription =
@@ -7541,12 +7687,10 @@ function openCitizenTrustedContacts(){
 
   }
 
-
-  window.openModal(
-    "Mes contacts de confiance",
-    html
-  );
-
+  openCitizenHealthModal(
+  "Mes contacts de confiance",
+  html
+);
 
   window.setTimeout(
     function(){
@@ -8377,12 +8521,10 @@ function openCitizenPasswordCreation(
 
   `;
 
-
-  window.openModal(
-    "Sécuriser mon abonnement",
-    html
-  );
-
+ openCitizenHealthModal(
+  "Sécuriser mon abonnement",
+  html
+);
 
   window.setTimeout(
     function(){
@@ -8627,12 +8769,10 @@ function openCitizenPasswordVerification(
 
   `;
 
-
-  window.openModal(
-    "Mon espace protégé",
-    html
-  );
-
+ openCitizenHealthModal(
+  "Mon espace protégé",
+  html
+);
 
   window.setTimeout(
     function(){
@@ -9119,17 +9259,24 @@ function renderCitizenSubscriptionAccess(){
         font-weight:700;
       "
     >
-      ${
+   ${
+  !getCitizenSecurity(
+    subscription
+  )
+
+    ? "Créer mon mot de passe et sécuriser mon espace"
+
+    : (
         filledCount > 0
 
           ? "Modifier mes contacts de confiance"
 
           : "Configurer mes contacts de confiance"
-      }
+      )
+}
     </button>
 
   `;
-
 
   if(
     planRadio
@@ -9180,10 +9327,14 @@ function renderCitizenSubscriptionAccess(){
     manageButton
   ){
 
-    manageButton.onclick =
-      openCitizenTrustedContacts;
+ manageButton.onclick =
+  function(){
 
-  }
+    openCitizenSecureAccess(
+      openCitizenTrustedContacts
+    );
+
+  };
 
 }
 
@@ -10087,7 +10238,7 @@ function appendHealthHelpSections(){
 
   );
 
-
+  renderCitizenSubscriptionAccess();
   /* =====================================================
      AIDES LOCALES — COMMUNE ACTIVE
      ===================================================== */
