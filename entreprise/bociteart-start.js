@@ -7034,6 +7034,12 @@ window.BociteCitizenSecurePayment =
    ===================================================== */
    
   function appendHealthHelpSections(){
+     modalBody.insertAdjacentHTML(
+  "beforeend",
+  `
+  ...
+  `
+);
 
     const modalTitle =
       document.getElementById(
@@ -7052,6 +7058,259 @@ window.BociteCitizenSecurePayment =
       !modalBody
     ){
       return;
+      /* =====================================================
+   AIDES LOCALES — COMMUNE ACTIVE
+   ===================================================== */
+
+async function refreshLocalHelp(){
+
+  const communeInput =
+    document.getElementById(
+      "mairieHealthCommuneInput"
+    );
+
+  const status =
+    document.getElementById(
+      "bociteLocalHelpStatus"
+    );
+
+
+  const commune =
+    String(
+      communeInput
+        ? communeInput.value
+        : ""
+    ).trim();
+
+
+  if(
+    !commune
+  ){
+
+    if(status){
+      status.textContent =
+        "Choisissez une commune pour afficher les aides locales.";
+    }
+
+    return;
+  }
+
+
+  if(status){
+
+    status.textContent =
+      "Aides locales de " +
+      commune +
+      " — recherche des informations disponibles…";
+
+  }
+
+
+  const api =
+    window.BociteLocalHelpAPI;
+
+
+  if(
+    !api ||
+    typeof api.load !==
+      "function"
+  ){
+
+    if(status){
+
+      status.textContent =
+        "Aides locales de " +
+        commune +
+        " — raccordement en cours.";
+
+    }
+
+    return;
+  }
+
+
+  const response =
+    await api.load({
+      commune:commune
+    });
+
+
+  if(
+    !response ||
+    response.connected !== true
+  ){
+
+    if(status){
+
+      status.textContent =
+        "Aides locales de " +
+        commune +
+        " — raccordement en cours.";
+
+    }
+
+    return;
+  }
+
+
+  if(status){
+
+    status.textContent =
+      "Aides locales de " +
+      commune +
+      " — informations disponibles.";
+
+  }
+
+
+  function renderRows(
+    elementId,
+    rows
+  ){
+
+    const container =
+      document.getElementById(
+        elementId
+      );
+
+
+    if(
+      !container
+    ){
+      return;
+    }
+
+
+    container.innerHTML =
+      "";
+
+
+    if(
+      !Array.isArray(rows) ||
+      !rows.length
+    ){
+      return;
+    }
+
+
+    rows.forEach(
+      function(item){
+
+        const line =
+          document.createElement(
+            "div"
+          );
+
+
+        line.style.marginTop =
+          "8px";
+
+        line.style.padding =
+          "10px";
+
+        line.style.border =
+          "1px solid #e1e1e1";
+
+        line.style.borderRadius =
+          "8px";
+
+        line.style.background =
+          "#ffffff";
+
+
+        if(
+          typeof item ===
+          "string"
+        ){
+
+          line.textContent =
+            item;
+
+        }else{
+
+          line.textContent =
+            [
+
+              item.name,
+              item.title,
+              item.label,
+              item.phone,
+              item.address
+
+            ]
+
+            .filter(Boolean)
+
+            .join(" — ");
+
+        }
+
+
+        container.appendChild(
+          line
+        );
+
+      }
+    );
+
+  }
+
+
+  renderRows(
+    "bociteLocalHelpFragileData",
+    response.fragile
+  );
+
+
+  renderRows(
+    "bociteLocalHelpFamiliesData",
+    response.families
+  );
+
+
+  renderRows(
+    "bociteLocalHelpContactsData",
+    response.usefulContacts
+  );
+
+}
+
+
+refreshLocalHelp();
+
+
+[
+  "mairieHealthSearchBtn",
+  "mairieHealthOpenCommuneBtn",
+  "mairieHealthOwnCommuneBtn"
+]
+.forEach(
+  function(id){
+
+    const button =
+      document.getElementById(
+        id
+      );
+
+
+    if(button){
+
+      button.addEventListener(
+        "click",
+        function(){
+
+          window.setTimeout(
+            refreshLocalHelp,
+            50
+          );
+
+        }
+      );
+
+    }
+
+  }
+); 
     }
 
 
@@ -7106,6 +7365,23 @@ window.BociteCitizenSecurePayment =
           >
             Aides de proximité et contacts utiles
           </div>
+<div
+  id="bociteLocalHelpStatus"
+  style="
+    margin:0 0 14px 0;
+    padding:10px 12px;
+    background:#ffffff;
+    border:1px solid #dedede;
+    border-radius:10px;
+    color:#111111;
+    font-size:14px;
+    font-weight:400;
+    line-height:1.5;
+  "
+>
+  Informations locales en cours de raccordement.
+</div>
+          
 
 
           <!-- =========================================
@@ -7156,6 +7432,10 @@ window.BociteCitizenSecurePayment =
               Les informations locales
               validées pour la commune
               seront regroupées dans cet espace.
+              <div
+  id="bociteLocalHelpFragileData"
+  style="margin-top:12px;"
+   ></div>
 
             </div>
 
@@ -7208,6 +7488,10 @@ window.BociteCitizenSecurePayment =
 
               <strong>
                 119 — Enfance en danger
+               <div
+  id="bociteLocalHelpFamiliesData"
+  style="margin-top:12px;"
+></div>
               </strong>
 
             </div>
@@ -7269,6 +7553,10 @@ window.BociteCitizenSecurePayment =
               <br>
 
               Information et orientation.
+              <div
+  id="bociteLocalHelpContactsData"
+  style="margin-top:12px;"
+></div>
 
             </div>
 
