@@ -1565,689 +1565,6 @@ function injectProfileCard(){
 }
 
 /* =====================================================
-   ANNUAIRE SANTÉ + AIDE
-   PORTE PUBLIQUE INDÉPENDANTE
-   ===================================================== */
-
-function openHealthHelp(){
-
-  /*
-   * On réutilise le véritable moteur
-   * d'annuaire déjà présent dans
-   * le module Mairie.
-   *
-   * Aucune donnée professionnelle
-   * fictive n'est créée ici.
-   */
-
-  if(
-    !window.BociteMairieModule ||
-    typeof window.BociteMairieModule
-      .openHealth !==
-      "function"
-  ){
-
-    if(
-      typeof window.openModal ===
-        "function"
-    ){
-
-      window.openModal(
-        "Annuaire santé + aide",
-        `
-
-          <div
-            class="box"
-            style="
-              background:#ffffff;
-              color:#111111;
-              font-size:14px;
-              font-weight:400;
-              line-height:1.55;
-            "
-          >
-
-            <div
-              style="
-                color:#2f5d46;
-                font-size:17px;
-                font-weight:700;
-                margin-bottom:8px;
-              "
-            >
-              Annuaire santé
-            </div>
-
-            L’annuaire santé
-            est momentanément indisponible.
-
-          </div>
-
-        `
-      );
-
-    }
-
-
-    return;
-  }
-
-
-  runCitizenHealthModalContext(
-  function(){
-
-    window.BociteMairieModule
-      .openHealth();
-
-  }
-);
-
-
-  /*
-   * Le module Mairie construit d'abord
-   * le véritable annuaire.
-   *
-   * Nous ajoutons ensuite les aides
-   * sous l'annuaire sans toucher
-   * à son moteur.
-   */
-
-  const completeHealthHelp =
-    function(){
-
-      const modalTitle =
-        document.getElementById(
-          "modalTitle"
-        );
-
-
-      const modalBody =
-        document.getElementById(
-          "modalBody"
-        );
-
-
-      if(
-        !modalTitle ||
-        !modalBody
-      ){
-
-        return;
-      }
-
-
-      modalTitle.textContent =
-        "Annuaire santé + aide";
-
-
-      if(
-        document.getElementById(
-          "bociteHealthHelpSections"
-        )
-      ){
-
-        return;
-      }
-
-
-      modalBody.insertAdjacentHTML(
-        "beforeend",
-        `
-
-          <div
-            id="bociteHealthHelpSections"
-            style="
-              margin-top:18px;
-            "
-          >
-
-
-            <!-- =========================================
-                 PERSONNES SEULES OU FRAGILES
-                 ========================================= -->
-
-            <div
-              style="
-                background:#ffffff;
-                border:1px solid #dedede;
-                border-radius:12px;
-                padding:16px;
-                margin:0 0 14px 0;
-              "
-            >
-
-              <div
-                style="
-                  color:#2f5d46;
-                  font-size:17px;
-                  font-weight:700;
-                  line-height:1.35;
-                  margin-bottom:8px;
-                "
-              >
-                Personnes seules ou fragiles
-              </div>
-
-              <div
-                style="
-                  color:#111111;
-                  font-size:14px;
-                  font-weight:400;
-                  line-height:1.55;
-                "
-              >
-
-                Une personne en difficulté
-                ne doit pas rester seule
-                simplement parce qu’elle
-                ne sait pas vers quelle porte
-                se tourner.
-
-                <br><br>
-
-                Bo’CitéArt rassemble progressivement
-                les contacts et services utiles
-                permettant de retrouver
-                un proche,
-                une personne de confiance,
-                un organisme
-                ou un interlocuteur adapté.
-
-                <br><br>
-
-                Les informations locales
-                validées pour la commune
-                seront regroupées ici.
-
-              </div>
-
-            </div>
-
-
-            <!-- =========================================
-                 FAMILLES ET ENFANTS
-                 ========================================= -->
-
-            <div
-              style="
-                background:#ffffff;
-                border:1px solid #dedede;
-                border-radius:12px;
-                padding:16px;
-                margin:0 0 14px 0;
-              "
-            >
-
-              <div
-                style="
-                  color:#2f5d46;
-                  font-size:17px;
-                  font-weight:700;
-                  line-height:1.35;
-                  margin-bottom:8px;
-                "
-              >
-                Familles et enfants
-              </div>
-
-              <div
-                style="
-                  color:#111111;
-                  font-size:14px;
-                  font-weight:400;
-                  line-height:1.55;
-                "
-              >
-
-                Retrouvez ici
-                les repères,
-                services
-                et contacts utiles
-                pour les familles
-                et les enfants.
-
-                <br><br>
-
-                119 — Enfance en danger
-
-                <br><br>
-
-                Les aides
-                et interlocuteurs locaux
-                validés pour la commune
-                seront également regroupés ici.
-
-              </div>
-
-            </div>
-
-
-            <!-- =========================================
-                 URGENCES ET CONTACTS ESSENTIELS
-                 ========================================= -->
-
-            <div
-              style="
-                background:#ffffff;
-                border:1px solid #dedede;
-                border-radius:12px;
-                padding:16px;
-                margin:0 0 14px 0;
-              "
-            >
-
-              <div
-                style="
-                  color:#2f5d46;
-                  font-size:17px;
-                  font-weight:700;
-                  line-height:1.35;
-                  margin-bottom:8px;
-                "
-              >
-                Urgences et contacts essentiels
-              </div>
-
-              <div
-                style="
-                  color:#111111;
-                  font-size:14px;
-                  font-weight:400;
-                  line-height:1.55;
-                "
-              >
-
-                112 — Urgence
-
-                <br><br>
-
-                119 — Enfance en danger
-
-                <br><br>
-
-                3919 — Violences faites aux femmes,
-                information et orientation
-
-                <br><br>
-
-                En situation d’urgence,
-                utilisez directement
-                le service compétent.
-
-              </div>
-
-            </div>
-
-
-            <!-- =========================================
-                 RÔLE DE BO'CITÉART
-                 ========================================= -->
-
-            <div
-              style="
-                background:#ffffff;
-                border:1px solid #dedede;
-                border-radius:12px;
-                padding:16px;
-                margin:0;
-              "
-            >
-
-              <div
-                style="
-                  color:#2f5d46;
-                  font-size:17px;
-                  font-weight:700;
-                  line-height:1.35;
-                  margin-bottom:8px;
-                "
-              >
-                Retrouver la bonne porte
-              </div>
-
-              <div
-                style="
-                  color:#111111;
-                  font-size:14px;
-                  font-weight:400;
-                  line-height:1.55;
-                "
-              >
-
-                Bo’CitéArt aide à retrouver
-                rapidement un professionnel,
-                un service
-                ou un interlocuteur utile.
-
-                <br><br>
-
-                Bo’CitéArt ne remplace
-                ni les médecins,
-                ni les services d’urgence,
-                ni les travailleurs sociaux,
-                ni les organismes compétents.
-
-              </div>
-
-            </div>
-
-
-          </div>
-
-        `
-      );
-
-      /* =====================================================
-   ÇA COMMENCE ICI — PAIEMENT CERCLE DE CONFIANCE
-   ===================================================== */
-
-const paymentButton =
-  document.getElementById(
-    "secureContinuePaymentBtn"
-  );
-
-
-if(
-  paymentButton
-){
-
-  paymentButton.onclick =
-    function(){
-
-      const acceptance =
-        document.getElementById(
-          "secureAccept"
-        );
-
-
-      const plan =
-        document.querySelector(
-          'input[name="securePlan"]:checked'
-        );
-
-
-      if(
-        !acceptance ||
-        !acceptance.checked
-      ){
-
-        alert(
-          "Veuillez accepter le cadre du service avant de continuer."
-        );
-
-        return;
-      }
-
-
-      if(
-        !plan
-      ){
-
-        alert(
-          "Choisissez une formule."
-        );
-
-        return;
-      }
-
-
-      const contacts =
-        Number(
-          plan.getAttribute(
-            "data-contacts"
-          ) || 0
-        );
-
-
-      /*
-       * TARIFS OFFICIELS TTC
-       * On ne fait pas confiance
-       * à la valeur HTML du bouton radio.
-       */
-
-      const PLAN_PRICES_TTC = {
-
-        2:
-          2.99,
-
-        5:
-          3.99,
-
-        10:
-          5.00
-
-      };
-
-
-      const amountTTC =
-        PLAN_PRICES_TTC[
-          contacts
-        ];
-
-
-      if(
-        !Number.isFinite(
-          amountTTC
-        )
-      ){
-
-        alert(
-          "La formule sélectionnée n'est pas reconnue."
-        );
-
-        return;
-      }
-
-
-      const vatRate =
-        20;
-
-
-      const amountHT =
-        Math.round(
-          (
-            amountTTC /
-            (
-              1 +
-              vatRate / 100
-            )
-          ) *
-          1000000
-        ) /
-        1000000;
-
-
-      const financialModule =
-        window.BociteEntreprise;
-
-
-      if(
-        !financialModule ||
-        typeof financialModule
-          .createFinancialOrder !==
-          "function"
-      ){
-
-        alert(
-          "Le moteur de commande est momentanément indisponible."
-        );
-
-        return;
-      }
-
-
-      if(
-        typeof financialModule
-          .openCentralPaymentPage !==
-          "function"
-      ){
-
-        alert(
-          "La page de paiement est momentanément indisponible."
-        );
-
-        return;
-      }
-
-
-      const serviceLabel =
-
-        contacts === 2
-
-          ? "Cercle de confiance Bo'CitéArt — 2 contacts"
-
-          : (
-
-              contacts === 5
-
-                ? "Cercle de confiance Bo'CitéArt — jusqu'à 5 contacts"
-
-                : "Cercle de confiance Bo'CitéArt — jusqu'à 10 contacts"
-
-            );
-
-
-      const order =
-        financialModule
-          .createFinancialOrder({
-
-            productCode:
-              "CITIZEN_SECURE_" +
-              contacts,
-
-            serviceType:
-              "citizen_subscription",
-
-            serviceLabel:
-              serviceLabel,
-
-            customerType:
-              "citizen",
-
-            customerId:
-              String(
-                localStorage.getItem(
-                  "bociteart_installation_id_v1"
-                ) ||
-                ""
-              ),
-
-            customerName:
-              "",
-
-            customerEmail:
-              "",
-
-            customerSiret:
-              "",
-
-            amountHT:
-              amountHT,
-
-            vatRate:
-              vatRate,
-
-            paymentMethod:
-              ""
-
-          });
-
-
-      if(
-        !order
-      ){
-
-        alert(
-          "La commande n'a pas pu être créée."
-        );
-
-        return;
-      }
-
-
-      try{
-
-        localStorage.setItem(
-          "bociteart_citizen_subscription_pending_v1",
-
-          JSON.stringify({
-
-            orderId:
-              order.id,
-
-            contacts:
-              contacts,
-
-            monthlyPriceTTC:
-              amountTTC,
-
-            amountHT:
-              amountHT,
-
-            vatRate:
-              vatRate,
-
-            status:
-              "waiting_payment",
-
-            createdAt:
-              Date.now()
-
-          })
-
-        );
-
-      }catch(
-        error
-      ){
-
-        console.warn(
-          "Bo'CitéArt : préparation de l'abonnement impossible.",
-          error
-        );
-
-      }
-
-
-      financialModule
-        .openCentralPaymentPage({
-
-          order:
-            order,
-
-          allowCard:
-            true,
-
-          allowBankTransfer:
-            true
-
-        });
-
-    };
-
-}
-
-/* =====================================================
-   ÇA FINIT ICI — PAIEMENT CERCLE DE CONFIANCE
-   ===================================================== */ 
-
-    };
-
-
-  window.setTimeout(
-    completeHealthHelp,
-    180
-  );
-
-
-  window.setTimeout(
-    completeHealthHelp,
-    320
-  );
-
-}
-
-/* =====================================================
    RACCORDEMENT COMPTE
    ===================================================== */
 
@@ -6711,12 +6028,18 @@ window.setTimeout(
     true
   );
 
-
   console.log(
     "✅ Introductions École / Sport / Mairie & Asso raccordées"
   );
 
-   /* =========================================================
+})();
+
+/* =========================================================
+   ÇA FINIT ICI
+   BO'CITÉART — INTRODUCTIONS DES AUTRES UNIVERS
+   ========================================================= */
+
+/* =========================================================
    ÇA COMMENCE ICI
    BO'CITÉART — ANNUAIRE SANTÉ + AIDE
    PORTE PRINCIPALE INDÉPENDANTE
@@ -7343,27 +6666,19 @@ function escapeCitizenContactValue(
    MODALES CITOYEN — INDÉPENDANTES D'ENTREPRISE
    ===================================================== */
 
-function runCitizenHealthModalContext(
-  callback
-){
-
-  const previousModule =
-    window.currentModule;
-
-
-  const previousEntrepriseScreen =
-    window.currentEntrepriseScreen;
-
+function enterCitizenHealthContext(){
 
   /*
-   * L'annuaire Santé + aide
-   * est indépendant de l'espace Entreprise.
+   * Contexte persistant pendant toute
+   * la navigation Annuaire santé + aide.
    *
-   * On vide aussi l'ancien historique
-   * de la modale afin qu'un ancien écran
-   * Commerce ne puisse jamais devenir
-   * le bouton Retour de cet espace.
+   * Aucun ancien contexte Commerce / Entreprise
+   * ne doit redevenir le retour de cet univers.
    */
+
+  window.BOCITEART_MODAL_CONTEXT =
+    "citizen_health_help";
+
 
   if(
     Array.isArray(
@@ -7373,31 +6688,6 @@ function runCitizenHealthModalContext(
 
     window.modalHistory.length =
       0;
-
-  }
-
-
-  window.currentModule =
-    "citizen_health_help";
-
-
-  window.currentEntrepriseScreen =
-    null;
-
-
-  try{
-
-    return callback();
-
-  }
-  finally{
-
-    window.currentModule =
-      previousModule;
-
-
-    window.currentEntrepriseScreen =
-      previousEntrepriseScreen;
 
   }
 
@@ -7419,16 +6709,22 @@ function openCitizenHealthModal(
   }
 
 
-  runCitizenHealthModalContext(
-    function(){
+  enterCitizenHealthContext();
 
-      window.openModal(
-        title,
-        html,
-        {
-          noHistory:true
-        }
-      );
+
+  window.openModal(
+    title,
+    html,
+    {
+
+      noHistory:
+        true,
+
+      context:
+        "citizen_health_help",
+
+      suppressAutoBack:
+        true
 
     }
   );
@@ -7442,11 +6738,9 @@ function openCitizenHealthModal(
 function returnToCitizenHealthHelp(){
 
   /*
-   * On ferme d'abord proprement
-   * la sous-page protégée.
-   *
-   * closeModal efface également
-   * l'ancien historique de navigation.
+   * On ferme la sous-page protégée,
+   * puis on rouvre proprement
+   * Annuaire santé + aide.
    */
 
   if(
@@ -7457,26 +6751,33 @@ function returnToCitizenHealthHelp(){
     window.closeModal();
 
   }
-  else if(
-    Array.isArray(
-      window.modalHistory
-    )
-  ){
+  else{
 
-    window.modalHistory.length =
-      0;
+    if(
+      Array.isArray(
+        window.modalHistory
+      )
+    ){
+
+      window.modalHistory.length =
+        0;
+
+    }
+
+
+    window.BOCITEART_MODAL_CONTEXT =
+      null;
 
   }
 
+window.setTimeout(
+  function(){
 
-  window.setTimeout(
-    function(){
+    openHealthHelp();
 
-      openHealthHelp();
-
-    },
-    0
-  );
+  },
+  0
+);
 
 }
 
@@ -7720,7 +7021,7 @@ function openCitizenTrustedContacts(){
         cancelButton.onclick =
           function(){
 
-          openHealthHelp();
+         returnToCitizenHealthHelp();
           };
 
       }
@@ -7938,7 +7239,7 @@ function openCitizenTrustedContacts(){
           );
 
 
-        openHealthHelp();
+     returnToCitizenHealthHelp();
 
         };
 
@@ -8566,7 +7867,7 @@ function openCitizenPasswordCreation(
         cancelButton.onclick =
           function(){
 
-            openHealthHelp();
+          returnToCitizenHealthHelp();
 
           };
 
@@ -8805,15 +8106,14 @@ function openCitizenPasswordVerification(
         cancel
       ){
 
-        cancel.onclick =
-          function(){
+       cancel.onclick =
+  function(){
 
-            openHealthHelp();
+    returnToCitizenHealthHelp();
 
-          };
+  };
 
       }
-
 
       async function validatePassword(){
 
@@ -8823,7 +8123,6 @@ function openCitizenPasswordVerification(
               ? input.value
               : ""
           );
-
 
         if(
           !value
@@ -10360,7 +9659,6 @@ function appendHealthHelpSections(){
 
     }
 
-
     if(
       !response ||
       response.connected !==
@@ -10377,7 +9675,6 @@ function appendHealthHelpSections(){
           " — raccordement en cours.";
 
       }
-
 
       return;
 
@@ -10560,7 +9857,6 @@ function appendHealthHelpSections(){
 
   }
 
-
   /* =====================================================
      PREMIER AFFICHAGE
      ===================================================== */
@@ -10669,7 +9965,28 @@ function appendHealthHelpSections(){
 
 }
 
- function openHealthHelp(){
+function openHealthHelp(){
+
+  /*
+   * Porte principale citoyenne indépendante.
+   * Le contexte Santé reste actif pendant
+   * toute cette navigation.
+   */
+
+  enterCitizenHealthContext();
+
+
+  if(
+    Array.isArray(
+      window.modalHistory
+    )
+  ){
+
+    window.modalHistory.length =
+      0;
+
+  }
+
 
   if(
     !window.BociteMairieModule ||
@@ -10677,33 +9994,39 @@ function appendHealthHelpSections(){
       !== "function"
   ){
 
-    if(
-      typeof window.openModal ===
-        "function"
-    ){
+    openCitizenHealthModal(
+      "Annuaire santé + aide",
+      `
 
-      window.openModal(
-        "Annuaire santé + aide",
-        `
+        <div
+          class="box"
+          style="
+            background:#ffffff;
+            color:#111111;
+            font-size:14px;
+            font-weight:400;
+            line-height:1.55;
+          "
+        >
 
-          <div class="box">
-
-            <strong>
-              Annuaire santé momentanément indisponible
-            </strong>
-
-            <br><br>
-
-            Le moteur de l’annuaire
-            n’est pas encore chargé.
-
+          <div
+            style="
+              color:#2f5d46;
+              font-size:17px;
+              font-weight:700;
+              margin-bottom:8px;
+            "
+          >
+            Annuaire santé
           </div>
 
-        `
-      );
+          L’annuaire santé
+          est momentanément indisponible.
 
-    }
+        </div>
 
+      `
+    );
 
     return;
   }
@@ -10713,14 +10036,29 @@ function appendHealthHelpSections(){
     .openHealth();
 
 
+  enterCitizenHealthContext();
+
+
   window.setTimeout(
-    appendHealthHelpSections,
+    function(){
+
+      enterCitizenHealthContext();
+
+      appendHealthHelpSections();
+
+    },
     180
   );
 
 
   window.setTimeout(
-    appendHealthHelpSections,
+    function(){
+
+      enterCitizenHealthContext();
+
+      appendHealthHelpSections();
+
+    },
     350
   );
 
@@ -10843,10 +10181,5 @@ function appendHealthHelpSections(){
    BO'CITÉART — ANNUAIRE SANTÉ + AIDE
    ========================================================= */
 
-})();
-
-/* =========================================================
-   ÇA FINIT ICI
-   ========================================================= */
 
 
