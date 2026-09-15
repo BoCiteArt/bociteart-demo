@@ -7033,267 +7033,1126 @@ window.BociteCitizenSecurePayment =
    PAIEMENT CITOYEN — CERCLE DE CONFIANCE
    ===================================================== */
    
-  function appendHealthHelpSections(){
-     modalBody.insertAdjacentHTML(
-  "beforeend",
-  `
-  ...
-  `
-);
+function appendHealthHelpSections(){
 
-    const modalTitle =
-      document.getElementById(
-        "modalTitle"
-      );
-
-
-    const modalBody =
-      document.getElementById(
-        "modalBody"
-      );
-
-
-    if(
-      !modalTitle ||
-      !modalBody
-    ){
-      return;
-      /* =====================================================
-   AIDES LOCALES — COMMUNE ACTIVE
-   ===================================================== */
-
-async function refreshLocalHelp(){
-
-  const communeInput =
+  const modalTitle =
     document.getElementById(
-      "mairieHealthCommuneInput"
-    );
-
-  const status =
-    document.getElementById(
-      "bociteLocalHelpStatus"
+      "modalTitle"
     );
 
 
-  const commune =
-    String(
-      communeInput
-        ? communeInput.value
-        : ""
-    ).trim();
+  const modalBody =
+    document.getElementById(
+      "modalBody"
+    );
 
 
   if(
-    !commune
+    !modalTitle ||
+    !modalBody
   ){
 
-    if(status){
-      status.textContent =
-        "Choisissez une commune pour afficher les aides locales.";
-    }
-
     return;
-  }
-
-
-  if(status){
-
-    status.textContent =
-      "Aides locales de " +
-      commune +
-      " — recherche des informations disponibles…";
 
   }
 
 
-  const api =
-    window.BociteLocalHelpAPI;
+  /*
+   * Le moteur santé Mairie
+   * a déjà construit l'annuaire.
+   *
+   * Ici :
+   * - on change seulement le titre ;
+   * - on ajoute les aides ;
+   * - on ajoute le Cercle de confiance ;
+   * - on raccorde les aides locales
+   *   à la commune choisie.
+   */
 
+
+  modalTitle.textContent =
+    "Annuaire santé + aide";
+
+
+  /*
+   * Empêche de créer deux fois
+   * les mêmes sections
+   * lorsque les deux temporisations
+   * d'ouverture se déclenchent.
+   */
 
   if(
-    !api ||
-    typeof api.load !==
-      "function"
+    document.getElementById(
+      "bociteHealthHelpSections"
+    )
   ){
-
-    if(status){
-
-      status.textContent =
-        "Aides locales de " +
-        commune +
-        " — raccordement en cours.";
-
-    }
 
     return;
-  }
-
-
-  const response =
-    await api.load({
-      commune:commune
-    });
-
-
-  if(
-    !response ||
-    response.connected !== true
-  ){
-
-    if(status){
-
-      status.textContent =
-        "Aides locales de " +
-        commune +
-        " — raccordement en cours.";
-
-    }
-
-    return;
-  }
-
-
-  if(status){
-
-    status.textContent =
-      "Aides locales de " +
-      commune +
-      " — informations disponibles.";
 
   }
 
 
-  function renderRows(
-    elementId,
-    rows
-  ){
+  modalBody.insertAdjacentHTML(
 
-    const container =
+    "beforeend",
+
+    `
+
+      <div
+        id="bociteHealthHelpSections"
+        style="
+          margin-top:20px;
+        "
+      >
+
+
+        <!-- =========================================
+             SÉPARATION ANNUAIRE → AIDES
+             ========================================= -->
+
+        <div
+          style="
+            margin:24px 0 18px 0;
+            padding:14px 12px;
+            border-top:3px solid #2f5d46;
+            border-bottom:3px solid #2f5d46;
+            text-align:center;
+            color:#2f5d46;
+            font-size:17px;
+            font-weight:700;
+            line-height:1.3;
+          "
+        >
+          Aides de proximité et contacts utiles
+        </div>
+
+
+        <!-- =========================================
+             ÉTAT DES AIDES LOCALES
+             ========================================= -->
+
+        <div
+          id="bociteLocalHelpStatus"
+          style="
+            margin:0 0 14px 0;
+            padding:10px 12px;
+            background:#ffffff;
+            border:1px solid #dedede;
+            border-radius:10px;
+            color:#111111;
+            font-size:14px;
+            font-weight:400;
+            line-height:1.5;
+          "
+        >
+          Informations locales en cours de raccordement.
+        </div>
+
+
+        <!-- =========================================
+             PERSONNES SEULES OU FRAGILES
+             ========================================= -->
+
+        <div
+          style="
+            background:#ffffff;
+            border:1px solid #dedede;
+            border-radius:12px;
+            padding:16px;
+            margin:0 0 14px 0;
+          "
+        >
+
+          <div
+            style="
+              color:#2f5d46;
+              font-size:17px;
+              font-weight:700;
+              margin-bottom:8px;
+            "
+          >
+            Personnes seules ou fragiles
+          </div>
+
+
+          <div
+            style="
+              color:#111111;
+              font-size:14px;
+              font-weight:400;
+              line-height:1.55;
+            "
+          >
+
+            Retrouvez ici les contacts,
+            services
+            et aides de proximité
+            permettant de mieux orienter
+            une personne seule,
+            fragile
+            ou momentanément en difficulté.
+
+            <br><br>
+
+            Les informations locales
+            validées pour la commune
+            seront regroupées dans cet espace.
+
+
+            <div
+              id="bociteLocalHelpFragileData"
+              style="
+                margin-top:12px;
+              "
+            ></div>
+
+          </div>
+
+        </div>
+
+
+        <!-- =========================================
+             FAMILLES ET ENFANTS
+             ========================================= -->
+
+        <div
+          style="
+            background:#ffffff;
+            border:1px solid #dedede;
+            border-radius:12px;
+            padding:16px;
+            margin:0 0 14px 0;
+          "
+        >
+
+          <div
+            style="
+              color:#2f5d46;
+              font-size:17px;
+              font-weight:700;
+              margin-bottom:8px;
+            "
+          >
+            Familles et enfants
+          </div>
+
+
+          <div
+            style="
+              color:#111111;
+              font-size:14px;
+              font-weight:400;
+              line-height:1.55;
+            "
+          >
+
+            Retrouvez ici
+            les services,
+            repères
+            et contacts utiles
+            pour les familles
+            et les enfants.
+
+            <br><br>
+
+            <strong>
+              119 — Enfance en danger
+            </strong>
+
+
+            <div
+              id="bociteLocalHelpFamiliesData"
+              style="
+                margin-top:12px;
+              "
+            ></div>
+
+          </div>
+
+        </div>
+
+
+        <!-- =========================================
+             URGENCES ET CONTACTS ESSENTIELS
+             ========================================= -->
+
+        <div
+          style="
+            background:#ffffff;
+            border:1px solid #dedede;
+            border-radius:12px;
+            padding:16px;
+            margin:0 0 14px 0;
+          "
+        >
+
+          <div
+            style="
+              color:#2f5d46;
+              font-size:17px;
+              font-weight:700;
+              margin-bottom:8px;
+            "
+          >
+            Urgences et contacts essentiels
+          </div>
+
+
+          <div
+            style="
+              color:#111111;
+              font-size:14px;
+              font-weight:400;
+              line-height:1.55;
+            "
+          >
+
+            <strong>
+              112 — Urgence
+            </strong>
+
+            <br><br>
+
+            <strong>
+              119 — Enfance en danger
+            </strong>
+
+            <br><br>
+
+            <strong>
+              3919 — Violences faites aux femmes
+            </strong>
+
+            <br>
+
+            Information et orientation.
+
+
+            <div
+              id="bociteLocalHelpContactsData"
+              style="
+                margin-top:12px;
+              "
+            ></div>
+
+          </div>
+
+        </div>
+
+
+        <!-- =========================================
+             RÔLE DE BO'CITÉART
+             ========================================= -->
+
+        <div
+          style="
+            background:#ffffff;
+            border:1px solid #dedede;
+            border-radius:12px;
+            padding:16px;
+            margin:0;
+          "
+        >
+
+          <div
+            style="
+              color:#2f5d46;
+              font-size:17px;
+              font-weight:700;
+              margin-bottom:8px;
+            "
+          >
+            Retrouver la bonne porte
+          </div>
+
+
+          <div
+            style="
+              color:#111111;
+              font-size:14px;
+              font-weight:400;
+              line-height:1.55;
+            "
+          >
+
+            Bo’CitéArt aide à retrouver
+            rapidement un professionnel,
+            un service
+            ou un interlocuteur utile.
+
+            <br><br>
+
+            Bo’CitéArt ne remplace
+            ni les médecins,
+            ni les services d’urgence,
+            ni les travailleurs sociaux,
+            ni les organismes compétents.
+
+          </div>
+
+        </div>
+
+
+        <!-- =========================================
+             CERCLE DE CONFIANCE
+             ========================================= -->
+
+        <div
+          style="
+            margin:24px 0 18px 0;
+            padding:14px 12px;
+            border-top:3px solid #2f5d46;
+            border-bottom:3px solid #2f5d46;
+            text-align:center;
+            color:#2f5d46;
+            font-size:17px;
+            font-weight:700;
+            line-height:1.3;
+          "
+        >
+          Cercle de confiance et aide entre proches
+        </div>
+
+
+        <!-- =========================================
+             PRÉSENTATION
+             ========================================= -->
+
+        <div
+          class="box"
+          style="
+            background:#ffffff;
+            color:#111111;
+            font-size:14px;
+            font-weight:400;
+            line-height:1.5;
+          "
+        >
+
+          <div
+            style="
+              color:#2f5d46;
+              font-size:17px;
+              font-weight:700;
+              margin-bottom:8px;
+            "
+          >
+            Cercle de confiance
+          </div>
+
+          L’abonné choisit les personnes
+          qu’il souhaite pouvoir prévenir
+          et leurs numéros de téléphone.
+
+          <br><br>
+
+          Deux contacts de confiance
+          sont inclus dans la première formule.
+
+        </div>
+
+
+        <!-- =========================================
+             EXEMPLE
+             ========================================= -->
+
+        <div
+          class="box"
+          style="
+            background:#ffffff;
+            color:#111111;
+            font-size:14px;
+            font-weight:400;
+            line-height:1.5;
+          "
+        >
+
+          <div
+            style="
+              color:#2f5d46;
+              font-size:17px;
+              font-weight:700;
+              margin-bottom:8px;
+            "
+          >
+            Exemple simple
+          </div>
+
+          Jean active l’option
+          pour sa mère.
+
+          <br><br>
+
+          Sur le téléphone de sa mère,
+          il enregistre un contact clair :
+
+          <br><br>
+
+          <strong>
+            Bo’CitéArt — appeler Jean
+          </strong>
+
+          <br><br>
+
+          avec le numéro de téléphone
+          de Jean.
+
+          <br><br>
+
+          Sa mère n’a pas besoin
+          de télécharger l’application.
+
+        </div>
+
+
+        <!-- =========================================
+             VEILLE VOLONTAIRE
+             ========================================= -->
+
+        <div
+          class="box"
+          style="
+            background:#ffffff;
+            color:#111111;
+            font-size:14px;
+            font-weight:400;
+            line-height:1.5;
+          "
+        >
+
+          <div
+            style="
+              color:#2f5d46;
+              font-size:17px;
+              font-weight:700;
+              margin-bottom:8px;
+            "
+          >
+            Veille volontaire par message
+          </div>
+
+          Si la personne l’accepte,
+          un message peut être envoyé
+          à l’heure choisie :
+
+          <br><br>
+
+          « Tout va bien aujourd’hui ? »
+
+          <br><br>
+
+          Réponse simple :
+
+          <br>
+
+          Tout va bien /
+          Rappelez-moi /
+          Besoin d’aide.
+
+        </div>
+
+
+        <!-- =========================================
+             OFFRES
+             ========================================= -->
+
+        <div
+          class="box"
+          style="
+            background:#ffffff;
+            color:#111111;
+            font-size:14px;
+            font-weight:400;
+            line-height:1.5;
+          "
+        >
+
+          <div
+            style="
+              color:#2f5d46;
+              font-size:17px;
+              font-weight:700;
+              margin-bottom:10px;
+            "
+          >
+            Je choisis mon offre
+          </div>
+
+
+          <label
+            style="
+              display:block;
+              margin-bottom:12px;
+            "
+          >
+
+            <input
+              type="radio"
+              name="securePlan"
+              value="2.99"
+              data-contacts="2"
+              checked
+            >
+
+            2 contacts de confiance —
+            <strong>
+              2,99 € TTC / mois
+            </strong>
+
+          </label>
+
+
+          <label
+            style="
+              display:block;
+              margin-bottom:12px;
+            "
+          >
+
+            <input
+              type="radio"
+              name="securePlan"
+              value="3.99"
+              data-contacts="5"
+            >
+
+            Jusqu’à 5 contacts —
+            <strong>
+              3,99 € TTC / mois
+            </strong>
+
+          </label>
+
+
+          <label
+            style="
+              display:block;
+            "
+          >
+
+            <input
+              type="radio"
+              name="securePlan"
+              value="5"
+              data-contacts="10"
+            >
+
+            Jusqu’à 10 contacts —
+            <strong>
+              5,00 € TTC / mois
+            </strong>
+
+          </label>
+
+        </div>
+
+
+        <!-- =========================================
+             ACTIVATION
+             ========================================= -->
+
+        <div
+          class="box"
+          style="
+            background:#ffffff;
+            color:#111111;
+            font-size:14px;
+            font-weight:400;
+            line-height:1.5;
+            border-left:6px solid #2f5d46;
+          "
+        >
+
+          <div
+            style="
+              color:#2f5d46;
+              font-size:17px;
+              font-weight:700;
+              margin-bottom:8px;
+            "
+          >
+            Activation de votre abonnement
+          </div>
+
+          Par carte bancaire,
+          l’abonnement est activé
+          après confirmation effective
+          du paiement.
+
+          <br><br>
+
+          Par virement bancaire,
+          l’abonnement est activé
+          après réception
+          et confirmation effective
+          du règlement.
+
+        </div>
+
+
+        <!-- =========================================
+             ACCEPTATION
+             ========================================= -->
+
+        <div
+          class="box"
+          style="
+            background:#ffffff;
+            color:#111111;
+            font-size:14px;
+            font-weight:400;
+            line-height:1.5;
+          "
+        >
+
+          <div
+            style="
+              color:#2f5d46;
+              font-size:17px;
+              font-weight:700;
+              margin-bottom:8px;
+            "
+          >
+            Validation avant paiement
+          </div>
+
+
+          <label>
+
+            <input
+              type="checkbox"
+              id="secureAccept"
+            >
+
+            Je comprends que cette option
+            est un outil volontaire
+            de notification entre proches
+            et non un service d’assistance,
+            de surveillance
+            ou d’urgence.
+
+          </label>
+
+        </div>
+
+
+        <!-- =========================================
+             BOUTON PAIEMENT
+             ========================================= -->
+
+        <button
+          id="secureContinuePaymentBtn"
+          class="choiceBtn"
+          type="button"
+          onclick="window.BociteCitizenSecurePayment(event)"
+          style="
+            width:100%;
+            background:#ffffff !important;
+            color:#111111 !important;
+            font-size:14px;
+            font-weight:400;
+          "
+        >
+          Continuer vers le paiement
+        </button>
+
+
+        <!-- =========================================
+             CADRE IMPORTANT
+             ========================================= -->
+
+        <div
+          class="box"
+          style="
+            margin-top:12px;
+            background:#ffffff;
+            color:#111111;
+            font-size:14px;
+            font-weight:400;
+            line-height:1.5;
+          "
+        >
+
+          <div
+            style="
+              color:#2f5d46;
+              font-size:17px;
+              font-weight:700;
+              margin-bottom:8px;
+            "
+          >
+            Cadre important
+          </div>
+
+          Bo’CitéArt est un outil volontaire
+          de notification entre proches.
+
+          <br><br>
+
+          Ce n’est pas un service
+          d’assistance,
+          de téléassistance,
+          de surveillance,
+          d’urgence
+          ou d’intervention.
+
+        </div>
+
+
+      </div>
+
+    `
+
+  );
+
+
+  /* =====================================================
+     AIDES LOCALES — COMMUNE ACTIVE
+     ===================================================== */
+
+  async function refreshLocalHelp(){
+
+    const communeInput =
       document.getElementById(
-        elementId
+        "mairieHealthCommuneInput"
       );
 
 
+    const status =
+      document.getElementById(
+        "bociteLocalHelpStatus"
+      );
+
+
+    const commune =
+      String(
+        communeInput
+          ? communeInput.value
+          : ""
+      ).trim();
+
+
     if(
-      !container
+      !commune
     ){
-      return;
-    }
 
+      if(
+        status
+      ){
 
-    container.innerHTML =
-      "";
-
-
-    if(
-      !Array.isArray(rows) ||
-      !rows.length
-    ){
-      return;
-    }
-
-
-    rows.forEach(
-      function(item){
-
-        const line =
-          document.createElement(
-            "div"
-          );
-
-
-        line.style.marginTop =
-          "8px";
-
-        line.style.padding =
-          "10px";
-
-        line.style.border =
-          "1px solid #e1e1e1";
-
-        line.style.borderRadius =
-          "8px";
-
-        line.style.background =
-          "#ffffff";
-
-
-        if(
-          typeof item ===
-          "string"
-        ){
-
-          line.textContent =
-            item;
-
-        }else{
-
-          line.textContent =
-            [
-
-              item.name,
-              item.title,
-              item.label,
-              item.phone,
-              item.address
-
-            ]
-
-            .filter(Boolean)
-
-            .join(" — ");
-
-        }
-
-
-        container.appendChild(
-          line
-        );
+        status.textContent =
+          "Choisissez une commune pour afficher les aides locales.";
 
       }
+
+
+      return;
+
+    }
+
+
+    if(
+      status
+    ){
+
+      status.textContent =
+        "Aides locales de " +
+        commune +
+        " — recherche des informations disponibles…";
+
+    }
+
+
+    const api =
+      window.BociteLocalHelpAPI;
+
+
+    if(
+      !api ||
+      typeof api.load !==
+        "function"
+    ){
+
+      if(
+        status
+      ){
+
+        status.textContent =
+          "Aides locales de " +
+          commune +
+          " — raccordement en cours.";
+
+      }
+
+
+      return;
+
+    }
+
+
+    let response;
+
+
+    try{
+
+      response =
+        await api.load({
+          commune:
+            commune
+        });
+
+    }catch(
+      error
+    ){
+
+      console.warn(
+        "Bo'CitéArt — aides locales indisponibles.",
+        error
+      );
+
+
+      response =
+        null;
+
+    }
+
+
+    if(
+      !response ||
+      response.connected !==
+        true
+    ){
+
+      if(
+        status
+      ){
+
+        status.textContent =
+          "Aides locales de " +
+          commune +
+          " — raccordement en cours.";
+
+      }
+
+
+      return;
+
+    }
+
+
+    if(
+      status
+    ){
+
+      status.textContent =
+        "Aides locales de " +
+        commune +
+        " — informations disponibles.";
+
+    }
+
+
+    /* ===================================================
+       AFFICHAGE SÉCURISÉ DES RÉSULTATS
+       =================================================== */
+
+    function renderRows(
+      elementId,
+      rows
+    ){
+
+      const container =
+        document.getElementById(
+          elementId
+        );
+
+
+      if(
+        !container
+      ){
+
+        return;
+
+      }
+
+
+      container.innerHTML =
+        "";
+
+
+      if(
+        !Array.isArray(
+          rows
+        ) ||
+        !rows.length
+      ){
+
+        return;
+
+      }
+
+
+      rows.forEach(
+        function(
+          item
+        ){
+
+          const line =
+            document.createElement(
+              "div"
+            );
+
+
+          line.style.marginTop =
+            "8px";
+
+
+          line.style.padding =
+            "10px";
+
+
+          line.style.border =
+            "1px solid #e1e1e1";
+
+
+          line.style.borderRadius =
+            "8px";
+
+
+          line.style.background =
+            "#ffffff";
+
+
+          line.style.color =
+            "#111111";
+
+
+          line.style.fontSize =
+            "14px";
+
+
+          line.style.fontWeight =
+            "400";
+
+
+          line.style.lineHeight =
+            "1.5";
+
+
+          if(
+            typeof item ===
+              "string"
+          ){
+
+            line.textContent =
+              item;
+
+          }
+          else{
+
+            line.textContent =
+              [
+
+                item &&
+                item.name,
+
+                item &&
+                item.title,
+
+                item &&
+                item.label,
+
+                item &&
+                item.phone,
+
+                item &&
+                item.address
+
+              ]
+
+              .filter(
+                Boolean
+              )
+
+              .join(
+                " — "
+              );
+
+          }
+
+
+          if(
+            line.textContent.trim()
+          ){
+
+            container.appendChild(
+              line
+            );
+
+          }
+
+        }
+      );
+
+    }
+
+
+    renderRows(
+      "bociteLocalHelpFragileData",
+      response.fragile
+    );
+
+
+    renderRows(
+      "bociteLocalHelpFamiliesData",
+      response.families
+    );
+
+
+    renderRows(
+      "bociteLocalHelpContactsData",
+      response.usefulContacts
     );
 
   }
 
 
-  renderRows(
-    "bociteLocalHelpFragileData",
-    response.fragile
-  );
+  /* =====================================================
+     PREMIER AFFICHAGE
+     ===================================================== */
+
+  refreshLocalHelp();
 
 
-  renderRows(
-    "bociteLocalHelpFamiliesData",
-    response.families
-  );
+  /* =====================================================
+     ACTUALISATION APRÈS CHANGEMENT DE COMMUNE
+     ===================================================== */
+
+  [
+    "mairieHealthSearchBtn",
+    "mairieHealthOpenCommuneBtn",
+    "mairieHealthOwnCommuneBtn"
+  ]
+
+  .forEach(
+    function(
+      id
+    ){
+
+      const button =
+        document.getElementById(
+          id
+        );
 
 
-  renderRows(
-    "bociteLocalHelpContactsData",
-    response.usefulContacts
-  );
+      if(
+        !button
+      ){
 
-}
+        return;
 
+      }
 
-refreshLocalHelp();
-
-
-[
-  "mairieHealthSearchBtn",
-  "mairieHealthOpenCommuneBtn",
-  "mairieHealthOwnCommuneBtn"
-]
-.forEach(
-  function(id){
-
-    const button =
-      document.getElementById(
-        id
-      );
-
-
-    if(button){
 
       button.addEventListener(
         "click",
@@ -7301,18 +8160,73 @@ refreshLocalHelp();
 
           window.setTimeout(
             refreshLocalHelp,
-            50
+            80
           );
 
         }
       );
 
     }
+  );
 
-  }
-); 
+
+  /* =====================================================
+     TOUCHE ENTRÉE
+     ===================================================== */
+
+  [
+    "mairieHealthCommuneInput",
+    "mairieHealthSearchInput"
+  ]
+
+  .forEach(
+    function(
+      id
+    ){
+
+      const input =
+        document.getElementById(
+          id
+        );
+
+
+      if(
+        !input
+      ){
+
+        return;
+
+      }
+
+
+      input.addEventListener(
+        "keydown",
+        function(
+          event
+        ){
+
+          if(
+            event.key !==
+              "Enter"
+          ){
+
+            return;
+
+          }
+
+
+          window.setTimeout(
+            refreshLocalHelp,
+            80
+          );
+
+        }
+      );
+
     }
+  );
 
+}
 
     /*
      * Le moteur santé Mairie a déjà construit
