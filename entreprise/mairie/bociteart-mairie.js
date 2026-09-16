@@ -3698,6 +3698,64 @@ function mairieValidateSchoolExchange(){
     rows
   );
 
+   /* =========================================================
+   ÇA COMMENCE ICI
+   MAIRIE → ÉCOLE
+   CONFIRMATION DE L'ÉCHANGE JAUNE
+   ========================================================= */
+
+try{
+
+  window.dispatchEvent(
+
+    new CustomEvent(
+      "bociteart:school-mairie-validated",
+      {
+        detail:{
+
+          type:
+            "school_wallet_validation",
+
+          id:
+            operation.id,
+
+          reference:
+            operation.reference,
+
+          className:
+            operation.className,
+
+          bocitecoins:
+            operation.bocitecoins,
+
+          solidarity:
+            mairieClone(
+              operation.solidarity
+            ),
+
+          validatedAt:
+            operation.validatedAt
+
+        }
+      }
+    )
+
+  );
+
+}catch(error){
+
+  console.warn(
+    "Bo'CitéArt Mairie : retour vers l'École impossible.",
+    error
+  );
+
+}
+
+/* =========================================================
+   ÇA FINIT ICI
+   MAIRIE → ÉCOLE
+   CONFIRMATION DE L'ÉCHANGE JAUNE
+   ========================================================= */
 
   if(
     out
