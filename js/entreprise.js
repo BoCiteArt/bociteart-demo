@@ -45238,6 +45238,168 @@ document.addEventListener(
      CARTE BANCAIRE / VIREMENT
      ======================================================= */
 
+/* =======================================================
+   ÇA COMMENCE ICI
+   AFFICHAGE PAIEMENT SELON L'UNIVERS D'ORIGINE
+   ======================================================= */
+
+function renderFinancialPaymentPage(
+  order,
+  title,
+  html,
+  afterRender
+){
+
+  const citizenSubscription =
+    !!(
+      order &&
+      order.serviceType ===
+        "citizen_subscription"
+    );
+
+
+  /*
+   * ABONNEMENT CITOYEN :
+   * reste entièrement dans
+   * Annuaire santé + aide.
+   */
+
+  if(
+    citizenSubscription &&
+    typeof window.openModal ===
+      "function"
+  ){
+
+    window.BOCITEART_MODAL_CONTEXT =
+      "citizen_health_help";
+
+
+    window.currentModule =
+      "citizen_health_help";
+
+
+    window.currentEntrepriseScreen =
+      null;
+
+
+    if(
+      Array.isArray(
+        window.modalHistory
+      )
+    ){
+
+      window.modalHistory.length =
+        0;
+
+    }
+
+
+    window.openModal(
+      title,
+      html,
+      {
+        noHistory:true,
+        context:
+          "citizen_health_help",
+        suppressAutoBack:true
+      }
+    );
+
+
+    if(
+      typeof afterRender ===
+        "function"
+    ){
+
+      window.setTimeout(
+        afterRender,
+        0
+      );
+
+    }
+
+
+    return true;
+
+  }
+
+
+  /*
+   * TOUS LES AUTRES PAIEMENTS :
+   * fonctionnement Entreprise actuel conservé.
+   */
+
+  if(
+    typeof module.renderModulePage ===
+      "function"
+  ){
+
+    module.renderModulePage(
+      title,
+      html,
+      {
+        showBack:false,
+        showFooter:false
+      }
+    );
+
+
+    if(
+      typeof afterRender ===
+        "function"
+    ){
+
+      window.setTimeout(
+        afterRender,
+        0
+      );
+
+    }
+
+
+    return true;
+
+  }
+
+
+  if(
+    typeof module.renderModal ===
+      "function"
+  ){
+
+    module.renderModal(
+      title,
+      html
+    );
+
+
+    if(
+      typeof afterRender ===
+        "function"
+    ){
+
+      window.setTimeout(
+        afterRender,
+        0
+      );
+
+    }
+
+
+    return true;
+
+  }
+
+
+  return false;
+
+}
+
+/* =======================================================
+   ÇA FINIT ICI
+   AFFICHAGE PAIEMENT SELON L'UNIVERS D'ORIGINE
+   ======================================================= */
+   
   function openCentralPaymentPage(
     options
   ){
@@ -45500,57 +45662,24 @@ document.addEventListener(
     }
 
 
-    if(
-      typeof module.renderModulePage ===
-      "function"
-    ){
+   if(
+  renderFinancialPaymentPage(
+    order,
+    "Paiement",
+    html,
+    bindCentralPaymentPage
+  )
+){
 
-      module.renderModulePage(
-        "Paiement",
-        html,
-        {
-          showBack:false,
-          showFooter:false
-        }
-      );
+  return;
 
-
-      window.setTimeout(
-        bindCentralPaymentPage,
-        0
-      );
+}
 
 
-      return;
-    }
-
-
-    if(
-      typeof module.renderModal ===
-      "function"
-    ){
-
-      module.renderModal(
-        "Paiement",
-        html
-      );
-
-
-      window.setTimeout(
-        bindCentralPaymentPage,
-        0
-      );
-
-
-      return;
-    }
-
-
-    alert(
-      "Le paiement est momentanément indisponible."
-    );
-  }
-
+alert(
+  "Le paiement est momentanément indisponible."
+);
+    } 
 
   /* =======================================================
      3C. CARTE BANCAIRE — DÉMO PSP
@@ -45717,239 +45846,181 @@ document.addEventListener(
     }
 
 
-    if(
-      typeof module.renderModulePage ===
-      "function"
-    ){
-
-      module.renderModulePage(
-        "Paiement par carte bancaire",
-        html,
-        {
-          showBack:false,
-          showFooter:false
-        }
-      );
-
-
-      window.setTimeout(
-        bindCardDemo,
-        0
-      );
-
-
-      return;
+renderFinancialPaymentPage(
+  order,
+  "Paiement par carte bancaire",
+  html,
+  bindCardDemo
+);
     }
+  
+/* =======================================================
+   3D. VIREMENT BANCAIRE BO'CITÉART
+   ======================================================= */
 
+function openBankTransferPayment(
+  order
+){
 
-    if(
-      typeof module.renderModal ===
-      "function"
-    ){
-
-      module.renderModal(
-        "Paiement par carte bancaire",
-        html
-      );
-
-
-      window.setTimeout(
-        bindCardDemo,
-        0
-      );
-    }
-  }
-
-
-  /* =======================================================
-     3D. VIREMENT BANCAIRE BO'CITÉART
-     ======================================================= */
-
-  function openBankTransferPayment(
-    order
+  if(
+    typeof module.createSepaOrBankTransfer !==
+    "function"
   ){
 
-    if(
-      typeof module.createSepaOrBankTransfer !==
-      "function"
-    ){
+    alert(
+      "Le paiement par virement est momentanément indisponible."
+    );
 
-      alert(
-        "Le paiement par virement est momentanément indisponible."
-      );
-
-      return;
-    }
-
-
-    const payment =
-      module.createSepaOrBankTransfer(
-        order,
-        "bank_transfer"
-      );
-
-
-    if(!payment){
-
-      alert(
-        "Le virement n'a pas pu être préparé."
-      );
-
-      return;
-    }
-
-
-    const config =
-      module.financialConfig ||
-      {};
-
-
-    const html = `
-
-      <div
-        class="box"
-        style="
-          background:#ffffff;
-          color:#111111;
-          font-size:14px;
-          font-weight:400;
-          line-height:1.5;
-          border-left:6px solid #2f5d46;
-        ">
-
-        <div
-          style="
-            color:#2f5d46;
-            font-size:17px;
-            font-weight:700;
-            margin-bottom:8px;
-          ">
-          Virement bancaire
-        </div>
-
-        Montant à régler :
-        ${Number(
-          order.amountTTC || 0
-        ).toFixed(2)}
-        €
-
-        <br><br>
-
-        Référence obligatoire à indiquer
-        dans votre virement :
-
-        <br>
-
-        <strong>
-          ${String(
-            payment.transferReference || ""
-          )}
-        </strong>
-
-        <br><br>
-
-        Titulaire :
-        ${String(
-          config.bankAccountLabel ||
-          "Compte bancaire Bo'CitéArt"
-        )}
-
-        <br>
-
-        IBAN :
-        ${String(
-          config.bankIban ||
-          "À renseigner"
-        )}
-
-        <br>
-
-        BIC :
-        ${String(
-          config.bankBic ||
-          "À renseigner"
-        )}
-
-        <br><br>
-
-        Votre service sera activé
-        après réception
-        et confirmation effective
-        du règlement sur le compte Bo'CitéArt.
-
-      </div>
-
-
-      <div
-        class="box"
-        style="
-          background:#ffffff;
-          color:#111111;
-          font-size:14px;
-          font-weight:400;
-          line-height:1.5;
-        ">
-
-        Votre commande reste
-        en attente de paiement.
-
-        <br><br>
-
-        Dès que le règlement
-        sera identifié,
-        les contrôles financiers,
-        la facture
-        et l'activation du service
-        seront déclenchés automatiquement.
-
-      </div>
-
-    `;
-
-
-    if(
-      typeof module.renderModulePage ===
-      "function"
-    ){
-
-      module.renderModulePage(
-        "Paiement par virement",
-        html,
-        {
-          showBack:false,
-          showFooter:false
-        }
-      );
-
-      return;
-    }
-
-
-    if(
-      typeof module.renderModal ===
-      "function"
-    ){
-
-      module.renderModal(
-        "Paiement par virement",
-        html
-      );
-    }
+    return;
   }
 
 
-  /* =======================================================
-     3E. EXPOSITION DE LA PAGE DE PAIEMENT
-     ======================================================= */
+  const payment =
+    module.createSepaOrBankTransfer(
+      order,
+      "bank_transfer"
+    );
 
-  module.openCentralPaymentPage =
-    openCentralPaymentPage;
 
-  module.openCardPaymentDemo =
-    openCardPaymentDemo;
+  if(!payment){
 
-  module.openBankTransferPayment =
-    openBankTransferPayment;
+    alert(
+      "Le virement n'a pas pu être préparé."
+    );
+
+    return;
+  }
+
+
+  const config =
+    module.financialConfig ||
+    {};
+
+
+  const html = `
+
+    <div
+      class="box"
+      style="
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.5;
+        border-left:6px solid #2f5d46;
+      ">
+
+      <div
+        style="
+          color:#2f5d46;
+          font-size:17px;
+          font-weight:700;
+          margin-bottom:8px;
+        ">
+        Virement bancaire
+      </div>
+
+      Montant à régler :
+      ${Number(
+        order.amountTTC || 0
+      ).toFixed(2)}
+      €
+
+      <br><br>
+
+      Référence obligatoire à indiquer
+      dans votre virement :
+
+      <br>
+
+      <strong>
+        ${String(
+          payment.transferReference || ""
+        )}
+      </strong>
+
+      <br><br>
+
+      Titulaire :
+      ${String(
+        config.bankAccountLabel ||
+        "Compte bancaire Bo'CitéArt"
+      )}
+
+      <br>
+
+      IBAN :
+      ${String(
+        config.bankIban ||
+        "À renseigner"
+      )}
+
+      <br>
+
+      BIC :
+      ${String(
+        config.bankBic ||
+        "À renseigner"
+      )}
+
+      <br><br>
+
+      Votre service sera activé
+      après réception
+      et confirmation effective
+      du règlement sur le compte Bo'CitéArt.
+
+    </div>
+
+
+    <div
+      class="box"
+      style="
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.5;
+      ">
+
+      Votre commande reste
+      en attente de paiement.
+
+      <br><br>
+
+      Dès que le règlement
+      sera identifié,
+      les contrôles financiers,
+      la facture
+      et l'activation du service
+      seront déclenchés automatiquement.
+
+    </div>
+
+  `;
+
+
+  renderFinancialPaymentPage(
+    order,
+    "Paiement par virement",
+    html
+  );
+
+}
+
+/* =======================================================
+   3E. EXPOSITION DE LA PAGE DE PAIEMENT
+   ======================================================= */
+
+module.openCentralPaymentPage =
+  openCentralPaymentPage;
+
+module.openCardPaymentDemo =
+  openCardPaymentDemo;
+
+module.openBankTransferPayment =
+  openBankTransferPayment;
+
 
   /* =======================================================
      4. RACCORDEMENT AU PAIEMENT CARTE EXISTANT
