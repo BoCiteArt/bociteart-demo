@@ -9064,6 +9064,10 @@ function appendHealthHelpSections(){
   "
 >
 
+  <!-- =======================================
+       GARDER CE QUE VOUS AVEZ GAGNÉ
+       ======================================= -->
+
   <div
     style="
       color:#2f5d46;
@@ -9114,6 +9118,10 @@ function appendHealthHelpSections(){
     "
   ></div>
 
+
+  <!-- =======================================
+       BO'CITÉART VA PLUS LOIN
+       ======================================= -->
 
   <div
     style="
@@ -9179,21 +9187,19 @@ function appendHealthHelpSections(){
   d’un lien supplémentaire
   entre ses proches.
 
-</div>
-<!-- =========================================
-     EXEMPLE
-     ========================================= -->
 
-<div
-  class="box"
-  style="
-    background:#ffffff;
-    color:#111111;
-    font-size:14px;
-    font-weight:400;
-    line-height:1.5;
-  "
->
+  <div
+    style="
+      height:1px;
+      background:#dedede;
+      margin:18px 0;
+    "
+  ></div>
+
+
+  <!-- =======================================
+       EXEMPLE CONCRET
+       ======================================= -->
 
   <div
     style="
@@ -9235,23 +9241,19 @@ function appendHealthHelpSections(){
   que l’on souhaite pouvoir
   accompagner simplement.
 
-</div>
+
+  <div
+    style="
+      height:1px;
+      background:#dedede;
+      margin:18px 0;
+    "
+  ></div>
 
 
-<!-- =========================================
-     VEILLE VOLONTAIRE
-     ========================================= -->
-
-<div
-  class="box"
-  style="
-    background:#ffffff;
-    color:#111111;
-    font-size:14px;
-    font-weight:400;
-    line-height:1.5;
-  "
->
+  <!-- =======================================
+       MESSAGE SIMPLE POUR GARDER LE LIEN
+       ======================================= -->
 
   <div
     style="
@@ -9314,7 +9316,6 @@ function appendHealthHelpSections(){
   qu’il doit reprendre contact avec elle.
 
 </div>
-
         <!-- =========================================
              OFFRES
              ========================================= -->
