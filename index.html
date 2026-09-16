@@ -13387,14 +13387,152 @@ function schoolGetTeacherIdentifier(account){
    schoolRenderSolidarityAgreementStatus();
   }
 
-  function schoolSaveSolidarityChoice(){
+/* =========================================================
+   ÇA COMMENCE ICI
+   ÉCOLE ↔ MAIRIE
+   ORIENTATION + ÉCHANGE EN ATTENTE + RETOUR MAIRIE
+   ========================================================= */
 
-  const mode = schoolGetSolidarityMode();
+function schoolReadMairiePendingExchange(){
+
+  try{
+
+    const raw =
+      localStorage.getItem(
+        "bociteart_school_mairie_pending_v1"
+      );
+
+    const parsed =
+      raw
+        ? JSON.parse(raw)
+        : null;
+
+    return (
+      parsed &&
+      typeof parsed === "object"
+    )
+      ? parsed
+      : null;
+
+  }catch(error){
+
+    return null;
+  }
+}
+
+
+function schoolPrepareMairieExchange(){
+
+  const map =
+    schoolLoadSolidarityMap();
+
+
+  const solidarity =
+    map[
+      schoolSolidarityMapKey()
+    ] || {
+
+      mode:"none",
+
+      classId:
+        schoolCurrentClassId(),
+
+      className:
+        schoolCurrentClass(),
+
+      associations:[],
+
+      savedAt:
+        new Date()
+          .toISOString()
+
+    };
+
+
+  const wallet =
+    (
+      typeof window.loadSchoolWallet ===
+        "function"
+    )
+
+      ? window.loadSchoolWallet()
+
+      : {
+          jaune:0
+        };
+
+
+  const amount =
+    Math.max(
+      0,
+      Number(
+        wallet &&
+        wallet.jaune ||
+        0
+      )
+    );
+
+
+  const payload = {
+
+    type:
+      "school_wallet",
+
+    class:
+      schoolCurrentClass(),
+
+    classId:
+      schoolCurrentClassId(),
+
+    wallet:
+      amount,
+
+    solidarity:
+      solidarity,
+
+    ts:
+      Date.now()
+
+  };
+
+
+  try{
+
+    localStorage.setItem(
+
+      "bociteart_school_mairie_pending_v1",
+
+      JSON.stringify(
+        payload
+      )
+
+    );
+
+  }catch(error){
+
+    console.warn(
+      "Bo'CitéArt École : préparation de l’échange Mairie impossible.",
+      error
+    );
+
+  }
+
+
+  return payload;
+}
+
+
+function schoolSaveSolidarityChoice(){
+
+  const mode =
+    schoolGetSolidarityMode();
+
 
   if(
     !schoolSolidarityAgreementActive() &&
     mode !== "none"
   ){
+
     alert(
       "Le partage solidaire est encore en attente d’accord. " +
       "La classe peut poursuivre le Mot du jour, " +
@@ -13402,90 +13540,699 @@ function schoolGetTeacherIdentifier(account){
     );
 
     schoolRenderSolidarityAgreementStatus();
+
     return;
   }
 
-  const picks = Array.from(
-    document.querySelectorAll(".schoolAssoPick")
-  );
-   
-    const selected = picks.filter(function(box){ return box.checked; });
 
-    if(mode !== "none" && !selected.length){
-      alert("Choisissez au moins une association.");
+  const picks =
+    Array.from(
+      document.querySelectorAll(
+        ".schoolAssoPick"
+      )
+    );
+
+
+  const selected =
+    picks.filter(
+      function(box){
+
+        return box.checked;
+      }
+    );
+
+
+  if(
+    mode !== "none" &&
+    !selected.length
+  ){
+
+    alert(
+      "Choisissez au moins une association."
+    );
+
+    return;
+  }
+
+
+  let associations =
+    [];
+
+
+  if(
+    mode === "partial"
+  ){
+
+    let total =
+      0;
+
+    let invalid =
+      false;
+
+
+    associations =
+      selected.map(
+        function(box){
+
+          const name =
+            String(
+              box.dataset.asso ||
+              ""
+            );
+
+
+          const input =
+            Array.from(
+              document.querySelectorAll(
+                ".schoolAssoPct"
+              )
+            )
+            .find(
+              function(item){
+
+                return (
+                  String(
+                    item.dataset.asso ||
+                    ""
+                  ) ===
+                  name
+                );
+              }
+            );
+
+
+          const percent =
+            Number(
+              input &&
+              input.value
+                ? input.value
+                : 0
+            );
+
+
+          if(
+            !Number.isFinite(
+              percent
+            ) ||
+            percent <= 0 ||
+            percent > 100
+          ){
+
+            invalid =
+              true;
+          }
+
+
+          total +=
+            percent;
+
+
+          return {
+
+            name:
+              name,
+
+            percent:
+              percent
+
+          };
+        }
+      );
+
+
+    if(
+      invalid
+    ){
+
+      alert(
+        "Indiquez un pourcentage supérieur à 0 pour chaque association choisie."
+      );
+
       return;
     }
 
-       let associations = [];
 
-    if(mode === "partial"){
-      let total = 0;
-      let invalid = false;
+    if(
+      total <= 0 ||
+      total >= 100
+    ){
 
-      associations = selected.map(function(box){
-        const name = String(box.dataset.asso || "");
-        const input = Array.from(document.querySelectorAll(".schoolAssoPct")).find(function(item){
-          return String(item.dataset.asso || "") === name;
-        });
-        const percent = Number(input && input.value ? input.value : 0);
+      alert(
+        "Pour un partage, le total destiné aux associations doit être supérieur à 0 % et inférieur à 100 %."
+      );
 
-        if(!Number.isFinite(percent) || percent <= 0 || percent > 100){
-          invalid = true;
-        }
-
-        total += percent;
-        return { name: name, percent: percent };
-      });
-
-      if(invalid){
-        alert("Indiquez un pourcentage supérieur à 0 pour chaque association choisie.");
-        return;
-      }
-
-      if(total <= 0 || total >= 100){
-        alert("Pour un partage, le total destiné aux associations doit être supérieur à 0 % et inférieur à 100 %.");
-        return;
-      }
-    }
-
-    if(mode === "full"){
-      const count = selected.length;
-      const base = Math.floor((10000 / count)) / 100;
-      let remaining = 100;
-
-      associations = selected.map(function(box, index){
-        const name = String(box.dataset.asso || "");
-        const percent = index === count - 1
-          ? Math.round(remaining * 100) / 100
-          : base;
-        remaining = Math.round((remaining - percent) * 100) / 100;
-        return { name: name, percent: percent };
-      });
-    }
-
-    if(mode === "none"){
-      associations = [];
-    }
-
-    const map = schoolLoadSolidarityMap();
-    map[schoolSolidarityMapKey()] = {
-      mode: mode,
-      classId: schoolCurrentClassId(),
-      className: schoolCurrentClass(),
-      associations: associations,
-      savedAt: new Date().toISOString()
-    };
-
-    try{
-      localStorage.setItem(SCHOOL_SOLIDARITY_KEY, JSON.stringify(map));
-    }catch(error){}
-
-    if(schoolSolidarityStatus){
-      schoolSolidarityStatus.textContent =
-       "✓ Orientation de la classe enregistrée. Modalités d’échange à voir avec la mairie.";
+      return;
     }
   }
 
+
+  if(
+    mode === "full"
+  ){
+
+    const count =
+      selected.length;
+
+
+    const base =
+      Math.floor(
+        10000 /
+        count
+      ) / 100;
+
+
+    let remaining =
+      100;
+
+
+    associations =
+      selected.map(
+        function(
+          box,
+          index
+        ){
+
+          const name =
+            String(
+              box.dataset.asso ||
+              ""
+            );
+
+
+          const percent =
+            index ===
+            count - 1
+
+              ? Math.round(
+                  remaining *
+                  100
+                ) / 100
+
+              : base;
+
+
+          remaining =
+            Math.round(
+              (
+                remaining -
+                percent
+              ) *
+              100
+            ) / 100;
+
+
+          return {
+
+            name:
+              name,
+
+            percent:
+              percent
+
+          };
+        }
+      );
+  }
+
+
+  if(
+    mode === "none"
+  ){
+
+    associations =
+      [];
+  }
+
+
+  const map =
+    schoolLoadSolidarityMap();
+
+
+  map[
+    schoolSolidarityMapKey()
+  ] = {
+
+    mode:
+      mode,
+
+    classId:
+      schoolCurrentClassId(),
+
+    className:
+      schoolCurrentClass(),
+
+    associations:
+      associations,
+
+    savedAt:
+      new Date()
+        .toISOString()
+
+  };
+
+
+  try{
+
+    localStorage.setItem(
+
+      SCHOOL_SOLIDARITY_KEY,
+
+      JSON.stringify(
+        map
+      )
+
+    );
+
+  }catch(error){
+
+    console.warn(
+      "Bo'CitéArt École : orientation de la classe non enregistrée.",
+      error
+    );
+
+    return;
+  }
+
+
+  /*
+   * On prépare en même temps
+   * l'échange qui pourra être lu
+   * par la Mairie.
+   */
+
+  const pending =
+    schoolPrepareMairieExchange();
+
+
+  if(
+    schoolSolidarityStatus
+  ){
+
+    const amount =
+      Number(
+        pending &&
+        pending.wallet ||
+        0
+      );
+
+
+    schoolSolidarityStatus.textContent =
+
+      amount > 0
+
+        ? (
+            "✓ Orientation de la classe enregistrée. " +
+            "Échange avec la mairie préparé pour " +
+            amount +
+            " bocitecoin(s) JAUNE."
+          )
+
+        : (
+            "✓ Orientation de la classe enregistrée. " +
+            "Aucun bocitecoin n’est actuellement à transmettre."
+          );
+  }
+}
+
+
+/* =========================================================
+   PASSERELLE ÉCOLE → MAIRIE
+   ========================================================= */
+
+window.BociteSchoolMairieBridge =
+  Object.assign(
+
+    window.BociteSchoolMairieBridge ||
+    {},
+
+    {
+
+      getPendingExchange:
+        function(){
+
+          return (
+            schoolReadMairiePendingExchange()
+          );
+        },
+
+
+      getPendingCode:
+        function(){
+
+          const pending =
+            schoolReadMairiePendingExchange();
+
+
+          return pending
+            ? JSON.stringify(
+                pending
+              )
+            : "";
+        },
+
+
+      refreshPendingExchange:
+        function(){
+
+          return (
+            schoolPrepareMairieExchange()
+          );
+        }
+
+    }
+
+  );
+
+
+/* =========================================================
+   RETOUR MAIRIE → ÉCOLE
+   APRÈS VALIDATION
+   ========================================================= */
+
+if(
+  !window.__bociteSchoolMairieValidationInstalled
+){
+
+  window.__bociteSchoolMairieValidationInstalled =
+    true;
+
+
+  window.addEventListener(
+
+    "bociteart:school-mairie-validated",
+
+    function(event){
+
+      const detail =
+        event &&
+        event.detail &&
+        typeof event.detail === "object"
+
+          ? event.detail
+
+          : null;
+
+
+      if(
+        !detail ||
+        detail.type !==
+          "school_wallet_validation"
+      ){
+
+        return;
+      }
+
+
+      const reference =
+        String(
+          detail.reference ||
+          ""
+        )
+        .trim();
+
+
+      if(
+        !reference
+      ){
+
+        return;
+      }
+
+
+      /*
+       * Historique local des validations
+       * déjà appliquées côté École.
+       */
+
+      let validations =
+        [];
+
+
+      try{
+
+        const raw =
+          localStorage.getItem(
+            "bociteart_school_mairie_validations_v1"
+          );
+
+
+        const parsed =
+          raw
+            ? JSON.parse(raw)
+            : [];
+
+
+        validations =
+          Array.isArray(
+            parsed
+          )
+            ? parsed
+            : [];
+
+      }catch(error){
+
+        validations =
+          [];
+      }
+
+
+      /*
+       * Une confirmation Mairie
+       * ne doit jamais être appliquée
+       * deux fois.
+       */
+
+      const alreadyApplied =
+        validations.some(
+          function(item){
+
+            return (
+              item &&
+              String(
+                item.reference ||
+                ""
+              ) ===
+              reference
+            );
+          }
+        );
+
+
+      if(
+        alreadyApplied
+      ){
+
+        return;
+      }
+
+
+      const amount =
+        Math.max(
+          0,
+          Number(
+            detail.bocitecoins ||
+            0
+          )
+        );
+
+
+      const wallet =
+        (
+          typeof window.loadSchoolWallet ===
+            "function"
+        )
+
+          ? window.loadSchoolWallet()
+
+          : {
+              jaune:0
+            };
+
+
+      const currentAmount =
+        Math.max(
+          0,
+          Number(
+            wallet &&
+            wallet.jaune ||
+            0
+          )
+        );
+
+
+      /*
+       * Protection :
+       * on ne retire jamais davantage
+       * que le solde réellement présent.
+       */
+
+      const amountApplied =
+        Math.min(
+          currentAmount,
+          amount
+        );
+
+
+      const newAmount =
+        Math.max(
+          0,
+          currentAmount -
+          amountApplied
+        );
+
+
+      if(
+        typeof window.saveSchoolWallet ===
+          "function"
+      ){
+
+        window.saveSchoolWallet({
+
+          jaune:
+            newAmount
+
+        });
+      }
+
+
+      /*
+       * Actualisation immédiate
+       * si le portefeuille est visible.
+       */
+
+      const balance =
+        document.getElementById(
+          "schoolCoinBalance"
+        );
+
+
+      if(
+        balance
+      ){
+
+        balance.textContent =
+          String(
+            newAmount
+          );
+      }
+
+
+      validations.push({
+
+        id:
+          String(
+            detail.id ||
+            ""
+          ),
+
+        reference:
+          reference,
+
+        className:
+          String(
+            detail.className ||
+            ""
+          ),
+
+        bocitecoins:
+          amountApplied,
+
+        solidarity:
+          detail.solidarity &&
+          typeof detail.solidarity ===
+            "object"
+
+            ? detail.solidarity
+
+            : {
+                mode:"none",
+                associations:[]
+              },
+
+        validatedAt:
+          detail.validatedAt ||
+          new Date()
+            .toISOString()
+
+      });
+
+
+      try{
+
+        localStorage.setItem(
+
+          "bociteart_school_mairie_validations_v1",
+
+          JSON.stringify(
+            validations.slice(
+              -500
+            )
+          )
+
+        );
+
+
+        localStorage.removeItem(
+          "bociteart_school_mairie_pending_v1"
+        );
+
+      }catch(error){}
+
+
+      if(
+        schoolSolidarityStatus
+      ){
+
+        schoolSolidarityStatus.textContent =
+
+          "✓ Échange confirmé par la mairie. " +
+          amountApplied +
+          " bocitecoin(s) JAUNE pris en compte. " +
+          "Nouveau solde : " +
+          newAmount +
+          ".";
+      }
+
+
+      try{
+
+        document.dispatchEvent(
+
+          new CustomEvent(
+            "bociteart:school-wallet-updated",
+            {
+              detail:{
+                source:
+                  "mairie",
+
+                amount:
+                  amountApplied,
+
+                balance:
+                  newAmount,
+
+                reference:
+                  reference
+              }
+            }
+          )
+
+        );
+
+      }catch(error){}
+
+    }
+
+  );
+
+}
+
+/* =========================================================
+   ÇA FINIT ICI
+   ÉCOLE ↔ MAIRIE
+   ORIENTATION + ÉCHANGE EN ATTENTE + RETOUR MAIRIE
+   ========================================================= */
+ 
   function schoolDirectionInitialized(){
     const data = schoolLoadAccessData();
     return Boolean(data.direction && data.direction.codeHash);
