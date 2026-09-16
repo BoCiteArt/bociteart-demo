@@ -18520,6 +18520,40 @@ window.openBociteSchoolTeacherAccess = function(){
    ===================================================== */
 
 /* =====================================================
+   ÇA COMMENCE ICI
+   OUVERTURE ÉCOLE — DIRECTION
+   DEPUIS LE PILOTAGE PRIVÉ
+   ===================================================== */
+
+window.openBociteSchoolPrivateDemo = function(){
+
+  if(!window.bociteartAdminSession){
+    alert("Accès privé requis.");
+    return;
+  }
+
+  window.bociteartSchoolAdminPreview = true;
+  window.bociteartSchoolPrivateEntry = true;
+
+  const schoolTile =
+    document.querySelector('[data-open="ecole"]');
+
+  if(!schoolTile){
+    alert("La tuile École n’a pas été trouvée.");
+    return;
+  }
+
+  schoolTile.__bociteOtherIntroBypass = true;
+  schoolTile.click();
+};
+
+/* =====================================================
+   ÇA FINIT ICI
+   OUVERTURE ÉCOLE — DIRECTION
+   DEPUIS LE PILOTAGE PRIVÉ
+   ===================================================== */
+   
+/* =====================================================
    OUVERTURE SPORT — PRÉSIDENCE
    DEPUIS LE PILOTAGE PRIVÉ
    ===================================================== */
