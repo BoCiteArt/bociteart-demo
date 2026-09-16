@@ -13423,6 +13423,10 @@ function schoolReadMairiePendingExchange(){
 
 function schoolPrepareMairieExchange(){
 
+  const SCHOOL_MIN_EXCHANGE =
+    30;
+
+
   const map =
     schoolLoadSolidarityMap();
 
@@ -13462,7 +13466,7 @@ function schoolPrepareMairieExchange(){
         };
 
 
-  const amount =
+  const currentAmount =
     Math.max(
       0,
       Number(
@@ -13471,6 +13475,73 @@ function schoolPrepareMairieExchange(){
         0
       )
     );
+
+
+  /*
+   * Aucun échange École
+   * n'est préparé sous 30 JAUNE.
+   */
+
+  if(
+    currentAmount <
+      SCHOOL_MIN_EXCHANGE
+  ){
+
+    try{
+
+      localStorage.removeItem(
+        "bociteart_school_mairie_pending_v1"
+      );
+
+    }catch(error){}
+
+
+    return {
+
+      type:
+        "school_wallet",
+
+      class:
+        schoolCurrentClass(),
+
+      classId:
+        schoolCurrentClassId(),
+
+      wallet:
+        currentAmount,
+
+      exchangeAmount:
+        0,
+
+      minimumExchange:
+        SCHOOL_MIN_EXCHANGE,
+
+      eligible:
+        false,
+
+      solidarity:
+        solidarity,
+
+      ts:
+        Date.now()
+
+    };
+  }
+
+
+  /*
+   * Pour cette première étape,
+   * on prépare 30 JAUNE.
+   *
+   * Plus tard nous ajouterons
+   * le choix 30 / 50 / 80 / 100
+   * ou autre quantité autorisée,
+   * sans supprimer les paliers
+   * déjà existants.
+   */
+
+  const exchangeAmount =
+    SCHOOL_MIN_EXCHANGE;
 
 
   const payload = {
@@ -13485,7 +13556,16 @@ function schoolPrepareMairieExchange(){
       schoolCurrentClassId(),
 
     wallet:
-      amount,
+      currentAmount,
+
+    exchangeAmount:
+      exchangeAmount,
+
+    minimumExchange:
+      SCHOOL_MIN_EXCHANGE,
+
+    eligible:
+      true,
 
     solidarity:
       solidarity,
@@ -13511,7 +13591,7 @@ function schoolPrepareMairieExchange(){
   }catch(error){
 
     console.warn(
-      "Bo'CitéArt École : préparation de l’échange Mairie impossible.",
+      "Bo'CitéArt École : préparation de la présentation à la Mairie impossible.",
       error
     );
 
@@ -13520,7 +13600,6 @@ function schoolPrepareMairieExchange(){
 
   return payload;
 }
-
 
 function schoolSaveSolidarityChoice(){
 
