@@ -9105,23 +9105,15 @@ function appendHealthHelpSections(){
     les bocitecoins que vous avez gagnés.
   </strong>
 
-</div>
 
+  <div
+    style="
+      height:1px;
+      background:#dedede;
+      margin:18px 0;
+    "
+  ></div>
 
-<!-- =========================================
-     BO'CITÉART VA PLUS LOIN
-     ========================================= -->
-
-<div
-  class="box"
-  style="
-    background:#ffffff;
-    color:#111111;
-    font-size:14px;
-    font-weight:400;
-    line-height:1.5;
-  "
->
 
   <div
     style="
@@ -9131,7 +9123,13 @@ function appendHealthHelpSections(){
       margin-bottom:8px;
     "
   >
-   <span style="white-space:nowrap;"><span style="color:#2f5d46;">Bo’Cité</span><span style="color:#b3282d;">Art</span></span> va plus loin
+    <span
+      style="
+        white-space:nowrap;
+        font-weight:700;
+      "
+    ><span style="color:#2f5d46;">Bo’Cité</span><span style="color:#b3282d;">Art</span></span>
+    va plus loin
   </div>
 
   Cet abonnement ne se limite pas
@@ -9139,14 +9137,14 @@ function appendHealthHelpSections(){
 
   <br><br>
 
-<span
-  style="
-    white-space:nowrap;
-    font-size:14px;
-    font-weight:700;
-  "
-><span style="color:#2f5d46;">Bo’Cité</span><span style="color:#b3282d;">Art</span></span>
-y associe également
+  <span
+    style="
+      white-space:nowrap;
+      font-size:14px;
+      font-weight:700;
+    "
+  ><span style="color:#2f5d46;">Bo’Cité</span><span style="color:#b3282d;">Art</span></span>
+  y associe également
   un autre service utile :
 
   <br><br>
