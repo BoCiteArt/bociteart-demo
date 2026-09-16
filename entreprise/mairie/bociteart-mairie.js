@@ -4603,9 +4603,241 @@ function mairieTransferSportRemainder(){
   return result;
 }
 
+/* =========================================================
+   ÇA COMMENCE ICI
+   EXPORT RAPPORT SPORT → MAIRIE
+   BOCITECOINS VERT
+   ========================================================= */
+
+function mairieExportSportReport(){
+
+  const bridge =
+    mairieSportBridge();
+
+
+  if(
+    !bridge
+  ){
+
+    alert(
+      "Le raccord Sport → Mairie n’est pas chargé."
+    );
+
+    return;
+  }
+
+
+  const exchanges =
+    typeof bridge.history ===
+      "function"
+
+      ? bridge.history()
+
+      : [];
+
+
+  const remainders =
+    typeof bridge.solidarityHistory ===
+      "function"
+
+      ? bridge.solidarityHistory()
+
+      : [];
+
+
+  const exchangeRows =
+    Array.isArray(
+      exchanges
+    )
+
+      ? exchanges
+
+      : [];
+
+
+  const remainderRows =
+    Array.isArray(
+      remainders
+    )
+
+      ? remainders
+
+      : [];
+
+
+  const totalExchanged =
+    exchangeRows.reduce(
+      function(
+        total,
+        item
+      ){
+
+        return (
+          total +
+          Math.max(
+            0,
+            Number(
+              item &&
+              item.amount ||
+              0
+            )
+          )
+        );
+
+      },
+      0
+    );
+
+
+  const totalRemainders =
+    remainderRows.reduce(
+      function(
+        total,
+        item
+      ){
+
+        return (
+          total +
+          Math.max(
+            0,
+            Number(
+              item &&
+              item.bocitecoins ||
+              0
+            )
+          )
+        );
+
+      },
+      0
+    );
+
+
+  const report = {
+
+    type:
+      "sport_mairie_report",
+
+    bocitecoin:
+      "VERT",
+
+    exportedAt:
+      mairieNow(),
+
+    summary:{
+
+      exchanges:
+        exchangeRows.length,
+
+      bocitecoinsExchanged:
+        totalExchanged,
+
+      remainders:
+        remainderRows.length,
+
+      bocitecoinsRemainders:
+        totalRemainders
+
+    },
+
+    exchanges:
+      mairieClone(
+        exchangeRows
+      ),
+
+    remainders:
+      mairieClone(
+        remainderRows
+      )
+
+  };
+
+
+  const data =
+    JSON.stringify(
+      report,
+      null,
+      2
+    );
+
+
+  const blob =
+    new Blob(
+      [
+        data
+      ],
+      {
+        type:
+          "application/json;charset=utf-8"
+      }
+    );
+
+
+  const url =
+    URL.createObjectURL(
+      blob
+    );
+
+
+  const link =
+    document.createElement(
+      "a"
+    );
+
+
+  link.href =
+    url;
+
+
+  link.download =
+    "bociteart-mairie-sport-vert-" +
+    new Date()
+      .toISOString()
+      .slice(
+        0,
+        10
+      ) +
+    ".json";
+
+
+  document.body
+    .appendChild(
+      link
+    );
+
+
+  link.click();
+
+
+  link.remove();
+
+
+  window.setTimeout(
+    function(){
+
+      URL.revokeObjectURL(
+        url
+      );
+
+    },
+    0
+  );
+
+}
+
+/* =========================================================
+   ÇA FINIT ICI
+   EXPORT RAPPORT SPORT → MAIRIE
+   BOCITECOINS VERT
+   ========================================================= */ 
+   /* =========================================================
+   ÇA COMMENCE ICI
+   RAPPORT SPORT → MAIRIE
+   BOCITECOINS VERT
+   ========================================================= */
 
 function mairieShowSportHistory(){
-
+   
   const bridge =
     mairieSportBridge();
 
@@ -4664,8 +4896,55 @@ function mairieShowSportHistory(){
       : [];
 
 
+  const totalExchanged =
+    exchangeRows.reduce(
+      function(
+        total,
+        item
+      ){
+
+        return (
+          total +
+          Math.max(
+            0,
+            Number(
+              item &&
+              item.amount ||
+              0
+            )
+          )
+        );
+      },
+      0
+    );
+
+
+  const totalRemainders =
+    solidarityRows.reduce(
+      function(
+        total,
+        item
+      ){
+
+        return (
+          total +
+          Math.max(
+            0,
+            Number(
+              item &&
+              item.bocitecoins ||
+              0
+            )
+          )
+        );
+      },
+      0
+    );
+
+
   mairieOpenModal(
-    "Historique Sport avec Bo'CitéArt",
+
+    "Rapport Sport avec Bo'CitéArt",
 
     `
 
@@ -4675,8 +4954,50 @@ function mairieShowSportHistory(){
         <div class="mairieCard mairieSport">
 
           ${mairieCardTitle(
-            "Échanges clubs"
+            "Synthèse des bocitecoins VERT"
           )}
+
+
+          <div class="mairieText">
+
+            Échanges validés :
+            <strong>
+              ${mairieEsc(
+                exchangeRows.length
+              )}
+            </strong>
+
+            <br>
+
+            Bocitecoins VERT utilisés :
+            <strong>
+              ${mairieEsc(
+                totalExchanged
+              )}
+            </strong>
+
+            <br>
+
+            Reliquats de fin de saison transmis :
+            <strong>
+              ${mairieEsc(
+                totalRemainders
+              )}
+            </strong>
+
+            bocitecoins VERT
+
+          </div>
+
+        </div>
+
+
+        <div class="mairieCard mairieSport">
+
+          ${mairieCardTitle(
+            "Échanges des clubs"
+          )}
+
 
           <div class="mairieText">
 
@@ -4696,25 +5017,90 @@ function mairieShowSportHistory(){
                         item
                       ){
 
+                        const actor =
+                          item &&
+                          item.actor &&
+                          typeof item.actor ===
+                            "object"
+
+                            ? (
+                                item.actor.label ||
+                                item.actor.name ||
+                                item.actor.type ||
+                                ""
+                              )
+
+                            : "";
+
+
                         return `
 
                           <div
                             style="
-                              margin-top:10px;
+                              margin-top:12px;
+                              padding-top:12px;
+                              border-top:1px solid rgba(0,0,0,.10);
                             "
                           >
 
-                            ${mairieEsc(
-                              item.clubName ||
-                              "Club"
-                            )}
+                            <strong>
+                              ${mairieEsc(
+                                item.clubName ||
+                                "Club"
+                              )}
+                            </strong>
 
                             <br>
 
+                            Bocitecoins VERT utilisés :
+                            ${mairieEsc(
+                              item.amount ||
+                              0
+                            )}
+
+                            ${
+                              mairieText(
+                                item.operationRef
+                              )
+
+                                ? "<br>Référence : " +
+                                  mairieEsc(
+                                    item.operationRef
+                                  )
+
+                                : ""
+                            }
+
+                            ${
+                              mairieText(
+                                actor
+                              )
+
+                                ? "<br>Validation : " +
+                                  mairieEsc(
+                                    actor
+                                  )
+
+                                : ""
+                            }
+
+                            <br>
+
+                            Date :
                             ${mairieEsc(
                               item.date ||
-                              item.createdAt ||
-                              ""
+                              (
+                                item.validatedAt
+
+                                  ? new Date(
+                                      item.validatedAt
+                                    )
+                                    .toLocaleString(
+                                      "fr-FR"
+                                    )
+
+                                  : ""
+                              )
                             )}
 
                           </div>
@@ -4739,6 +5125,7 @@ function mairieShowSportHistory(){
             "Reliquats de fin de saison"
           )}
 
+
           <div class="mairieText">
 
             ${
@@ -4761,17 +5148,22 @@ function mairieShowSportHistory(){
 
                           <div
                             style="
-                              margin-top:10px;
+                              margin-top:12px;
+                              padding-top:12px;
+                              border-top:1px solid rgba(0,0,0,.10);
                             "
                           >
 
-                            ${mairieEsc(
-                              item.clubName ||
-                              "Club"
-                            )}
+                            <strong>
+                              ${mairieEsc(
+                                item.clubName ||
+                                "Club"
+                              )}
+                            </strong>
 
-                            →
+                            <br>
 
+                            Association :
                             ${mairieEsc(
                               item.associationName ||
                               "Association"
@@ -4779,19 +5171,44 @@ function mairieShowSportHistory(){
 
                             <br>
 
+                            Bocitecoins VERT transmis :
                             ${mairieEsc(
                               item.bocitecoins ||
                               0
                             )}
 
-                            bocitecoins
+                            <br>
 
-                            —
+                            État :
+                            ${mairieEsc(
+                              item.status ===
+                                "validated"
 
+                                ? "validé"
+
+                                : (
+                                    item.status ||
+                                    "enregistré"
+                                  )
+                            )}
+
+                            <br>
+
+                            Date :
                             ${mairieEsc(
                               item.date ||
-                              item.createdAt ||
-                              ""
+                              (
+                                item.createdAt
+
+                                  ? new Date(
+                                      item.createdAt
+                                    )
+                                    .toLocaleString(
+                                      "fr-FR"
+                                    )
+
+                                  : ""
+                              )
                             )}
 
                           </div>
@@ -4817,10 +5234,15 @@ function mairieShowSportHistory(){
 
 
   mairieSetModalHeader(
-    "Historique Sport avec"
+    "Rapport Sport avec"
   );
 }
 
+/* =========================================================
+   ÇA FINIT ICI
+   RAPPORT SPORT → MAIRIE
+   BOCITECOINS VERT
+   ========================================================= */
 /* =========================================================
    FINANCE
    LECTURE DU MOTEUR COMMUN EXISTANT
@@ -5443,6 +5865,13 @@ de la tuile Mairie.
               Consulter l’historique Sport
             </button>
 
+<button
+  class="mairieBtn"
+  id="mairieSportExportBtn"
+  type="button"
+>
+  Exporter le rapport Sport
+</button>
           </div>
 
 
@@ -6687,6 +7116,25 @@ const identity =
       mairieShowSportHistory;
   }
 
+   /* =====================================================
+   EXPORT RAPPORT SPORT / BOCITECOINS VERT
+   ===================================================== */
+
+   
+
+const sportExport =
+  mairieEl(
+    "mairieSportExportBtn"
+  );
+
+
+if(
+  sportExport
+){
+
+  sportExport.onclick =
+    mairieExportSportReport;
+}
 
   const sportRemainder =
     mairieEl(
@@ -6787,21 +7235,23 @@ window.BociteMairieModule = {
   saveMessage:
     mairieSave,
 
-  getSchoolHistory:
-    function(){
+  /* =========================================================
+   ÇA COMMENCE ICI
+   HISTORIQUE ÉCOLE EXPOSÉ À LA MAIRIE
+   ========================================================= */
 
-      return mairieClone(
-        mairieSchoolHistory()
-      );
-    },
+getSchoolHistory:
+  function(){
 
-  getReferralHistory:
-    function(){
+    return mairieClone(
+      mairieSchoolHistory()
+    );
+  }
 
-      return mairieClone(
-        mairieReferralHistory()
-      );
-    }
+/* =========================================================
+   ÇA FINIT ICI
+   HISTORIQUE ÉCOLE EXPOSÉ À LA MAIRIE
+   ========================================================= */
 
 };
 
