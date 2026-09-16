@@ -6744,46 +6744,29 @@ function openCitizenHealthModal(
 function returnToCitizenHealthHelp(){
 
   /*
-   * On ferme la sous-page protégée,
-   * puis on rouvre proprement
-   * Annuaire santé + aide.
+   * Retour interne à Annuaire santé + aide.
+   *
+   * On ne ferme plus la modale :
+   * cela évite de rendre la main
+   * à l'ancien univers Commerce / Entreprise.
    */
 
+  enterCitizenHealthContext();
+
+
   if(
-    typeof window.closeModal ===
-      "function"
+    Array.isArray(
+      window.modalHistory
+    )
   ){
 
-    window.closeModal();
-
-  }
-  else{
-
-    if(
-      Array.isArray(
-        window.modalHistory
-      )
-    ){
-
-      window.modalHistory.length =
-        0;
-
-    }
-
-
-    window.BOCITEART_MODAL_CONTEXT =
-      null;
+    window.modalHistory.length =
+      0;
 
   }
 
-window.setTimeout(
-  function(){
 
-    openHealthHelp();
-
-  },
-  0
-);
+  openHealthHelp();
 
 }
 
