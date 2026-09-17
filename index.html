@@ -15942,36 +15942,6 @@ const mairieCode =
     "
   ></div>
 
-  <textarea
-    id="schoolMairieCode"
-    readonly
-    style="
-      box-sizing:border-box;
-      width:100%;
-      min-height:70px;
-      margin-top:12px;
-      padding:8px;
-      border:1px solid #cccccc;
-      border-radius:10px;
-      background:#ffffff;
-      color:#111111;
-      font-size:10px;
-      resize:none;
-    "
-  >${schoolEscapeHtml(mairieCode || "")}</textarea>
-
-  <button
-    id="schoolCopyMairieCodeBtn"
-    class="bociteSchoolAction"
-    type="button"
-    style="
-      width:100%;
-      margin-top:10px;
-    "
-  >
-    Copier le code
-  </button>
-
 </div>
 
 <!-- =====================================================
@@ -16042,7 +16012,7 @@ if(
     );
 
     qrHost.textContent =
-      "Le QR n’a pas pu être affiché. Utilisez le code à copier ci-dessous.";
+  "Le QR n’a pas pu être affiché. Fermez cette fenêtre puis réessayez.";
   }
 }
 
