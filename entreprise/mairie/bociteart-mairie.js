@@ -3407,12 +3407,6 @@ function mairieParseSchoolScan(
     );
   }
 
-const amount =
-    Number(
-      payload.wallet ||
-      0
-    );
-
 /* =====================================================
    ÇA COMMENCE ICI
    MAIRIE — LECTURE DU MONTANT JAUNE PRÉSENTÉ
