@@ -3538,7 +3538,8 @@ return {
    ÇA FINIT ICI
    MAIRIE — LECTURE QR ÉCOLE COMPACT + ANCIEN FORMAT
    ===================================================== */
-
+}
+   
 function mairieSchoolReference(
   payload
 ){
