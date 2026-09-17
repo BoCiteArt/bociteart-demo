@@ -15763,6 +15763,25 @@ if(schoolDirectionFirstSetupBtn){
       const classId =
         schoolCurrentClassId();
 
+     /* =====================================================
+   ÇA COMMENCE ICI
+   ÉCOLE → MAIRIE — CODE DE PRÉSENTATION
+   ===================================================== */
+
+const mairieCode =
+  (
+    window.BociteSchoolMairieBridge &&
+    typeof window.BociteSchoolMairieBridge.getPendingCode ===
+      "function"
+  )
+    ? window.BociteSchoolMairieBridge.getPendingCode()
+    : JSON.stringify(pending);
+
+/* =====================================================
+   ÇA FINIT ICI
+   ÉCOLE → MAIRIE — CODE DE PRÉSENTATION
+   ===================================================== */
+
       openModal(
         "Présentation à la Mairie",
         `
@@ -15820,31 +15839,185 @@ if(schoolDirectionFirstSetupBtn){
 
           </div>
 
-          <div
-            class="box"
-            style="
-              margin-top:12px;
-              background:#ffffff;
-              color:#111111;
-              font-size:14px;
-              font-weight:400;
-              line-height:1.5;
-            "
-          >
+        <!-- =====================================================
+     ÇA COMMENCE ICI
+     ÉCOLE → MAIRIE — QR DE PRÉSENTATION
+     ===================================================== -->
 
-            Présentez cet écran au service municipal.
+<div
+  class="box"
+  style="
+    margin-top:12px;
+    background:#ffffff;
+    color:#111111;
+    font-size:14px;
+    font-weight:400;
+    line-height:1.5;
+    text-align:center;
+  "
+>
 
-            <br><br>
+  <div
+    style="
+      color:#2f5d46;
+      font-size:17px;
+      font-weight:700;
+    "
+  >
+    Présenter ce compte à la Mairie
+  </div>
 
-            La Mairie vérifiera la classe,
-            le montant présenté
-            et l’orientation enregistrée
-            avant de confirmer l’opération.
+  <div
+    style="
+      margin-top:8px;
+      text-align:left;
+    "
+  >
+    Présentez ce QR au service municipal.
 
-          </div>
+    <br><br>
 
+    La Mairie le scanne pour retrouver
+    la classe, son solde,
+    le nombre de bocitecoins JAUNE présentés
+    et l’orientation choisie.
+  </div>
+
+  <div
+    id="schoolMairieQr"
+    style="
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      margin-top:14px;
+      padding:12px;
+      background:#ffffff;
+    "
+  ></div>
+
+  <textarea
+    id="schoolMairieCode"
+    readonly
+    style="
+      box-sizing:border-box;
+      width:100%;
+      min-height:70px;
+      margin-top:12px;
+      padding:8px;
+      border:1px solid #cccccc;
+      border-radius:10px;
+      background:#ffffff;
+      color:#111111;
+      font-size:10px;
+      resize:none;
+    "
+  >${schoolEscapeHtml(mairieCode || "")}</textarea>
+
+  <button
+    id="schoolCopyMairieCodeBtn"
+    class="bociteSchoolAction"
+    type="button"
+    style="
+      width:100%;
+      margin-top:10px;
+    "
+  >
+    Copier le code
+  </button>
+
+</div>
+
+<!-- =====================================================
+     ÇA FINIT ICI
+     ÉCOLE → MAIRIE — QR DE PRÉSENTATION
+     ===================================================== -->
+         
         `
+       );
+/* =====================================================
+   ÇA COMMENCE ICI
+   ÉCOLE → MAIRIE — GÉNÉRATION DU QR
+   ===================================================== */
+
+window.setTimeout(
+  function(){
+
+    const qrHost =
+      document.getElementById(
+        "schoolMairieQr"
       );
+
+    if(
+      qrHost &&
+      mairieCode &&
+      typeof window.QRCode === "function"
+    ){
+
+      qrHost.innerHTML = "";
+
+      new window.QRCode(
+        qrHost,
+        {
+          text:
+            mairieCode,
+
+          width:
+            190,
+
+          height:
+            190,
+
+          correctLevel:
+            window.QRCode.CorrectLevel.M
+        }
+      );
+    }
+
+
+    const copyBtn =
+      document.getElementById(
+        "schoolCopyMairieCodeBtn"
+      );
+
+    if(copyBtn){
+
+      copyBtn.onclick =
+        async function(){
+
+          try{
+
+            await navigator.clipboard.writeText(
+              mairieCode
+            );
+
+            copyBtn.textContent =
+              "Code copié ✓";
+
+          }catch(error){
+
+            const codeField =
+              document.getElementById(
+                "schoolMairieCode"
+              );
+
+            if(codeField){
+
+              codeField.focus();
+              codeField.select();
+            }
+          }
+        };
+    }
+
+  },
+  0
+);
+
+/* =====================================================
+   ÇA FINIT ICI
+   ÉCOLE → MAIRIE — GÉNÉRATION DU QR
+   ===================================================== */
+       
     };
 }
 
