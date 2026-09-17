@@ -14194,6 +14194,149 @@ function schoolSaveSolidarityChoice(){
    PASSERELLE ÉCOLE → MAIRIE
    ========================================================= */
 
+/* ===== ÇA COMMENCE ICI — PASSERELLE JETON ÉCOLE → MAIRIE ===== */
+
+window.BociteSchoolMairieTokenBridge = {
+
+  endpoint:
+    "",
+
+  async createToken(
+    pending
+  ){
+
+    const operation =
+      pending &&
+      typeof pending === "object"
+        ? pending
+        : {};
+
+    const classId =
+      String(
+        operation.classId ||
+        ""
+      ).trim();
+
+    const amount =
+      Number(
+        operation.exchangeAmount ||
+        0
+      );
+
+    const orientation =
+      operation.solidarity &&
+      operation.solidarity.mode === "full"
+        ? "full"
+        : "none";
+
+    if(
+      !classId
+    ){
+      throw new Error(
+        "Identifiant de classe manquant."
+      );
+    }
+
+    if(
+      !Number.isFinite(amount) ||
+      amount < 30
+    ){
+      throw new Error(
+        "La quantité présentée doit être au minimum de 30 bocitecoins."
+      );
+    }
+
+    const endpoint =
+      String(
+        this.endpoint ||
+        ""
+      ).trim();
+
+    if(
+      !endpoint
+    ){
+      throw new Error(
+        "Service de jeton École → Mairie non configuré."
+      );
+    }
+
+    const response =
+      await fetch(
+        endpoint,
+        {
+          method:
+            "POST",
+
+          headers:
+            {
+              "Content-Type":
+                "application/json",
+
+              "Accept":
+                "application/json"
+            },
+
+          credentials:
+            "include",
+
+          cache:
+            "no-store",
+
+          body:
+            JSON.stringify(
+              {
+                classId:
+                  classId,
+
+                amount:
+                  Math.trunc(
+                    amount
+                  ),
+
+                orientation:
+                  orientation
+              }
+            )
+        }
+      );
+
+    if(
+      !response.ok
+    ){
+      throw new Error(
+        "Création du jeton École → Mairie impossible."
+      );
+    }
+
+    const result =
+      await response.json();
+
+    const token =
+      String(
+        result &&
+        result.token
+          ? result.token
+          : ""
+      )
+      .trim()
+      .toUpperCase();
+
+    if(
+      !/^BCA-E-[A-Z0-9]{8,64}$/.test(
+        token
+      )
+    ){
+      throw new Error(
+        "Jeton École → Mairie invalide."
+      );
+    }
+
+    return token;
+  }
+};
+
+/* ===== ÇA FINIT ICI — PASSERELLE JETON ÉCOLE → MAIRIE ===== */
+ 
 window.BociteSchoolMairieBridge =
   Object.assign(
 
