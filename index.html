@@ -12475,50 +12475,11 @@ function schoolRenderSolidarityAgreementStatus(){
         : "#b42318";
   });
 
-
-  document
-    .querySelectorAll(
-      'input[name="schoolSolidarityMode"]'
-    )
-    .forEach(function(radio){
-
-      const mode =
-        String(radio.value || "");
-
-      if(
-        mode === "partial" ||
-        mode === "full"
-      ){
-
-        radio.disabled =
-          !active;
-      }
-    });
-
-
   /*
     Accord non encore validé :
     la classe conserve ses bocitecoins.
     On ne supprime aucun ancien choix enregistré.
   */
-  if(!active){
-
-    const keepAll =
-      document.querySelector(
-        'input[name="schoolSolidarityMode"][value="none"]'
-      );
-
-    if(keepAll){
-      keepAll.checked = true;
-    }
-
-
-    if(schoolSolidarityAssociations){
-
-      schoolSolidarityAssociations.style.display =
-        "none";
-    }
-  }
 }
 
 
@@ -13938,23 +13899,6 @@ function schoolSaveSolidarityChoice(){
    * On conserve provisoirement ces valeurs internes
    * pour ne pas casser le reste du module.
    */
-
-  if(
-    !schoolSolidarityAgreementActive() &&
-    mode === "full"
-  ){
-
-    alert(
-      "L’orientation solidaire est encore en attente d’accord. " +
-      "La classe peut poursuivre le Mot du jour, " +
-      "mais ce choix n’est pas encore disponible."
-    );
-
-    schoolRenderSolidarityAgreementStatus();
-
-    return;
-  }
-
 
   const picks =
     Array.from(
