@@ -14226,45 +14226,53 @@ getPendingCode:
      * ce dont la Mairie a besoin.
      */
 
-    const compactPayload = {
+/* =====================================================
+   ÇA COMMENCE ICI
+   ÉCOLE → MAIRIE — QR ULTRA-COMPACT
+   ===================================================== */
 
-      type:
-        "school_wallet",
+const compactPayload = {
 
-      class:
-        pending.class ||
-        "",
+  type:
+    "school_wallet",
 
-      classId:
-        pending.classId ||
-        "",
+  c:
+    pending.class ||
+    "",
 
-      wallet:
-        Number(
-          pending.wallet ||
-          0
-        ),
+  i:
+    pending.classId ||
+    "",
 
-      exchangeAmount:
-        Number(
-          pending.exchangeAmount ||
-          0
-        ),
+  w:
+    Number(
+      pending.wallet ||
+      0
+    ),
 
-      solidarity:{
-        mode:
-          pending.solidarity &&
-          pending.solidarity.mode
-            ? pending.solidarity.mode
-            : "none"
-      },
+  a:
+    Number(
+      pending.exchangeAmount ||
+      0
+    ),
 
-      ts:
-        Number(
-          pending.ts ||
-          Date.now()
-        )
-    };
+  o:
+    pending.solidarity &&
+    pending.solidarity.mode === "full"
+      ? "full"
+      : "none",
+
+  t:
+    Number(
+      pending.ts ||
+      Date.now()
+    )
+};
+
+/* =====================================================
+   ÇA FINIT ICI
+   ÉCOLE → MAIRIE — QR ULTRA-COMPACT
+   ===================================================== */
 
     return JSON.stringify(
       compactPayload
