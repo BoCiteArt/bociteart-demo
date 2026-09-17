@@ -13435,6 +13435,24 @@ function schoolGetTeacherIdentifier(account){
   }
 
   function schoolRefreshSolidarityUi(){
+
+     /* =====================================================
+     ÉCOLE — 2 ORIENTATIONS TOUJOURS CLIQUABLES
+     ===================================================== */
+
+  document
+    .querySelectorAll(
+      'input[name="schoolSolidarityMode"]'
+    )
+    .forEach(function(radio){
+
+      radio.disabled = false;
+
+      radio.removeAttribute(
+        "disabled"
+      );
+
+    });
      /* =====================================================
      ÉCOLE — SOLDE JAUNE DISPONIBLE POUR LA MAIRIE
      ===================================================== */
