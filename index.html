@@ -16014,59 +16014,18 @@ if(
     qrHost.textContent =
   "Le QR n’a pas pu être affiché. Fermez cette fenêtre puis réessayez.";
   }
-}
+ }
 
 /* =====================================================
    ÇA FINIT ICI
    ÉCOLE → MAIRIE — QR VISIBLE
    ===================================================== */
-
-    const copyBtn =
-      document.getElementById(
-        "schoolCopyMairieCodeBtn"
-      );
-
-    if(copyBtn){
-
-      copyBtn.onclick =
-        async function(){
-
-          try{
-
-            await navigator.clipboard.writeText(
-              mairieCode
-            );
-
-            copyBtn.textContent =
-              "Code copié ✓";
-
-          }catch(error){
-
-            const codeField =
-              document.getElementById(
-                "schoolMairieCode"
-              );
-
-            if(codeField){
-
-              codeField.focus();
-              codeField.select();
-            }
-          }
-        };
-    }
-
   },
   0
-);
-
-/* =====================================================
-   ÇA FINIT ICI
-   ÉCOLE → MAIRIE — GÉNÉRATION DU QR
-   ===================================================== */
-       
+ );
+      
     };
-}
+    }
 
   if(schoolTeacherChangeCodeBtn){
     schoolTeacherChangeCodeBtn.onclick = schoolTeacherChangeOwnCode;
