@@ -3407,27 +3407,50 @@ function mairieParseSchoolScan(
     );
   }
 
-
-  const amount =
+const amount =
     Number(
       payload.wallet ||
       0
     );
 
+/* =====================================================
+   ÇA COMMENCE ICI
+   MAIRIE — LECTURE DU MONTANT JAUNE PRÉSENTÉ
+   ===================================================== */
 
-  if(
-    !Number.isFinite(
-      amount
-    ) ||
-    amount <
-      0
-  ){
+const walletAmount =
+  Number(
+    payload.wallet ||
+    0
+  );
 
-    throw new Error(
-      "Le montant transmis par l’école est invalide."
-    );
-  }
+const amount =
+  Number(
+    payload.exchangeAmount != null
+      ? payload.exchangeAmount
+      : payload.wallet || 0
+  );
 
+if(
+  !Number.isFinite(
+    walletAmount
+  ) ||
+  walletAmount < 0 ||
+  !Number.isInteger(
+    amount
+  ) ||
+  amount < 30 ||
+  amount > walletAmount
+){
+
+  throw new Error(
+    "Le montant présenté par l’école est invalide."
+  );
+}
+/* =====================================================
+   ÇA FINIT ICI
+   MAIRIE — LECTURE DU MONTANT JAUNE PRÉSENTÉ
+   ===================================================== */
 
   return {
 
@@ -3443,6 +3466,9 @@ function mairieParseSchoolScan(
 
     amount:
       amount,
+
+     wallet:
+  walletAmount,
 
     solidarity:
       payload.solidarity &&
