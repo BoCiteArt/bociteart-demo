@@ -2685,6 +2685,24 @@ function mairieHealthHtml(){
 
         <div class="mairieActions">
 
+        <!-- =====================================================
+     ÇA COMMENCE ICI
+     MAIRIE — SCANNER LE QR DE LA CLASSE
+     ===================================================== -->
+
+<button
+  class="mairieBtn"
+  id="mairieSchoolCameraBtn"
+  type="button"
+>
+  Scanner le QR de la classe
+</button>
+
+<!-- =====================================================
+     ÇA FINIT ICI
+     MAIRIE — SCANNER LE QR DE LA CLASSE
+     ===================================================== -->
+
           <button
             id="mairieHealthOpenCommuneBtn"
             class="mairieBtn"
@@ -3458,6 +3476,22 @@ if(
       ) ||
       "Classe non renseignée",
 
+         /* =====================================================
+       ÇA COMMENCE ICI
+       MAIRIE — IDENTIFIANT UNIQUE DE LA CLASSE
+       ===================================================== */
+
+    classId:
+      mairieText(
+        payload.classId
+      ) ||
+      "Non renseigné",
+
+    /* =====================================================
+       ÇA FINIT ICI
+       MAIRIE — IDENTIFIANT UNIQUE DE LA CLASSE
+       ===================================================== */
+
         wallet:
       walletAmount,
 
@@ -3547,39 +3581,73 @@ function mairieReadSchoolScan(){
     lastSchoolPayload =
       parsed;
 
+     /* =====================================================
+   ÇA COMMENCE ICI
+   MAIRIE — FICHE ÉCOLE LUE APRÈS SCAN
+   ===================================================== */
 
-    if(
-      out
-    ){
+if(
+  out
+){
 
-      out.dataset.state =
-        "ok";
+  const orientationLabel =
+    parsed.solidarity &&
+    parsed.solidarity.mode === "full"
+
+      ? "Solidarité — recherche médicale"
+
+      : "Surprise, cadeau collectif ou matériel scolaire";
 
 
-      out.innerHTML =
+  out.dataset.state =
+    "ok";
 
-        "Classe : " +
-        mairieEsc(
-          parsed.className
-        ) +
 
-        "<br>Montant : " +
-        mairieEsc(
-          parsed.amount
-        ) +
-        " bocitecoins JAUNE" +
+  out.innerHTML =
 
-        "<br>Transmission : " +
-        mairieEsc(
+    "<strong>Classe :</strong> " +
+    mairieEsc(
+      parsed.className
+    ) +
 
-          new Date(
-            parsed.ts
-          )
-            .toLocaleString(
-              "fr-FR"
-            )
-        );
-    }
+    "<br><strong>Identifiant de classe :</strong> " +
+    mairieEsc(
+      parsed.classId ||
+      "Non renseigné"
+    ) +
+
+    "<br><strong>Solde du compte :</strong> " +
+    mairieEsc(
+      parsed.wallet
+    ) +
+    " bocitecoins JAUNE" +
+
+    "<br><strong>Quantité présentée :</strong> " +
+    mairieEsc(
+      parsed.amount
+    ) +
+    " bocitecoins JAUNE" +
+
+    "<br><strong>Orientation :</strong> " +
+    mairieEsc(
+      orientationLabel
+    ) +
+
+    "<br><strong>Transmission :</strong> " +
+    mairieEsc(
+      new Date(
+        parsed.ts
+      )
+        .toLocaleString(
+          "fr-FR"
+        )
+    );
+}
+
+/* =====================================================
+   ÇA FINIT ICI
+   MAIRIE — FICHE ÉCOLE LUE APRÈS SCAN
+   ===================================================== */
 
 
     return parsed;
@@ -3608,7 +3676,382 @@ function mairieReadSchoolScan(){
   }
 }
 
+/* =========================================================
+   ÇA COMMENCE ICI
+   MAIRIE — SCANNER LE QR ÉCOLE AVEC LA CAMÉRA
+   ========================================================= */
 
+async function mairieScanSchoolQrWithCamera(){
+
+  const input =
+    mairieEl(
+      "mairieSchoolScanInput"
+    );
+
+  const out =
+    mairieEl(
+      "mairieSchoolReadOut"
+    );
+
+
+  if(!input){
+    return;
+  }
+
+
+  if(
+    typeof window.BarcodeDetector !==
+      "function" ||
+    !navigator.mediaDevices ||
+    typeof navigator.mediaDevices.getUserMedia !==
+      "function"
+  ){
+
+    if(out){
+
+      out.dataset.state =
+        "warn";
+
+      out.textContent =
+        "Le scanner caméra n’est pas disponible sur cet appareil. Collez le code de la classe dans le champ prévu.";
+    }
+
+    return;
+  }
+
+
+  let supported =
+    [];
+
+  try{
+
+    if(
+      typeof window.BarcodeDetector.getSupportedFormats ===
+        "function"
+    ){
+
+      supported =
+        await window.BarcodeDetector
+          .getSupportedFormats();
+    }
+
+  }catch(error){}
+
+
+  if(
+    supported.length &&
+    !supported.includes(
+      "qr_code"
+    )
+  ){
+
+    if(out){
+
+      out.dataset.state =
+        "warn";
+
+      out.textContent =
+        "La lecture des QR n’est pas disponible sur cet appareil. Collez le code de la classe.";
+    }
+
+    return;
+  }
+
+
+  const detector =
+    new window.BarcodeDetector({
+      formats:[
+        "qr_code"
+      ]
+    });
+
+
+  const overlay =
+    document.createElement(
+      "div"
+    );
+
+  overlay.id =
+    "mairieSchoolCameraOverlay";
+
+  overlay.style.cssText =
+    "position:fixed;" +
+    "inset:0;" +
+    "z-index:100050;" +
+    "background:rgba(0,0,0,.78);" +
+    "padding:16px;" +
+    "display:flex;" +
+    "align-items:center;" +
+    "justify-content:center;" +
+    "box-sizing:border-box;";
+
+
+  overlay.innerHTML = `
+
+    <div
+      style="
+        width:100%;
+        max-width:420px;
+        background:#ffffff;
+        border-radius:16px;
+        padding:14px;
+        box-sizing:border-box;
+      "
+    >
+
+      <div
+        style="
+          color:#2f5d46;
+          font-size:17px;
+          font-weight:700;
+        "
+      >
+        Scanner le QR de la classe
+      </div>
+
+      <div
+        style="
+          margin-top:8px;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.5;
+        "
+      >
+        Placez le QR présenté par le professeur
+        dans le cadre de la caméra.
+      </div>
+
+      <video
+        id="mairieSchoolCameraVideo"
+        autoplay
+        muted
+        playsinline
+        style="
+          width:100%;
+          margin-top:12px;
+          border-radius:12px;
+          background:#111111;
+        "
+      ></video>
+
+      <button
+        id="mairieSchoolCameraClose"
+        class="mairieBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-top:12px;
+        "
+      >
+        Annuler le scan
+      </button>
+
+    </div>
+
+  `;
+
+
+  document.body.appendChild(
+    overlay
+  );
+
+
+  const video =
+    document.getElementById(
+      "mairieSchoolCameraVideo"
+    );
+
+  const closeBtn =
+    document.getElementById(
+      "mairieSchoolCameraClose"
+    );
+
+
+  let stream =
+    null;
+
+  let timer =
+    null;
+
+  let active =
+    true;
+
+  let detecting =
+    false;
+
+
+  function closeCamera(){
+
+    active =
+      false;
+
+    if(timer){
+
+      window.clearInterval(
+        timer
+      );
+
+      timer =
+        null;
+    }
+
+
+    if(stream){
+
+      stream
+        .getTracks()
+        .forEach(
+          function(track){
+
+            track.stop();
+          }
+        );
+    }
+
+
+    if(
+      overlay &&
+      overlay.parentNode
+    ){
+
+      overlay.remove();
+    }
+  }
+
+
+  if(closeBtn){
+
+    closeBtn.onclick =
+      closeCamera;
+  }
+
+
+  try{
+
+    stream =
+      await navigator.mediaDevices
+        .getUserMedia({
+
+          audio:false,
+
+          video:{
+            facingMode:{
+              ideal:"environment"
+            }
+          }
+
+        });
+
+
+    video.srcObject =
+      stream;
+
+    await video.play();
+
+
+    if(out){
+
+      out.dataset.state =
+        "warn";
+
+      out.textContent =
+        "Scanner actif : présentez le QR de la classe.";
+    }
+
+
+    timer =
+      window.setInterval(
+        async function(){
+
+          if(
+            !active ||
+            detecting ||
+            !video ||
+            video.readyState < 2
+          ){
+            return;
+          }
+
+
+          detecting =
+            true;
+
+
+          try{
+
+            const codes =
+              await detector.detect(
+                video
+              );
+
+
+            if(
+              codes &&
+              codes.length &&
+              codes[0] &&
+              codes[0].rawValue
+            ){
+
+              const raw =
+                String(
+                  codes[0].rawValue
+                ).trim();
+
+
+              if(raw){
+
+                input.value =
+                  raw;
+
+                closeCamera();
+
+                mairieReadSchoolScan();
+
+                return;
+              }
+            }
+
+          }catch(error){
+
+            console.warn(
+              "Bo'CitéArt Mairie : lecture QR en cours.",
+              error
+            );
+
+          }finally{
+
+            detecting =
+              false;
+          }
+
+        },
+        450
+      );
+
+
+  }catch(error){
+
+    closeCamera();
+
+
+    if(out){
+
+      out.dataset.state =
+        "error";
+
+      out.textContent =
+        "La caméra n’a pas pu être ouverte. Autorisez son accès ou collez le code de la classe.";
+    }
+  }
+}
+
+/* =========================================================
+   ÇA FINIT ICI
+   MAIRIE — SCANNER LE QR ÉCOLE AVEC LA CAMÉRA
+   ========================================================= */
+
+   
 function mairieValidateSchoolExchange(){
 
   const payload =
@@ -3675,7 +4118,56 @@ function mairieValidateSchoolExchange(){
     return duplicate;
   }
 
+/* =====================================================
+   ÇA COMMENCE ICI
+   MAIRIE — CONFIRMATION AVANT BRÛLAGE DES JAUNE
+   ===================================================== */
 
+const remainingBalance =
+  Math.max(
+    0,
+    Number(payload.wallet || 0) -
+    Number(payload.amount || 0)
+  );
+
+const confirmExchange =
+  window.confirm(
+    "Confirmer l’opération École → Mairie ?\n\n" +
+
+    "Classe : " +
+    String(payload.className || "") +
+    "\n\n" +
+
+    "Solde actuel : " +
+    Number(payload.wallet || 0) +
+    " bocitecoins JAUNE\n" +
+
+    "Quantité présentée : " +
+    Number(payload.amount || 0) +
+    " bocitecoins JAUNE\n\n" +
+
+    "Après confirmation, les " +
+    Number(payload.amount || 0) +
+    " bocitecoins JAUNE présentés seront comptabilisés puis brûlés.\n\n" +
+
+    "Ils seront retirés du compte de la classe et n’auront aucune valeur monétaire.\n\n" +
+
+    "Nouveau solde de la classe : " +
+    remainingBalance +
+    " bocitecoins JAUNE."
+  );
+
+if(
+  !confirmExchange
+){
+  return;
+}
+
+/* =====================================================
+   ÇA FINIT ICI
+   MAIRIE — CONFIRMATION AVANT BRÛLAGE DES JAUNE
+   ===================================================== */
+   
   const operation = {
 
     id:
@@ -3777,17 +4269,49 @@ try{
    CONFIRMATION DE L'ÉCHANGE JAUNE
    ========================================================= */
 
-  if(
-    out
-  ){
+ /* =====================================================
+   ÇA COMMENCE ICI
+   MAIRIE — CONFIRMATION APRÈS BRÛLAGE DES JAUNE
+   ===================================================== */
 
-    out.dataset.state =
-      "ok";
+if(
+  out
+){
 
+  out.dataset.state =
+    "ok";
 
-    out.textContent =
-      "Échange École → Mairie confirmé et enregistré.";
-  }
+  out.innerHTML =
+    "<strong>Opération confirmée.</strong>" +
+
+    "<br><br>" +
+
+    mairieEsc(
+      payload.amount
+    ) +
+    " bocitecoin(s) JAUNE ont été comptabilisés puis brûlés." +
+
+    "<br>" +
+
+    "Ils sont retirés du compte de la classe." +
+
+    "<br><br>" +
+
+    "<strong>Nouveau solde de la classe :</strong> " +
+    mairieEsc(
+      remainingBalance
+    ) +
+    " bocitecoin(s) JAUNE." +
+
+    "<br><br>" +
+
+    "Cette opération ne correspond à aucune conversion des bocitecoins en euros.";
+}
+
+/* =====================================================
+   ÇA FINIT ICI
+   MAIRIE — CONFIRMATION APRÈS BRÛLAGE DES JAUNE
+   ===================================================== */
 
 
   return operation;
@@ -7013,6 +7537,29 @@ const identity =
      ÉCOLE → MAIRIE
      ===================================================== */
 
+/* =====================================================
+   ÇA COMMENCE ICI
+   MAIRIE — BOUTON CAMÉRA ÉCOLE
+   ===================================================== */
+
+const schoolCamera =
+  mairieEl(
+    "mairieSchoolCameraBtn"
+  );
+
+if(
+  schoolCamera
+){
+
+  schoolCamera.onclick =
+    mairieScanSchoolQrWithCamera;
+}
+
+/* =====================================================
+   ÇA FINIT ICI
+   MAIRIE — BOUTON CAMÉRA ÉCOLE
+   ===================================================== */
+   
   const schoolRead =
     mairieEl(
       "mairieSchoolReadBtn"
