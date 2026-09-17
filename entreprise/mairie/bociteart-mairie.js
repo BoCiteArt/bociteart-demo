@@ -3464,11 +3464,11 @@ if(
       ) ||
       "Classe non renseignée",
 
-    amount:
+      wallet:
+  walletAmount, 
+     
+     amount:
       amount,
-
-     wallet:
-  walletAmount,
 
     solidarity:
       payload.solidarity &&
