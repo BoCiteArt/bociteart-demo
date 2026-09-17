@@ -12231,6 +12231,25 @@ de progression collective.
     "
   ></div>
 
+  <!-- =====================================================
+     ÇA COMMENCE ICI
+     ÉCOLE — PROFESSEUR — PRÉSENTER À LA MAIRIE
+     ===================================================== -->
+
+<button
+  id="schoolPresentMairieBtn"
+  class="bociteSchoolAction"
+  type="button"
+  style="margin-top:10px;"
+>
+  Présenter à la Mairie
+</button>
+
+<!-- =====================================================
+     ÇA FINIT ICI
+     ÉCOLE — PROFESSEUR — PRÉSENTER À LA MAIRIE
+     ===================================================== -->
+
   <div
     style="
       margin-top:12px;
@@ -12374,6 +12393,7 @@ Modalités d’échange à voir avec la mairie.
   const schoolSolidarityAssociations = document.getElementById("schoolSolidarityAssociations");
   const schoolSolidaritySaveBtn = document.getElementById("schoolSolidaritySaveBtn");
   const schoolSolidarityStatus = document.getElementById("schoolSolidarityStatus");
+  const schoolPresentMairieBtn = document.getElementById("schoolPresentMairieBtn");
  const schoolSolidarityAgreementDirection = document.getElementById("schoolSolidarityAgreementDirection");
  const schoolSolidarityAgreementProfessor = document.getElementById("schoolSolidarityAgreementProfessor");
 
@@ -15690,6 +15710,143 @@ if(schoolDirectionFirstSetupBtn){
   if(schoolSolidaritySaveBtn){
     schoolSolidaritySaveBtn.onclick = schoolSaveSolidarityChoice;
   }
+
+ if(schoolPresentMairieBtn){
+
+  schoolPresentMairieBtn.onclick =
+    function(){
+
+      const savedMap =
+        schoolLoadSolidarityMap();
+
+      const savedChoice =
+        savedMap[
+          schoolSolidarityMapKey()
+        ];
+
+      if(!savedChoice){
+
+        alert(
+          "Enregistrez d’abord le choix de la classe."
+        );
+
+        return;
+      }
+
+      const pending =
+        schoolPrepareMairieExchange();
+
+      if(
+        !pending ||
+        pending.eligible !== true ||
+        Number(
+          pending.exchangeAmount ||
+          0
+        ) < 30
+      ){
+
+        alert(
+          "La présentation à la Mairie est disponible à partir de 30 bocitecoins JAUNE."
+        );
+
+        return;
+      }
+
+      const modeLabel =
+        savedChoice.mode === "full"
+          ? "Solidarité — recherche médicale"
+          : "Surprise, cadeau collectif ou matériel scolaire";
+
+      const className =
+        schoolCurrentClass();
+
+      const classId =
+        schoolCurrentClassId();
+
+      openModal(
+        "Présentation à la Mairie",
+        `
+
+          <div
+            class="box"
+            style="
+              background:#ffffff;
+              color:#111111;
+              font-size:14px;
+              font-weight:400;
+              line-height:1.55;
+              border-left:6px solid #d4bb18;
+            "
+          >
+
+            <div
+              style="
+                color:#2f5d46;
+                font-size:17px;
+                font-weight:700;
+              "
+            >
+              Compte de la classe
+            </div>
+
+            <div style="margin-top:10px;">
+
+              <strong>Classe :</strong>
+              ${schoolEscapeHtml(className)}
+
+              <br><br>
+
+              <strong>Identifiant de classe :</strong>
+              ${schoolEscapeHtml(classId || "Non renseigné")}
+
+              <br><br>
+
+              <strong>Solde actuel :</strong>
+              ${Number(pending.wallet || 0)}
+              bocitecoin(s) JAUNE
+
+              <br><br>
+
+              <strong>Montant présenté :</strong>
+              ${Number(pending.exchangeAmount || 0)}
+              bocitecoin(s) JAUNE
+
+              <br><br>
+
+              <strong>Orientation :</strong>
+              ${schoolEscapeHtml(modeLabel)}
+
+            </div>
+
+          </div>
+
+          <div
+            class="box"
+            style="
+              margin-top:12px;
+              background:#ffffff;
+              color:#111111;
+              font-size:14px;
+              font-weight:400;
+              line-height:1.5;
+            "
+          >
+
+            Présentez cet écran au service municipal.
+
+            <br><br>
+
+            La Mairie vérifiera la classe,
+            le montant présenté
+            et l’orientation enregistrée
+            avant de confirmer l’opération.
+
+          </div>
+
+        `
+      );
+    };
+}
 
   if(schoolTeacherChangeCodeBtn){
     schoolTeacherChangeCodeBtn.onclick = schoolTeacherChangeOwnCode;
