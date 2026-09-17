@@ -15986,89 +15986,73 @@ window.setTimeout(
         "schoolMairieQr"
       );
 
-    if(
-      qrHost &&
-      mairieCode &&
-      typeof window.QRCode === "function"
-    ){
-
-      qrHost.innerHTML = "";
-
-   /* =====================================================
+/* =====================================================
    ÇA COMMENCE ICI
-   ÉCOLE → MAIRIE — QR VISIBLE
+   ÉCOLE → MAIRIE — QR VISIBLE SUR CANVAS
    ===================================================== */
 
-new window.QRCode(
-  qrHost,
-  {
-    text:
-      mairieCode,
+if(
+  qrHost &&
+  mairieCode &&
+  window.QRCode &&
+  typeof window.QRCode.toCanvas ===
+    "function"
+){
 
-    width:
-      190,
+  qrHost.innerHTML =
+    "";
 
-    height:
-      190,
+  const qrCanvas =
+    document.createElement(
+      "canvas"
+    );
 
-    colorDark:
-      "#000000",
+  qrHost.appendChild(
+    qrCanvas
+  );
 
-    colorLight:
-      "#ffffff",
+  window.QRCode.toCanvas(
+    qrCanvas,
+    mairieCode,
+    {
+      width:
+        190,
 
-    correctLevel:
-  
-     window.QRCode.CorrectLevel.M
-  }
-);
+      margin:
+        2,
 
-window.setTimeout(
-  function(){
+      errorCorrectionLevel:
+        "M",
 
-    const canvas =
-      qrHost.querySelector(
-        "canvas"
-      );
+      color:{
+        dark:
+          "#000000",
 
-    const image =
-      qrHost.querySelector(
-        "img"
-      );
+        light:
+          "#ffffff"
+      }
+    },
+    function(error){
 
-    if(canvas){
+      if(error){
 
-      canvas.style.display =
-        "block";
+        console.error(
+          "Bo'CitéArt École : génération du QR impossible.",
+          error
+        );
 
-      canvas.style.width =
-        "190px";
-
-      canvas.style.height =
-        "190px";
+        qrHost.innerHTML =
+          "Le QR n’a pas pu être affiché. Utilisez le code à copier ci-dessous.";
+      }
     }
-
-    if(image){
-
-      image.style.display =
-        "block";
-
-      image.style.width =
-        "190px";
-
-      image.style.height =
-        "190px";
-    }
-
-  },
-  100
-);
+  );
+}
 
 /* =====================================================
    ÇA FINIT ICI
-   ÉCOLE → MAIRIE — QR VISIBLE
+   ÉCOLE → MAIRIE — QR VISIBLE SUR CANVAS
    ===================================================== */
-    }
+  
 
 
     const copyBtn =
