@@ -1,5 +1,5 @@
 /* =========================================================
-   ÇA COMMENCE ICI — BO'CITÉART — MODULE MAIRIE EXTERNE
+   ÇA COMMENCE ICI — BO'CITÉART — MODULE MAIRIE EXTERNE 
 
    Fichier :
    entreprise/mairie/bociteart-mairie.js
@@ -3458,10 +3458,10 @@ if(
       ) ||
       "Classe non renseignée",
 
-      wallet:
-  walletAmount, 
-     
-     amount:
+        wallet:
+      walletAmount,
+
+    amount:
       amount,
 
     solidarity:
