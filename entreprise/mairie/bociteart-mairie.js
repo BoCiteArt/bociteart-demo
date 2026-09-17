@@ -3430,17 +3430,27 @@ function mairieParseSchoolScan(
    MAIRIE — LECTURE DU MONTANT JAUNE PRÉSENTÉ
    ===================================================== */
 
+/* =====================================================
+   ÇA COMMENCE ICI
+   MAIRIE — LECTURE QR ÉCOLE COMPACT + ANCIEN FORMAT
+   ===================================================== */
+
 const walletAmount =
   Number(
-    payload.wallet ||
-    0
+    payload.w != null
+      ? payload.w
+      : payload.wallet || 0
   );
 
 const amount =
   Number(
-    payload.exchangeAmount != null
-      ? payload.exchangeAmount
-      : payload.wallet || 0
+    payload.a != null
+      ? payload.a
+      : (
+          payload.exchangeAmount != null
+            ? payload.exchangeAmount
+            : payload.wallet || 0
+        )
   );
 
 if(
@@ -3459,75 +3469,75 @@ if(
     "Le montant présenté par l’école est invalide."
   );
 }
+
+
+return {
+
+  type:
+    "school_wallet",
+
+  className:
+    mairieText(
+      payload.c != null
+        ? payload.c
+        : (
+            payload.class ||
+            payload.className
+          )
+    ) ||
+    "Classe non renseignée",
+
+  classId:
+    mairieText(
+      payload.i != null
+        ? payload.i
+        : payload.classId
+    ) ||
+    "Non renseigné",
+
+  wallet:
+    walletAmount,
+
+  amount:
+    amount,
+
+  solidarity:
+    payload.solidarity &&
+    typeof payload.solidarity ===
+      "object"
+
+      ? mairieClone(
+          payload.solidarity
+        )
+
+      : {
+          mode:
+            mairieText(
+              payload.o
+            ) ||
+            "none",
+
+          map:{}
+        },
+
+  ts:
+    Number(
+      payload.t != null
+        ? payload.t
+        : payload.ts || 0
+    ) ||
+    Date.now(),
+
+  raw:
+    mairieClone(
+      payload
+    )
+};
+
 /* =====================================================
    ÇA FINIT ICI
-   MAIRIE — LECTURE DU MONTANT JAUNE PRÉSENTÉ
+   MAIRIE — LECTURE QR ÉCOLE COMPACT + ANCIEN FORMAT
    ===================================================== */
-
-  return {
-
-    type:
-      "school_wallet",
-
-    className:
-      mairieText(
-        payload.class ||
-        payload.className
-      ) ||
-      "Classe non renseignée",
-
-         /* =====================================================
-       ÇA COMMENCE ICI
-       MAIRIE — IDENTIFIANT UNIQUE DE LA CLASSE
-       ===================================================== */
-
-    classId:
-      mairieText(
-        payload.classId
-      ) ||
-      "Non renseigné",
-
-    /* =====================================================
-       ÇA FINIT ICI
-       MAIRIE — IDENTIFIANT UNIQUE DE LA CLASSE
-       ===================================================== */
-
-        wallet:
-      walletAmount,
-
-    amount:
-      amount,
-
-    solidarity:
-      payload.solidarity &&
-      typeof payload.solidarity ===
-        "object"
-
-        ? mairieClone(
-            payload.solidarity
-          )
-
-        : {
-            mode:
-              "none",
-
-            map:{}
-          },
-
-    ts:
-      Number(
-        payload.ts ||
-        0
-      ) ||
-      Date.now(),
-
-    raw:
-      mairieClone(
-        payload
-      )
-  };
-}
-
 
 function mairieSchoolReference(
   payload
