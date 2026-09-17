@@ -15988,72 +15988,60 @@ window.setTimeout(
 
 /* =====================================================
    ÇA COMMENCE ICI
-   ÉCOLE → MAIRIE — QR VISIBLE SUR CANVAS
+   ÉCOLE → MAIRIE — QR VISIBLE
    ===================================================== */
 
 if(
   qrHost &&
   mairieCode &&
-  window.QRCode &&
-  typeof window.QRCode.toCanvas ===
+  typeof window.QRCode ===
     "function"
 ){
 
   qrHost.innerHTML =
     "";
 
-  const qrCanvas =
-    document.createElement(
-      "canvas"
-    );
+  try{
 
-  qrHost.appendChild(
-    qrCanvas
-  );
+    new window.QRCode(
+      qrHost,
+      {
+        text:
+          mairieCode,
 
-  window.QRCode.toCanvas(
-    qrCanvas,
-    mairieCode,
-    {
-      width:
-        190,
+        width:
+          190,
 
-      margin:
-        2,
+        height:
+          190,
 
-      errorCorrectionLevel:
-        "M",
-
-      color:{
-        dark:
+        colorDark:
           "#000000",
 
-        light:
-          "#ffffff"
+        colorLight:
+          "#ffffff",
+
+        correctLevel:
+          window.QRCode.CorrectLevel.M
       }
-    },
-    function(error){
+    );
 
-      if(error){
+  }catch(error){
 
-        console.error(
-          "Bo'CitéArt École : génération du QR impossible.",
-          error
-        );
+    console.error(
+      "Bo'CitéArt École : génération du QR impossible.",
+      error
+    );
 
-        qrHost.innerHTML =
-          "Le QR n’a pas pu être affiché. Utilisez le code à copier ci-dessous.";
-      }
-    }
-  );
+    qrHost.textContent =
+      "Le QR n’a pas pu être affiché. Utilisez le code à copier ci-dessous.";
+  }
 }
 
 /* =====================================================
    ÇA FINIT ICI
-   ÉCOLE → MAIRIE — QR VISIBLE SUR CANVAS
+   ÉCOLE → MAIRIE — QR VISIBLE
    ===================================================== */
-  
-
 
     const copyBtn =
       document.getElementById(
