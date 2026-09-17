@@ -14209,22 +14209,67 @@ window.BociteSchoolMairieBridge =
             schoolReadMairiePendingExchange()
           );
         },
+    
+getPendingCode:
+  function(){
 
+    const pending =
+      schoolReadMairiePendingExchange();
 
-      getPendingCode:
-        function(){
+    if(!pending){
+      return "";
+    }
 
-          const pending =
-            schoolReadMairiePendingExchange();
+    /*
+     * QR volontairement compact.
+     * On transmet uniquement
+     * ce dont la Mairie a besoin.
+     */
 
+    const compactPayload = {
 
-          return pending
-            ? JSON.stringify(
-                pending
-              )
-            : "";
-        },
+      type:
+        "school_wallet",
 
+      class:
+        pending.class ||
+        "",
+
+      classId:
+        pending.classId ||
+        "",
+
+      wallet:
+        Number(
+          pending.wallet ||
+          0
+        ),
+
+      exchangeAmount:
+        Number(
+          pending.exchangeAmount ||
+          0
+        ),
+
+      solidarity:{
+        mode:
+          pending.solidarity &&
+          pending.solidarity.mode
+            ? pending.solidarity.mode
+            : "none"
+      },
+
+      ts:
+        Number(
+          pending.ts ||
+          Date.now()
+        )
+    };
+
+    return JSON.stringify(
+      compactPayload
+    );
+  },
 
       refreshPendingExchange:
         function(){
