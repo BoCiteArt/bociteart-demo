@@ -11427,6 +11427,77 @@ par la Direction de l’établissement.
      ÉCOLE — ESPACE PROFESSEUR — PROGRESSION ET PALIERS
      ===================================================== -->
 
+<!-- =====================================================
+     ÇA COMMENCE ICI
+     ÉCOLE — PROFESSEUR — COMPTE DE LA CLASSE
+     ===================================================== -->
+
+<div
+  class="bociteSchoolCard"
+  style="
+    margin-top:10px;
+    border-left:6px solid #d4bb18;
+  "
+>
+
+  <div
+    class="bociteSchoolSectionTitle"
+    style="margin-top:0;"
+  >
+    Compte de la classe
+  </div>
+
+  <div
+    style="
+      margin-top:8px;
+      color:#111111;
+      font-size:14px;
+      font-weight:400;
+    "
+  >
+    Solde actuel
+  </div>
+
+  <div
+    style="
+      display:flex;
+      align-items:baseline;
+      gap:8px;
+      margin-top:4px;
+    "
+  >
+
+    <span
+      id="schoolCoinBalance"
+      style="
+        color:#b18900;
+        font-size:30px;
+        font-weight:800;
+        line-height:1;
+      "
+    >
+      0
+    </span>
+
+    <span
+      style="
+        color:#111111;
+        font-size:14px;
+        font-weight:700;
+      "
+    >
+      bocitecoins JAUNE
+    </span>
+
+  </div>
+
+</div>
+
+<!-- =====================================================
+     ÇA FINIT ICI
+     ÉCOLE — PROFESSEUR — COMPTE DE LA CLASSE
+     ===================================================== -->
+
 <div class="bociteSchoolSectionTitle">
   Grandir ensemble, savoir aussi attendre
 </div>
@@ -11443,7 +11514,26 @@ par la Direction de l’établissement.
 
   <br><br>
 
-  <strong>Les principaux repères sont :</strong>
+  <strong>À expliquer à la classe :</strong>
+
+<br><br>
+
+Le professeur présente ces repères aux élèves
+et leur explique pourquoi attendre peut devenir
+aussi intéressant que d’utiliser immédiatement
+les bocitecoins obtenus.
+
+<br><br>
+
+L’objectif n’est pas seulement d’atteindre un nombre.
+Les paliers permettent de parler avec la classe
+de régularité, de patience, d’effort collectif,
+de choix commun et de la satisfaction
+d’atteindre ensemble un objectif plus important.
+
+<br><br>
+
+<strong>Les principaux repères sont :</strong>
 
   <br><br>
 
@@ -13483,6 +13573,23 @@ function schoolGetTeacherIdentifier(account){
         )
       )
     );
+
+     /* =====================================================
+     ÉCOLE — COMPTE JAUNE VISIBLE DU PROFESSEUR
+     ===================================================== */
+
+  const schoolCoinBalance =
+    document.getElementById(
+      "schoolCoinBalance"
+    );
+
+  if(schoolCoinBalance){
+
+    schoolCoinBalance.textContent =
+      String(
+        exchangeBalance
+      );
+  }
 
   if(exchangeBalanceInfo){
 
