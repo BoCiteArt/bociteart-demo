@@ -2685,24 +2685,6 @@ function mairieHealthHtml(){
 
         <div class="mairieActions">
 
-        <!-- =====================================================
-     ÇA COMMENCE ICI
-     MAIRIE — SCANNER LE QR DE LA CLASSE
-     ===================================================== -->
-
-<button
-  class="mairieBtn"
-  id="mairieSchoolCameraBtn"
-  type="button"
->
-  Scanner le QR de la classe
-</button>
-
-<!-- =====================================================
-     ÇA FINIT ICI
-     MAIRIE — SCANNER LE QR DE LA CLASSE
-     ===================================================== -->
-
           <button
             id="mairieHealthOpenCommuneBtn"
             class="mairieBtn"
@@ -6225,6 +6207,24 @@ de la tuile Mairie.
 
 
           <div class="mairieActions">
+
+            <!-- =====================================================
+     ÇA COMMENCE ICI
+     MAIRIE — SCANNER LE QR DE LA CLASSE
+     ===================================================== -->
+
+<button
+  class="mairieBtn"
+  id="mairieSchoolCameraBtn"
+  type="button"
+>
+  Scanner le QR de la classe
+</button>
+
+<!-- =====================================================
+     ÇA FINIT ICI
+     MAIRIE — SCANNER LE QR DE LA CLASSE
+     ===================================================== -->
 
             <button
               class="mairieBtn"
