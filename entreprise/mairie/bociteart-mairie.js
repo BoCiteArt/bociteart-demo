@@ -3385,10 +3385,11 @@ function mairieSchoolHistory(){
 
   const rows =
     mairieRead(
-      SCHOOL_HISTORY_KEY,
+      mairieCityStorageKey(
+        SCHOOL_HISTORY_KEY
+      ),
       []
     );
-
 
   return Array.isArray(
     rows
@@ -3405,7 +3406,9 @@ function mairieSaveSchoolHistory(
 ){
 
   return mairieWrite(
-    SCHOOL_HISTORY_KEY,
+   mairieCityStorageKey(
+  SCHOOL_HISTORY_KEY
+),
 
     Array.isArray(
       rows
@@ -3681,11 +3684,23 @@ return {
    ===================================================== */
 }
    
+/* =========================================================
+   ÇA COMMENCE ICI — RÉFÉRENCE ÉCOLE TERRITORIALE
+   ========================================================= */
+
 function mairieSchoolReference(
   payload
 ){
 
   return [
+
+    mairieText(
+      payload.cityId
+    ),
+
+    mairieText(
+      payload.classId
+    ),
 
     mairieText(
       payload.className
@@ -3704,6 +3719,9 @@ function mairieSchoolReference(
   );
 }
 
+/* =========================================================
+   ÇA FINIT ICI — RÉFÉRENCE ÉCOLE TERRITORIALE
+   ========================================================= */
 
 function mairieReadSchoolScan(){
 
@@ -4220,15 +4238,58 @@ function mairieValidateSchoolExchange(){
     mairieReadSchoolScan();
 
 
-  if(
-    !payload
-  ){
-    return;
+if(
+  !payload
+){
+  return;
+}
+
+
+/* =========================================================
+   ÇA COMMENCE ICI — DERNIER CONTRÔLE VILLE AVANT VALIDATION
+   ========================================================= */
+
+const activeCity =
+  mairieActiveCity();
+
+
+if(
+  mairieText(
+    payload.cityId
+  ).toLowerCase() !==
+    activeCity.cityId
+){
+
+  const out =
+    mairieEl(
+      "mairieSchoolReadOut"
+    );
+
+
+  lastSchoolPayload =
+    null;
+
+
+  if(out){
+
+    out.dataset.state =
+      "error";
+
+    out.textContent =
+      "Validation refusée : ce QR n’appartient pas à la commune active.";
   }
 
 
-  const rows =
-    mairieSchoolHistory();
+  return;
+}
+
+/* =========================================================
+   ÇA FINIT ICI — DERNIER CONTRÔLE VILLE AVANT VALIDATION
+   ========================================================= */
+
+
+const rows =
+  mairieSchoolHistory();
 
 
   const reference =
@@ -4329,18 +4390,27 @@ if(
    MAIRIE — CONFIRMATION AVANT BRÛLAGE DES JAUNE
    ===================================================== */
    
-  const operation = {
+ const operation = {
 
-    id:
-      mairieId(
-        "school-exchange"
-      ),
+  id:
+    mairieId(
+      "school-exchange"
+    ),
 
-    reference:
-      reference,
+  reference:
+    reference,
 
-    className:
-      payload.className,
+  cityId:
+    payload.cityId,
+
+  cityName:
+    payload.cityName,
+
+  coinPlural:
+    payload.coinPlural,
+
+  className:
+    payload.className,
 
     bocitecoins:
       payload.amount,
@@ -4394,6 +4464,15 @@ try{
 
           reference:
             operation.reference,
+
+           cityId:
+  operation.cityId,
+
+cityName:
+  operation.cityName,
+
+coinPlural:
+  operation.coinPlural,
 
           className:
             operation.className,
