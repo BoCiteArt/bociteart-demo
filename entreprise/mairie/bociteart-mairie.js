@@ -8254,6 +8254,119 @@ if(!window.__bociteMairieMainButtonsFixed){
 /* =========================================================
    ÇA FINIT ICI — MAIRIE — CORRECTION BOUTONS PRINCIPAUX
    ========================================================= */
+/* =========================================================
+   ÇA COMMENCE ICI — MAIRIE — COMMANDES ÉCOLE DÉLÉGUÉES
+   ========================================================= */
+
+if(
+  !window.__bociteMairieSchoolControlsDelegated
+){
+
+  window.__bociteMairieSchoolControlsDelegated =
+    true;
+
+
+  document.addEventListener(
+    "click",
+    function(event){
+
+      const target =
+        event.target instanceof Element
+          ? event.target
+          : null;
+
+
+      if(!target){
+        return;
+      }
+
+
+      const button =
+        target.closest(
+          "#mairieSchoolCameraBtn," +
+          "#mairieSchoolReadBtn," +
+          "#mairieSchoolValidateBtn," +
+          "#mairieSchoolHistoryBtn," +
+          "#mairieSchoolExportBtn," +
+          "#mairieSchoolHistoryResetBtn"
+        );
+
+
+      if(!button){
+        return;
+      }
+
+
+      event.preventDefault();
+      event.stopPropagation();
+
+
+      if(
+        button.id ===
+          "mairieSchoolCameraBtn"
+      ){
+
+        mairieScanSchoolQrWithCamera();
+        return;
+      }
+
+
+      if(
+        button.id ===
+          "mairieSchoolReadBtn"
+      ){
+
+        mairieReadSchoolScan();
+        return;
+      }
+
+
+      if(
+        button.id ===
+          "mairieSchoolValidateBtn"
+      ){
+
+        mairieValidateSchoolExchange();
+        return;
+      }
+
+
+      if(
+        button.id ===
+          "mairieSchoolHistoryBtn"
+      ){
+
+        mairieShowSchoolHistory();
+        return;
+      }
+
+
+      if(
+        button.id ===
+          "mairieSchoolExportBtn"
+      ){
+
+        mairieExportSchoolHistory();
+        return;
+      }
+
+
+      if(
+        button.id ===
+          "mairieSchoolHistoryResetBtn"
+      ){
+
+        mairieResetSchoolHistory();
+      }
+
+    },
+    true
+  );
+}
+
+/* =========================================================
+   ÇA FINIT ICI — MAIRIE — COMMANDES ÉCOLE DÉLÉGUÉES
+   ========================================================= */
    
 })();
 
