@@ -61,14 +61,36 @@
       gap:10px;
     }
 
-    .ticker{
-      position:relative;
-      overflow:hidden;
-      border-radius:18px;
-      background:var(--beige);
-      height:130px;
-      cursor:pointer;
-    }
+  /* =========================================================
+   ÇA COMMENCE ICI — HAUTEUR ÉCRAN PRINCIPAL MULTI-VILLES
+   ========================================================= */
+
+.ticker{
+  position:relative;
+  overflow:hidden;
+  border-radius:18px;
+  background:var(--beige);
+  height:92px;
+  cursor:pointer;
+}
+
+/*
+  Les grandes tuiles sont légèrement abaissées
+  afin de conserver toute la page dans le gabarit mobile.
+*/
+.tile{
+  position:relative;
+  width:100%;
+  aspect-ratio:1 / 0.64;
+  border-radius:22px;
+  overflow:hidden;
+  background:var(--beige);
+  cursor:pointer;
+}
+
+/* =========================================================
+   ÇA FINIT ICI — HAUTEUR ÉCRAN PRINCIPAL MULTI-VILLES
+   ========================================================= */
     .ticker img{
       position:absolute;
       inset:0;
@@ -144,16 +166,6 @@
       display:grid;
       grid-template-columns:1fr 1fr;
       gap:12px;
-    }
-
-    .tile{
-      position:relative;
-      width:100%;
-      aspect-ratio:1 / 0.70;
-      border-radius:22px;
-      overflow:hidden;
-      background:var(--beige);
-      cursor:pointer;
     }
     .tile img{
       position:absolute;
@@ -842,7 +854,8 @@
 }
     @media (max-height:780px){
       .wrap{ padding:10px; gap:10px; }
-      .ticker{ height:120px; }
+      .ticker{ height:82px; }
+      .tile{ aspect-ratio:1 / 0.61; }
       .grid{ gap:10px; }
       .tile .h{ font-size:16px; }
       .tile .p{ margin-top:6px; }
@@ -1077,38 +1090,81 @@ html.bocite-entry-pending body > .page{
   <div class="page">
     <div class="wrap">
 
-<!-- =========================================================
-     ÇA COMMENCE ICI — SÉLECTEUR DE VILLE HAUT APPLICATION
+     <!-- =========================================================
+     ÇA COMMENCE ICI — BARRE VILLE ACTIVE
      ========================================================= -->
-
 <div
-  class="cityBar"
   id="activeCityBar"
+  style="
+    width:100%;
+    height:34px;
+    min-height:34px;
+    box-sizing:border-box;
+    background:#ffffff;
+    border:2px solid #2f5d46;
+    border-radius:12px;
+    display:flex;
+    align-items:center;
+    overflow:hidden;
+  "
 >
 
   <button
-    class="cityBarBtn"
     id="activeCityBtn"
     type="button"
-    aria-label="Choisir la ville active Bo'CitéArt"
+    aria-label="Choisir votre ville Bo'CitéArt"
+    style="
+      width:100%;
+      height:100%;
+      border:0;
+      background:#ffffff;
+      padding:0 10px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+      cursor:pointer;
+    "
   >
 
-    <span class="cityBarMain">
+    <span
+      style="
+        display:flex;
+        align-items:center;
+        gap:6px;
+        min-width:0;
+      "
+    >
 
       <span
-        class="cityBarPin"
         aria-hidden="true"
+        style="
+          font-size:13px;
+        "
       >
         📍
       </span>
 
-      <span class="cityBarLabel">
-        Ville
+      <span
+        style="
+          color:#6e6a63;
+          font-size:10px;
+          font-weight:700;
+        "
+      >
+        Ville :
       </span>
 
       <span
-        class="cityBarName"
         id="activeCityName"
+        style="
+          color:#2f5d46;
+          font-size:13px;
+          font-weight:900;
+          white-space:nowrap;
+          overflow:hidden;
+          text-overflow:ellipsis;
+        "
       >
         Wattignies
       </span>
@@ -1116,18 +1172,34 @@ html.bocite-entry-pending body > .page{
     </span>
 
 
-    <span class="cityBarRight">
+    <span
+      style="
+        display:flex;
+        align-items:center;
+        gap:6px;
+        min-width:0;
+      "
+    >
 
       <span
-        class="cityBarCoin"
         id="activeCityCoinName"
+        style="
+          color:#2f5d46;
+          font-size:10px;
+          font-weight:800;
+          white-space:nowrap;
+        "
       >
         Watticoins
       </span>
 
       <span
-        class="cityBarChevron"
         aria-hidden="true"
+        style="
+          color:#2f5d46;
+          font-size:11px;
+          font-weight:900;
+        "
       >
         ▼
       </span>
@@ -1139,9 +1211,9 @@ html.bocite-entry-pending body > .page{
 </div>
 
 <!-- =========================================================
-     ÇA FINIT ICI — SÉLECTEUR DE VILLE HAUT APPLICATION
+     ÇA FINIT ICI — BARRE VILLE ACTIVE
      ========================================================= -->
-     
+    
       <div class="ticker" id="ticker" aria-label="Publicités (toucher pour détails)">
         <img id="tickerImg" alt="" />
         <div class="overlay"></div>
