@@ -4509,10 +4509,60 @@ coinPlural:
    CONFIRMATION DE L'ÉCHANGE JAUNE
    ========================================================= */
 
- /* =====================================================
+/* =====================================================
    ÇA COMMENCE ICI
-   MAIRIE — CONFIRMATION APRÈS BRÛLAGE DES JAUNE
+   MAIRIE — CONFIRMATION APRÈS BRÛLAGE + QR RETOUR ÉCOLE
    ===================================================== */
+
+const schoolReturnPayload = {
+
+  type:
+    "school_wallet_validation",
+
+  v:
+    String(
+      operation.cityId ||
+      ""
+    ),
+
+  i:
+    String(
+      payload.classId ||
+      ""
+    ),
+
+  x:
+    String(
+      operation.id ||
+      ""
+    ),
+
+  a:
+    Number(
+      operation.bocitecoins ||
+      0
+    ),
+
+  b:
+    Number(
+      remainingBalance ||
+      0
+    ),
+
+  t:
+    Date.parse(
+      operation.validatedAt ||
+      ""
+    ) ||
+    Date.now()
+};
+
+
+const schoolReturnCode =
+  JSON.stringify(
+    schoolReturnPayload
+  );
+
 
 if(
   out
@@ -4533,11 +4583,11 @@ if(
 
     "<br>" +
 
-    "Ils sont retirés du compte de la classe." +
+    "Ils sont retirés du compte de la classe après lecture du retour par l’École." +
 
     "<br><br>" +
 
-    "<strong>Nouveau solde de la classe :</strong> " +
+    "<strong>Nouveau solde attendu de la classe :</strong> " +
     mairieEsc(
       remainingBalance
     ) +
@@ -4545,14 +4595,82 @@ if(
 
     "<br><br>" +
 
+    "<strong>QR de retour Mairie → École</strong>" +
+
+    "<div id=\"mairieSchoolReturnQr\" style=\"margin-top:12px;display:flex;justify-content:center;\"></div>" +
+
+    "<textarea id=\"mairieSchoolReturnCode\" class=\"mairieField\" readonly style=\"margin-top:12px;min-height:90px;\">" +
+    mairieEsc(
+      schoolReturnCode
+    ) +
+    "</textarea>" +
+
+    "<div style=\"margin-top:10px;font-size:13px;line-height:1.45;\">" +
+    "Code de démonstration destiné au retour vers la classe. " +
+    "Il ne constitue pas une preuve serveur." +
+    "</div>" +
+
+    "<br><br>" +
+
     "Cette opération ne correspond à aucune conversion des bocitecoins en euros.";
+
+
+  window.setTimeout(
+    function(){
+
+      const qrHost =
+        mairieEl(
+          "mairieSchoolReturnQr"
+        );
+
+
+      if(
+        !qrHost ||
+        typeof window.QRCode !==
+          "function"
+      ){
+        return;
+      }
+
+
+      qrHost.innerHTML =
+        "";
+
+
+      new window.QRCode(
+        qrHost,
+        {
+
+          text:
+            schoolReturnCode,
+
+          width:
+            190,
+
+          height:
+            190,
+
+          colorDark:
+            "#000000",
+
+          colorLight:
+            "#ffffff",
+
+          correctLevel:
+            window.QRCode.CorrectLevel.M
+
+        }
+      );
+
+    },
+    0
+  );
 }
 
 /* =====================================================
    ÇA FINIT ICI
-   MAIRIE — CONFIRMATION APRÈS BRÛLAGE DES JAUNE
+   MAIRIE — CONFIRMATION APRÈS BRÛLAGE + QR RETOUR ÉCOLE
    ===================================================== */
-
 
   return operation;
 }
