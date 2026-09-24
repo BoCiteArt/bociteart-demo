@@ -1782,18 +1782,26 @@ Les présentes Conditions Générales de Vente sont régies par le droit frança
   (function initBoCiteArtClean(){
   console.log("✅ JS démarré");
 
-  const CITY_CONFIG = {
-    cityName: "Wattignies",
-    coinName: "WattCoin",
-    coinPlural: "WattCoins",
-    mainColor: "#a51e22"
-  };
+/* =========================================================
+   ÇA COMMENCE ICI — ANCIEN BLOC VILLE À REMPLACER
+   ========================================================= */
 
-  window.CITY_CONFIG = CITY_CONFIG;
+const CITY_CONFIG = {
+  cityName: "Wattignies",
+  coinName: "WattCoin",
+  coinPlural: "WattCoins",
+  mainColor: "#a51e22"
+};
 
-  function cityText(key){
-    return CITY_CONFIG[key] || "";
-  }
+window.CITY_CONFIG = CITY_CONFIG;
+
+function cityText(key){
+  return CITY_CONFIG[key] || "";
+}
+
+/* =========================================================
+   ÇA FINIT ICI — ANCIEN BLOC VILLE À REMPLACER
+   ========================================================= */
 
   const $ = (id) => document.getElementById(id);
   const on = (el, evt, fn) => { if(el) el.addEventListener(evt, fn); };
