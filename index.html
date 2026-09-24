@@ -854,6 +854,122 @@
       .sportTape{ height:34px; }
       .sportTapeTrack{ font-size:11px; }
     }
+
+  /* =========================================================
+   ÇA COMMENCE ICI — BARRE VILLE ACTIVE + HAUTEUR PUB
+   ========================================================= */
+
+.cityBar{
+  width:100%;
+  height:34px;
+  min-height:34px;
+  border:2px solid rgba(47,93,70,.24);
+  border-radius:12px;
+  background:#ffffff;
+  overflow:hidden;
+  box-shadow:0 3px 9px rgba(0,0,0,.05);
+}
+
+.cityBarBtn{
+  width:100%;
+  height:100%;
+  border:0;
+  background:#ffffff;
+  padding:0 10px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  cursor:pointer;
+  color:var(--text);
+  font:inherit;
+}
+
+.cityBarMain{
+  min-width:0;
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+
+.cityBarPin{
+  flex:0 0 auto;
+  font-size:13px;
+  line-height:1;
+}
+
+.cityBarLabel{
+  flex:0 0 auto;
+  font-size:10px;
+  line-height:1;
+  font-weight:800;
+  color:var(--muted);
+}
+
+.cityBarName{
+  min-width:0;
+  max-width:150px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  color:var(--green);
+  font-size:13px;
+  line-height:1;
+  font-weight:900;
+}
+
+.cityBarRight{
+  min-width:0;
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:7px;
+}
+
+.cityBarCoin{
+  min-width:0;
+  max-width:105px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  color:var(--muted);
+  font-size:10px;
+  line-height:1;
+  font-weight:800;
+}
+
+.cityBarChevron{
+  flex:0 0 auto;
+  color:var(--green);
+  font-size:12px;
+  font-weight:900;
+}
+
+/*
+  La barre ajoute 34 px + le gap existant de 10 px.
+
+  La publicité passe de 130 px à 86 px :
+
+  34 + 10 + 86 = 130
+
+  La hauteur totale reste donc identique.
+*/
+
+.ticker{
+  height:86px;
+}
+
+@media (max-height:780px){
+
+  .ticker{
+    height:76px;
+  }
+
+}
+
+/* =========================================================
+   ÇA FINIT ICI — BARRE VILLE ACTIVE + HAUTEUR PUB
+   ========================================================= */ 
     /* === PATCH STABILISATION DÉMO ÉLUS === */
 
 .demoBanner{
@@ -961,6 +1077,71 @@ html.bocite-entry-pending body > .page{
   <div class="page">
     <div class="wrap">
 
+<!-- =========================================================
+     ÇA COMMENCE ICI — SÉLECTEUR DE VILLE HAUT APPLICATION
+     ========================================================= -->
+
+<div
+  class="cityBar"
+  id="activeCityBar"
+>
+
+  <button
+    class="cityBarBtn"
+    id="activeCityBtn"
+    type="button"
+    aria-label="Choisir la ville active Bo'CitéArt"
+  >
+
+    <span class="cityBarMain">
+
+      <span
+        class="cityBarPin"
+        aria-hidden="true"
+      >
+        📍
+      </span>
+
+      <span class="cityBarLabel">
+        Ville
+      </span>
+
+      <span
+        class="cityBarName"
+        id="activeCityName"
+      >
+        Wattignies
+      </span>
+
+    </span>
+
+
+    <span class="cityBarRight">
+
+      <span
+        class="cityBarCoin"
+        id="activeCityCoinName"
+      >
+        Watticoins
+      </span>
+
+      <span
+        class="cityBarChevron"
+        aria-hidden="true"
+      >
+        ▼
+      </span>
+
+    </span>
+
+  </button>
+
+</div>
+
+<!-- =========================================================
+     ÇA FINIT ICI — SÉLECTEUR DE VILLE HAUT APPLICATION
+     ========================================================= -->
+     
       <div class="ticker" id="ticker" aria-label="Publicités (toucher pour détails)">
         <img id="tickerImg" alt="" />
         <div class="overlay"></div>
@@ -1810,6 +1991,551 @@ function cityText(key){
   window.$ = $;
   window.on = on;
   window.isFn = isFn;
+
+   /* =========================================================
+   ÇA COMMENCE ICI — INTERFACE SÉLECTEUR DE VILLE
+   ========================================================= */
+
+function bociteCityUiEscape(value){
+
+  return String(value || "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+}
+
+
+/* ---------------------------------------------------------
+   ACTUALISER LA BARRE DU HAUT
+   --------------------------------------------------------- */
+
+function bociteRefreshActiveCityBar(){
+
+  if(
+    !window.BociteCityContext ||
+    typeof window.BociteCityContext.get !==
+      "function"
+  ){
+
+    return;
+
+  }
+
+
+  const city =
+    window.BociteCityContext.get();
+
+
+  const nameEl =
+    $("activeCityName");
+
+
+  const coinEl =
+    $("activeCityCoinName");
+
+
+  const button =
+    $("activeCityBtn");
+
+
+  if(nameEl){
+
+    nameEl.textContent =
+      city.cityName ||
+      "Ville";
+
+  }
+
+
+  if(coinEl){
+
+    coinEl.textContent =
+      city.coinPlural ||
+      "";
+
+  }
+
+
+  if(button){
+
+    button.setAttribute(
+      "aria-label",
+      "Ville active : " +
+      (
+        city.cityName ||
+        "Non renseignée"
+      ) +
+      ". Choisir une autre ville Bo'CitéArt."
+    );
+
+  }
+
+}
+
+
+/* ---------------------------------------------------------
+   AFFICHER LES VILLES DISPONIBLES
+   --------------------------------------------------------- */
+
+function bociteRenderCityChoices(
+  filterText
+){
+
+  const host =
+    $("bociteCityList");
+
+
+  if(
+    !host ||
+    !window.BociteCityContext ||
+    typeof window.BociteCityContext.list !==
+      "function"
+  ){
+
+    return;
+
+  }
+
+
+  const filter =
+    String(
+      filterText ||
+      ""
+    )
+      .trim()
+      .toLocaleLowerCase(
+        "fr-FR"
+      );
+
+
+  const active =
+    window.BociteCityContext.get();
+
+
+  const cities =
+    window.BociteCityContext
+      .list()
+      .filter(
+        function(city){
+
+          if(!filter){
+
+            return true;
+
+          }
+
+
+          const haystack =
+            (
+              String(
+                city.cityName ||
+                ""
+              ) +
+              " " +
+              String(
+                city.coinPlural ||
+                ""
+              )
+            )
+              .toLocaleLowerCase(
+                "fr-FR"
+              );
+
+
+          return haystack.includes(
+            filter
+          );
+
+        }
+      );
+
+
+  if(!cities.length){
+
+    host.innerHTML = `
+
+      <div
+        class="box"
+        style="
+          background:#ffffff;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.5;
+        "
+      >
+
+        Cette commune n'est pas encore disponible
+        dans Bo'CitéArt.
+
+      </div>
+
+    `;
+
+
+    return;
+
+  }
+
+
+  host.innerHTML =
+    cities
+      .map(
+        function(city){
+
+          const selected =
+            active &&
+            active.cityId ===
+              city.cityId;
+
+
+          return `
+
+            <button
+              class="choiceBtn bociteCityChoice"
+              type="button"
+              data-bocite-city-id="${bociteCityUiEscape(
+                city.cityId
+              )}"
+              style="
+                width:100%;
+                margin-top:8px;
+                background:#ffffff !important;
+                color:#111111 !important;
+                text-align:left;
+                border:${
+                  selected
+                    ? "2px solid #2f5d46"
+                    : "1px solid rgba(47,93,70,.28)"
+                };
+              "
+            >
+
+              <span
+                style="
+                  display:block;
+                  color:#2f5d46;
+                  font-size:15px;
+                  font-weight:900;
+                "
+              >
+
+                ${bociteCityUiEscape(
+                  city.cityName
+                )}
+
+                ${
+                  selected
+                    ? "✓"
+                    : ""
+                }
+
+              </span>
+
+
+              <span
+                style="
+                  display:block;
+                  margin-top:3px;
+                  color:#6e6a63;
+                  font-size:11px;
+                  font-weight:800;
+                "
+              >
+
+                ${bociteCityUiEscape(
+                  city.coinPlural
+                )}
+
+              </span>
+
+            </button>
+
+          `;
+
+        }
+      )
+      .join("");
+
+
+  host
+    .querySelectorAll(
+      "[data-bocite-city-id]"
+    )
+    .forEach(
+      function(button){
+
+        button.onclick =
+          function(){
+
+            const cityId =
+              button.getAttribute(
+                "data-bocite-city-id"
+              );
+
+
+            const changed =
+              window.BociteCityContext.set(
+                cityId
+              );
+
+
+            if(!changed){
+
+              alert(
+                "Cette ville ne peut pas être activée."
+              );
+
+              return;
+
+            }
+
+
+            bociteRefreshActiveCityBar();
+
+
+            if(
+              typeof window.closeModal ===
+                "function"
+            ){
+
+              window.closeModal();
+
+            }
+
+          };
+
+      }
+    );
+
+}
+
+
+/* ---------------------------------------------------------
+   OUVRIR LE CHOIX DE LA VILLE
+   --------------------------------------------------------- */
+
+function bociteOpenCitySelector(){
+
+  if(
+    !window.BociteCityContext ||
+    typeof window.BociteCityContext.list !==
+      "function"
+  ){
+
+    alert(
+      "Le sélecteur de ville est momentanément indisponible."
+    );
+
+    return;
+
+  }
+
+
+  if(
+    typeof window.openModal !==
+      "function"
+  ){
+
+    alert(
+      "Le sélecteur de ville est momentanément indisponible."
+    );
+
+    return;
+
+  }
+
+
+  const active =
+    window.BociteCityContext.get();
+
+
+  window.openModal(
+    "Choisir votre ville",
+    `
+
+      <div
+        class="box"
+        style="
+          background:#ffffff;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.5;
+          border-left:6px solid #2f5d46;
+        "
+      >
+
+        <div
+          style="
+            color:#2f5d46;
+            font-size:17px;
+            font-weight:700;
+          "
+        >
+
+          Ville active :
+          ${bociteCityUiEscape(
+            active.cityName ||
+            "Non renseignée"
+          )}
+
+        </div>
+
+
+        <div
+          style="
+            margin-top:6px;
+          "
+        >
+
+          Chaque ville possède ses propres
+          informations, partenaires, QR codes
+          et portefeuilles.
+
+        </div>
+
+      </div>
+
+
+      <div
+        class="box"
+        style="
+          margin-top:10px;
+          background:#ffffff;
+        "
+      >
+
+        <label
+          for="bociteCitySearchInput"
+          style="
+            display:block;
+            color:#2f5d46;
+            font-size:14px;
+            font-weight:800;
+            margin-bottom:7px;
+          "
+        >
+
+          Rechercher une ville Bo'CitéArt
+
+        </label>
+
+
+        <input
+          id="bociteCitySearchInput"
+          class="miniField"
+          type="search"
+          autocomplete="off"
+          placeholder="Exemple : Wattignies"
+        >
+
+
+        <div
+          id="bociteCityList"
+          style="
+            margin-top:8px;
+          "
+        ></div>
+
+      </div>
+
+    `,
+    {
+      noHistory:true
+    }
+  );
+
+
+  setTimeout(
+    function(){
+
+      const input =
+        $("bociteCitySearchInput");
+
+
+      bociteRenderCityChoices(
+        ""
+      );
+
+
+      if(input){
+
+        input.addEventListener(
+          "input",
+          function(){
+
+            bociteRenderCityChoices(
+              input.value
+            );
+
+          }
+        );
+
+
+        input.focus();
+
+      }
+
+    },
+    0
+  );
+
+}
+
+
+/* ---------------------------------------------------------
+   BOUTON DU HAUT
+   --------------------------------------------------------- */
+
+const activeCityButton =
+  $("activeCityBtn");
+
+
+if(activeCityButton){
+
+  activeCityButton.addEventListener(
+    "click",
+    bociteOpenCitySelector
+  );
+
+}
+
+
+/* ---------------------------------------------------------
+   CHANGEMENT DE VILLE
+   --------------------------------------------------------- */
+
+document.addEventListener(
+  "bociteart:city-changed",
+  bociteRefreshActiveCityBar
+);
+
+
+/* ---------------------------------------------------------
+   PREMIER AFFICHAGE
+   --------------------------------------------------------- */
+
+bociteRefreshActiveCityBar();
+
+
+/* ---------------------------------------------------------
+   FONCTIONS DISPONIBLES POUR LES AUTRES MODULES
+   --------------------------------------------------------- */
+
+window.bociteOpenCitySelector =
+  bociteOpenCitySelector;
+
+
+window.bociteRefreshActiveCityBar =
+  bociteRefreshActiveCityBar;
+
+
+/* =========================================================
+   ÇA FINIT ICI — INTERFACE SÉLECTEUR DE VILLE
+   ========================================================= */
 
   function setVh(){
     const vh = window.innerHeight * 0.01;
