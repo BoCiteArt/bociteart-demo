@@ -2032,24 +2032,966 @@ Les présentes Conditions Générales de Vente sont régies par le droit frança
   console.log("✅ JS démarré");
 
 /* =========================================================
-   ÇA COMMENCE ICI — ANCIEN BLOC VILLE À REMPLACER
+   ÇA COMMENCE ICI — CONTEXTE MULTI-VILLES BO'CITÉART
    ========================================================= */
 
-const CITY_CONFIG = {
-  cityName: "Wattignies",
-  coinName: "WattCoin",
-  coinPlural: "WattCoins",
-  mainColor: "#a51e22"
+const BOCITE_ACTIVE_CITY_KEY =
+  "bociteart_active_city_id_v1";
+
+const BOCITE_COIN_NAME_LOCK_KEY =
+  "bociteart_city_coin_names_v1";
+
+const BOCITE_RESERVED_COLOR_FAMILIES = {
+  schoolYellow:"yellow",
+  sportGreen:"green"
 };
 
-window.CITY_CONFIG = CITY_CONFIG;
-
-function cityText(key){
-  return CITY_CONFIG[key] || "";
-}
 
 /* =========================================================
-   ÇA FINIT ICI — ANCIEN BLOC VILLE À REMPLACER
+   REGISTRE DES VILLES BO'CITÉART ACTIVES
+   ========================================================= */
+
+const BOCITE_CITIES = {
+
+  wattignies: {
+
+    cityId:
+      "wattignies",
+
+    cityName:
+      "Wattignies",
+
+    /*
+      Nom territorial choisi.
+    */
+    coinName:
+      "Watticoin",
+
+    coinPlural:
+      "Watticoins",
+
+    /*
+      Trois propositions conservées
+      pour le paramétrage administratif.
+    */
+    coinNameSuggestions:[
+      "Watticoins",
+      "Wattignicoins",
+      "Wattigniescoins"
+    ],
+
+    /*
+      Le nom choisi est maintenant verrouillé.
+    */
+    coinNameLocked:
+      true,
+
+    /*
+      Couleur territoriale.
+      JAUNE = École
+      VERT = Sport
+      restent réservés.
+    */
+    mainColor:
+      "#a51e22",
+
+    blasonKey:
+      "wattignies"
+
+  }
+
+};
+
+
+/*
+  Objet conservé pour compatibilité
+  avec toutes les anciennes fonctions.
+*/
+const CITY_CONFIG = {};
+
+
+/* =========================================================
+   OUTILS NOMS DE COINS
+   ========================================================= */
+
+function bociteNormalizeCoinName(
+  value
+){
+
+  return String(
+    value || ""
+  )
+    .trim()
+    .toLocaleLowerCase(
+      "fr-FR"
+    );
+}
+
+
+function bociteLoadLockedCoinNames(){
+
+  try{
+
+    const raw =
+      localStorage.getItem(
+        BOCITE_COIN_NAME_LOCK_KEY
+      );
+
+    const parsed =
+      raw
+        ? JSON.parse(raw)
+        : {};
+
+    return (
+      parsed &&
+      typeof parsed === "object"
+    )
+      ? parsed
+      : {};
+
+  }catch(error){
+
+    return {};
+  }
+}
+
+
+function bociteSaveLockedCoinNames(
+  map
+){
+
+  try{
+
+    localStorage.setItem(
+      BOCITE_COIN_NAME_LOCK_KEY,
+      JSON.stringify(
+        map || {}
+      )
+    );
+
+    return true;
+
+  }catch(error){
+
+    console.warn(
+      "Bo'CitéArt : mémorisation des noms de coins impossible.",
+      error
+    );
+
+    return false;
+  }
+}
+
+
+/* =========================================================
+   INTERDIRE DEUX NOMS IDENTIQUES
+   ========================================================= */
+
+function bociteCoinNameAlreadyUsed(
+  name,
+  exceptCityId
+){
+
+  const normalized =
+    bociteNormalizeCoinName(
+      name
+    );
+
+  if(!normalized){
+
+    return false;
+  }
+
+
+  return Object.values(
+    BOCITE_CITIES
+  ).some(
+    function(city){
+
+      if(
+        exceptCityId &&
+        city.cityId ===
+          exceptCityId
+      ){
+
+        return false;
+      }
+
+
+      return (
+        bociteNormalizeCoinName(
+          city.coinPlural ||
+          city.coinName
+        ) ===
+        normalized
+      );
+    }
+  );
+}
+
+
+/* =========================================================
+   CONTRÔLE DES COULEURS TERRITORIALES
+   ========================================================= */
+
+function bociteColorFamily(
+  hex
+){
+
+  const value =
+    String(
+      hex || ""
+    )
+      .trim()
+      .toLowerCase();
+
+
+  if(
+    !/^#[0-9a-f]{6}$/.test(
+      value
+    )
+  ){
+
+    return "unknown";
+  }
+
+
+  const r =
+    parseInt(
+      value.slice(1,3),
+      16
+    );
+
+  const g =
+    parseInt(
+      value.slice(3,5),
+      16
+    );
+
+  const b =
+    parseInt(
+      value.slice(5,7),
+      16
+    );
+
+
+  /*
+    Famille JAUNE :
+    réservée à l'École.
+  */
+  if(
+    r > 150 &&
+    g > 125 &&
+    b < 110
+  ){
+
+    return "yellow";
+  }
+
+
+  /*
+    Famille VERTE :
+    réservée au Sport.
+  */
+  if(
+    g > r * 1.15 &&
+    g > b * 1.15 &&
+    g > 90
+  ){
+
+    return "green";
+  }
+
+
+  return "other";
+}
+
+
+function bociteTerritorialColorAllowed(
+  hex
+){
+
+  const family =
+    bociteColorFamily(
+      hex
+    );
+
+
+  return (
+    family !==
+      BOCITE_RESERVED_COLOR_FAMILIES.schoolYellow
+    &&
+    family !==
+      BOCITE_RESERVED_COLOR_FAMILIES.sportGreen
+  );
+}
+
+
+/* =========================================================
+   VALIDATION D'UNE CONFIGURATION DE VILLE
+   ========================================================= */
+
+function bociteValidateCityConfig(
+  config
+){
+
+  if(
+    !config ||
+    !config.cityId ||
+    !config.cityName
+  ){
+
+    return {
+      ok:false,
+      reason:
+        "Identité de ville incomplète."
+    };
+  }
+
+
+  if(
+    !config.coinName ||
+    !config.coinPlural
+  ){
+
+    return {
+      ok:false,
+      reason:
+        "Nom local des coins manquant."
+    };
+  }
+
+
+  if(
+    bociteCoinNameAlreadyUsed(
+      config.coinPlural,
+      config.cityId
+    )
+  ){
+
+    return {
+      ok:false,
+      reason:
+        "Ce nom de coins est déjà utilisé par une autre ville."
+    };
+  }
+
+
+  if(
+    !bociteTerritorialColorAllowed(
+      config.mainColor
+    )
+  ){
+
+    return {
+      ok:false,
+
+      reason:
+        "La couleur territoriale principale ne peut pas être jaune ou verte, réservées à l'École et au Sport."
+    };
+  }
+
+
+  return {
+    ok:true,
+    reason:""
+  };
+}
+
+
+/* =========================================================
+   TROUVER UNE VILLE
+   ========================================================= */
+
+function bociteGetCity(
+  cityId
+){
+
+  const id =
+    String(
+      cityId || ""
+    )
+      .trim()
+      .toLowerCase();
+
+
+  return (
+    BOCITE_CITIES[id] ||
+    null
+  );
+}
+
+
+/* =========================================================
+   LISTE DES VILLES ACTIVES BO'CITÉART
+   ========================================================= */
+
+function bociteListCities(){
+
+  return Object.values(
+    BOCITE_CITIES
+  ).map(
+    function(city){
+
+      return {
+        ...city
+      };
+    }
+  );
+}
+
+
+/* =========================================================
+   VILLE ACTIVE
+   ========================================================= */
+
+function bociteGetActiveCity(){
+
+  return {
+    ...CITY_CONFIG
+  };
+}
+
+
+/* =========================================================
+   CHANGER DE VILLE
+   ========================================================= */
+
+function bociteSetActiveCity(
+  cityId
+){
+
+  const nextCity =
+    bociteGetCity(
+      cityId
+    );
+
+
+  if(!nextCity){
+
+    console.warn(
+      "Bo'CitéArt : ville inconnue :",
+      cityId
+    );
+
+    return false;
+  }
+
+
+  const validation =
+    bociteValidateCityConfig(
+      nextCity
+    );
+
+
+  if(!validation.ok){
+
+    console.warn(
+      "Bo'CitéArt : configuration de ville refusée :",
+      validation.reason
+    );
+
+    return false;
+  }
+
+
+  const previousCityId =
+    CITY_CONFIG.cityId ||
+    "";
+
+
+  /*
+    On conserve le même objet
+    pour ne pas casser l'ancien code.
+  */
+  Object.keys(
+    CITY_CONFIG
+  ).forEach(
+    function(key){
+
+      delete CITY_CONFIG[key];
+    }
+  );
+
+
+  Object.assign(
+    CITY_CONFIG,
+    nextCity
+  );
+
+
+  window.CITY_CONFIG =
+    CITY_CONFIG;
+
+
+  /*
+    VILLE ACTIVE BO'CITÉART.
+
+    Important :
+    on ne réutilise PAS
+    BOCITEART_CURRENT_CITY,
+    déjà utilisé par la carte.
+  */
+  window.BOCITEART_ACTIVE_CITY_ID =
+    CITY_CONFIG.cityId;
+
+
+  window.BOCITEART_ACTIVE_CITY_NAME =
+    CITY_CONFIG.cityName;
+
+
+  try{
+
+    localStorage.setItem(
+      BOCITE_ACTIVE_CITY_KEY,
+      CITY_CONFIG.cityId
+    );
+
+  }catch(error){
+
+    console.warn(
+      "Bo'CitéArt : mémorisation de la ville active impossible.",
+      error
+    );
+  }
+
+
+  /*
+    Tous les modules pourront écouter
+    le même événement.
+  */
+  if(
+    previousCityId !==
+      CITY_CONFIG.cityId
+  ){
+
+    document.dispatchEvent(
+      new CustomEvent(
+        "bociteart:city-changed",
+        {
+
+          detail:{
+
+            previousCityId:
+              previousCityId,
+
+            city:{
+              ...CITY_CONFIG
+            }
+
+          }
+
+        }
+      )
+    );
+  }
+
+
+  return true;
+}
+
+
+/* =========================================================
+   ENREGISTRER UNE NOUVELLE VILLE
+   ========================================================= */
+
+function bociteRegisterCity(
+  config
+){
+
+  if(
+    !config ||
+    !config.cityId ||
+    !config.cityName
+  ){
+
+    return false;
+  }
+
+
+  const cityId =
+    String(
+      config.cityId
+    )
+      .trim()
+      .toLowerCase();
+
+
+  if(!cityId){
+
+    return false;
+  }
+
+
+  const candidate = {
+
+    ...config,
+
+    cityId:
+      cityId
+
+  };
+
+
+  const validation =
+    bociteValidateCityConfig(
+      candidate
+    );
+
+
+  if(!validation.ok){
+
+    console.warn(
+      "Bo'CitéArt : ville non enregistrée :",
+      validation.reason
+    );
+
+    return false;
+  }
+
+
+  BOCITE_CITIES[
+    cityId
+  ] =
+    candidate;
+
+
+  return true;
+}
+
+
+/* =========================================================
+   CHOISIR / MODIFIER LE NOM DES COINS
+   ========================================================= */
+
+function bociteSetCityCoinName(
+  cityId,
+  singularName,
+  pluralName,
+  options
+){
+
+  options =
+    options || {};
+
+
+  const city =
+    bociteGetCity(
+      cityId
+    );
+
+
+  if(!city){
+
+    return false;
+  }
+
+
+  const lockedMap =
+    bociteLoadLockedCoinNames();
+
+
+  const alreadyLocked =
+    Boolean(
+      city.coinNameLocked === true ||
+      lockedMap[
+        city.cityId
+      ]
+    );
+
+
+  /*
+    Une fois choisi :
+    seul l'Admin Bo'CitéArt
+    pourra autoriser un changement.
+  */
+  if(
+    alreadyLocked &&
+    options.adminOverride !==
+      true
+  ){
+
+    console.warn(
+      "Bo'CitéArt : le nom local des coins est verrouillé pour cette ville."
+    );
+
+    return false;
+  }
+
+
+  const cleanSingular =
+    String(
+      singularName || ""
+    ).trim();
+
+
+  const cleanPlural =
+    String(
+      pluralName || ""
+    ).trim();
+
+
+  if(
+    !cleanSingular ||
+    !cleanPlural
+  ){
+
+    return false;
+  }
+
+
+  if(
+    bociteCoinNameAlreadyUsed(
+      cleanPlural,
+      city.cityId
+    )
+  ){
+
+    console.warn(
+      "Bo'CitéArt : ce nom de coins est déjà utilisé par une autre ville."
+    );
+
+    return false;
+  }
+
+
+  city.coinName =
+    cleanSingular;
+
+
+  city.coinPlural =
+    cleanPlural;
+
+
+  city.coinNameLocked =
+    true;
+
+
+  lockedMap[
+    city.cityId
+  ] = {
+
+    coinName:
+      cleanSingular,
+
+    coinPlural:
+      cleanPlural,
+
+    updatedAt:
+      new Date()
+        .toISOString(),
+
+    adminOverride:
+      options.adminOverride ===
+        true
+
+  };
+
+
+  bociteSaveLockedCoinNames(
+    lockedMap
+  );
+
+
+  /*
+    Si la ville modifiée est celle
+    actuellement affichée,
+    on actualise immédiatement.
+  */
+  if(
+    CITY_CONFIG.cityId ===
+      city.cityId
+  ){
+
+    bociteSetActiveCity(
+      city.cityId
+    );
+  }
+
+
+  return true;
+}
+
+
+/* =========================================================
+   RESTAURER LES NOMS DÉJÀ VERROUILLÉS
+   ========================================================= */
+
+function bociteHydrateLockedCoinNames(){
+
+  const lockedMap =
+    bociteLoadLockedCoinNames();
+
+
+  /*
+    Wattignies est la première
+    ville validée.
+
+    Watticoins est donc considéré
+    comme choisi et verrouillé.
+  */
+  if(
+    !lockedMap.wattignies
+  ){
+
+    lockedMap.wattignies = {
+
+      coinName:
+        "Watticoin",
+
+      coinPlural:
+        "Watticoins",
+
+      updatedAt:
+        new Date()
+          .toISOString(),
+
+      adminOverride:
+        false
+
+    };
+
+
+    bociteSaveLockedCoinNames(
+      lockedMap
+    );
+  }
+
+
+  Object.keys(
+    lockedMap
+  ).forEach(
+    function(cityId){
+
+      const city =
+        bociteGetCity(
+          cityId
+        );
+
+
+      const saved =
+        lockedMap[
+          cityId
+        ];
+
+
+      if(
+        !city ||
+        !saved ||
+        !saved.coinName ||
+        !saved.coinPlural
+      ){
+
+        return;
+      }
+
+
+      city.coinName =
+        String(
+          saved.coinName
+        );
+
+
+      city.coinPlural =
+        String(
+          saved.coinPlural
+        );
+
+
+      city.coinNameLocked =
+        true;
+    }
+  );
+}
+
+
+/* =========================================================
+   INITIALISATION
+   ========================================================= */
+
+bociteHydrateLockedCoinNames();
+
+
+let savedActiveCityId =
+  "wattignies";
+
+
+try{
+
+  savedActiveCityId =
+    localStorage.getItem(
+      BOCITE_ACTIVE_CITY_KEY
+    ) ||
+    "wattignies";
+
+}catch(error){}
+
+
+if(
+  !bociteGetCity(
+    savedActiveCityId
+  )
+){
+
+  savedActiveCityId =
+    "wattignies";
+}
+
+
+bociteSetActiveCity(
+  savedActiveCityId
+);
+
+
+/* =========================================================
+   COMPATIBILITÉ AVEC L'ANCIEN CODE
+   ========================================================= */
+
+function cityText(
+  key
+){
+
+  return (
+    CITY_CONFIG[key] ||
+    ""
+  );
+}
+
+
+/* =========================================================
+   API GLOBALE
+   ========================================================= */
+
+window.BociteCityContext = {
+
+  get:
+    bociteGetActiveCity,
+
+  getById:
+    bociteGetCity,
+
+  list:
+    bociteListCities,
+
+  set:
+    bociteSetActiveCity,
+
+  register:
+    bociteRegisterCity,
+
+  setCoinName:
+    bociteSetCityCoinName,
+
+  validate:
+    bociteValidateCityConfig,
+
+  colorAllowed:
+    bociteTerritorialColorAllowed
+
+};
+
+/* =========================================================
+   ÇA FINIT ICI — CONTEXTE MULTI-VILLES BO'CITÉART
    ========================================================= */
 
   const $ = (id) => document.getElementById(id);
@@ -15216,6 +16158,347 @@ function schoolReadMairiePendingExchange(){
    ÇA FINIT ICI — STOCKAGE ÉCOLE → MAIRIE PAR VILLE
    ========================================================= */
 
+/* =========================================================
+   ÇA COMMENCE ICI
+   ÉCOLE → MAIRIE
+   MONTANT CHOISI PAR LA CLASSE
+   MINIMUM 30 — MAXIMUM SOLDE DISPONIBLE
+   ========================================================= */
+
+function schoolPrepareMairieExchange(){
+
+  const SCHOOL_MIN_EXCHANGE =
+    30;
+
+
+  const city =
+    schoolMairieActiveCity();
+
+
+  const pendingKey =
+    schoolMairieStorageKey(
+      "bociteart_school_mairie_pending_v1"
+    );
+
+
+  const map =
+    schoolLoadSolidarityMap();
+
+
+  const solidarity =
+    map[
+      schoolSolidarityMapKey()
+    ] || {
+
+      mode:
+        "none",
+
+      classId:
+        schoolCurrentClassId(),
+
+      className:
+        schoolCurrentClass(),
+
+      associations:
+        [],
+
+      savedAt:
+        new Date()
+          .toISOString()
+
+    };
+
+
+  const wallet =
+    (
+      typeof window.loadSchoolWallet ===
+        "function"
+    )
+
+      ? window.loadSchoolWallet()
+
+      : {
+          jaune:0
+        };
+
+
+  const currentAmount =
+    Math.max(
+      0,
+      Math.floor(
+        Number(
+          wallet &&
+          wallet.jaune ||
+          0
+        )
+      )
+    );
+
+
+  const amountInput =
+    document.getElementById(
+      "schoolExchangeAmountInput"
+    );
+
+
+  /*
+    Minimum 30.
+    Maximum = solde réel.
+  */
+  if(amountInput){
+
+    amountInput.min =
+      String(
+        SCHOOL_MIN_EXCHANGE
+      );
+
+    amountInput.max =
+      String(
+        currentAmount
+      );
+  }
+
+
+  /*
+    Sous 30 :
+    impossible de présenter
+    à la Mairie.
+  */
+  if(
+    currentAmount <
+      SCHOOL_MIN_EXCHANGE
+  ){
+
+    if(amountInput){
+
+      amountInput.disabled =
+        true;
+    }
+
+
+    try{
+
+      localStorage.removeItem(
+        pendingKey
+      );
+
+    }catch(error){}
+
+
+    return {
+
+      type:
+        "school_wallet",
+
+      cityId:
+        city.cityId,
+
+      cityName:
+        city.cityName,
+
+      coinPlural:
+        city.coinPlural,
+
+      class:
+        schoolCurrentClass(),
+
+      classId:
+        schoolCurrentClassId(),
+
+      wallet:
+        currentAmount,
+
+      exchangeAmount:
+        0,
+
+      minimumExchange:
+        SCHOOL_MIN_EXCHANGE,
+
+      eligible:
+        false,
+
+      solidarity:
+        solidarity,
+
+      ts:
+        Date.now()
+
+    };
+  }
+
+
+  if(amountInput){
+
+    amountInput.disabled =
+      false;
+  }
+
+
+  /*
+    Montant choisi par
+    le professeur avec la classe.
+  */
+  const requestedAmount =
+    amountInput
+
+      ? Number(
+          amountInput.value
+        )
+
+      : SCHOOL_MIN_EXCHANGE;
+
+
+  /*
+    Protection :
+    nombre entier,
+    minimum 30,
+    jamais supérieur au solde.
+  */
+  if(
+    !Number.isInteger(
+      requestedAmount
+    )
+    ||
+    requestedAmount <
+      SCHOOL_MIN_EXCHANGE
+    ||
+    requestedAmount >
+      currentAmount
+  ){
+
+    try{
+
+      localStorage.removeItem(
+        pendingKey
+      );
+
+    }catch(error){}
+
+
+    alert(
+      "Choisissez un nombre entier compris entre 30 et " +
+      currentAmount +
+      " bocitecoins JAUNE."
+    );
+
+
+    return {
+
+      type:
+        "school_wallet",
+
+      cityId:
+        city.cityId,
+
+      cityName:
+        city.cityName,
+
+      coinPlural:
+        city.coinPlural,
+
+      class:
+        schoolCurrentClass(),
+
+      classId:
+        schoolCurrentClassId(),
+
+      wallet:
+        currentAmount,
+
+      exchangeAmount:
+        0,
+
+      minimumExchange:
+        SCHOOL_MIN_EXCHANGE,
+
+      eligible:
+        false,
+
+      solidarity:
+        solidarity,
+
+      ts:
+        Date.now()
+
+    };
+  }
+
+
+  /*
+    Échange valide.
+  */
+  const payload = {
+
+    type:
+      "school_wallet",
+
+    cityId:
+      city.cityId,
+
+    cityName:
+      city.cityName,
+
+    coinPlural:
+      city.coinPlural,
+
+    class:
+      schoolCurrentClass(),
+
+    classId:
+      schoolCurrentClassId(),
+
+    wallet:
+      currentAmount,
+
+    exchangeAmount:
+      requestedAmount,
+
+    minimumExchange:
+      SCHOOL_MIN_EXCHANGE,
+
+    eligible:
+      true,
+
+    solidarity:
+      solidarity,
+
+    ts:
+      Date.now()
+
+  };
+
+
+  /*
+    Stockage strictement
+    dans la ville active.
+  */
+  try{
+
+    localStorage.setItem(
+      pendingKey,
+      JSON.stringify(
+        payload
+      )
+    );
+
+  }catch(error){
+
+    console.warn(
+      "Bo'CitéArt École : préparation de la présentation à la Mairie impossible.",
+      error
+    );
+  }
+
+
+  return payload;
+}
+
+/* =========================================================
+   ÇA FINIT ICI
+   ÉCOLE → MAIRIE
+   MONTANT CHOISI PAR LA CLASSE
+   ========================================================= */
+ 
 /* =========================================================
    ÇA COMMENCE ICI
    ÉCOLE — ENREGISTREMENT DES 2 ORIENTATIONS DE LA CLASSE
