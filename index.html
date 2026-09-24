@@ -15025,342 +15025,195 @@ function schoolGetTeacherIdentifier(account){
   }
 
 /* =========================================================
-   ÇA COMMENCE ICI
-   ÉCOLE ↔ MAIRIE
-   ORIENTATION + ÉCHANGE EN ATTENTE + RETOUR MAIRIE
+   ÇA COMMENCE ICI — STOCKAGE ÉCOLE → MAIRIE PAR VILLE
    ========================================================= */
 
+function schoolMairieActiveCity(){
+
+  try{
+
+    if(
+      window.BociteCityContext &&
+      typeof window.BociteCityContext.get === "function"
+    ){
+
+      const city =
+        window.BociteCityContext.get();
+
+      if(
+        city &&
+        city.cityId
+      ){
+
+        return {
+          cityId:
+            String(
+              city.cityId
+            )
+              .trim()
+              .toLowerCase(),
+
+          cityName:
+            String(
+              city.cityName ||
+              ""
+            ).trim(),
+
+          coinPlural:
+            String(
+              city.coinPlural ||
+              ""
+            ).trim()
+        };
+      }
+    }
+
+  }catch(error){}
+
+
+  return {
+    cityId:"wattignies",
+    cityName:"Wattignies",
+    coinPlural:"Watticoins"
+  };
+}
+
+
+function schoolMairieStorageKey(
+  baseKey
+){
+
+  const city =
+    schoolMairieActiveCity();
+
+  return (
+    String(
+      baseKey || ""
+    ) +
+    "__city__" +
+    city.cityId
+  );
+}
+
 function schoolReadMairiePendingExchange(){
+
+  const city =
+    schoolMairieActiveCity();
+
+  const scopedKey =
+    schoolMairieStorageKey(
+      "bociteart_school_mairie_pending_v1"
+    );
 
   try{
 
     const raw =
       localStorage.getItem(
-        "bociteart_school_mairie_pending_v1"
+        scopedKey
       );
 
-    const parsed =
-      raw
-        ? JSON.parse(raw)
-        : null;
 
-    return (
-      parsed &&
-      typeof parsed === "object"
-    )
-      ? parsed
-      : null;
+    if(raw){
 
-  }catch(error){
+      const parsed =
+        JSON.parse(
+          raw
+        );
 
-    return null;
-  }
-}
-
-/* =========================================================
-   ÇA COMMENCE ICI
-   ÉCOLE → MAIRIE
-   MONTANT CHOISI PAR LA CLASSE
-   MINIMUM 30 — MAXIMUM SOLDE DISPONIBLE
-   ========================================================= */
-
-function schoolPrepareMairieExchange(){
-
-  const SCHOOL_MIN_EXCHANGE =
-    30;
-
-
-  const map =
-    schoolLoadSolidarityMap();
-
-
-  const solidarity =
-    map[
-      schoolSolidarityMapKey()
-    ] || {
-
-      mode:"none",
-
-      classId:
-        schoolCurrentClassId(),
-
-      className:
-        schoolCurrentClass(),
-
-      associations:[],
-
-      savedAt:
-        new Date()
-          .toISOString()
-
-    };
-
-
-  const wallet =
-    (
-      typeof window.loadSchoolWallet ===
-        "function"
-    )
-
-      ? window.loadSchoolWallet()
-
-      : {
-          jaune:0
-        };
-
-
-  const currentAmount =
-    Math.max(
-      0,
-      Math.floor(
-        Number(
-          wallet &&
-          wallet.jaune ||
-          0
-        )
+      return (
+        parsed &&
+        typeof parsed === "object"
       )
-    );
-
-
-  const amountInput =
-    document.getElementById(
-      "schoolExchangeAmountInput"
-    );
-
-
-  /*
-   * Le champ ne peut jamais dépasser
-   * le solde réel de la classe.
-   */
-
-  if(amountInput){
-
-    amountInput.min =
-      String(
-        SCHOOL_MIN_EXCHANGE
-      );
-
-    amountInput.max =
-      String(
-        currentAmount
-      );
-
-  }
-
-
-  /*
-   * Sous 30 JAUNE :
-   * aucune présentation à la Mairie.
-   */
-
-  if(
-    currentAmount <
-      SCHOOL_MIN_EXCHANGE
-  ){
-
-    if(amountInput){
-
-      amountInput.disabled =
-        true;
-
+        ? parsed
+        : null;
     }
 
+    /*
+      Migration de l'ancienne démo.
 
-    try{
+      Toute ancienne présentation
+      sans ville appartient à Wattignies.
+    */
+    if(
+      city.cityId ===
+        "wattignies"
+    ){
 
-      localStorage.removeItem(
-        "bociteart_school_mairie_pending_v1"
-      );
+      const legacyRaw =
+        localStorage.getItem(
+          "bociteart_school_mairie_pending_v1"
+        );
 
-    }catch(error){}
 
+      if(legacyRaw){
 
-    return {
+        const legacyParsed =
+          JSON.parse(
+            legacyRaw
+          );
 
-      type:
-        "school_wallet",
 
-      class:
-        schoolCurrentClass(),
+        if(
+          legacyParsed &&
+          typeof legacyParsed ===
+            "object"
+        ){
 
-      classId:
-        schoolCurrentClassId(),
+          const migrated = {
 
-      wallet:
-        currentAmount,
+            ...legacyParsed,
 
-      exchangeAmount:
-        0,
+            cityId:
+              legacyParsed.cityId ||
+              city.cityId,
 
-      minimumExchange:
-        SCHOOL_MIN_EXCHANGE,
+            cityName:
+              legacyParsed.cityName ||
+              city.cityName,
 
-      eligible:
-        false,
+            coinPlural:
+              legacyParsed.coinPlural ||
+              city.coinPlural
 
-      solidarity:
-        solidarity,
+          };
 
-      ts:
-        Date.now()
 
-    };
-  }
+          localStorage.setItem(
+            scopedKey,
+            JSON.stringify(
+              migrated
+            )
+          );
 
 
-  if(amountInput){
+          /*
+            L'ancienne clé globale
+            ne doit plus pouvoir
+            réapparaître ensuite.
+          */
+          localStorage.removeItem(
+            "bociteart_school_mairie_pending_v1"
+          );
 
-    amountInput.disabled =
-      false;
 
-  }
-
-
-  /*
-   * Montant choisi par le professeur
-   * avec la classe.
-   */
-
-  const requestedAmount =
-    amountInput
-
-      ? Number(
-          amountInput.value
-        )
-
-      : SCHOOL_MIN_EXCHANGE;
-
-
-  /*
-   * Le montant doit être entier
-   * et compris entre 30
-   * et le solde disponible.
-   */
-
-  if(
-    !Number.isInteger(
-      requestedAmount
-    ) ||
-    requestedAmount <
-      SCHOOL_MIN_EXCHANGE ||
-    requestedAmount >
-      currentAmount
-  ){
-
-    try{
-
-      localStorage.removeItem(
-        "bociteart_school_mairie_pending_v1"
-      );
-
-    }catch(error){}
-
-
-    alert(
-      "Choisissez un nombre entier compris entre 30 et " +
-      currentAmount +
-      " bocitecoins JAUNE."
-    );
-
-
-    return {
-
-      type:
-        "school_wallet",
-
-      class:
-        schoolCurrentClass(),
-
-      classId:
-        schoolCurrentClassId(),
-
-      wallet:
-        currentAmount,
-
-      exchangeAmount:
-        0,
-
-      minimumExchange:
-        SCHOOL_MIN_EXCHANGE,
-
-      eligible:
-        false,
-
-      solidarity:
-        solidarity,
-
-      ts:
-        Date.now()
-
-    };
-  }
-
-
-  const exchangeAmount =
-    requestedAmount;
-
-
-  const payload = {
-
-    type:
-      "school_wallet",
-
-    class:
-      schoolCurrentClass(),
-
-    classId:
-      schoolCurrentClassId(),
-
-    wallet:
-      currentAmount,
-
-    exchangeAmount:
-      exchangeAmount,
-
-    minimumExchange:
-      SCHOOL_MIN_EXCHANGE,
-
-    eligible:
-      true,
-
-    solidarity:
-      solidarity,
-
-    ts:
-      Date.now()
-
-  };
-
-
-  try{
-
-    localStorage.setItem(
-
-      "bociteart_school_mairie_pending_v1",
-
-      JSON.stringify(
-        payload
-      )
-
-    );
+          return migrated;
+        }
+      }
+    }
 
   }catch(error){
 
     console.warn(
-      "Bo'CitéArt École : préparation de la présentation à la Mairie impossible.",
+      "Bo'CitéArt École : lecture de l'échange Mairie impossible.",
       error
     );
-
   }
 
-
-  return payload;
+  return null;
 }
 
 /* =========================================================
-   ÇA FINIT ICI
-   ÉCOLE → MAIRIE
-   MONTANT CHOISI PAR LA CLASSE
+   ÇA FINIT ICI — STOCKAGE ÉCOLE → MAIRIE PAR VILLE
    ========================================================= */
 
 /* =========================================================
