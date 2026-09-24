@@ -302,7 +302,86 @@ function mairieWrite(
   }
 }
 
+/* =========================================================
+   ÇA COMMENCE ICI — CONTEXTE VILLE MAIRIE
+   ========================================================= */
 
+function mairieActiveCity(){
+
+  try{
+
+    if(
+      window.BociteCityContext &&
+      typeof window.BociteCityContext.get === "function"
+    ){
+
+      const city =
+        window.BociteCityContext.get();
+
+      if(
+        city &&
+        city.cityId
+      ){
+
+        return {
+
+          cityId:
+            mairieText(
+              city.cityId
+            ).toLowerCase(),
+
+          cityName:
+            mairieText(
+              city.cityName
+            ),
+
+          coinPlural:
+            mairieText(
+              city.coinPlural
+            )
+
+        };
+      }
+    }
+
+  }catch(error){}
+
+
+  return {
+
+    cityId:
+      "wattignies",
+
+    cityName:
+      "Wattignies",
+
+    coinPlural:
+      "Watticoins"
+
+  };
+}
+
+
+function mairieCityStorageKey(
+  baseKey
+){
+
+  const city =
+    mairieActiveCity();
+
+  return (
+    mairieText(
+      baseKey
+    ) +
+    "__city__" +
+    city.cityId
+  );
+}
+
+/* =========================================================
+   ÇA FINIT ICI — CONTEXTE VILLE MAIRIE
+   ========================================================= */
+   
 /* =========================================================
    IDENTITÉ VISUELLE BO'CITÉART
    ========================================================= */
@@ -3407,6 +3486,75 @@ function mairieParseSchoolScan(
     );
   }
 
+   /* =====================================================
+   ÇA COMMENCE ICI — CONTRÔLE TERRITORIAL DU QR ÉCOLE
+   ===================================================== */
+
+const activeCity =
+  mairieActiveCity();
+
+
+const qrCityId =
+  mairieText(
+    payload.v != null
+      ? payload.v
+      : payload.cityId
+  )
+  .toLowerCase();
+
+
+const qrCityName =
+  mairieText(
+    payload.vn != null
+      ? payload.vn
+      : payload.cityName
+  );
+
+
+const qrCoinPlural =
+  mairieText(
+    payload.cp != null
+      ? payload.cp
+      : payload.coinPlural
+  );
+
+
+/*
+  Désormais un QR École doit
+  obligatoirement identifier sa commune.
+*/
+if(
+  !qrCityId
+){
+
+  throw new Error(
+    "Ce QR École est d’une ancienne version : la commune n’est pas identifiée."
+  );
+}
+
+
+/*
+  Le QR doit appartenir
+  à la commune actuellement active.
+*/
+if(
+  qrCityId !==
+    activeCity.cityId
+){
+
+  throw new Error(
+    "Ce QR appartient à " +
+    (qrCityName || qrCityId) +
+    ". La Mairie active est " +
+    activeCity.cityName +
+    ". Aucune validation n’est autorisée."
+  );
+}
+
+/* =====================================================
+   ÇA FINIT ICI — CONTRÔLE TERRITORIAL DU QR ÉCOLE
+   ===================================================== */
+
 /* =====================================================
    ÇA COMMENCE ICI
    MAIRIE — LECTURE DU MONTANT JAUNE PRÉSENTÉ
@@ -3457,6 +3605,17 @@ return {
 
   type:
     "school_wallet",
+
+  cityId:
+    qrCityId,
+
+  cityName:
+    qrCityName ||
+    activeCity.cityName,
+
+  coinPlural:
+    qrCoinPlural ||
+    activeCity.coinPlural,
 
   className:
     mairieText(
@@ -3595,10 +3754,19 @@ if(
   out.dataset.state =
     "ok";
 
+out.innerHTML =
 
-  out.innerHTML =
+  "<strong>Ville :</strong> " +
+  mairieEsc(
+    parsed.cityName
+  ) +
 
-    "<strong>Classe :</strong> " +
+  "<br><strong>Repère territorial :</strong> " +
+  mairieEsc(
+    parsed.coinPlural
+  ) +
+
+  "<br><strong>Classe :</strong> " +
     mairieEsc(
       parsed.className
     ) +
