@@ -17432,6 +17432,1052 @@ cityName:
    ÉCOLE ↔ MAIRIE
    ORIENTATION + ÉCHANGE EN ATTENTE + RETOUR MAIRIE
    ========================================================= */
+
+ /* =========================================================
+   ÇA COMMENCE ICI
+   ÉCOLE — LECTURE DU QR RETOUR MAIRIE
+   DÉMONSTRATION MULTI-APPAREILS
+   ========================================================= */
+
+function schoolParseMairieReturnCode(
+  raw
+){
+
+  const text =
+    String(
+      raw || ""
+    ).trim();
+
+
+  if(!text){
+
+    throw new Error(
+      "Scannez ou collez d’abord le QR de retour de la Mairie."
+    );
+  }
+
+
+  let payload;
+
+
+  try{
+
+    payload =
+      (
+        window.boScanEngine &&
+        typeof window.boScanEngine.parse ===
+          "function"
+      )
+
+        ? window.boScanEngine.parse(
+            text
+          )
+
+        : JSON.parse(
+            text
+          );
+
+  }catch(error){
+
+    throw new Error(
+      "Le QR de retour de la Mairie n’est pas lisible."
+    );
+  }
+
+
+  if(
+    !payload ||
+    typeof payload !==
+      "object" ||
+    payload.type !==
+      "school_wallet_validation"
+  ){
+
+    throw new Error(
+      "Ce code ne correspond pas à une validation Mairie → École."
+    );
+  }
+
+
+  const activeCity =
+    schoolMairieActiveCity();
+
+
+  const cityId =
+    String(
+      payload.v ||
+      payload.cityId ||
+      ""
+    )
+    .trim()
+    .toLowerCase();
+
+
+  const classId =
+    String(
+      payload.i ||
+      payload.classId ||
+      ""
+    ).trim();
+
+
+  const operationId =
+    String(
+      payload.x ||
+      payload.id ||
+      ""
+    ).trim();
+
+
+  const amount =
+    Number(
+      payload.a != null
+        ? payload.a
+        : payload.bocitecoins
+    );
+
+
+  const expectedBalance =
+    Number(
+      payload.b != null
+        ? payload.b
+        : payload.balance
+    );
+
+
+  const validatedTs =
+    Number(
+      payload.t ||
+      0
+    );
+
+
+  if(
+    !cityId ||
+    cityId !==
+      activeCity.cityId
+  ){
+
+    throw new Error(
+      "Cette validation ne correspond pas à la ville active."
+    );
+  }
+
+
+  if(
+    !classId ||
+    classId !==
+      schoolCurrentClassId()
+  ){
+
+    throw new Error(
+      "Cette validation ne correspond pas à cette classe."
+    );
+  }
+
+
+  if(
+    !operationId
+  ){
+
+    throw new Error(
+      "Identifiant de validation Mairie manquant."
+    );
+  }
+
+
+  if(
+    !Number.isInteger(
+      amount
+    ) ||
+    amount < 30
+  ){
+
+    throw new Error(
+      "La quantité validée par la Mairie est invalide."
+    );
+  }
+
+
+  if(
+    !Number.isInteger(
+      expectedBalance
+    ) ||
+    expectedBalance < 0
+  ){
+
+    throw new Error(
+      "Le nouveau solde transmis par la Mairie est invalide."
+    );
+  }
+
+
+  const wallet =
+    typeof window.loadSchoolWallet ===
+      "function"
+
+      ? window.loadSchoolWallet()
+
+      : {
+          jaune:0
+        };
+
+
+  const currentBalance =
+    Math.max(
+      0,
+      Math.floor(
+        Number(
+          wallet &&
+          wallet.jaune ||
+          0
+        )
+      )
+    );
+
+
+  /*
+   * Si le compte possède déjà
+   * le solde annoncé par la Mairie,
+   * aucun second retrait.
+   */
+  if(
+    currentBalance ===
+      expectedBalance
+  ){
+
+    return {
+
+      alreadyApplied:
+        true,
+
+      cityId:
+        cityId,
+
+      classId:
+        classId,
+
+      operationId:
+        operationId,
+
+      amount:
+        amount,
+
+      expectedBalance:
+        expectedBalance,
+
+      validatedTs:
+        validatedTs
+
+    };
+  }
+
+
+  /*
+   * Contrôle de cohérence :
+   *
+   * solde actuel - quantité validée
+   * doit donner exactement
+   * le solde annoncé par la Mairie.
+   */
+  if(
+    Math.max(
+      0,
+      currentBalance -
+      amount
+    ) !==
+      expectedBalance
+  ){
+
+    throw new Error(
+      "Le solde actuel de la classe ne correspond pas à cette validation Mairie."
+    );
+  }
+
+
+  return {
+
+    alreadyApplied:
+      false,
+
+    cityId:
+      cityId,
+
+    classId:
+      classId,
+
+    operationId:
+      operationId,
+
+    amount:
+      amount,
+
+    expectedBalance:
+      expectedBalance,
+
+    validatedTs:
+      validatedTs
+
+  };
+}
+
+
+
+function schoolApplyMairieReturnCode(
+  raw,
+  out
+){
+
+  try{
+
+    const parsed =
+      schoolParseMairieReturnCode(
+        raw
+      );
+
+
+    if(
+      parsed.alreadyApplied
+    ){
+
+      if(out){
+
+        out.style.color =
+          "#2f5d46";
+
+        out.textContent =
+          "✓ Cette validation est déjà prise en compte. " +
+          "Solde actuel : " +
+          parsed.expectedBalance +
+          " bocitecoin(s) JAUNE.";
+      }
+
+
+      return parsed;
+    }
+
+
+    const activeCity =
+      schoolMairieActiveCity();
+
+
+    const reference =
+      [
+        "mairie-return",
+        parsed.cityId,
+        parsed.classId,
+        parsed.operationId
+      ].join(
+        "|"
+      );
+
+
+    /*
+     * On transmet le retour contrôlé
+     * au moteur École déjà présent.
+     */
+    window.dispatchEvent(
+
+      new CustomEvent(
+        "bociteart:school-mairie-validated",
+        {
+          detail:{
+
+            type:
+              "school_wallet_validation",
+
+            id:
+              parsed.operationId,
+
+            reference:
+              reference,
+
+            cityId:
+              parsed.cityId,
+
+            cityName:
+              activeCity.cityName,
+
+            coinPlural:
+              activeCity.coinPlural,
+
+            className:
+              schoolCurrentClass(),
+
+            bocitecoins:
+              parsed.amount,
+
+            solidarity:{
+              mode:"none",
+              associations:[]
+            },
+
+            validatedAt:
+              parsed.validatedTs
+
+                ? new Date(
+                    parsed.validatedTs
+                  ).toISOString()
+
+                : new Date()
+                    .toISOString()
+
+          }
+        }
+      )
+
+    );
+
+
+    /*
+     * Vérification après traitement.
+     */
+    const wallet =
+      typeof window.loadSchoolWallet ===
+        "function"
+
+        ? window.loadSchoolWallet()
+
+        : {
+            jaune:0
+          };
+
+
+    const newBalance =
+      Math.max(
+        0,
+        Math.floor(
+          Number(
+            wallet &&
+            wallet.jaune ||
+            0
+          )
+        )
+      );
+
+
+    if(
+      newBalance !==
+        parsed.expectedBalance
+    ){
+
+      throw new Error(
+        "La validation a été lue, mais le solde de la classe n’a pas été mis à jour."
+      );
+    }
+
+
+    if(out){
+
+      out.style.color =
+        "#2f5d46";
+
+      out.textContent =
+        "✓ Validation Mairie enregistrée. " +
+        parsed.amount +
+        " bocitecoin(s) JAUNE retirés. " +
+        "Nouveau solde : " +
+        newBalance +
+        ".";
+    }
+
+
+    return parsed;
+
+  }catch(error){
+
+    if(out){
+
+      out.style.color =
+        "#a51e22";
+
+      out.textContent =
+        error &&
+        error.message
+
+          ? error.message
+
+          : "Lecture du retour Mairie impossible.";
+    }
+
+
+    return null;
+  }
+}
+
+
+
+async function schoolScanMairieReturnQr(){
+
+  const input =
+    document.getElementById(
+      "schoolMairieReturnInput"
+    );
+
+
+  const out =
+    document.getElementById(
+      "schoolMairieReturnStatus"
+    );
+
+
+  if(!input){
+
+    return;
+  }
+
+
+  if(
+    typeof window.BarcodeDetector !==
+      "function" ||
+    !navigator.mediaDevices ||
+    typeof navigator.mediaDevices.getUserMedia !==
+      "function"
+  ){
+
+    if(out){
+
+      out.style.color =
+        "#8a6d00";
+
+      out.textContent =
+        "Le scanner caméra n’est pas disponible sur cet appareil. " +
+        "Collez le code de retour dans le champ prévu.";
+    }
+
+
+    return;
+  }
+
+
+  const detector =
+    new window.BarcodeDetector({
+      formats:[
+        "qr_code"
+      ]
+    });
+
+
+  const overlay =
+    document.createElement(
+      "div"
+    );
+
+
+  overlay.id =
+    "schoolMairieReturnCameraOverlay";
+
+
+  overlay.style.cssText =
+    "position:fixed;" +
+    "inset:0;" +
+    "z-index:100060;" +
+    "background:rgba(0,0,0,.78);" +
+    "padding:16px;" +
+    "display:flex;" +
+    "align-items:center;" +
+    "justify-content:center;" +
+    "box-sizing:border-box;";
+
+
+  overlay.innerHTML = `
+
+    <div
+      style="
+        width:100%;
+        max-width:420px;
+        background:#ffffff;
+        border-radius:16px;
+        padding:14px;
+        box-sizing:border-box;
+      "
+    >
+
+      <div
+        style="
+          color:#2f5d46;
+          font-size:17px;
+          font-weight:700;
+        "
+      >
+        Lire la validation de la Mairie
+      </div>
+
+
+      <div
+        style="
+          margin-top:8px;
+          color:#111111;
+          font-size:14px;
+          line-height:1.5;
+        "
+      >
+        Placez le QR de retour affiché par la Mairie
+        dans le cadre de la caméra.
+      </div>
+
+
+      <video
+        id="schoolMairieReturnCameraVideo"
+        autoplay
+        muted
+        playsinline
+        style="
+          width:100%;
+          margin-top:12px;
+          border-radius:12px;
+          background:#111111;
+        "
+      ></video>
+
+
+      <button
+        id="schoolMairieReturnCameraClose"
+        class="choiceBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-top:12px;
+        "
+      >
+        Annuler le scan
+      </button>
+
+    </div>
+
+  `;
+
+
+  document.body.appendChild(
+    overlay
+  );
+
+
+  const video =
+    document.getElementById(
+      "schoolMairieReturnCameraVideo"
+    );
+
+
+  const closeBtn =
+    document.getElementById(
+      "schoolMairieReturnCameraClose"
+    );
+
+
+  let stream =
+    null;
+
+
+  let timer =
+    null;
+
+
+  let active =
+    true;
+
+
+  let detecting =
+    false;
+
+
+  function closeCamera(){
+
+    active =
+      false;
+
+
+    if(timer){
+
+      window.clearInterval(
+        timer
+      );
+
+      timer =
+        null;
+    }
+
+
+    if(stream){
+
+      stream
+        .getTracks()
+        .forEach(
+          function(track){
+
+            track.stop();
+          }
+        );
+    }
+
+
+    if(
+      overlay &&
+      overlay.parentNode
+    ){
+
+      overlay.remove();
+    }
+  }
+
+
+  if(closeBtn){
+
+    closeBtn.onclick =
+      closeCamera;
+  }
+
+
+  try{
+
+    stream =
+      await navigator.mediaDevices
+        .getUserMedia({
+
+          audio:false,
+
+          video:{
+            facingMode:{
+              ideal:"environment"
+            }
+          }
+
+        });
+
+
+    video.srcObject =
+      stream;
+
+
+    await video.play();
+
+
+    if(out){
+
+      out.style.color =
+        "#8a6d00";
+
+      out.textContent =
+        "Scanner actif : présentez le QR de retour Mairie.";
+    }
+
+
+    timer =
+      window.setInterval(
+
+        async function(){
+
+          if(
+            !active ||
+            detecting ||
+            !video ||
+            video.readyState < 2
+          ){
+
+            return;
+          }
+
+
+          detecting =
+            true;
+
+
+          try{
+
+            const codes =
+              await detector.detect(
+                video
+              );
+
+
+            if(
+              codes &&
+              codes.length &&
+              codes[0] &&
+              codes[0].rawValue
+            ){
+
+              const raw =
+                String(
+                  codes[0].rawValue
+                ).trim();
+
+
+              if(raw){
+
+                input.value =
+                  raw;
+
+
+                closeCamera();
+
+
+                schoolApplyMairieReturnCode(
+                  raw,
+                  out
+                );
+
+
+                return;
+              }
+            }
+
+          }catch(error){
+
+            console.warn(
+              "Bo'CitéArt École : lecture QR retour Mairie en cours.",
+              error
+            );
+
+          }finally{
+
+            detecting =
+              false;
+          }
+
+        },
+
+        450
+      );
+
+
+  }catch(error){
+
+    closeCamera();
+
+
+    if(out){
+
+      out.style.color =
+        "#a51e22";
+
+      out.textContent =
+        "La caméra n’a pas pu être ouverte. " +
+        "Collez le code de retour de la Mairie dans le champ prévu.";
+    }
+  }
+}
+
+
+
+function schoolOpenMairieReturnReader(){
+
+  openModal(
+    "Retour Mairie → École",
+    `
+
+      <div
+        class="box"
+        style="
+          background:#ffffff;
+          color:#111111;
+          border-left:6px solid #d4bb18;
+        "
+      >
+
+        <div
+          style="
+            color:#2f5d46;
+            font-size:17px;
+            font-weight:700;
+          "
+        >
+          Validation de la Mairie
+        </div>
+
+
+        <div
+          style="
+            margin-top:8px;
+            font-size:14px;
+            line-height:1.5;
+          "
+        >
+          Scannez le QR de retour affiché par la Mairie.
+
+          <br><br>
+
+          La ville, la classe, l’opération
+          et le solde sont contrôlés
+          avant toute modification du compte.
+
+          <br><br>
+
+          Pour la démonstration,
+          le code peut également être collé
+          manuellement dans le champ ci-dessous.
+        </div>
+
+
+        <button
+          id="schoolMairieReturnScanBtn"
+          class="choiceBtn"
+          type="button"
+          style="
+            width:100%;
+            margin-top:12px;
+          "
+        >
+          Scanner le QR de retour
+        </button>
+
+
+        <textarea
+          id="schoolMairieReturnInput"
+          class="miniField"
+          placeholder="Scanner ou coller le code de retour de la Mairie"
+          style="
+            min-height:100px;
+            margin-top:12px;
+            resize:vertical;
+          "
+        ></textarea>
+
+
+        <button
+          id="schoolMairieReturnApplyBtn"
+          class="choiceBtn"
+          type="button"
+          style="
+            width:100%;
+            margin-top:12px;
+          "
+        >
+          Valider le retour Mairie
+        </button>
+
+
+        <div
+          id="schoolMairieReturnStatus"
+          role="status"
+          aria-live="polite"
+          style="
+            margin-top:12px;
+            font-size:14px;
+            line-height:1.5;
+          "
+        ></div>
+
+      </div>
+
+    `
+  );
+
+
+  window.setTimeout(
+
+    function(){
+
+      const scanBtn =
+        document.getElementById(
+          "schoolMairieReturnScanBtn"
+        );
+
+
+      const applyBtn =
+        document.getElementById(
+          "schoolMairieReturnApplyBtn"
+        );
+
+
+      const input =
+        document.getElementById(
+          "schoolMairieReturnInput"
+        );
+
+
+      const out =
+        document.getElementById(
+          "schoolMairieReturnStatus"
+        );
+
+
+      if(scanBtn){
+
+        scanBtn.onclick =
+          schoolScanMairieReturnQr;
+      }
+
+
+      if(applyBtn){
+
+        applyBtn.onclick =
+          function(){
+
+            schoolApplyMairieReturnCode(
+              input
+                ? input.value
+                : "",
+              out
+            );
+          };
+      }
+
+    },
+
+    0
+  );
+}
+
+
+
+if(
+  !window.__bociteSchoolMairieReturnReaderInstalled
+){
+
+  window.__bociteSchoolMairieReturnReaderInstalled =
+    true;
+
+
+  document.addEventListener(
+
+    "click",
+
+    function(event){
+
+      const target =
+        event.target &&
+        typeof event.target.closest ===
+          "function"
+
+          ? event.target
+
+          : null;
+
+
+      if(!target){
+
+        return;
+      }
+
+
+      const button =
+        target.closest(
+          "#schoolReadMairieReturnBtn"
+        );
+
+
+      if(!button){
+
+        return;
+      }
+
+
+      event.preventDefault();
+
+
+      schoolOpenMairieReturnReader();
+
+    }
+
+  );
+}
+
+/* =========================================================
+   ÇA FINIT ICI
+   ÉCOLE — LECTURE DU QR RETOUR MAIRIE
+   DÉMONSTRATION MULTI-APPAREILS
+   ========================================================= */
  
   function schoolDirectionInitialized(){
     const data = schoolLoadAccessData();
