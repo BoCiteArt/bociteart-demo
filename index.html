@@ -16708,6 +16708,37 @@ window.BociteSchoolMairieTokenBridge = {
         ? "full"
         : "none";
 
+ /* =========================================================
+   ÇA COMMENCE ICI — VILLE DU JETON ÉCOLE → MAIRIE
+   ========================================================= */
+
+const activeCity =
+  schoolMairieActiveCity();
+
+
+const cityId =
+  String(
+    operation.cityId ||
+    activeCity.cityId ||
+    ""
+  )
+  .trim()
+  .toLowerCase();
+
+
+if(
+  !cityId
+){
+
+  throw new Error(
+    "Ville Bo'CitéArt manquante."
+  );
+}
+
+/* =========================================================
+   ÇA FINIT ICI — VILLE DU JETON ÉCOLE → MAIRIE
+   ========================================================= */
+
     if(
       !classId
     ){
@@ -16763,18 +16794,43 @@ window.BociteSchoolMairieTokenBridge = {
 
           body:
             JSON.stringify(
-              {
-                classId:
-                  classId,
+           /* =========================================================
+   ÇA COMMENCE ICI — DONNÉES ENVOYÉES AU SERVICE ÉCOLE → MAIRIE
+   ========================================================= */
 
-                amount:
-                  Math.trunc(
-                    amount
-                  ),
+{
+  cityId:
+    cityId,
 
-                orientation:
-                  orientation
-              }
+  cityName:
+    String(
+      operation.cityName ||
+      activeCity.cityName ||
+      ""
+    ),
+
+  coinPlural:
+    String(
+      operation.coinPlural ||
+      activeCity.coinPlural ||
+      ""
+    ),
+
+  classId:
+    classId,
+
+  amount:
+    Math.trunc(
+      amount
+    ),
+
+  orientation:
+    orientation
+}
+
+/* =========================================================
+   ÇA FINIT ICI — DONNÉES ENVOYÉES AU SERVICE ÉCOLE → MAIRIE
+   ========================================================= */
             )
         }
       );
@@ -16850,7 +16906,7 @@ getPendingCode:
 
 /* =====================================================
    ÇA COMMENCE ICI
-   ÉCOLE → MAIRIE — QR ULTRA-COMPACT
+   ÉCOLE → MAIRIE — QR TERRITORIAL ULTRA-COMPACT
    ===================================================== */
 
 const compactPayload = {
@@ -16858,32 +16914,82 @@ const compactPayload = {
   type:
     "school_wallet",
 
+  /*
+    VILLE BO'CITÉART
+    Identifiant technique obligatoire.
+  */
+  v:
+    String(
+      pending.cityId ||
+      schoolMairieActiveCity().cityId ||
+      ""
+    ),
+
+  /*
+    Nom lisible de la commune.
+  */
+  vn:
+    String(
+      pending.cityName ||
+      schoolMairieActiveCity().cityName ||
+      ""
+    ),
+
+  /*
+    Nom territorial des coins.
+    Exemple : Watticoins.
+  */
+  cp:
+    String(
+      pending.coinPlural ||
+      schoolMairieActiveCity().coinPlural ||
+      ""
+    ),
+
+  /*
+    Classe.
+  */
   c:
     pending.class ||
     "",
 
+  /*
+    Identifiant de classe.
+  */
   i:
     pending.classId ||
     "",
 
+  /*
+    Solde JAUNE avant présentation.
+  */
   w:
     Number(
       pending.wallet ||
       0
     ),
 
+  /*
+    Quantité présentée.
+  */
   a:
     Number(
       pending.exchangeAmount ||
       0
     ),
 
+  /*
+    Orientation de la classe.
+  */
   o:
     pending.solidarity &&
     pending.solidarity.mode === "full"
       ? "full"
       : "none",
 
+  /*
+    Horodatage.
+  */
   t:
     Number(
       pending.ts ||
@@ -16893,9 +16999,9 @@ const compactPayload = {
 
 /* =====================================================
    ÇA FINIT ICI
-   ÉCOLE → MAIRIE — QR ULTRA-COMPACT
+   ÉCOLE → MAIRIE — QR TERRITORIAL ULTRA-COMPACT
    ===================================================== */
-
+   
     return JSON.stringify(
       compactPayload
     );
@@ -16942,18 +17048,98 @@ if(
 
           : null;
 
+if(
+  !detail ||
+  detail.type !==
+    "school_wallet_validation"
+){
 
-      if(
-        !detail ||
-        detail.type !==
-          "school_wallet_validation"
-      ){
-
-        return;
-      }
+  return;
+}
 
 
-      const reference =
+/* =========================================================
+   ÇA COMMENCE ICI — CONTRÔLE VILLE RETOUR MAIRIE → ÉCOLE
+   ========================================================= */
+
+const activeCity =
+  schoolMairieActiveCity();
+
+
+const detailCityId =
+  String(
+    detail.cityId ||
+    ""
+  )
+  .trim()
+  .toLowerCase();
+
+
+/*
+  Si le retour indique une ville,
+  elle doit être identique
+  à la ville actuellement active.
+*/
+if(
+  detailCityId &&
+  detailCityId !==
+    activeCity.cityId
+){
+
+  console.warn(
+    "Bo'CitéArt École : validation refusée — ville différente.",
+    detailCityId,
+    activeCity.cityId
+  );
+
+  return;
+}
+
+
+/*
+  En exploitation officielle,
+  une validation sans cityId
+  sera refusée.
+
+  La tolérance reste uniquement
+  pour la démonstration actuelle.
+*/
+if(
+  typeof APP_MODE !== "undefined" &&
+  APP_MODE !== "DEMO" &&
+  !detailCityId
+){
+
+  console.warn(
+    "Bo'CitéArt École : validation refusée — cityId manquant."
+  );
+
+  return;
+}
+
+
+/*
+  Historique et échange en attente
+  strictement rattachés à la ville active.
+*/
+const validationsKey =
+  schoolMairieStorageKey(
+    "bociteart_school_mairie_validations_v1"
+  );
+
+
+const pendingKey =
+  schoolMairieStorageKey(
+    "bociteart_school_mairie_pending_v1"
+  );
+
+/* =========================================================
+   ÇA FINIT ICI — CONTRÔLE VILLE RETOUR MAIRIE → ÉCOLE
+   ========================================================= */
+
+
+const reference =
+     
         String(
           detail.reference ||
           ""
@@ -16982,7 +17168,7 @@ if(
 
         const raw =
           localStorage.getItem(
-            "bociteart_school_mairie_validations_v1"
+            validationsKey
           );
 
 
@@ -17125,9 +17311,14 @@ if(
             newAmount
           );
       }
-
-
+     
       validations.push({
+
+       cityId:
+  activeCity.cityId,
+
+cityName:
+  activeCity.cityName,
 
         id:
           String(
@@ -17171,7 +17362,7 @@ if(
 
         localStorage.setItem(
 
-          "bociteart_school_mairie_validations_v1",
+          validationsKey,
 
           JSON.stringify(
             validations.slice(
@@ -17181,9 +17372,8 @@ if(
 
         );
 
-
         localStorage.removeItem(
-          "bociteart_school_mairie_pending_v1"
+           pendingKey
         );
 
       }catch(error){}
@@ -18484,12 +18674,22 @@ const mairieCode =
 
               <br><br>
 
-              <strong>Identifiant de classe :</strong>
-              ${schoolEscapeHtml(classId || "Non renseigné")}
+             <strong>Identifiant de classe :</strong>
+${schoolEscapeHtml(classId || "Non renseigné")}
 
-              <br><br>
+<br><br>
 
-              <strong>Solde actuel :</strong>
+<strong>Ville :</strong>
+${schoolEscapeHtml(pending.cityName || "Non renseignée")}
+
+<br>
+
+<strong>Repère territorial :</strong>
+${schoolEscapeHtml(pending.coinPlural || "")}
+
+<br><br>
+
+<strong>Solde actuel :</strong>
               ${Number(pending.wallet || 0)}
               bocitecoin(s) JAUNE
 
