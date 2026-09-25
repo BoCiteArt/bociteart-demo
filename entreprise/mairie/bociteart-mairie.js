@@ -6533,90 +6533,93 @@ de la tuile Mairie.
         class="mairieHidden"
       >
 
-        <!-- =================================================
-             MESSAGE BANDEAU
-             ================================================= -->
-
-        <div class="mairieCard">
-
-          <div class="mairieTitle">
-
-            Message bandeau mairie interne
-
-          </div>
-
-
-          <div class="mairieText">
-
-            Ce message alimente
-            le petit bandeau rouge défilant
-            sur la tuile Mairie.
-
-          </div>
-
-
-          <label
-            class="mairieLabel"
-            for="mairieMsgInput"
-          >
-            Message
-          </label>
-
-
-          <input
-            class="mairieField"
-            id="mairieMsgInput"
-            maxlength="280"
-            placeholder="Information locale à diffuser"
-          >
-
-
-          <div class="mairieActions">
-
-            <!-- =====================================================
+      <!-- =====================================================
      ÇA COMMENCE ICI
-     MAIRIE — SCANNER LE QR DE LA CLASSE
+     MAIRIE — MESSAGE URGENCE / INTÉRÊT GÉNÉRAL
      ===================================================== -->
 
-<button
-  class="mairieBtn"
-  id="mairieSchoolCameraBtn"
-  type="button"
+<div
+  class="mairieCard"
+  style="
+    border:2px solid #b3282d;
+    background:#fffafa;
+  "
 >
-  Scanner le QR de la classe
-</button>
+
+  <div class="mairieTitle">
+    Message gratuit d’urgence ou d’intérêt général
+  </div>
+
+
+  <div class="mairieText">
+
+    Cet encart sert uniquement à publier
+    une information municipale urgente
+    ou d’intérêt général.
+
+    <br><br>
+
+    Le message validé apparaît dans
+    le <strong style="color:#b3282d;">petit bandeau rouge défilant</strong>
+    de la tuile Mairie visible par les habitants.
+
+    <br><br>
+
+    Vous pouvez corriger le texte puis le republier,
+    ou le retirer lorsqu’il n’est plus nécessaire.
+
+  </div>
+
+
+  <label
+    class="mairieLabel"
+    for="mairieMsgInput"
+  >
+    Message à diffuser
+  </label>
+
+
+  <input
+    class="mairieField"
+    id="mairieMsgInput"
+    maxlength="280"
+    placeholder="Ex. Rue barrée, déviation, vigilance météo..."
+  >
+
+
+  <div class="mairieActions">
+
+    <button
+      class="mairieBtn"
+      id="mairieMsgSave"
+      type="button"
+    >
+      Publier / mettre à jour le message
+    </button>
+
+
+    <button
+      class="mairieBtn"
+      id="mairieMsgReset"
+      type="button"
+    >
+      Retirer le message
+    </button>
+
+  </div>
+
+
+  ${mairieStatus(
+    "mairieMsgStatus",
+    ""
+  )}
+
+</div>
 
 <!-- =====================================================
      ÇA FINIT ICI
-     MAIRIE — SCANNER LE QR DE LA CLASSE
+     MAIRIE — MESSAGE URGENCE / INTÉRÊT GÉNÉRAL
      ===================================================== -->
-
-            <button
-              class="mairieBtn"
-              id="mairieMsgSave"
-              type="button"
-            >
-              Enregistrer le message
-            </button>
-
-
-            <button
-              class="mairieBtn"
-              id="mairieMsgReset"
-              type="button"
-            >
-              Effacer le message
-            </button>
-
-          </div>
-
-
-          ${mairieStatus(
-            "mairieMsgStatus",
-            ""
-          )}
-
-        </div>
         
         <!-- =================================================
              ÉCOLE → MAIRIE
@@ -6631,14 +6634,48 @@ de la tuile Mairie.
           </div>
 
 
-          <div class="mairieText">
+          <!-- =====================================================
+     ÇA COMMENCE ICI
+     MAIRIE — MODE D’EMPLOI ÉCOLE + SCANNER
+     ===================================================== -->
 
-            La mairie lit le code
-            transmis par l’école,
-            contrôle les informations présentées
-            puis confirme l’échange.
+<div class="mairieText">
 
-          </div>
+  Pour traiter une présentation École → Mairie :
+
+  <br><br>
+
+  1. Sur l’application de l’établissement,
+  le professeur ouvre
+  <strong>École → Espace professeur → Présenter à la Mairie</strong>.
+
+  <br><br>
+
+  2. Un QR de la classe s’affiche sur son appareil.
+
+  <br><br>
+
+  3. Ici, cliquez sur
+  <strong>Scanner le QR de la classe</strong>,
+  contrôlez les informations lues,
+  puis confirmez l’échange.
+
+</div>
+
+
+<button
+  class="mairieBtn mairieFull"
+  id="mairieSchoolCameraBtn"
+  type="button"
+  style="margin-top:10px;"
+>
+  Scanner le QR de la classe
+</button>
+
+<!-- =====================================================
+     ÇA FINIT ICI
+     MAIRIE — MODE D’EMPLOI ÉCOLE + SCANNER
+     ===================================================== -->
 
 
           <label
