@@ -6750,130 +6750,160 @@ de la tuile Mairie.
         </div>
 
 
-        <!-- =================================================
-             SPORT → MAIRIE
-             ================================================= -->
+<!-- =====================================================
+     ÇA COMMENCE ICI
+     SPORT → MAIRIE — PARCOURS SIMPLIFIÉ
+     ===================================================== -->
 
-        <div class="mairieCard mairieSport">
+<div class="mairieCard mairieSport">
 
-          <div class="mairieTitle">
-
-            Lecture Sport → Mairie
-
-          </div>
-
-
-          <div class="mairieText">
-
-            Cet espace utilise directement
-            le raccord Sport déjà en place.
-
-            <br><br>
-
-            La mairie lit le club,
-            confirme les échanges prévus
-            et gère le reliquat de fin de saison
-            lorsqu’il est inférieur
-            à 30 bocitecoins.
-
-          </div>
+  <div class="mairieTitle">
+    Sport → Mairie
+  </div>
 
 
-          <label
-            class="mairieLabel"
-            for="mairieSportScanInput"
-          >
-            Code du club
-          </label>
+  <div class="mairieText">
+
+    Le responsable du club présente
+    son code Bo’CitéArt à la commune.
+
+    <br><br>
+
+    Ici, la commune :
+
+    <br><br>
+
+    1. lit le code du club ;
+
+    <br>
+
+    2. contrôle le nombre de bocitecoins VERT
+    présentés et l’orientation choisie ;
+
+    <br>
+
+    3. confirme l’opération.
+
+    <br><br>
+
+    Les bocitecoins VERT validés sont ensuite
+    comptabilisés puis brûlés.
+    Ils ne sont jamais convertis en euros.
+
+  </div>
 
 
-          <textarea
-            id="mairieSportScanInput"
-            class="mairieField"
-            placeholder="Scanner ou coller le code du club"
-          ></textarea>
+  <label
+    class="mairieLabel"
+    for="mairieSportScanInput"
+  >
+    Code présenté par le club
+  </label>
 
 
-          <div class="mairieActions">
-
-            <button
-              class="mairieBtn"
-              id="mairieSportReadBtn"
-              type="button"
-            >
-              Consulter le club
-            </button>
+  <textarea
+    id="mairieSportScanInput"
+    class="mairieField"
+    placeholder="Lire ou coller le code présenté par le club"
+  ></textarea>
 
 
-            <button
-              class="mairieBtn"
-              id="mairieSportValidateBtn"
-              type="button"
-            >
-              Confirmer l’échange Sport
-            </button>
+  <div class="mairieActions">
+
+    <button
+      class="mairieBtn"
+      id="mairieSportReadBtn"
+      type="button"
+    >
+      Vérifier le club
+    </button>
 
 
-            <button
-              class="mairieBtn"
-              id="mairieSportHistoryBtn"
-              type="button"
-            >
-              Consulter l’historique Sport
-            </button>
-
-<button
-  class="mairieBtn"
-  id="mairieSportExportBtn"
-  type="button"
->
-  Exporter le rapport Sport
-</button>
-          </div>
+    <button
+      class="mairieBtn"
+      id="mairieSportValidateBtn"
+      type="button"
+    >
+      Confirmer l’opération Sport
+    </button>
 
 
-          <label
-            class="mairieLabel"
-            for="mairieSportAssociation"
-          >
-            Association validée
-            pour un reliquat de fin de saison
-          </label>
+    <button
+      class="mairieBtn"
+      id="mairieSportHistoryBtn"
+      type="button"
+    >
+      Voir l’historique
+    </button>
 
 
-          <select
-            id="mairieSportAssociation"
-            class="mairieField"
-          >
+    <button
+      class="mairieBtn"
+      id="mairieSportExportBtn"
+      type="button"
+    >
+      Exporter le rapport
+    </button>
 
-            ${mairieSportAssociationOptions()}
-
-          </select>
-
-
-          <button
-            id="mairieSportRemainderBtn"
-            class="mairieBtn mairieFull"
-            type="button"
-            style="
-              margin-top:10px;
-            "
-          >
-            Transmettre le reliquat
-            à l’association validée
-          </button>
+  </div>
 
 
-          ${mairieStatus(
-            "mairieSportReadOut",
-            "Aucun code Sport lu pour le moment."
-          )}
+  <div
+    class="mairieText"
+    style="margin-top:16px;"
+  >
 
-        </div>
+    <strong>Reliquat de fin de saison</strong>
 
-        <!-- =================================================
-             RECHERCHE MÉDICALE — ESPACE PRIVÉ MAIRIE
-             ================================================= -->
+    <br><br>
+
+    Lorsqu’un reliquat inférieur à 30 bocitecoins VERT
+    reste sur le compte du club,
+    la commune peut enregistrer son orientation
+    vers une association de recherche médicale validée.
+
+  </div>
+
+
+  <label
+    class="mairieLabel"
+    for="mairieSportAssociation"
+  >
+    Association de recherche médicale retenue
+  </label>
+
+
+  <select
+    id="mairieSportAssociation"
+    class="mairieField"
+  >
+
+    ${mairieSportAssociationOptions()}
+
+  </select>
+
+
+  <button
+    id="mairieSportRemainderBtn"
+    class="mairieBtn mairieFull"
+    type="button"
+    style="margin-top:10px;"
+  >
+    Enregistrer l’orientation du reliquat
+  </button>
+
+
+  ${mairieStatus(
+    "mairieSportReadOut",
+    "Aucun code Sport lu pour le moment."
+  )}
+
+</div>
+
+<!-- =====================================================
+     ÇA FINIT ICI
+     SPORT → MAIRIE — PARCOURS SIMPLIFIÉ
+     ===================================================== -->
 
         <div class="mairieCard">
 
