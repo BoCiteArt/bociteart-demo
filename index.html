@@ -14069,361 +14069,134 @@ de progression collective.
 
 <div class="bociteSchoolCard">
 
- <!-- =====================================================
+<!-- =====================================================
      ÇA COMMENCE ICI
-     ÉCOLE — PROFESSEUR — 2 ORIENTATIONS DE LA CLASSE
+     ÉCOLE — PROFESSEUR — CHOIX MATÉRIEL / RECHERCHE
      ===================================================== -->
 
 <div>
-  Le professeur échange avec les élèves
-  et enregistre le choix retenu ensemble par la classe.
+  Le professeur garde la main sur le moment où la classe utilise ses bocitecoins.
+  Il peut attendre pour constituer un solde plus important.
+</div>
+
+<div style="margin-top:10px;color:#111111;font-size:14px;line-height:1.5;">
+  À partir de <strong>30 bocitecoins JAUNE</strong>, la classe peut choisir
+  le matériel scolaire, la recherche médicale, ou les deux.
+
+  <br><br>
+
+  <strong>Chaque partie choisie doit comporter au minimum 30 JAUNE.</strong>
+  Les bocitecoins non utilisés restent dans le compte de la classe.
 </div>
 
 <div
-  style="
-    margin-top:10px;
-    color:#111111;
-    font-size:14px;
-    font-weight:400;
-    line-height:1.5;
-  "
+  id="schoolExchangeBalanceInfo"
+  style="margin-top:14px;padding:10px;border:1px solid #dedede;border-radius:10px;background:#f7f2e8;color:#111111;font-size:14px;line-height:1.5;"
 >
-  Deux orientations sont proposées :
+  Solde disponible de la classe : —
 </div>
 
-<div style="margin-top:10px;">
+<label class="bociteSchoolChoice" style="margin-top:14px;">
+  <input
+    id="schoolMaterialChoice"
+    type="checkbox"
+  >
+  <span>
+    <strong>Matériel scolaire / cadeau collectif</strong>
+  </span>
+</label>
 
-  <label class="bociteSchoolChoice">
-    <input
-      type="radio"
-      name="schoolSolidarityMode"
-      value="none"
-      checked
-    >
-    <span>
-      Surprise, cadeau collectif ou matériel scolaire
-    </span>
+<div
+  id="schoolMaterialAmountWrap"
+  style="display:none;margin:8px 0 0 27px;"
+>
+  <label
+    for="schoolMaterialAmountInput"
+    style="display:block;font-size:14px;font-weight:700;"
+  >
+    Nombre de JAUNE pour le matériel
   </label>
 
-  <label class="bociteSchoolChoice">
-    <input
-      type="radio"
-      name="schoolSolidarityMode"
-      value="full"
-    >
-    <span>
-      Solidarité — recherche médicale
-    </span>
-  </label>
-
+  <input
+    id="schoolMaterialAmountInput"
+    class="bociteSchoolField"
+    type="number"
+    min="30"
+    step="1"
+    value="30"
+    inputmode="numeric"
+    style="margin-top:6px;"
+  >
 </div>
+
+<label class="bociteSchoolChoice" style="margin-top:14px;">
+  <input
+    id="schoolResearchChoice"
+    type="checkbox"
+  >
+  <span>
+    <strong>Recherche médicale</strong>
+  </span>
+</label>
+
+<div
+  id="schoolResearchAmountWrap"
+  style="display:none;margin:8px 0 0 27px;"
+>
+  <label
+    for="schoolResearchAmountInput"
+    style="display:block;font-size:14px;font-weight:700;"
+  >
+    Nombre de JAUNE pour la recherche médicale
+  </label>
+
+  <input
+    id="schoolResearchAmountInput"
+    class="bociteSchoolField"
+    type="number"
+    min="30"
+    step="1"
+    value="30"
+    inputmode="numeric"
+    style="margin-top:6px;"
+  >
+</div>
+
+<div
+  id="schoolExchangeSummary"
+  style="margin-top:14px;padding:10px;border:1px solid #dedede;border-radius:10px;background:#ffffff;color:#111111;font-size:14px;line-height:1.55;"
+>
+  Choisissez une orientation pour préparer le calcul.
+</div>
+
+<button
+  id="schoolSolidaritySaveBtn"
+  class="bociteSchoolAction"
+  type="button"
+  style="margin-top:12px;"
+>
+  Valider le choix de la classe
+</button>
+
+<div
+  id="schoolSolidarityStatus"
+  role="status"
+  aria-live="polite"
+  style="margin-top:10px;color:#111111;font-size:14px;font-weight:400;line-height:1.5;"
+></div>
+
+<button
+  id="schoolPresentMairieBtn"
+  class="bociteSchoolAction"
+  type="button"
+  style="margin-top:10px;"
+>
+  Présenter à la Mairie
+</button>
 
 <!-- =====================================================
      ÇA FINIT ICI
-     ÉCOLE — PROFESSEUR — 2 ORIENTATIONS DE LA CLASSE
-     ===================================================== -->
-
-  <div
-    id="schoolSolidarityAssociations"
-    style="margin-top:14px;display:none;"
-  >
-
-    <div
-      class="bociteSchoolSectionTitle"
-      style="margin-top:0;"
-    >
-      Associations proposées
-    </div>
-
-    <div
-      style="
-        margin-top:6px;
-        color:#111111;
-        font-size:14px;
-        font-weight:400;
-        line-height:1.5;
-      "
-    >
-      Les associations proposées à la classe
-      sont sélectionnées et vérifiées
-      avant leur mise à disposition.
-
-      <br><br>
-
-      Leur liste peut évoluer afin de conserver
-      des organismes correspondant aux causes retenues
-      et aux exigences de transparence
-      et d’utilisation effective des soutiens.
-
-      <br><br>
-
-      Les exemples ci-dessous permettent au professeur
-      d’aborder plusieurs grandes formes de solidarité
-      avec les élèves.
-    </div>
-
-
-    <!-- A -->
-
-    <label class="bociteSchoolChoice">
-
-      <input
-        type="checkbox"
-        class="schoolAssoPick"
-        data-asso="Association solidaire A"
-      >
-
-      <span>
-        Association solidaire A
-      </span>
-
-    </label>
-
-    <details
-      style="
-        margin:6px 0 8px 27px;
-        padding:10px;
-        border:1px solid #dedede;
-        border-radius:10px;
-        background:#f7f2e8;
-      "
-    >
-
-      <summary
-        style="
-          cursor:pointer;
-          color:#2f5d46;
-          font-size:14px;
-          font-weight:700;
-        "
-      >
-        Comprendre cette cause
-      </summary>
-
-      <div
-        style="
-          margin-top:8px;
-          color:#111111;
-          font-size:14px;
-          font-weight:400;
-          line-height:1.5;
-        "
-      >
-        Exemple de thème pédagogique :
-        les maladies rares de l’enfant
-        et la recherche médicale.
-
-        <br><br>
-
-        Le professeur peut expliquer pourquoi
-        certaines maladies concernent peu de personnes,
-        pourquoi la recherche peut être longue
-        et pourquoi la solidarité peut contribuer
-        à soutenir les travaux nécessaires.
-      </div>
-
-    </details>
-
-    <!-- B -->
-
-    <label class="bociteSchoolChoice">
-
-      <input
-        type="checkbox"
-        class="schoolAssoPick"
-        data-asso="Association solidaire B"
-      >
-
-      <span>
-        Association solidaire B
-      </span>
-
-    </label>
-
-    <details
-      style="
-        margin:6px 0 8px 27px;
-        padding:10px;
-        border:1px solid #dedede;
-        border-radius:10px;
-        background:#f7f2e8;
-      "
-    >
-
-      <summary
-        style="
-          cursor:pointer;
-          color:#2f5d46;
-          font-size:14px;
-          font-weight:700;
-        "
-      >
-        Comprendre cette cause
-      </summary>
-
-      <div
-        style="
-          margin-top:8px;
-          color:#111111;
-          font-size:14px;
-          font-weight:400;
-          line-height:1.5;
-        "
-      >
-        Exemple de thème pédagogique :
-        les enfants malades,
-        les soins et l’accompagnement.
-
-        <br><br>
-
-        Le professeur peut expliquer qu’aider
-        un enfant malade ne concerne pas uniquement
-        les soins, mais aussi sa vie quotidienne,
-        sa famille, sa scolarité
-        et les moments qui lui permettent
-        de rester un enfant malgré la maladie.
-      </div>
-
-    </details>
-
-    <!-- C -->
-
-    <label class="bociteSchoolChoice">
-
-      <input
-        type="checkbox"
-        class="schoolAssoPick"
-        data-asso="Association solidaire C"
-      >
-
-      <span>
-        Association solidaire C
-      </span>
-
-    </label>
-
-    <details
-      style="
-        margin:6px 0 8px 27px;
-        padding:10px;
-        border:1px solid #dedede;
-        border-radius:10px;
-        background:#f7f2e8;
-      "
-    >
-
-      <summary
-        style="
-          cursor:pointer;
-          color:#2f5d46;
-          font-size:14px;
-          font-weight:700;
-        "
-      >
-        Comprendre cette cause
-      </summary>
-
-      <div
-        style="
-          margin-top:8px;
-          color:#111111;
-          font-size:14px;
-          font-weight:400;
-          line-height:1.5;
-        "
-      >
-        Exemple de thème pédagogique :
-        le handicap de l’enfant,
-        l’autonomie et l’inclusion.
-
-        <br><br>
-
-        Le professeur peut aborder
-        la différence, l’accessibilité,
-        l’autonomie et la place de chacun
-        dans la vie collective.
-
-        <br><br>
-
-        Les élèves peuvent ainsi comprendre
-        que chacun doit pouvoir participer
-        et trouver sa place.
-      </div>
-
-    </details> 
-    
-    <!-- D -->
-
-    <label class="bociteSchoolChoice">
-
-      <input
-        type="checkbox"
-        class="schoolAssoPick"
-        data-asso="Association solidaire D"
-      >
-
-      <span>
-        Association solidaire D
-      </span>
-
-    </label>
-
-    <details
-      style="
-        margin:6px 0 8px 27px;
-        padding:10px;
-        border:1px solid #dedede;
-        border-radius:10px;
-        background:#f7f2e8;
-      "
-    >
-
-      <summary
-        style="
-          cursor:pointer;
-          color:#2f5d46;
-          font-size:14px;
-          font-weight:700;
-        "
-      >
-        Comprendre cette cause
-      </summary>
-
-      <div
-        style="
-          margin-top:8px;
-          color:#111111;
-          font-size:14px;
-          font-weight:400;
-          line-height:1.5;
-        "
-      >
-        Exemple de thème pédagogique :
-        les accidents touchant les enfants,
-        leurs conséquences et la reconstruction.
-
-        <br><br>
-
-        Le professeur peut expliquer
-        qu’après les soins peuvent venir
-        la rééducation, le retour à l’école,
-        la recherche d’une nouvelle autonomie
-        et l’accompagnement de la famille.
-
-        <br><br>
-
-        Cela permet également de parler
-        de prévention, de courage,
-        de patience et d’entraide.
-      </div>
-
-    </details>
-
-  </div>
-
-<!-- =====================================================
-     ÇA COMMENCE ICI
-     ÉCOLE — PROFESSEUR — MONTANT À PRÉSENTER À LA MAIRIE
+     ÉCOLE — PROFESSEUR — CHOIX MATÉRIEL / RECHERCHE
      ===================================================== -->
 
 <div
@@ -15808,163 +15581,638 @@ function schoolGetTeacherIdentifier(account){
     return schoolCurrentClassId() || schoolCurrentClass();
   }
 
-  function schoolGetSolidarityMode(){
-    const checked = document.querySelector('input[name="schoolSolidarityMode"]:checked');
-    return checked ? String(checked.value || "none") : "none";
-  }
+ function schoolGetAllocationDraft(){
 
-  function schoolRefreshSolidarityVisibility(){
-    if(!schoolSolidarityAssociations){
-      return;
-    }
-
-    const mode = schoolGetSolidarityMode();
-    schoolSolidarityAssociations.style.display = mode === "none" ? "none" : "block";
-
-  }
-
-  function schoolRefreshSolidarityUi(){
-
-     /* =====================================================
-     ÉCOLE — 2 ORIENTATIONS TOUJOURS CLIQUABLES
-     ===================================================== */
-
-  document
-    .querySelectorAll(
-      'input[name="schoolSolidarityMode"]'
-    )
-    .forEach(function(radio){
-
-      radio.disabled = false;
-
-      radio.removeAttribute(
-        "disabled"
-      );
-
-    });
-     /* =====================================================
-     ÉCOLE — SOLDE JAUNE DISPONIBLE POUR LA MAIRIE
-     ===================================================== */
-
-  const exchangeAmountInput =
+  const material =
     document.getElementById(
-      "schoolExchangeAmountInput"
+      "schoolMaterialChoice"
     );
 
-  const exchangeBalanceInfo =
+  const research =
     document.getElementById(
-      "schoolExchangeBalanceInfo"
+      "schoolResearchChoice"
     );
 
-  const exchangeWallet =
-    typeof window.loadSchoolWallet === "function"
-      ? window.loadSchoolWallet()
-      : { jaune:0 };
+  const materialInput =
+    document.getElementById(
+      "schoolMaterialAmountInput"
+    );
 
-  const exchangeBalance =
+  const researchInput =
+    document.getElementById(
+      "schoolResearchAmountInput"
+    );
+
+  return {
+
+    materialSelected:
+      !!(
+        material &&
+        material.checked
+      ),
+
+    researchSelected:
+      !!(
+        research &&
+        research.checked
+      ),
+
+    materialAmount:
+      material &&
+      material.checked
+
+        ? Number(
+            materialInput &&
+            materialInput.value ||
+            0
+          )
+
+        : 0,
+
+    researchAmount:
+      research &&
+      research.checked
+
+        ? Number(
+            researchInput &&
+            researchInput.value ||
+            0
+          )
+
+        : 0
+  };
+}
+
+
+function schoolValidateAllocationDraft(
+  draft,
+  walletAmount
+){
+
+  const wallet =
     Math.max(
       0,
       Math.floor(
         Number(
-          exchangeWallet &&
-          exchangeWallet.jaune ||
+          walletAmount ||
           0
         )
       )
     );
 
-     /* =====================================================
-     ÉCOLE — COMPTE JAUNE VISIBLE DU PROFESSEUR
-     ===================================================== */
+  const material =
+    Number(
+      draft &&
+      draft.materialAmount ||
+      0
+    );
+
+  const research =
+    Number(
+      draft &&
+      draft.researchAmount ||
+      0
+    );
+
+  if(
+    !draft ||
+    (
+      !draft.materialSelected &&
+      !draft.researchSelected
+    )
+  ){
+
+    return {
+      ok:false,
+      message:
+        "Choisissez le matériel scolaire, la recherche médicale, ou les deux."
+    };
+  }
+
+
+  if(
+    draft.materialSelected &&
+    (
+      !Number.isInteger(
+        material
+      ) ||
+      material < 30
+    )
+  ){
+
+    return {
+      ok:false,
+      message:
+        "La partie matériel doit être d’au moins 30 bocitecoins JAUNE."
+    };
+  }
+
+
+  if(
+    draft.researchSelected &&
+    (
+      !Number.isInteger(
+        research
+      ) ||
+      research < 30
+    )
+  ){
+
+    return {
+      ok:false,
+      message:
+        "La partie recherche médicale doit être d’au moins 30 bocitecoins JAUNE."
+    };
+  }
+
+
+  const total =
+    material +
+    research;
+
+
+  if(
+    total >
+    wallet
+  ){
+
+    return {
+      ok:false,
+      message:
+        "Le total choisi dépasse le solde disponible de la classe."
+    };
+  }
+
+
+  return {
+
+    ok:true,
+
+    materialAmount:
+      material,
+
+    researchAmount:
+      research,
+
+    total:
+      total,
+
+    remaining:
+      wallet -
+      total
+  };
+}
+
+
+function schoolUpdateAllocationDraftUi(){
+
+  const wallet =
+    typeof window.loadSchoolWallet ===
+      "function"
+
+      ? window.loadSchoolWallet()
+
+      : {
+          jaune:0
+        };
+
+
+  const balance =
+    Math.max(
+      0,
+      Math.floor(
+        Number(
+          wallet &&
+          wallet.jaune ||
+          0
+        )
+      )
+    );
+
+
+  const material =
+    document.getElementById(
+      "schoolMaterialChoice"
+    );
+
+  const research =
+    document.getElementById(
+      "schoolResearchChoice"
+    );
+
+  const materialInput =
+    document.getElementById(
+      "schoolMaterialAmountInput"
+    );
+
+  const researchInput =
+    document.getElementById(
+      "schoolResearchAmountInput"
+    );
+
+  const materialWrap =
+    document.getElementById(
+      "schoolMaterialAmountWrap"
+    );
+
+  const researchWrap =
+    document.getElementById(
+      "schoolResearchAmountWrap"
+    );
+
+  const balanceInfo =
+    document.getElementById(
+      "schoolExchangeBalanceInfo"
+    );
+
+  const summary =
+    document.getElementById(
+      "schoolExchangeSummary"
+    );
+
+  const saveButton =
+    document.getElementById(
+      "schoolSolidaritySaveBtn"
+    );
+
+  const presentButton =
+    document.getElementById(
+      "schoolPresentMairieBtn"
+    );
 
   const schoolCoinBalance =
     document.getElementById(
       "schoolCoinBalance"
     );
 
-  if(schoolCoinBalance){
+
+  const allowed =
+    balance >= 30;
+
+
+  if(
+    schoolCoinBalance
+  ){
 
     schoolCoinBalance.textContent =
       String(
-        exchangeBalance
+        balance
       );
   }
 
-  if(exchangeBalanceInfo){
 
-    exchangeBalanceInfo.textContent =
-      "Solde disponible de la classe : " +
-      exchangeBalance +
+  if(
+    balanceInfo
+  ){
+
+    balanceInfo.innerHTML =
+      "<strong>Solde disponible :</strong> " +
+      balance +
       " bocitecoin(s) JAUNE.";
   }
 
-  if(exchangeAmountInput){
 
-    exchangeAmountInput.min =
-      "30";
+  if(material){
 
-    exchangeAmountInput.max =
+    material.disabled =
+      !allowed;
+  }
+
+
+  if(research){
+
+    research.disabled =
+      !allowed;
+  }
+
+
+  if(materialWrap){
+
+    materialWrap.style.display =
+      material &&
+      material.checked
+
+        ? "block"
+
+        : "none";
+  }
+
+
+  if(researchWrap){
+
+    researchWrap.style.display =
+      research &&
+      research.checked
+
+        ? "block"
+
+        : "none";
+  }
+
+
+  if(materialInput){
+
+    materialInput.max =
       String(
-        exchangeBalance
+        balance
       );
 
-    if(exchangeBalance < 30){
+    materialInput.disabled =
+      !(
+        allowed &&
+        material &&
+        material.checked
+      );
+  }
 
-      exchangeAmountInput.disabled =
-        true;
+
+  if(researchInput){
+
+    researchInput.max =
+      String(
+        balance
+      );
+
+    researchInput.disabled =
+      !(
+        allowed &&
+        research &&
+        research.checked
+      );
+  }
+
+
+  if(saveButton){
+
+    saveButton.disabled =
+      !allowed;
+  }
+
+
+  const draft =
+    schoolGetAllocationDraft();
+
+
+  const check =
+    schoolValidateAllocationDraft(
+      draft,
+      balance
+    );
+
+
+  if(summary){
+
+    summary.innerHTML =
+
+      !allowed
+
+        ? (
+            "Le solde est inférieur à 30 JAUNE. " +
+            "L’utilisation normale est bloquée ; " +
+            "le reliquat de fin d’année sera traité séparément."
+          )
+
+        : check.ok
+
+          ? (
+              "<strong>Matériel :</strong> " +
+              check.materialAmount +
+              " JAUNE" +
+
+              "<br><strong>Recherche :</strong> " +
+              check.researchAmount +
+              " JAUNE" +
+
+              "<br><strong>Total choisi :</strong> " +
+              check.total +
+              " JAUNE" +
+
+              "<br><strong>Solde restant :</strong> " +
+              check.remaining +
+              " JAUNE"
+            )
+
+          : check.message;
+  }
+
+
+  if(presentButton){
+
+    const saved =
+      schoolLoadSolidarityMap()[
+        schoolSolidarityMapKey()
+      ] ||
+      null;
+
+
+    const same =
+      !!(
+        saved &&
+
+        Number(
+          saved.materialAmount ||
+          0
+        ) ===
+        Number(
+          draft.materialAmount ||
+          0
+        ) &&
+
+        Number(
+          saved.researchAmount ||
+          0
+        ) ===
+        Number(
+          draft.researchAmount ||
+          0
+        )
+      );
+
+
+    presentButton.disabled =
+      !(
+        saved &&
+        same &&
+        Number(
+          saved.totalAmount ||
+          0
+        ) >= 30 &&
+        Number(
+          saved.totalAmount ||
+          0
+        ) <= balance
+      );
+  }
+
+
+  return check;
+}
+
+
+function schoolRefreshSolidarityVisibility(){
+
+  schoolUpdateAllocationDraftUi();
+}
+
+
+function schoolRefreshSolidarityUi(){
+
+  const wallet =
+    typeof window.loadSchoolWallet ===
+      "function"
+
+      ? window.loadSchoolWallet()
+
+      : {
+          jaune:0
+        };
+
+
+  const balance =
+    Math.max(
+      0,
+      Math.floor(
+        Number(
+          wallet &&
+          wallet.jaune ||
+          0
+        )
+      )
+    );
+
+
+  const saved =
+    schoolLoadSolidarityMap()[
+      schoolSolidarityMapKey()
+    ] ||
+    null;
+
+
+  const material =
+    document.getElementById(
+      "schoolMaterialChoice"
+    );
+
+  const research =
+    document.getElementById(
+      "schoolResearchChoice"
+    );
+
+  const materialInput =
+    document.getElementById(
+      "schoolMaterialAmountInput"
+    );
+
+  const researchInput =
+    document.getElementById(
+      "schoolResearchAmountInput"
+    );
+
+
+  let materialAmount =
+    Number(
+      saved &&
+      saved.materialAmount ||
+      0
+    );
+
+
+  let researchAmount =
+    Number(
+      saved &&
+      saved.researchAmount ||
+      0
+    );
+
+
+  /*
+    Migration douce
+    de l’ancien choix exclusif.
+  */
+  if(
+    saved &&
+    materialAmount <= 0 &&
+    researchAmount <= 0 &&
+    balance >= 30
+  ){
+
+    if(
+      String(
+        saved.mode ||
+        ""
+      ) ===
+      "full"
+    ){
+
+      researchAmount =
+        30;
 
     }else{
 
-      exchangeAmountInput.disabled =
-        false;
-
-      const currentValue =
-        Number(
-          exchangeAmountInput.value
-        );
-
-      if(
-        !Number.isInteger(currentValue) ||
-        currentValue < 30 ||
-        currentValue > exchangeBalance
-      ){
-
-        exchangeAmountInput.value =
-          "30";
-      }
+      materialAmount =
+        30;
     }
   }
-    const map = schoolLoadSolidarityMap();
-    const saved = map[schoolSolidarityMapKey()] || null;
-    const mode = saved && saved.mode ? String(saved.mode) : "none";
 
-    const radio = document.querySelector(
-      'input[name="schoolSolidarityMode"][value="' + CSS.escape(mode) + '"]'
-    );
-    if(radio){
-      radio.checked = true;
-    }
 
-    const savedAssociations = saved && Array.isArray(saved.associations)
-      ? saved.associations
-      : [];
+  if(material){
 
-    document.querySelectorAll(".schoolAssoPick").forEach(function(box){
-      const name = String(box.dataset.asso || "");
-      box.checked = savedAssociations.some(function(item){
-        return item && String(item.name || "") === name;
-      });
-    });
+    material.checked =
+      materialAmount >= 30;
+  }
 
-    if(schoolSolidarityStatus){
-      schoolSolidarityStatus.textContent = saved
-        ? "✓ Choix déjà enregistré pour cette classe."
+
+  if(research){
+
+    research.checked =
+      researchAmount >= 30;
+  }
+
+
+  if(materialInput){
+
+    materialInput.value =
+      String(
+        materialAmount >= 30
+          ? materialAmount
+          : 30
+      );
+  }
+
+
+  if(researchInput){
+
+    researchInput.value =
+      String(
+        researchAmount >= 30
+          ? researchAmount
+          : 30
+      );
+  }
+
+
+  if(
+    schoolSolidarityStatus
+  ){
+
+    schoolSolidarityStatus.textContent =
+
+      saved &&
+      Number(
+        saved.totalAmount ||
+        0
+      ) > 0
+
+        ? "✓ Choix déjà validé pour cette classe."
+
         : "";
-    }
-
-    schoolRefreshSolidarityVisibility();
-   schoolRenderSolidarityAgreementStatus();
   }
+
+
+  schoolUpdateAllocationDraftUi();
+
+  schoolRenderSolidarityAgreementStatus();
+}
 
 /* =========================================================
    ÇA COMMENCE ICI — STOCKAGE ÉCOLE → MAIRIE PAR VILLE
@@ -16160,16 +16408,10 @@ function schoolReadMairiePendingExchange(){
 
 /* =========================================================
    ÇA COMMENCE ICI
-   ÉCOLE → MAIRIE
-   MONTANT CHOISI PAR LA CLASSE
-   MINIMUM 30 — MAXIMUM SOLDE DISPONIBLE
+   ÉCOLE → MAIRIE — CHOIX MATÉRIEL / RECHERCHE
    ========================================================= */
 
 function schoolPrepareMairieExchange(){
-
-  const SCHOOL_MIN_EXCHANGE =
-    30;
-
 
   const city =
     schoolMairieActiveCity();
@@ -16181,39 +16423,9 @@ function schoolPrepareMairieExchange(){
     );
 
 
-  const map =
-    schoolLoadSolidarityMap();
-
-
-  const solidarity =
-    map[
-      schoolSolidarityMapKey()
-    ] || {
-
-      mode:
-        "none",
-
-      classId:
-        schoolCurrentClassId(),
-
-      className:
-        schoolCurrentClass(),
-
-      associations:
-        [],
-
-      savedAt:
-        new Date()
-          .toISOString()
-
-    };
-
-
   const wallet =
-    (
-      typeof window.loadSchoolWallet ===
-        "function"
-    )
+    typeof window.loadSchoolWallet ===
+      "function"
 
       ? window.loadSchoolWallet()
 
@@ -16235,135 +16447,63 @@ function schoolPrepareMairieExchange(){
     );
 
 
-  const amountInput =
-    document.getElementById(
-      "schoolExchangeAmountInput"
-    );
+  const saved =
+    schoolLoadSolidarityMap()[
+      schoolSolidarityMapKey()
+    ] ||
+    null;
 
 
-  /*
-    Minimum 30.
-    Maximum = solde réel.
-  */
-  if(amountInput){
-
-    amountInput.min =
-      String(
-        SCHOOL_MIN_EXCHANGE
-      );
-
-    amountInput.max =
-      String(
-        currentAmount
-      );
-  }
-
-
-  /*
-    Sous 30 :
-    impossible de présenter
-    à la Mairie.
-  */
-  if(
-    currentAmount <
-      SCHOOL_MIN_EXCHANGE
-  ){
-
-    if(amountInput){
-
-      amountInput.disabled =
-        true;
-    }
-
-
-    try{
-
-      localStorage.removeItem(
-        pendingKey
-      );
-
-    }catch(error){}
-
-
-    return {
-
-      type:
-        "school_wallet",
-
-      cityId:
-        city.cityId,
-
-      cityName:
-        city.cityName,
-
-      coinPlural:
-        city.coinPlural,
-
-      class:
-        schoolCurrentClass(),
-
-      classId:
-        schoolCurrentClassId(),
-
-      wallet:
-        currentAmount,
-
-      exchangeAmount:
-        0,
-
-      minimumExchange:
-        SCHOOL_MIN_EXCHANGE,
-
-      eligible:
-        false,
-
-      solidarity:
-        solidarity,
-
-      ts:
-        Date.now()
-
-    };
-  }
-
-
-  if(amountInput){
-
-    amountInput.disabled =
-      false;
-  }
-
-
-  /*
-    Montant choisi par
-    le professeur avec la classe.
-  */
-  const requestedAmount =
-    amountInput
-
-      ? Number(
-          amountInput.value
+  const materialAmount =
+    Math.max(
+      0,
+      Math.floor(
+        Number(
+          saved &&
+          saved.materialAmount ||
+          0
         )
+      )
+    );
 
-      : SCHOOL_MIN_EXCHANGE;
+
+  const researchAmount =
+    Math.max(
+      0,
+      Math.floor(
+        Number(
+          saved &&
+          saved.researchAmount ||
+          0
+        )
+      )
+    );
 
 
-  /*
-    Protection :
-    nombre entier,
-    minimum 30,
-    jamais supérieur au solde.
-  */
+  const totalAmount =
+    materialAmount +
+    researchAmount;
+
+
+  const eligible =
+    !!(
+      saved &&
+      currentAmount >= 30 &&
+      totalAmount >= 30 &&
+      totalAmount <= currentAmount &&
+      (
+        materialAmount === 0 ||
+        materialAmount >= 30
+      ) &&
+      (
+        researchAmount === 0 ||
+        researchAmount >= 30
+      )
+    );
+
+
   if(
-    !Number.isInteger(
-      requestedAmount
-    )
-    ||
-    requestedAmount <
-      SCHOOL_MIN_EXCHANGE
-    ||
-    requestedAmount >
-      currentAmount
+    !eligible
   ){
 
     try{
@@ -16373,13 +16513,6 @@ function schoolPrepareMairieExchange(){
       );
 
     }catch(error){}
-
-
-    alert(
-      "Choisissez un nombre entier compris entre 30 et " +
-      currentAmount +
-      " bocitecoins JAUNE."
-    );
 
 
     return {
@@ -16408,25 +16541,37 @@ function schoolPrepareMairieExchange(){
       exchangeAmount:
         0,
 
-      minimumExchange:
-        SCHOOL_MIN_EXCHANGE,
+      materialAmount:
+        0,
+
+      researchAmount:
+        0,
+
+      remainingAmount:
+        currentAmount,
 
       eligible:
         false,
 
-      solidarity:
-        solidarity,
-
       ts:
         Date.now()
-
     };
   }
 
 
-  /*
-    Échange valide.
-  */
+  const mode =
+    materialAmount > 0 &&
+    researchAmount > 0
+
+      ? "split"
+
+      : researchAmount > 0
+
+        ? "research"
+
+        : "material";
+
+
   const payload = {
 
     type:
@@ -16451,27 +16596,55 @@ function schoolPrepareMairieExchange(){
       currentAmount,
 
     exchangeAmount:
-      requestedAmount,
+      totalAmount,
 
-    minimumExchange:
-      SCHOOL_MIN_EXCHANGE,
+    materialAmount:
+      materialAmount,
+
+    researchAmount:
+      researchAmount,
+
+    remainingAmount:
+      currentAmount -
+      totalAmount,
 
     eligible:
       true,
 
-    solidarity:
-      solidarity,
+    allocation:{
+
+      mode:
+        mode,
+
+      material:
+        materialAmount,
+
+      research:
+        researchAmount,
+
+      total:
+        totalAmount,
+
+      remaining:
+        currentAmount -
+        totalAmount
+    },
+
+    solidarity:{
+
+      mode:
+        researchAmount > 0
+          ? "research"
+          : "none",
+
+      associations:[]
+    },
 
     ts:
       Date.now()
-
   };
 
 
-  /*
-    Stockage strictement
-    dans la ville active.
-  */
   try{
 
     localStorage.setItem(
@@ -16489,84 +16662,123 @@ function schoolPrepareMairieExchange(){
     );
   }
 
-
   return payload;
 }
 
 /* =========================================================
    ÇA FINIT ICI
-   ÉCOLE → MAIRIE
-   MONTANT CHOISI PAR LA CLASSE
+   ÉCOLE → MAIRIE — CHOIX MATÉRIEL / RECHERCHE
    ========================================================= */
- 
+
 /* =========================================================
    ÇA COMMENCE ICI
-   ÉCOLE — ENREGISTREMENT DES 2 ORIENTATIONS DE LA CLASSE
+   ÉCOLE — VALIDATION DU CHOIX DE LA CLASSE
    ========================================================= */
 
 function schoolSaveSolidarityChoice(){
 
-  const mode =
-    schoolGetSolidarityMode();
+  const wallet =
+    typeof window.loadSchoolWallet ===
+      "function"
+
+      ? window.loadSchoolWallet()
+
+      : {
+          jaune:0
+        };
 
 
-  /*
-   * "none" = cadeau / matériel scolaire
-   * "full" = solidarité / recherche médicale
-   *
-   * On conserve provisoirement ces valeurs internes
-   * pour ne pas casser le reste du module.
-   */
-
-  const picks =
-    Array.from(
-      document.querySelectorAll(
-        ".schoolAssoPick"
+  const currentAmount =
+    Math.max(
+      0,
+      Math.floor(
+        Number(
+          wallet &&
+          wallet.jaune ||
+          0
+        )
       )
     );
 
 
-  const selected =
-    picks.filter(
-      function(box){
-
-        return box.checked;
-      }
-    );
-
-
   if(
-    mode === "full" &&
-    !selected.length
+    currentAmount < 30
   ){
 
     alert(
-      "Choisissez au moins une association."
+      "Le solde est inférieur à 30 bocitecoins JAUNE. " +
+      "Le choix normal est bloqué ; le reliquat de fin d’année sera traité séparément."
     );
 
     return;
   }
 
 
-  const associations =
-    mode === "full"
+  const validation =
+    schoolValidateAllocationDraft(
+      schoolGetAllocationDraft(),
+      currentAmount
+    );
 
-      ? selected.map(
-          function(box){
 
-            return {
+  if(
+    !validation.ok
+  ){
 
-              name:
-                String(
-                  box.dataset.asso ||
-                  ""
-                )
+    alert(
+      validation.message
+    );
 
-            };
-          }
-        )
+    return;
+  }
 
-      : [];
+
+  const confirmed =
+    window.confirm(
+
+      "Êtes-vous sûr du choix retenu avec les élèves ?\n\n" +
+
+      "Solde actuel : " +
+      currentAmount +
+      " JAUNE\n\n" +
+
+      "Matériel scolaire : " +
+      validation.materialAmount +
+      " JAUNE\n" +
+
+      "Recherche médicale : " +
+      validation.researchAmount +
+      " JAUNE\n\n" +
+
+      "Total choisi : " +
+      validation.total +
+      " JAUNE\n" +
+
+      "Solde restant : " +
+      validation.remaining +
+      " JAUNE"
+    );
+
+
+  if(
+    !confirmed
+  ){
+
+    return;
+  }
+
+
+  const mode =
+    validation.materialAmount > 0 &&
+    validation.researchAmount > 0
+
+      ? "split"
+
+      : validation.researchAmount > 0
+
+        ? "research"
+
+        : "material";
 
 
   const map =
@@ -16580,38 +16792,45 @@ function schoolSaveSolidarityChoice(){
     mode:
       mode,
 
+    materialAmount:
+      validation.materialAmount,
+
+    researchAmount:
+      validation.researchAmount,
+
+    totalAmount:
+      validation.total,
+
+    remainingAmount:
+      validation.remaining,
+
     classId:
       schoolCurrentClassId(),
 
     className:
       schoolCurrentClass(),
 
-    associations:
-      associations,
+    associations:[],
 
     savedAt:
       new Date()
         .toISOString()
-
   };
 
 
   try{
 
     localStorage.setItem(
-
       SCHOOL_SOLIDARITY_KEY,
-
       JSON.stringify(
         map
       )
-
     );
 
   }catch(error){
 
     console.warn(
-      "Bo'CitéArt École : orientation de la classe non enregistrée.",
+      "Bo'CitéArt École : choix de la classe non enregistré.",
       error
     );
 
@@ -16627,46 +16846,31 @@ function schoolSaveSolidarityChoice(){
     schoolSolidarityStatus
   ){
 
-    const wallet =
-      Number(
-        pending &&
-        pending.wallet ||
-        0
-      );
-
-
-    const exchangeAmount =
-      Number(
-        pending &&
-        pending.exchangeAmount ||
-        0
-      );
-
-
     schoolSolidarityStatus.textContent =
 
-      exchangeAmount >= 30
+      "✓ Choix validé. " +
 
-        ? (
-            "✓ Orientation de la classe enregistrée. " +
-            "Présentation à la Mairie préparée pour " +
-            exchangeAmount +
-            " bocitecoin(s) JAUNE."
-          )
+      "Matériel : " +
+      validation.materialAmount +
+      " JAUNE — " +
 
-        : (
-            "✓ Orientation de la classe enregistrée. " +
-            "Solde actuel : " +
-            wallet +
-            " bocitecoin(s) JAUNE. " +
-            "Le seuil minimum de présentation est de 30."
-          );
+      "Recherche : " +
+      validation.researchAmount +
+      " JAUNE — " +
+
+      "Reste : " +
+      validation.remaining +
+      " JAUNE.";
   }
+
+  schoolUpdateAllocationDraftUi();
+
+  return pending;
 }
 
 /* =========================================================
    ÇA FINIT ICI
-   ÉCOLE — ENREGISTREMENT DES 2 ORIENTATIONS DE LA CLASSE
+   ÉCOLE — VALIDATION DU CHOIX DE LA CLASSE
    ========================================================= */
 
 /* =========================================================
@@ -19608,9 +19812,44 @@ if(schoolDirectionFirstSetupBtn){
     schoolManageScheduledWordsBtn.onclick = schoolOpenScheduleManager;
   }
 
-  document.querySelectorAll('input[name="schoolSolidarityMode"]').forEach(function(radio){
-    radio.addEventListener("change", schoolRefreshSolidarityVisibility);
-  });
+ [
+  "schoolMaterialChoice",
+  "schoolResearchChoice"
+].forEach(function(id){
+
+  const el =
+    document.getElementById(
+      id
+    );
+
+  if(el){
+
+    el.addEventListener(
+      "change",
+      schoolUpdateAllocationDraftUi
+    );
+  }
+});
+
+
+[
+  "schoolMaterialAmountInput",
+  "schoolResearchAmountInput"
+].forEach(function(id){
+
+  const el =
+    document.getElementById(
+      id
+    );
+
+  if(el){
+
+    el.addEventListener(
+      "input",
+      schoolUpdateAllocationDraftUi
+    );
+  }
+});
 
   if(schoolSolidaritySaveBtn){
     schoolSolidaritySaveBtn.onclick = schoolSaveSolidarityChoice;
