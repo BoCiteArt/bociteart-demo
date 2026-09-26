@@ -13134,31 +13134,82 @@ if(key === "ecole"){
           line-height:1.55;
         }
 
-        .bociteSchoolPublicRoot .bociteSchoolTitle,
-        .bociteSchoolPublicRoot .bociteSchoolSectionTitle{
-          color:#2f5d46 !important;
-          font-size:17px !important;
-          font-weight:700 !important;
-          line-height:1.35 !important;
-        }
+       /* =====================================================
+   ÇA COMMENCE ICI
+   ÉCOLE — TITRES VERTS TOUJOURS SUR FOND BLANC
+   ===================================================== */
 
-        .bociteSchoolPublicRoot .bociteSchoolSectionTitle{
-          margin-top:14px;
-        }
+.bociteSchoolPublicRoot .bociteSchoolTitle,
+.bociteSchoolPublicRoot .bociteSchoolSectionTitle{
+  color:#2f5d46 !important;
+  font-size:17px !important;
+  font-weight:700 !important;
+  line-height:1.35 !important;
+}
 
-        .bociteSchoolPublicRoot .bociteSchoolCard{
-          margin-top:8px;
-          padding:14px;
-          border:1px solid #dedede;
-          border-radius:12px;
-          background:#ffffff;
-          box-sizing:border-box;
-          color:#111111;
-          font-size:14px;
-          font-weight:400;
-          line-height:1.55;
-        }
+/*
+  Tous les titres de section qui étaient
+  directement posés sur le beige
+  reçoivent maintenant un fond blanc.
+*/
+.bociteSchoolPublicRoot .bociteSchoolSectionTitle{
+  margin-top:14px;
+  margin-bottom:0;
+  padding:12px 14px;
+  background:#ffffff;
+  border:1px solid #dedede;
+  border-radius:12px;
+  box-sizing:border-box;
+}
 
+/*
+  Si un titre est suivi d'un bloc blanc,
+  le titre et son contenu forment visuellement
+  un seul encart.
+*/
+.bociteSchoolPublicRoot .bociteSchoolSectionTitle:has(+ .bociteSchoolCard){
+  padding-bottom:6px;
+  border-bottom:0;
+  border-radius:12px 12px 0 0;
+}
+
+.bociteSchoolPublicRoot .bociteSchoolSectionTitle + .bociteSchoolCard{
+  margin-top:0 !important;
+  border-top:0;
+  border-radius:0 0 12px 12px;
+}
+
+/*
+  Si le titre est déjà à l'intérieur
+  d'un bloc blanc, on ne crée pas
+  un deuxième cadre blanc.
+*/
+.bociteSchoolPublicRoot .bociteSchoolCard .bociteSchoolSectionTitle{
+  margin-top:0;
+  margin-bottom:12px;
+  padding:0;
+  background:transparent;
+  border:0;
+  border-radius:0;
+}
+
+.bociteSchoolPublicRoot .bociteSchoolCard{
+  margin-top:8px;
+  padding:14px;
+  border:1px solid #dedede;
+  border-radius:12px;
+  background:#ffffff;
+  box-sizing:border-box;
+  color:#111111;
+  font-size:14px;
+  font-weight:400;
+  line-height:1.55;
+}
+
+/* =====================================================
+   ÇA FINIT ICI
+   ÉCOLE — TITRES VERTS TOUJOURS SUR FOND BLANC
+   ===================================================== */
         .bociteSchoolPublicRoot .bociteSchoolExample{
           margin-top:8px;
           padding:14px;
