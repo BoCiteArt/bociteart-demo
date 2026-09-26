@@ -14463,7 +14463,88 @@ Modalités d’échange à voir avec la mairie.
 
   `);
 
-  const schoolAccessOpenBtn = document.getElementById("schoolAccessOpenBtn");
+ /* =========================================================
+   ÇA COMMENCE ICI
+   ÉCOLE — TITRES VERTS À L'INTÉRIEUR DES BLOCS BLANCS
+   ========================================================= */
+
+document
+  .querySelectorAll(
+    ".bociteSchoolPublicRoot .bociteSchoolSectionTitle"
+  )
+  .forEach(function(title){
+
+    /*
+      Si le titre est déjà dans une carte blanche,
+      on ne touche à rien.
+    */
+    if(
+      title.parentElement &&
+      title.parentElement.classList.contains(
+        "bociteSchoolCard"
+      )
+    ){
+      return;
+    }
+
+
+    /*
+      On cherche le premier élément qui suit le titre.
+      Les commentaires HTML sont ignorés automatiquement
+      par nextElementSibling.
+    */
+    const next =
+      title.nextElementSibling;
+
+
+    /*
+      Si le contenu correspondant est une carte blanche,
+      on déplace physiquement le titre dedans.
+    */
+    if(
+      next &&
+      next.classList.contains(
+        "bociteSchoolCard"
+      )
+    ){
+
+      next.insertBefore(
+        title,
+        next.firstChild
+      );
+
+
+      /*
+        Le titre est maintenant réellement
+        à l'intérieur du fond blanc.
+      */
+      title.style.marginTop =
+        "0";
+
+      title.style.marginBottom =
+        "12px";
+
+      title.style.padding =
+        "0";
+
+      title.style.background =
+        "transparent";
+
+      title.style.border =
+        "0";
+
+      title.style.borderRadius =
+        "0";
+    }
+
+  });
+
+/* =========================================================
+   ÇA FINIT ICI
+   ÉCOLE — TITRES VERTS À L'INTÉRIEUR DES BLOCS BLANCS
+   ========================================================= */
+ 
+ const schoolAccessOpenBtn = document.getElementById("schoolAccessOpenBtn");
   const schoolAccessPanel = document.getElementById("schoolAccessPanel");
  const schoolAccessIdentifierInput = document.getElementById("schoolAccessIdentifierInput");
   const schoolAccessRole = document.getElementById("schoolAccessRole");
