@@ -5394,20 +5394,23 @@ function mairieReadSportScan(){
     true
 ){
 
-  const messages = {
+ const messages = {
 
-    invalid_scan:
-      "Le code du club n’est pas reconnu.",
+  invalid_scan:
+    "Le code du club n’est pas reconnu.",
 
-    wrong_city:
-      "Ce QR appartient à une autre ville Bo’CitéArt. Utilisez le QR d’un club rattaché à cette commune.",
+  wrong_city:
+    "Ce QR appartient à une autre ville Bo’CitéArt. Utilisez le QR d’un club rattaché à cette commune.",
 
-    invalid_operation:
-      "Ce QR dynamique n’est pas valide. Demandez au club d’afficher un nouveau QR.",
+  invalid_operation:
+    "Ce QR dynamique n’est pas valide. Demandez au club d’afficher un nouveau QR.",
 
-    scan_expired:
-      "Ce QR dynamique a expiré. Demandez au club d’afficher un nouveau QR."
-  };
+  scan_expired:
+    "Ce QR dynamique a expiré. Demandez au club d’afficher un nouveau QR.",
+
+  qr_already_used:
+    "Ce QR a déjà été utilisé. Demandez au club d’afficher un nouveau QR dynamique."
+};
 
   throw new Error(
 
