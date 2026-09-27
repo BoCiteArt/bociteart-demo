@@ -3654,6 +3654,34 @@ const remainingAmount =
         )
   );
 
+ /* =========================================================
+   ÇA COMMENCE ICI
+   MAIRIE — IDENTIFIANT DU QR DYNAMIQUE ÉCOLE
+   ========================================================= */
+
+const operationId =
+  mairieText(
+    payload.x != null
+      ? payload.x
+      : payload.operationId
+  )
+  .toUpperCase();
+
+if(
+  hasNewSplit &&
+  !/^BCA-E-[A-Z0-9]{8,64}$/.test(
+    operationId
+  )
+){
+  throw new Error(
+    "Le QR dynamique de l’école ne contient pas de référence d’opération valide."
+  );
+}
+
+/* =========================================================
+   ÇA FINIT ICI
+   MAIRIE — IDENTIFIANT DU QR DYNAMIQUE ÉCOLE
+   ========================================================= */  
 
 /*
   CONTRÔLES
@@ -3704,6 +3732,9 @@ return {
 
   type:
     "school_wallet",
+
+     operationId:
+    operationId,
 
   cityId:
     qrCityId,
@@ -3923,6 +3954,22 @@ function mairieSchoolReference(
   payload
 ){
 
+  const operationId =
+    mairieText(
+      payload &&
+      payload.operationId
+    );
+
+  if(
+    operationId
+  ){
+    return operationId;
+  }
+
+  /*
+    Compatibilité temporaire
+    avec les anciens QR de démonstration.
+  */
   return [
 
     mairieText(
@@ -3949,7 +3996,6 @@ function mairieSchoolReference(
     "|"
   );
 }
-
 /* =========================================================
    ÇA FINIT ICI — RÉFÉRENCE ÉCOLE TERRITORIALE
    ========================================================= */
@@ -4646,6 +4692,24 @@ if(
     bocitecoins:
       payload.amount,
 
+      materialAmount:
+    Number(
+      payload.materialAmount ||
+      0
+    ),
+
+  researchAmount:
+    Number(
+      payload.researchAmount ||
+      0
+    ),
+
+  remainingAmount:
+    Number(
+      payload.remainingAmount ||
+      0
+    ),
+
     solidarity:
       mairieClone(
         payload.solidarity
@@ -4764,7 +4828,7 @@ const schoolReturnPayload = {
 
   x:
     String(
-      operation.id ||
+      operation.reference ||
       ""
     ),
 
