@@ -16796,13 +16796,41 @@ function schoolSaveSolidarityChoice(){
   const map =
     schoolLoadSolidarityMap();
 
+ /* =========================================================
+   ÇA COMMENCE ICI
+   ÉCOLE → MAIRIE — IDENTIFIANT DYNAMIQUE DE L'OPÉRATION
+   ========================================================= */
 
-  map[
-    schoolSolidarityMapKey()
-  ] = {
+const schoolOperationCreatedAt =
+  Date.now();
 
-    mode:
-      mode,
+const schoolOperationId =
+  "BCA-E-" +
+  schoolOperationCreatedAt
+    .toString(36)
+    .toUpperCase() +
+  Math.random()
+    .toString(36)
+    .slice(2,10)
+    .toUpperCase();
+
+/* =========================================================
+   ÇA FINIT ICI
+   ÉCOLE → MAIRIE — IDENTIFIANT DYNAMIQUE DE L'OPÉRATION
+   ========================================================= */
+
+ map[
+  schoolSolidarityMapKey()
+] = {
+
+  operationId:
+    schoolOperationId,
+
+  operationCreatedAt:
+    schoolOperationCreatedAt,
+
+  mode:
+    mode,
 
     materialAmount:
       validation.materialAmount,
@@ -17129,6 +17157,18 @@ const compactPayload = {
 
   type:
     "school_wallet",
+
+    /* Identifiant unique de l'opération */
+  x:
+    String(
+      pending.operationId ||
+      ""
+    ),
+
+  /*
+    VILLE BO'CITÉART
+    Identifiant technique obligatoire.
+  */
 
   v:
     String(
