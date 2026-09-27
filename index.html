@@ -14250,127 +14250,7 @@ de progression collective.
      ÉCOLE — PROFESSEUR — CHOIX MATÉRIEL / RECHERCHE
      ===================================================== -->
 
-<div
-  style="
-    margin-top:14px;
-    padding-top:14px;
-    border-top:1px solid #dedede;
-  "
->
-
-  <div
-    class="bociteSchoolSectionTitle"
-    style="margin-top:0;"
-  >
-    Bocitecoins JAUNE à présenter à la Mairie
-  </div>
-
-  <div
-    style="
-      margin-top:8px;
-      color:#111111;
-      font-size:14px;
-      font-weight:400;
-      line-height:1.5;
-    "
-  >
-    La classe choisit le nombre de bocitecoins JAUNE
-    qu’elle souhaite utiliser pour cette opération.
-
-    <br><br>
-
-    Minimum : <strong>30 bocitecoins JAUNE</strong>.<br>
-    Maximum : le solde disponible de la classe.
-  </div>
-
-  <input
-    id="schoolExchangeAmountInput"
-    class="bociteSchoolField"
-    type="number"
-    min="30"
-    step="1"
-    value="30"
-    inputmode="numeric"
-    style="margin-top:10px;"
-  >
-
-   <div
-  id="schoolExchangeBalanceInfo"
-  style="
-    margin-top:8px;
-    color:#111111;
-    font-size:14px;
-    font-weight:400;
-    line-height:1.5;
-  "
->
-  Solde disponible de la classe : —
 </div>
-
-</div>
-
-<!-- =====================================================
-     ÇA FINIT ICI
-     ÉCOLE — PROFESSEUR — MONTANT À PRÉSENTER À LA MAIRIE
-     ===================================================== -->
-
-  <button
-    id="schoolSolidaritySaveBtn"
-    class="bociteSchoolAction"
-    type="button"
-  >
-    Enregistrer le choix de la classe
-  </button>
-
-  <div
-    id="schoolSolidarityStatus"
-    role="status"
-    aria-live="polite"
-    style="
-      margin-top:10px;
-      color:#111111;
-      font-size:14px;
-      font-weight:400;
-    "
-  ></div>
-
-  <!-- =====================================================
-     ÇA COMMENCE ICI
-     ÉCOLE — PROFESSEUR — PRÉSENTER À LA MAIRIE
-     ===================================================== -->
-
-<button
-  id="schoolPresentMairieBtn"
-  class="bociteSchoolAction"
-  type="button"
-  style="margin-top:10px;"
->
-  Présenter à la Mairie
-</button>
-
-<!-- =====================================================
-     ÇA FINIT ICI
-     ÉCOLE — PROFESSEUR — PRÉSENTER À LA MAIRIE
-     ===================================================== -->
-
-  <div
-    style="
-      margin-top:12px;
-      padding-top:12px;
-      border-top:1px solid #dedede;
-      color:#111111;
-      font-size:14px;
-      font-weight:400;
-      line-height:1.5;
-    "
-  >
-    Le choix enregistré indique l’orientation souhaitée par la classe.
-<br><br>
-Modalités d’échange à voir avec la mairie.
-  </div>
-
-</div>
-
 
 <div
   id="schoolTeacherCodeChangeCard"
@@ -17250,10 +17130,6 @@ const compactPayload = {
   type:
     "school_wallet",
 
-  /*
-    VILLE BO'CITÉART
-    Identifiant technique obligatoire.
-  */
   v:
     String(
       pending.cityId ||
@@ -17261,9 +17137,6 @@ const compactPayload = {
       ""
     ),
 
-  /*
-    Nom lisible de la commune.
-  */
   vn:
     String(
       pending.cityName ||
@@ -17271,10 +17144,6 @@ const compactPayload = {
       ""
     ),
 
-  /*
-    Nom territorial des coins.
-    Exemple : Watticoins.
-  */
   cp:
     String(
       pending.coinPlural ||
@@ -17282,50 +17151,61 @@ const compactPayload = {
       ""
     ),
 
-  /*
-    Classe.
-  */
   c:
     pending.class ||
     "",
 
-  /*
-    Identifiant de classe.
-  */
   i:
     pending.classId ||
     "",
 
-  /*
-    Solde JAUNE avant présentation.
-  */
+  /* Solde avant validation */
   w:
     Number(
       pending.wallet ||
       0
     ),
 
-  /*
-    Quantité présentée.
-  */
+  /* Total présenté */
   a:
     Number(
       pending.exchangeAmount ||
       0
     ),
 
+  /* Part matériel */
+  m:
+    Number(
+      pending.materialAmount ||
+      0
+    ),
+
+  /* Part recherche médicale */
+  r:
+    Number(
+      pending.researchAmount ||
+      0
+    ),
+
+  /* Solde qui doit rester après confirmation */
+  b:
+    Number(
+      pending.remainingAmount ||
+      0
+    ),
+
   /*
-    Orientation de la classe.
+    Compatibilité avec l'ancienne lecture Mairie
+    tant que son module n'est pas encore remplacé.
   */
   o:
-    pending.solidarity &&
-    pending.solidarity.mode === "full"
+    Number(
+      pending.researchAmount ||
+      0
+    ) > 0
       ? "full"
       : "none",
 
-  /*
-    Horodatage.
-  */
   t:
     Number(
       pending.ts ||
@@ -17354,7 +17234,6 @@ const compactPayload = {
     }
 
   );
-
 
 /* =========================================================
    RETOUR MAIRIE → ÉCOLE
@@ -20028,12 +19907,25 @@ if(schoolDirectionFirstSetupBtn){
         return;
       }
 
-      const modeLabel =
-        savedChoice.mode === "full"
-          ? "Solidarité — recherche médicale"
-          : "Surprise, cadeau collectif ou matériel scolaire";
+     const materialAmount =
+  Number(
+    pending.materialAmount ||
+    0
+  );
 
-      const className =
+const researchAmount =
+  Number(
+    pending.researchAmount ||
+    0
+  );
+
+const remainingAmount =
+  Number(
+    pending.remainingAmount ||
+    0
+  );
+
+const className =
         schoolCurrentClass();
 
       const classId =
@@ -20112,14 +20004,27 @@ ${schoolEscapeHtml(pending.coinPlural || "")}
 
               <br><br>
 
-              <strong>Montant présenté :</strong>
-              ${Number(pending.exchangeAmount || 0)}
-              bocitecoin(s) JAUNE
+             <strong>Matériel scolaire :</strong>
+${materialAmount}
+JAUNE
 
-              <br><br>
+<br>
 
-              <strong>Orientation :</strong>
-              ${schoolEscapeHtml(modeLabel)}
+<strong>Recherche médicale :</strong>
+${researchAmount}
+JAUNE
+
+<br><br>
+
+<strong>Total présenté :</strong>
+${Number(pending.exchangeAmount || 0)}
+JAUNE
+
+<br>
+
+<strong>Solde restant après validation :</strong>
+${remainingAmount}
+JAUNE
 
             </div>
 
@@ -20163,10 +20068,10 @@ ${schoolEscapeHtml(pending.coinPlural || "")}
 
     <br><br>
 
-    La Mairie le scanne pour retrouver
-    la classe, son solde,
-    le nombre de bocitecoins JAUNE présentés
-    et l’orientation choisie.
+   La Mairie le scanne pour retrouver
+la classe, son solde avant validation,
+la part matériel, la part recherche
+et le solde qui doit rester.
   </div>
 
   <div
