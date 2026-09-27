@@ -4775,6 +4775,24 @@ coinPlural:
           bocitecoins:
             operation.bocitecoins,
 
+          materialAmount:
+  Number(
+    operation.materialAmount ||
+    0
+  ),
+
+researchAmount:
+  Number(
+    operation.researchAmount ||
+    0
+  ),
+
+remainingAmount:
+  Number(
+    operation.remainingAmount ||
+    0
+  ), 
+
           solidarity:
             mairieClone(
               operation.solidarity
@@ -4837,6 +4855,18 @@ const schoolReturnPayload = {
       operation.bocitecoins ||
       0
     ),
+
+   m:
+  Number(
+    operation.materialAmount ||
+    0
+  ),
+
+r:
+  Number(
+    operation.researchAmount ||
+    0
+  ),
 
   b:
     Number(
