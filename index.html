@@ -16204,35 +16204,21 @@ function schoolRefreshSolidarityUi(){
 
 
   if(
-    schoolSolidarityStatus
-  ){
+  schoolSolidarityStatus
+){
 
-   schoolSolidarityStatus.textContent =
+  schoolSolidarityStatus.textContent =
 
-  "✓ Échange confirmé par la Mairie. " +
+    saved &&
+    Number(
+      saved.totalAmount ||
+      0
+    ) > 0
 
-  "Matériel : " +
-  Number(
-    detail.materialAmount ||
-    0
-  ) +
-  " JAUNE — " +
+      ? "✓ Choix déjà validé pour cette classe."
 
-  "Recherche médicale : " +
-  Number(
-    detail.researchAmount ||
-    0
-  ) +
-  " JAUNE — " +
-
-  "Total retiré : " +
-  amountApplied +
-  " JAUNE — " +
-
-  "Nouveau solde : " +
-  newAmount +
-  " JAUNE.";
-  }
+      : "";
+}
 
   schoolUpdateAllocationDraftUi();
 
@@ -16597,97 +16583,92 @@ function schoolPrepareMairieExchange(){
         : "material";
 
 
-  const payload = {
+ const payload = {
 
-    type:
-      "school_wallet",
+  type:
+    "school_wallet",
 
-  if(
-  schoolSolidarityStatus
-){
+  operationId:
+    String(
+      saved &&
+      saved.operationId ||
+      ""
+    ),
 
-  schoolSolidarityStatus.textContent =
-
-    saved &&
+  operationCreatedAt:
     Number(
-      saved.totalAmount ||
+      saved &&
+      saved.operationCreatedAt ||
       0
-    ) > 0
+    ) ||
+    Date.now(),
 
-      ? "✓ Choix déjà validé pour cette classe."
+  cityId:
+    city.cityId,
 
-      : "";
-} 
+  cityName:
+    city.cityName,
 
-    cityId:
-      city.cityId,
+  coinPlural:
+    city.coinPlural,
 
-    cityName:
-      city.cityName,
+  class:
+    schoolCurrentClass(),
 
-    coinPlural:
-      city.coinPlural,
+  classId:
+    schoolCurrentClassId(),
 
-    class:
-      schoolCurrentClass(),
+  wallet:
+    currentAmount,
 
-    classId:
-      schoolCurrentClassId(),
+  exchangeAmount:
+    totalAmount,
 
-    wallet:
-      currentAmount,
+  materialAmount:
+    materialAmount,
 
-    exchangeAmount:
-      totalAmount,
+  researchAmount:
+    researchAmount,
 
-    materialAmount:
+  remainingAmount:
+    currentAmount -
+    totalAmount,
+
+  eligible:
+    true,
+
+  allocation:{
+
+    mode:
+      mode,
+
+    material:
       materialAmount,
 
-    researchAmount:
+    research:
       researchAmount,
 
-    remainingAmount:
-      currentAmount -
+    total:
       totalAmount,
 
-    eligible:
-      true,
+    remaining:
+      currentAmount -
+      totalAmount
+  },
 
-    allocation:{
+  solidarity:{
 
-      mode:
-        mode,
+    mode:
+      researchAmount > 0
+        ? "research"
+        : "none",
 
-      material:
-        materialAmount,
+    associations:[]
+  },
 
-      research:
-        researchAmount,
-
-      total:
-        totalAmount,
-
-      remaining:
-        currentAmount -
-        totalAmount
-    },
-
-    solidarity:{
-
-      mode:
-        researchAmount > 0
-          ? "research"
-          : "none",
-
-      associations:[]
-    },
- 
-t:
-  Number(
-    pending.operationCreatedAt ||
-    pending.ts ||
+  ts:
     Date.now()
-  )
+};
  
   try{
 
@@ -17278,11 +17259,12 @@ const compactPayload = {
       ? "full"
       : "none",
 
-  t:
-    Number(
-      pending.ts ||
-      Date.now()
-    )
+ t:
+  Number(
+    pending.operationCreatedAt ||
+    pending.ts ||
+    Date.now()
+  )
 };
 
 /* =====================================================
@@ -17685,21 +17667,36 @@ solidarity:
       }catch(error){}
 
 
-      if(
-        schoolSolidarityStatus
-      ){
+     if(
+  schoolSolidarityStatus
+){
 
-        schoolSolidarityStatus.textContent =
+  schoolSolidarityStatus.textContent =
 
-          "✓ Échange confirmé par la mairie. " +
-          amountApplied +
-          " bocitecoin(s) JAUNE pris en compte. " +
-          "Nouveau solde : " +
-          newAmount +
-          ".";
-      }
+    "✓ Échange confirmé par la Mairie. " +
 
+    "Matériel : " +
+    Number(
+      detail.materialAmount ||
+      0
+    ) +
+    " JAUNE — " +
 
+    "Recherche médicale : " +
+    Number(
+      detail.researchAmount ||
+      0
+    ) +
+    " JAUNE — " +
+
+    "Total retiré : " +
+    amountApplied +
+    " JAUNE — " +
+
+    "Nouveau solde : " +
+    newAmount +
+    " JAUNE.";
+}
       try{
 
         document.dispatchEvent(
