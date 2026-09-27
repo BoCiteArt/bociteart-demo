@@ -16207,19 +16207,32 @@ function schoolRefreshSolidarityUi(){
     schoolSolidarityStatus
   ){
 
-    schoolSolidarityStatus.textContent =
+   schoolSolidarityStatus.textContent =
 
-      saved &&
-      Number(
-        saved.totalAmount ||
-        0
-      ) > 0
+  "✓ Échange confirmé par la Mairie. " +
 
-        ? "✓ Choix déjà validé pour cette classe."
+  "Matériel : " +
+  Number(
+    detail.materialAmount ||
+    0
+  ) +
+  " JAUNE — " +
 
-        : "";
+  "Recherche médicale : " +
+  Number(
+    detail.researchAmount ||
+    0
+  ) +
+  " JAUNE — " +
+
+  "Total retiré : " +
+  amountApplied +
+  " JAUNE — " +
+
+  "Nouveau solde : " +
+  newAmount +
+  " JAUNE.";
   }
-
 
   schoolUpdateAllocationDraftUi();
 
