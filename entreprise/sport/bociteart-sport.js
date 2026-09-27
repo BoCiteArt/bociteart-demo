@@ -2267,7 +2267,7 @@ function sportDebitRemainder(){
      ======================================================= */
 
   const operationRef=
-    "BCA-SPORT-SOLIDARITY-" +
+   "BCA-SPORT-RESEARCH-" +
     Date.now() +
     "-" +
     Math.random()
@@ -2325,14 +2325,14 @@ function sportDebitRemainder(){
 
     id:
       sportId(
-        "solidarity-orientation"
+        "medical-research-orientation"
       ),
 
     operationRef:
       operationRef,
 
     direction:
-      "solidarity_orientation",
+      "medical_research_orientation",
 
     pointsCancelled:
       points,
@@ -2362,7 +2362,7 @@ function sportDebitRemainder(){
       "none",
 
     reason:
-      "Orientation solidaire de fin de saison — points annulés sans conversion monétaire",
+      "Orientation du reliquat vers la recherche médicale — points annulés sans conversion monétaire",
 
     status:
       "recorded",
@@ -2416,7 +2416,7 @@ function sportDebitRemainder(){
      ======================================================= */
 
   sportNotifyEvent(
-    "sport_solidarity_orientation_recorded",
+    "sport_medical_research_orientation_recorded"
     {
 
       operationRef:
@@ -6055,7 +6055,7 @@ if(
 
       id:
         sportId(
-          "solidarity-orientation"
+         "medical-research-orientation"
         ),
 
             qrOperationId:
@@ -6068,7 +6068,7 @@ if(
         ),
 
       recordType:
-        "solidarity_orientation",
+          "medical_research_orientation",
 
       clubRef:
         String(
@@ -6108,8 +6108,7 @@ if(
         null,
 
       beneficiaryType:
-        "none",
-
+       "medical_research",
       associationId:
         null,
 
@@ -6117,7 +6116,7 @@ if(
         null,
 
       financialSettlement:
-        "separate_process",
+       "not_applicable",
 
       validatedBy:
         "mairie",
@@ -6209,7 +6208,7 @@ if(
        ======================================================= */
 
     sportNotifyEvent(
-      "sport_solidarity_orientation_validated",
+      "sport_medical_research_orientation_validated"
       {
 
         operationRef:
