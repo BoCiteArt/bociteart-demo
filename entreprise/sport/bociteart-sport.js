@@ -273,52 +273,189 @@ id
 );
 
 
+/* =========================================================
+   ÇA COMMENCE ICI — SPORT MULTI-VILLES / STOCKAGE PAR VILLE
+   ========================================================= */
+
+function sportActiveCity(){
+
+  try{
+
+    if(
+      window.BociteCityContext &&
+      typeof window.BociteCityContext.get ===
+        "function"
+    ){
+
+      const city=
+        window.BociteCityContext.get() ||
+        {};
+
+      return {
+
+        cityId:
+          String(
+            city.cityId ||
+            window.BOCITEART_ACTIVE_CITY_ID ||
+            ""
+          )
+            .trim()
+            .toLowerCase(),
+
+        cityName:
+          String(
+            city.cityName ||
+            window.BOCITEART_ACTIVE_CITY_NAME ||
+            ""
+          ).trim()
+      };
+    }
+
+  }catch(error){}
+
+  return {
+
+    cityId:
+      String(
+        window.BOCITEART_ACTIVE_CITY_ID ||
+        ""
+      )
+        .trim()
+        .toLowerCase(),
+
+    cityName:
+      String(
+        window.BOCITEART_ACTIVE_CITY_NAME ||
+        ""
+      ).trim()
+  };
+}
+
+
+function sportStorageKey(
+  key
+){
+
+  const city=
+    sportActiveCity();
+
+  if(
+    !city.cityId
+  ){
+
+    return String(
+      key ||
+      ""
+    );
+  }
+
+  return (
+    String(
+      key ||
+      ""
+    ) +
+    "__city_" +
+    city.cityId
+  );
+}
+
+
 const sportLoad=
 (
-key,
-fallback
+  key,
+  fallback
 )=>{
 
-try{
+  try{
 
-const raw=
-localStorage.getItem(
-key
-);
+    const scopedKey=
+      sportStorageKey(
+        key
+      );
 
-return raw
-? JSON.parse(raw)
-: fallback;
+    let raw=
+      localStorage.getItem(
+        scopedKey
+      );
 
-}catch(error){
+    /*
+      Migration unique de l'ancienne démo
+      vers Wattignies.
+    */
+    if(
+      raw == null &&
+      scopedKey !== key
+    ){
 
-return fallback;
-}
+      const city=
+        sportActiveCity();
+
+      if(
+        city.cityId ===
+          "wattignies"
+      ){
+
+        const legacy=
+          localStorage.getItem(
+            key
+          );
+
+        if(
+          legacy != null
+        ){
+
+          localStorage.setItem(
+            scopedKey,
+            legacy
+          );
+
+          raw=
+            legacy;
+        }
+      }
+    }
+
+    return raw
+      ? JSON.parse(
+          raw
+        )
+      : fallback;
+
+  }catch(error){
+
+    return fallback;
+  }
 };
 
 
 const sportSave=
 (
-key,
-value
+  key,
+  value
 )=>{
 
-try{
+  try{
 
-localStorage.setItem(
-key,
-JSON.stringify(
-value
-)
-);
+    localStorage.setItem(
+      sportStorageKey(
+        key
+      ),
+      JSON.stringify(
+        value
+      )
+    );
 
-return true;
+    return true;
 
-}catch(error){
+  }catch(error){
 
-return false;
-}
+    return false;
+  }
 };
+
+/* =========================================================
+   ÇA FINIT ICI — SPORT MULTI-VILLES / STOCKAGE PAR VILLE
+   ========================================================= */
 
 
 const sportId=
@@ -4091,10 +4228,17 @@ function sportMarkReceiptMissing(
    CODE DYNAMIQUE DU CLUB
    ========================================================= */
 
+/* =========================================================
+   ÇA COMMENCE ICI — QR DYNAMIQUE SPORT TERRITORIAL
+   ========================================================= */
+
 function sportClubCode(){
 
   const c=
     sportClub();
+
+  const city=
+    sportActiveCity();
 
   const representative={
 
@@ -4127,6 +4271,16 @@ function sportClubCode(){
   const now=
     Date.now();
 
+  const operationId=
+    "BCA-S-" +
+    now
+      .toString(36)
+      .toUpperCase() +
+    Math.random()
+      .toString(36)
+      .slice(2,10)
+      .toUpperCase();
+
   const expiresAt=
     now +
     (
@@ -4155,6 +4309,24 @@ function sportClubCode(){
 
     type:
       "sport_club_ref",
+
+    operationId:
+      operationId,
+
+    operationCreatedAt:
+      now,
+
+    cityId:
+      String(
+        city.cityId ||
+        ""
+      ),
+
+    cityName:
+      String(
+        city.cityName ||
+        ""
+      ),
 
     clubId:
       c.id,
@@ -4200,7 +4372,9 @@ function sportClubCode(){
   };
 }
 
-
+/* =========================================================
+   ÇA FINIT ICI — QR DYNAMIQUE SPORT TERRITORIAL
+   ========================================================= */
 /* =========================================================
    JUSTIFICATIF AUTOMATIQUE D'ÉCHANGE CABAS
    ========================================================= */
@@ -4503,6 +4677,173 @@ async function sportValidateBag(
     };
   }
 
+const city=
+  sportActiveCity();
+
+const scanCityId=
+  String(
+    scan.cityId ||
+    ""
+  )
+    .trim()
+    .toLowerCase();
+
+const operationId=
+  String(
+    scan.operationId ||
+    ""
+  )
+    .trim()
+    .toUpperCase();
+
+
+if(
+  !city.cityId ||
+  !scanCityId ||
+  scanCityId !==
+    city.cityId
+){
+
+  return {
+    ok:false,
+    reason:
+      "wrong_city"
+  };
+}
+
+
+if(
+  !/^BCA-S-[A-Z0-9]{12,40}$/.test(
+    operationId
+  )
+){
+
+  return {
+    ok:false,
+    reason:
+      "invalid_operation"
+  };
+}
+
+
+if(
+  Number(
+    scan.expiresAt ||
+    0
+  ) > 0 &&
+  Number(
+    scan.expiresAt
+  ) <
+  Date.now()
+){
+
+  return {
+    ok:false,
+    reason:
+      "scan_expired"
+  };
+}
+  
+  const city=
+    sportActiveCity();
+
+  const scanCityId=
+    String(
+      scan.cityId ||
+      ""
+    )
+      .trim()
+      .toLowerCase();
+
+
+  if(
+    !city.cityId ||
+    !scanCityId ||
+    scanCityId !==
+      city.cityId
+  ){
+
+    return {
+
+      ok:false,
+
+      reason:
+        "wrong_city"
+    };
+  }
+
+
+  const operationId=
+    String(
+      scan.operationId ||
+      ""
+    )
+      .trim()
+      .toUpperCase();
+
+
+  if(
+    !/^BCA-S-[A-Z0-9]{12,40}$/.test(
+      operationId
+    )
+  ){
+
+    return {
+
+      ok:false,
+
+      reason:
+        "invalid_operation"
+    };
+  }
+
+const alreadyUsed=
+  sportExchanges()
+    .some(
+      item =>
+        String(
+          item &&
+          item.operationRef ||
+          ""
+        ) ===
+        operationId
+    )
+  ||
+  sportMairieTransfers()
+    .some(
+      item =>
+        String(
+          item &&
+          (
+            item.qrOperationId ||
+            item.operationRef
+          ) ||
+          ""
+        ) ===
+        operationId
+    );
+
+  if(
+    alreadyUsed
+  ){
+
+    return {
+
+      ok:false,
+
+      duplicate:true,
+
+      reason:
+        "qr_already_used",
+
+      balance:
+        sportWallet().vert,
+
+      operationRef:
+        operationId
+    };
+  }
+  
   if(
     String(
       scan.clubRef ||
@@ -4735,32 +5076,51 @@ async function sportValidateBag(
                 "application/json"
             },
             body:
-              JSON.stringify({
+          JSON.stringify({
 
-                action:
-                  "redeem_sport_bag",
+  action:
+    "redeem_sport_bag",
 
-                clubRef:
-                  c.clubRef,
+  cityId:
+    city.cityId,
 
-                scanToken:
-                  String(
-                    scan.scanToken ||
-                    ""
-                  ),
+  operationId:
+    operationId,
 
-                amount:
-                  30,
+  operationCreatedAt:
+    Number(
+      scan.operationCreatedAt ||
+      scan.issuedAt ||
+      0
+    ),
 
-                actor:
-                  actor || {},
+  expiresAt:
+    Number(
+      scan.expiresAt ||
+      0
+    ),
 
-                representative:
-                  representative,
+  clubRef:
+    c.clubRef,
 
-                purchase:
-                  purchase
-              })
+  scanToken:
+    String(
+      scan.scanToken ||
+      ""
+    ),
+
+  amount:
+    30,
+
+  actor:
+    actor || {},
+
+  representative:
+    representative,
+
+  purchase:
+    purchase
+}) 
           }
         );
 
@@ -4792,25 +5152,33 @@ async function sportValidateBag(
     return debit;
   }
 
-  const operationRef=
-    "BCA-SPORT-" +
-    Date.now() +
-    "-" +
-    Math.random()
-      .toString(36)
-      .slice(2,7)
-      .toUpperCase();
+ const operationRef=
+  operationId;
 
-  const exchange={
+ cityId:
+  String(
+    city.cityId ||
+    ""
+  ),
 
-    id:
-      sportId("bag"),
+cityName:
+  String(
+    city.cityName ||
+    ""
+  ),
 
-    operationRef:
-      operationRef,
+qrIssuedAt:
+  Number(
+    scan.issuedAt ||
+    scan.operationCreatedAt ||
+    0
+  ),
 
-    clubRef:
-      c.clubRef,
+qrExpiresAt:
+  Number(
+    scan.expiresAt ||
+    0
+  ),
 
     clubName:
       c.name,
@@ -5302,6 +5670,123 @@ window.BociteSportMairie={
       };
     }
 
+    const city=
+  sportActiveCity();
+
+const scanCityId=
+  String(
+    scan.cityId ||
+    ""
+  )
+    .trim()
+    .toLowerCase();
+
+const operationId=
+  String(
+    scan.operationId ||
+    ""
+  )
+    .trim()
+    .toUpperCase();
+
+
+if(
+  !city.cityId ||
+  !scanCityId ||
+  scanCityId !==
+    city.cityId
+){
+
+  return {
+
+    ok:false,
+
+    reason:
+      "wrong_city"
+  };
+}
+
+
+if(
+  !/^BCA-S-[A-Z0-9]{12,40}$/.test(
+    operationId
+  )
+){
+
+  return {
+
+    ok:false,
+
+    reason:
+      "invalid_operation"
+  };
+}
+
+
+if(
+  Number(
+    scan.expiresAt ||
+    0
+  ) > 0 &&
+  Number(
+    scan.expiresAt
+  ) <
+  Date.now()
+){
+
+  return {
+
+    ok:false,
+
+    reason:
+      "scan_expired"
+  };
+}
+
+const alreadyUsed=
+  sportExchanges()
+    .some(
+      item =>
+        String(
+          item &&
+          item.operationRef ||
+          ""
+        ) ===
+        operationId
+    )
+  ||
+  sportMairieTransfers()
+    .some(
+      item =>
+        String(
+          item &&
+          (
+            item.qrOperationId ||
+            item.operationRef
+          ) ||
+          ""
+        ) ===
+        operationId
+    );
+
+if(
+  alreadyUsed
+){
+
+  return {
+
+    ok:false,
+
+    duplicate:true,
+
+    reason:
+      "qr_already_used",
+
+    balance:
+      sportWallet().vert
+  };
+}
+
     return {
 
       ok:true,
@@ -5466,7 +5951,6 @@ window.BociteSportMairie={
     const all=
       sportMairieTransfers();
 
-
     const x={
 
       id:
@@ -5474,6 +5958,9 @@ window.BociteSportMairie={
           "solidarity-orientation"
         ),
 
+            qrOperationId:
+  operationId,
+      
       operationRef:
         String(
           r.operationRef ||
@@ -6483,6 +6970,10 @@ function sportDaysUntil(iso){
 }
 
 
+/* =========================================================
+   ÇA COMMENCE ICI — RAPPELS FIN DE SAISON SPORT
+   ========================================================= */
+
 function sportReminderText(
   days,
   balance
@@ -6494,26 +6985,34 @@ function sportReminderText(
 
   const start=
     days === 30
-      ? "Il vous reste 30 jours pour utiliser vos bocitecoins avant la clôture de la saison."
+      ? "Il vous reste 30 jours avant la clôture de la saison."
       : days === 15
-        ? "Avez-vous pensé à utiliser vos bocitecoins ? Il vous reste 15 jours avant la clôture de la saison."
-        : "Plus que 7 jours avant la clôture de la saison : pensez à vider le portefeuille du club.";
+        ? "Il vous reste 15 jours avant la clôture de la saison."
+        : "Plus que 7 jours avant la clôture de la saison.";
+
 
   return balance < 30
     ? (
         start +
         " Votre solde est de " +
         balance +
-        " bocitecoins : il ne permet plus un Cabas de 30. Présentez le code du club à la mairie afin d’orienter ce reliquat vers les associations solidaires validées. À la clôture, tout solde restant sera perdu."
+        " bocitecoins VERT : il ne permet plus un Cabas de 30. " +
+        "Vous pouvez présenter le QR du club à la mairie pour enregistrer son orientation vers la recherche médicale. " +
+        "À la clôture, tout solde restant sera orienté vers la recherche médicale puis le portefeuille repartira à zéro."
       )
     : (
         start +
         " Votre solde est de " +
         balance +
-        " bocitecoins. Chaque Cabas vaut exactement 30 bocitecoins. Les bocitecoins ne se transfèrent jamais entre clubs. À la clôture, tout solde restant sera perdu."
+        " bocitecoins VERT. Chaque Cabas utilise exactement 30 bocitecoins. " +
+        "Pensez à utiliser les Cabas disponibles avant la clôture. " +
+        "Tout solde restant à la fin de la saison sera orienté vers la recherche médicale puis le portefeuille repartira à zéro."
       );
 }
 
+/* =========================================================
+   ÇA FINIT ICI — RAPPELS FIN DE SAISON SPORT
+   ========================================================= */
 
 function sportRunSeason(){
 
@@ -6543,96 +7042,325 @@ function sportRunSeason(){
     return;
   }
 
-  if(days < 0){
+/* =========================================================
+   ÇA COMMENCE ICI — CLÔTURE SAISON SPORT
+   ORIENTATION RECHERCHE MÉDICALE
+   ========================================================= */
 
-    if(w.vert > 0){
+if(days < 0){
 
-      const old=
-        w.vert;
+  if(w.vert > 0){
+
+    const old=
+      Number(
+        w.vert ||
+        0
+      );
+
+    const city=
+      sportActiveCity();
+
+    const operationRef=
+      "BCA-SPORT-SEASON-RESEARCH-" +
+      Date.now() +
+      "-" +
+      Math.random()
+        .toString(36)
+        .slice(2,7)
+        .toUpperCase();
+
+
+    /*
+      Le portefeuille est remis à zéro,
+      mais uniquement si l'écriture peut être enregistrée.
+    */
+    if(
+      !sportSaveWallet({
+        vert:0
+      })
+    ){
+
+      return;
+    }
+
+
+    const l=
+      sportLedger();
+
+    l.push({
+
+      id:
+        sportId(
+          "season-research"
+        ),
+
+      operationRef:
+        operationRef,
+
+      direction:
+        "medical_research_orientation",
+
+      pointsCancelled:
+        old,
+
+      amount:
+        old,
+
+      pointNature:
+        "non_monetary_participation",
+
+      financialConversion:
+        false,
+
+      cashValue:
+        null,
+
+      currency:
+        null,
+
+      beneficiaryType:
+        "medical_research",
+
+      reason:
+        "Clôture annuelle — orientation du solde restant vers la recherche médicale, sans conversion monétaire",
+
+      status:
+        "recorded",
+
+      ts:
+        Date.now(),
+
+      date:
+        new Date()
+          .toLocaleString(
+            "fr-FR"
+          )
+    });
+
+
+    /*
+      Si l'historique ne s'enregistre pas,
+      on restaure immédiatement les points.
+    */
+    if(
+      !sportSaveLedger(
+        l
+      )
+    ){
 
       sportSaveWallet({
-        vert:0
+        vert:
+          old
       });
 
-      const l=
-        sportLedger();
+      return;
+    }
 
-      l.push({
 
-        id:
-          sportId(
-            "season-close"
-          ),
+    const transfers=
+      sportMairieTransfers();
 
-        direction:
-          "expire",
+    transfers.push({
 
-        amount:
-          old,
+      id:
+        sportId(
+          "season-research"
+        ),
 
-        reason:
-          "Clôture annuelle du portefeuille Sport",
+      operationRef:
+        operationRef,
 
-        ts:
-          Date.now(),
+      recordType:
+        "season_end_medical_research_orientation",
 
-        date:
-          new Date()
-            .toLocaleString(
-              "fr-FR"
-            )
+      cityId:
+        String(
+          city.cityId ||
+          ""
+        ),
+
+      cityName:
+        String(
+          city.cityName ||
+          ""
+        ),
+
+      clubRef:
+        String(
+          c.clubRef ||
+          ""
+        ),
+
+      clubName:
+        String(
+          c.name ||
+          ""
+        ),
+
+      pointsCancelled:
+        old,
+
+      pointNature:
+        "non_monetary_participation",
+
+      financialConversion:
+        false,
+
+      cashValue:
+        null,
+
+      currency:
+        null,
+
+      beneficiaryType:
+        "medical_research",
+
+      associationId:
+        null,
+
+      associationName:
+        null,
+
+      validatedBy:
+        "automatic_season_closure",
+
+      status:
+        "orientation_recorded",
+
+      createdAt:
+        Date.now(),
+
+      date:
+        new Date()
+          .toLocaleString(
+            "fr-FR"
+          )
+    });
+
+
+    /*
+      Deuxième sécurité :
+      si le registre de clôture échoue,
+      on restaure le portefeuille
+      et on retire l'écriture créée.
+    */
+    if(
+      !sportSaveMairieTransfers(
+        transfers
+      )
+    ){
+
+      sportSaveWallet({
+        vert:
+          old
       });
 
       sportSaveLedger(
-        l
-      );
-    }
-
-    let next=
-      new Date(
-        String(
-          c.seasonEndDate
-        ) +
-        "T12:00:00"
-      );
-
-    if(
-      !isNaN(next)
-    ){
-
-      do{
-
-        next.setFullYear(
-          next.getFullYear() +
-          1
-        );
-
-      }while(
-        next <
-        new Date()
+        sportLedger()
+          .filter(
+            item =>
+              String(
+                item &&
+                item.operationRef ||
+                ""
+              ) !==
+              operationRef
+          )
       );
 
-      c.seasonEndDate=
-        next
-          .toISOString()
-          .slice(0,10);
-
-      sportSaveClub(c);
+      return;
     }
 
-    if(notice){
 
-      notice.style.display=
-        "block";
+    sportNotifyEvent(
+      "sport_season_medical_research_orientation",
+      {
 
-      notice.textContent=
-        "La saison est clôturée. Le portefeuille repart à zéro pour la nouvelle saison.";
-    }
+        operationRef:
+          operationRef,
 
-    sportRefreshWallet();
+        cityId:
+          String(
+            city.cityId ||
+            ""
+          ),
 
-    return;
+        clubRef:
+          String(
+            c.clubRef ||
+            ""
+          ),
+
+        pointsCancelled:
+          old,
+
+        financialConversion:
+          false,
+
+        balance:
+          0
+      }
+    );
   }
+
+
+  let next=
+    new Date(
+      String(
+        c.seasonEndDate
+      ) +
+      "T12:00:00"
+    );
+
+
+  if(
+    !isNaN(next)
+  ){
+
+    do{
+
+      next.setFullYear(
+        next.getFullYear() +
+        1
+      );
+
+    }while(
+      next <
+      new Date()
+    );
+
+
+    c.seasonEndDate=
+      next
+        .toISOString()
+        .slice(0,10);
+
+    sportSaveClub(c);
+  }
+
+
+  if(notice){
+
+    notice.style.display=
+      "block";
+
+    notice.textContent=
+      w.vert > 0
+
+        ? "La saison est clôturée. Le solde restant a été orienté vers la recherche médicale et le portefeuille repart à zéro."
+
+        : "La saison est clôturée. Le portefeuille repart à zéro pour la nouvelle saison.";
+  }
+
+
+  sportRefreshWallet();
+
+  return;
+}
+
+/* =========================================================
+   ÇA FINIT ICI — CLÔTURE SAISON SPORT
+   ========================================================= */
 
   if(w.vert <= 0){
 
@@ -10985,7 +11713,7 @@ function sportRefreshWallet(){
           ? (
               "Solde : " +
               w.vert +
-              " bocitecoins. Aucun Cabas disponible. En fin de saison, ce reliquat peut être remis à la mairie pour une association validée."
+             " bocitecoins VERT. Aucun Cabas disponible. Ce reliquat peut être présenté à la mairie pour enregistrer son orientation vers la recherche médicale. À la clôture de la saison, tout solde restant sera orienté vers la recherche médicale puis le portefeuille repartira à zéro."
             )
           : "Solde : 0 bocitecoin. Aucun rappel de fin de saison n’est nécessaire.";
   }
@@ -11463,13 +12191,35 @@ async function sportShowCode(){
             },
             body:
               JSON.stringify({
-                action:
-                  "issue_sport_club_token",
-                clubRef:
-                  c.clubRef,
-                representative:
-                  code.presentedBy
-              })
+
+  action:
+    "issue_sport_club_token",
+
+  cityId:
+    code.cityId,
+
+  operationId:
+    code.operationId,
+
+  operationCreatedAt:
+    Number(
+      code.operationCreatedAt ||
+      code.issuedAt ||
+      Date.now()
+    ),
+
+  expiresAt:
+    Number(
+      code.expiresAt ||
+      0
+    ),
+
+  clubRef:
+    c.clubRef,
+
+  representative:
+    code.presentedBy
+})
           }
         );
 
@@ -11568,23 +12318,45 @@ async function sportShowCode(){
             "
           >
 
-            Code temporaire :
+         <div
+  class="sportStatus"
+  style="
+    margin-top:14px;
+    text-align:center;
+  "
+>
 
-            <br>
+<div
+  class="sportStatus"
+  style="
+    margin-top:14px;
+    text-align:center;
+  "
+>
 
-            <strong
-              style="
-                display:block;
-                margin-top:8px;
-                font-size:20px;
-                letter-spacing:1px;
-              "
-            >
-              ${sportEsc(
-                code.scanToken ||
-                "En attente du service sécurisé"
-              )}
-            </strong>
+  <div
+    style="
+      color:#2f5d46;
+      font-size:17px;
+      font-weight:700;
+    "
+  >
+    QR dynamique du club
+  </div>
+
+  <div
+    id="sportDynamicQr"
+    style="
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      margin-top:12px;
+      padding:12px;
+      background:#ffffff;
+    "
+  ></div>
+
+</div>
 
           </div>
 
@@ -11642,23 +12414,82 @@ async function sportShowCode(){
     "Code du club avec"
   );
 
-  setTimeout(
-    ()=>{
+setTimeout(
+  ()=>{
 
-      const close=
-        sportEl(
-          "sportDynamicCodeClose"
+    const qrHost=
+      sportEl(
+        "sportDynamicQr"
+      );
+
+    const close=
+      sportEl(
+        "sportDynamicCodeClose"
+      );
+
+
+    if(
+      qrHost &&
+      typeof window.QRCode ===
+        "function"
+    ){
+
+      qrHost.innerHTML=
+        "";
+
+      try{
+
+        new window.QRCode(
+          qrHost,
+          {
+
+            text:
+              JSON.stringify(
+                code
+              ),
+
+            width:
+              190,
+
+            height:
+              190,
+
+            colorDark:
+              "#000000",
+
+            colorLight:
+              "#ffffff",
+
+            correctLevel:
+              window.QRCode
+                .CorrectLevel
+                .M
+          }
         );
 
-      if(close){
+      }catch(error){
 
-        close.onclick=
-          openClubReserve;
+        console.error(
+          "Bo'CitéArt Sport : génération du QR impossible.",
+          error
+        );
+
+        qrHost.textContent=
+          "Le QR n’a pas pu être affiché. Fermez cette fenêtre puis réessayez.";
       }
+    }
 
-    },
-    0
-  );
+
+    if(close){
+
+      close.onclick=
+        openClubReserve;
+    }
+
+  },
+  0
+);
+ 
 }
 
 
@@ -12830,7 +13661,7 @@ function openClubReserve(){
 
             "- aucun transfert entre clubs\n" +
 
-            "- les reliquats inférieurs à 30 peuvent être remis à la mairie en fin de saison pour une association validée"
+            "- les reliquats inférieurs à 30 peuvent être présentés à la mairie pour enregistrer leur orientation vers la recherche médicale ; à la clôture, tout solde restant est orienté vers la recherche médicale puis le portefeuille repart à zéro"
           );
       }
 
