@@ -5152,59 +5152,79 @@ const alreadyUsed=
     return debit;
   }
 
- const operationRef=
+/* =========================================================
+   ÇA COMMENCE ICI — ENREGISTREMENT ÉCHANGE CABAS
+   ========================================================= */
+
+const operationRef=
   operationId;
 
- cityId:
-  String(
-    city.cityId ||
-    ""
-  ),
+const exchange={
 
-cityName:
-  String(
-    city.cityName ||
-    ""
-  ),
+  id:
+    sportId(
+      "bag"
+    ),
 
-qrIssuedAt:
-  Number(
-    scan.issuedAt ||
-    scan.operationCreatedAt ||
-    0
-  ),
+  operationRef:
+    operationRef,
 
-qrExpiresAt:
-  Number(
-    scan.expiresAt ||
-    0
-  ),
+  cityId:
+    String(
+      city.cityId ||
+      ""
+    ),
 
-    clubName:
-      c.name,
+  cityName:
+    String(
+      city.cityName ||
+      ""
+    ),
 
-    amount:
-      30,
+  qrIssuedAt:
+    Number(
+      scan.issuedAt ||
+      scan.operationCreatedAt ||
+      0
+    ),
 
-    actor:
-      actor || {},
+  qrExpiresAt:
+    Number(
+      scan.expiresAt ||
+      0
+    ),
 
-    representative:
-      representative,
+  clubRef:
+    c.clubRef,
 
-    purchase:
-      purchase,
+  clubName:
+    c.name,
 
-    validatedAt:
-      Date.now(),
+  amount:
+    30,
 
-    date:
-      new Date()
-        .toLocaleString(
-          "fr-FR"
-        )
-  };
+  actor:
+    actor || {},
 
+  representative:
+    representative,
+
+  purchase:
+    purchase,
+
+  validatedAt:
+    Date.now(),
+
+  date:
+    new Date()
+      .toLocaleString(
+        "fr-FR"
+      )
+};
+
+/* =========================================================
+   ÇA FINIT ICI — ENREGISTREMENT ÉCHANGE CABAS
+   ========================================================= */
   const exchanges=
     sportExchanges();
 
@@ -5670,7 +5690,7 @@ window.BociteSportMairie={
       };
     }
 
-    const city=
+const city=
   sportActiveCity();
 
 const scanCityId=
@@ -5698,9 +5718,7 @@ if(
 ){
 
   return {
-
     ok:false,
-
     reason:
       "wrong_city"
   };
@@ -5714,35 +5732,12 @@ if(
 ){
 
   return {
-
     ok:false,
-
     reason:
       "invalid_operation"
   };
 }
-
-
-if(
-  Number(
-    scan.expiresAt ||
-    0
-  ) > 0 &&
-  Number(
-    scan.expiresAt
-  ) <
-  Date.now()
-){
-
-  return {
-
-    ok:false,
-
-    reason:
-      "scan_expired"
-  };
-}
-
+     
 const alreadyUsed=
   sportExchanges()
     .some(
@@ -5905,7 +5900,133 @@ if(
       };
     }
 
+/* =========================================================
+   ÇA COMMENCE ICI — CONTRÔLE QR RELIQUAT SPORT
+   ========================================================= */
 
+const city=
+  sportActiveCity();
+
+const scanCityId=
+  String(
+    scan.cityId ||
+    ""
+  )
+    .trim()
+    .toLowerCase();
+
+const operationId=
+  String(
+    scan.operationId ||
+    ""
+  )
+    .trim()
+    .toUpperCase();
+
+
+if(
+  !city.cityId ||
+  !scanCityId ||
+  scanCityId !==
+    city.cityId
+){
+
+  return {
+
+    ok:false,
+
+    reason:
+      "wrong_city"
+  };
+}
+
+
+if(
+  !/^BCA-S-[A-Z0-9]{12,40}$/.test(
+    operationId
+  )
+){
+
+  return {
+
+    ok:false,
+
+    reason:
+      "invalid_operation"
+  };
+}
+
+
+if(
+  Number(
+    scan.expiresAt ||
+    0
+  ) > 0 &&
+  Number(
+    scan.expiresAt
+  ) <
+  Date.now()
+){
+
+  return {
+
+    ok:false,
+
+    reason:
+      "scan_expired"
+  };
+}
+
+
+const alreadyUsed=
+  sportExchanges()
+    .some(
+      item =>
+        String(
+          item &&
+          item.operationRef ||
+          ""
+        ) ===
+        operationId
+    )
+  ||
+  sportMairieTransfers()
+    .some(
+      item =>
+        String(
+          item &&
+          (
+            item.qrOperationId ||
+            item.operationRef
+          ) ||
+          ""
+        ) ===
+        operationId
+    );
+
+
+if(
+  alreadyUsed
+){
+
+  return {
+
+    ok:false,
+
+    duplicate:true,
+
+    reason:
+      "qr_already_used",
+
+    balance:
+      sportWallet().vert
+  };
+}
+
+/* =========================================================
+   ÇA FINIT ICI — CONTRÔLE QR RELIQUAT SPORT
+   ========================================================= */
+     
     /*
       Ancien paramètre conservé
       uniquement pour compatibilité technique.
