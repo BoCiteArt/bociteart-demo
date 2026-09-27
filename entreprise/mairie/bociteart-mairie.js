@@ -5641,18 +5641,15 @@ const messages = {
   }
 }
 
-
 function mairieTransferSportRemainder(){
 
   const bridge =
     mairieSportBridge();
 
-
   const out =
     mairieEl(
       "mairieSportReadOut"
     );
-
 
   if(
     !bridge ||
@@ -5660,16 +5657,13 @@ function mairieTransferSportRemainder(){
       "function"
   ){
 
-    if(
-      out
-    ){
+    if(out){
 
       out.dataset.state =
         "error";
 
-
       out.textContent =
-        "Le transfert de reliquat Sport n’est pas disponible.";
+        "L’orientation du reliquat Sport n’est pas disponible.";
     }
 
     return;
@@ -5691,48 +5685,11 @@ function mairieTransferSportRemainder(){
   }
 
 
-  const select =
-    mairieEl(
-      "mairieSportAssociation"
-    );
-
-
-  const associationId =
-    mairieText(
-
-      select
-        ? select.value
-        : ""
-    );
-
-
-  if(
-    !associationId
-  ){
-
-    if(
-      out
-    ){
-
-      out.dataset.state =
-        "warn";
-
-
-      out.textContent =
-        "Choisissez d’abord une association validée.";
-    }
-
-    return;
-  }
-
-
   const result =
     bridge
       .transferRemainderToAssociation(
-
         lastSportScan,
-
-        associationId
+        ""
       );
 
 
@@ -5747,25 +5704,31 @@ function mairieTransferSportRemainder(){
       invalid_scan:
         "Le code du club n’est pas reconnu.",
 
-      association_not_eligible:
-        "L’association sélectionnée n’est pas validée pour cette opération.",
+      wrong_city:
+        "Ce QR appartient à une autre ville Bo’CitéArt. L’orientation ne peut pas être enregistrée ici.",
+
+      invalid_operation:
+        "Ce QR dynamique n’est pas valide. Demandez au club d’en afficher un nouveau.",
+
+      scan_expired:
+        "Ce QR dynamique a expiré. Demandez au club d’en afficher un nouveau.",
+
+      qr_already_used:
+        "Ce QR a déjà été utilisé. Demandez au club d’afficher un nouveau QR dynamique.",
 
       empty_balance:
         "Le club ne dispose d’aucun reliquat.",
 
       bag_still_available:
-        "Le solde du club permet encore un Cabas de 30 bocitecoins. Le reliquat ne peut donc pas être transféré."
+        "Le solde du club permet encore un Cabas de 30 bocitecoins. Le reliquat ne peut pas encore être orienté."
 
     };
 
 
-    if(
-      out
-    ){
+    if(out){
 
       out.dataset.state =
         "error";
-
 
       out.textContent =
 
@@ -5773,7 +5736,7 @@ function mairieTransferSportRemainder(){
           result.reason
         ] ||
 
-        "Le transfert du reliquat n’a pas pu être effectué.";
+        "L’orientation du reliquat n’a pas pu être enregistrée.";
     }
 
 
@@ -5781,22 +5744,18 @@ function mairieTransferSportRemainder(){
   }
 
 
-  if(
-    out
-  ){
+  if(out){
 
     out.dataset.state =
       "ok";
 
-
     out.textContent =
-      "Reliquat de fin de saison transmis à l’association validée. Solde du club : 0 bocitecoin.";
+      "Orientation du reliquat vers la recherche médicale enregistrée. Les bocitecoins VERT concernés sont annulés sans conversion monétaire. Solde du club : 0 bocitecoin.";
   }
 
 
   return result;
 }
-
 /* =========================================================
    ÇA COMMENCE ICI
    EXPORT RAPPORT SPORT → MAIRIE
@@ -7145,34 +7104,22 @@ de la tuile Mairie.
     style="margin-top:16px;"
   >
 
-    <strong>Reliquat de fin de saison</strong>
+  <strong>Reliquat de fin de saison</strong>
 
-    <br><br>
+  <br><br>
 
-    Lorsqu’un reliquat inférieur à 30 bocitecoins VERT
-    reste sur le compte du club,
-    la commune peut enregistrer son orientation
-    vers une association de recherche médicale validée.
+  Lorsqu’un reliquat inférieur à 30 bocitecoins VERT
+  reste sur le compte du club,
+  la commune enregistre son orientation
+  vers la recherche médicale.
 
-  </div>
+  <br><br>
 
+  Les bocitecoins concernés sont ensuite annulés.
+  Ils ne sont ni transférés,
+  ni convertis en euros.
 
-  <label
-    class="mairieLabel"
-    for="mairieSportAssociation"
-  >
-    Association de recherche médicale retenue
-  </label>
-
-
-  <select
-    id="mairieSportAssociation"
-    class="mairieField"
-  >
-
-    ${mairieSportAssociationOptions()}
-
-  </select>
+</div>
 
 
   <button
