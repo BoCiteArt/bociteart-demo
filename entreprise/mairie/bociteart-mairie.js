@@ -4897,26 +4897,43 @@ if(
     "ok";
 
   out.innerHTML =
-    "<strong>Opération confirmée.</strong>" +
+  "<strong>Opération confirmée.</strong>" +
 
-    "<br><br>" +
+  "<br><br>" +
 
-    mairieEsc(
-      payload.amount
-    ) +
-    " bocitecoin(s) JAUNE ont été comptabilisés puis brûlés." +
+  "<strong>Matériel scolaire :</strong> " +
+  mairieEsc(
+    operation.materialAmount || 0
+  ) +
+  " JAUNE" +
 
-    "<br>" +
+  "<br>" +
 
-    "Ils sont retirés du compte de la classe après lecture du retour par l’École." +
+  "<strong>Recherche médicale :</strong> " +
+  mairieEsc(
+    operation.researchAmount || 0
+  ) +
+  " JAUNE" +
 
-    "<br><br>" +
+  "<br><br>" +
 
-    "<strong>Nouveau solde attendu de la classe :</strong> " +
-    mairieEsc(
-      remainingBalance
-    ) +
-    " bocitecoin(s) JAUNE." +
+  "<strong>Total comptabilisé puis brûlé :</strong> " +
+  mairieEsc(
+    operation.bocitecoins || 0
+  ) +
+  " JAUNE" +
+
+  "<br>" +
+
+  "Ces bocitecoins sont retirés du compte de la classe après lecture du retour par l’École." +
+
+  "<br><br>" +
+
+  "<strong>Nouveau solde attendu de la classe :</strong> " +
+  mairieEsc(
+    remainingBalance
+  ) +
+  " JAUNE." +
 
     "<br><br>" +
 
@@ -5043,35 +5060,73 @@ function mairieShowSchoolHistory(){
                             "
                           >
 
-                            ${mairieEsc(
-                              item.className ||
-                              "Classe"
-                            )}
+                      <strong>
+  ${mairieEsc(
+    item.className ||
+    "Classe"
+  )}
+</strong>
 
-                            —
+<br>
 
-                            ${mairieEsc(
-                              item.bocitecoins ||
-                              0
-                            )}
+Total validé :
+<strong>
+  ${mairieEsc(
+    item.bocitecoins ||
+    0
+  )}
+  JAUNE
+</strong>
 
-                            bocitecoins JAUNE
+<br>
 
-                            <br>
+Matériel scolaire :
+<strong>
+  ${mairieEsc(
+    item.materialAmount ||
+    0
+  )}
+  JAUNE
+</strong>
 
-                            ${mairieEsc(
+<br>
 
-                              item.validatedAt
+Recherche médicale :
+<strong>
+  ${mairieEsc(
+    item.researchAmount ||
+    0
+  )}
+  JAUNE
+</strong>
 
-                                ? new Date(
-                                    item.validatedAt
-                                  )
-                                    .toLocaleString(
-                                      "fr-FR"
-                                    )
+<br>
 
-                                : "Date non renseignée"
-                            )}
+Solde restant :
+<strong>
+  ${mairieEsc(
+    item.remainingAmount != null
+      ? item.remainingAmount
+      : "—"
+  )}
+  JAUNE
+</strong>
+
+<br>
+
+${mairieEsc(
+
+  item.validatedAt
+
+    ? new Date(
+        item.validatedAt
+      )
+        .toLocaleString(
+          "fr-FR"
+        )
+
+    : "Date non renseignée"
+)}
 
                           </div>
 
