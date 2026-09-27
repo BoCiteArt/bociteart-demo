@@ -17840,6 +17840,76 @@ function schoolParseMairieReturnCode(
     );
   }
 
+ /* =========================================================
+   ÇA COMMENCE ICI
+   ÉCOLE — CONTRÔLE DE L'OPÉRATION RETOUR MAIRIE
+   ========================================================= */
+
+const pendingExchange =
+  schoolReadMairiePendingExchange();
+
+const pendingOperationId =
+  String(
+    pendingExchange &&
+    pendingExchange.operationId ||
+    ""
+  )
+  .trim()
+  .toUpperCase();
+
+const returnedOperationId =
+  String(
+    operationId ||
+    ""
+  )
+  .trim()
+  .toUpperCase();
+
+
+if(
+  pendingExchange &&
+  pendingOperationId &&
+  returnedOperationId !==
+    pendingOperationId
+){
+
+  throw new Error(
+    "Cette validation Mairie ne correspond pas à l’opération présentée par cette classe."
+  );
+}
+
+
+/*
+  On contrôle également que
+  le total confirmé et le solde restant
+  correspondent bien à l'opération envoyée.
+*/
+if(
+  pendingExchange &&
+  (
+    Number(
+      pendingExchange.exchangeAmount ||
+      0
+    ) !==
+      amount ||
+
+    Number(
+      pendingExchange.remainingAmount ||
+      0
+    ) !==
+      expectedBalance
+  )
+){
+
+  throw new Error(
+    "Les montants du retour Mairie ne correspondent pas à l’opération présentée."
+  );
+}
+
+/* =========================================================
+   ÇA FINIT ICI
+   ÉCOLE — CONTRÔLE DE L'OPÉRATION RETOUR MAIRIE
+   ========================================================= */
 
   if(
     !Number.isInteger(
