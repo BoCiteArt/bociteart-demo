@@ -3560,9 +3560,240 @@ if(
 
 /* =====================================================
    ÇA COMMENCE ICI
-   MAIRIE — LECTURE DU MONTANT JAUNE PRÉSENTÉ
+   MAIRIE — LECTURE MATÉRIEL / RECHERCHE / TOTAL
    ===================================================== */
 
+const walletAmount =
+  Number(
+    payload.w != null
+      ? payload.w
+      : payload.wallet || 0
+  );
+
+const amount =
+  Number(
+    payload.a != null
+      ? payload.a
+      : (
+          payload.exchangeAmount != null
+            ? payload.exchangeAmount
+            : payload.wallet || 0
+        )
+  );
+
+
+/*
+  Nouveau QR :
+  m = matériel
+  r = recherche médicale
+  b = solde restant
+*/
+const hasNewSplit =
+  payload.m != null ||
+  payload.r != null ||
+  payload.materialAmount != null ||
+  payload.researchAmount != null;
+
+
+let materialAmount;
+let researchAmount;
+
+
+if(hasNewSplit){
+
+  materialAmount =
+    Number(
+      payload.m != null
+        ? payload.m
+        : payload.materialAmount || 0
+    );
+
+  researchAmount =
+    Number(
+      payload.r != null
+        ? payload.r
+        : payload.researchAmount || 0
+    );
+
+}else{
+
+  /*
+    Compatibilité avec les anciens QR
+    déjà créés pendant la démonstration.
+  */
+  const legacyResearch =
+    mairieText(
+      payload.o != null
+        ? payload.o
+        : (
+            payload.solidarity &&
+            payload.solidarity.mode
+          )
+    );
+
+  researchAmount =
+    legacyResearch === "full"
+      ? amount
+      : 0;
+
+  materialAmount =
+    legacyResearch === "full"
+      ? 0
+      : amount;
+}
+
+
+const remainingAmount =
+  Number(
+    payload.b != null
+      ? payload.b
+      : (
+          payload.remainingAmount != null
+            ? payload.remainingAmount
+            : walletAmount - amount
+        )
+  );
+
+
+/*
+  CONTRÔLES
+*/
+if(
+  !Number.isInteger(walletAmount) ||
+  walletAmount < 0 ||
+
+  !Number.isInteger(amount) ||
+  amount < 30 ||
+  amount > walletAmount ||
+
+  !Number.isInteger(materialAmount) ||
+  materialAmount < 0 ||
+
+  !Number.isInteger(researchAmount) ||
+  researchAmount < 0 ||
+
+  !Number.isInteger(remainingAmount) ||
+  remainingAmount < 0 ||
+
+  (
+    materialAmount !== 0 &&
+    materialAmount < 30
+  ) ||
+
+  (
+    researchAmount !== 0 &&
+    researchAmount < 30
+  ) ||
+
+  materialAmount +
+    researchAmount !==
+    amount ||
+
+  walletAmount -
+    amount !==
+    remainingAmount
+){
+
+  throw new Error(
+    "Le choix transmis par l’école est invalide."
+  );
+}
+
+
+return {
+
+  type:
+    "school_wallet",
+
+  cityId:
+    qrCityId,
+
+  cityName:
+    qrCityName ||
+    activeCity.cityName,
+
+  coinPlural:
+    qrCoinPlural ||
+    activeCity.coinPlural,
+
+  className:
+    mairieText(
+      payload.c != null
+        ? payload.c
+        : (
+            payload.class ||
+            payload.className
+          )
+    ) ||
+    "Classe non renseignée",
+
+  classId:
+    mairieText(
+      payload.i != null
+        ? payload.i
+        : payload.classId
+    ) ||
+    "Non renseigné",
+
+  wallet:
+    walletAmount,
+
+  amount:
+    amount,
+
+  materialAmount:
+    materialAmount,
+
+  researchAmount:
+    researchAmount,
+
+  remainingAmount:
+    remainingAmount,
+
+  allocation:{
+
+    material:
+      materialAmount,
+
+    research:
+      researchAmount,
+
+    total:
+      amount,
+
+    remaining:
+      remainingAmount
+  },
+
+  solidarity:{
+
+    mode:
+      researchAmount > 0
+        ? "research"
+        : "none",
+
+    associations:[]
+  },
+
+  ts:
+    Number(
+      payload.t != null
+        ? payload.t
+        : payload.ts || 0
+    ) ||
+    Date.now(),
+
+  raw:
+    mairieClone(
+      payload
+    )
+};
+
+/* =====================================================
+   ÇA FINIT ICI
+   MAIRIE — LECTURE MATÉRIEL / RECHERCHE / TOTAL
+   ===================================================== */
+}
 /* =====================================================
    ÇA COMMENCE ICI
    MAIRIE — LECTURE QR ÉCOLE COMPACT + ANCIEN FORMAT
