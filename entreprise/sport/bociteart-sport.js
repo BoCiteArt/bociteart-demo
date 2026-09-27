@@ -8066,18 +8066,26 @@ function sportRenderPresidentHistory(){
           "debit"
     );
 
-  const solidarity=
-    ledger.filter(
-      x =>
-        x.direction ===
-          "solidarity_transfer"
-    );
+ const researchOrientations=
+  ledger.filter(
+    x =>
+      [
+        "solidarity_transfer",
+        "solidarity_orientation",
+        "medical_research_orientation"
+      ].includes(
+        String(
+          x.direction ||
+          ""
+        )
+      )
+  );
 
-  const expired=
-    ledger.filter(
-      x =>
-        x.direction ===
-          "expire"
+const legacyClosures=
+  ledger.filter(
+    x =>
+      x.direction ===
+        "expire"
     );
 
   const coinsWon=
@@ -8100,25 +8108,27 @@ function sportRenderPresidentHistory(){
       0
     );
 
-  const solidarityCoins=
-    solidarity.reduce(
-      (sum,x) =>
-        sum +
-        Number(
-          x.amount || 0
-        ),
-      0
-    );
+ const researchOrientationCoins=
+  researchOrientations.reduce(
+    (sum,x) =>
+      sum +
+      Number(
+        x.amount ||
+        x.pointsCancelled ||
+        0
+      ),
+    0
+  );
 
-  const expiredCoins=
-    expired.reduce(
-      (sum,x) =>
-        sum +
-        Number(
-          x.amount || 0
-        ),
-      0
-    );
+const legacyClosureCoins=
+  legacyClosures.reduce(
+    (sum,x) =>
+      sum +
+      Number(
+        x.amount || 0
+      ),
+    0
+  );
 
   const validatedTrainings=
     trainings.filter(
@@ -8295,15 +8305,21 @@ function sportRenderPresidentHistory(){
         <strong>${coinsUsed}</strong>
       </div>
 
-      <div style="margin-top:6px;">
-        Orientés vers la solidarité :
-        <strong>${solidarityCoins}</strong>
-      </div>
+     <div style="margin-top:6px;">
+  Orientés vers la recherche médicale :
+  <strong>${researchOrientationCoins}</strong>
+</div>
 
+${
+  legacyClosureCoins > 0
+    ? `
       <div style="margin-top:6px;">
-        Expirés en clôture :
-        <strong>${expiredCoins}</strong>
+        Anciennes clôtures enregistrées :
+        <strong>${legacyClosureCoins}</strong>
       </div>
+    `
+    : ""
+}
 
       <div style="margin-top:6px;">
         Cabas validés :
@@ -8471,23 +8487,31 @@ function sportRenderPresidentHistory(){
         item.reason ||
         "Mouvement bocitecoins";
 
-      if(
-        item.direction ===
-          "solidarity_transfer"
-      ){
+    if(
+  [
+    "solidarity_transfer",
+    "solidarity_orientation",
+    "medical_research_orientation"
+  ].includes(
+    String(
+      item.direction ||
+      ""
+    )
+  )
+){
 
-        label=
-          "Orientation vers une association solidaire";
-      }
+  label=
+    "Orientation vers la recherche médicale";
+}
 
-      if(
-        item.direction ===
-          "expire"
-      ){
+if(
+  item.direction ===
+    "expire"
+){
 
-        label=
-          "Clôture de saison";
-      }
+  label=
+    "Clôture de saison — ancienne version";
+}
 
       operations.push({
 
