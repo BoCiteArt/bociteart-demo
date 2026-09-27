@@ -5388,17 +5388,37 @@ function mairieReadSportScan(){
       );
 
 
-    if(
-      !result ||
-      result.ok !==
-        true
-    ){
+   if(
+  !result ||
+  result.ok !==
+    true
+){
 
-      throw new Error(
-        "Le club présenté n’a pas été reconnu."
-      );
-    }
+  const messages = {
 
+    invalid_scan:
+      "Le code du club n’est pas reconnu.",
+
+    wrong_city:
+      "Ce QR appartient à une autre ville Bo’CitéArt. Utilisez le QR d’un club rattaché à cette commune.",
+
+    invalid_operation:
+      "Ce QR dynamique n’est pas valide. Demandez au club d’afficher un nouveau QR.",
+
+    scan_expired:
+      "Ce QR dynamique a expiré. Demandez au club d’afficher un nouveau QR."
+  };
+
+  throw new Error(
+
+    messages[
+      result &&
+      result.reason
+    ] ||
+
+    "Le club présenté n’a pas été reconnu."
+  );
+}
 
     lastSportScan =
       scan;
@@ -5545,18 +5565,30 @@ async function mairieValidateSportExchange(){
         true
     ){
 
-      const messages = {
+const messages = {
 
-        insufficient_balance:
-          "Le club ne dispose pas encore des 30 bocitecoins nécessaires.",
+  insufficient_balance:
+    "Le club ne dispose pas encore des 30 bocitecoins nécessaires.",
 
-        invalid_scan:
-          "Le code du club n’est pas reconnu.",
+  invalid_scan:
+    "Le code du club n’est pas reconnu.",
 
-        food_limit_reached:
-          "La limite applicable à cette catégorie est atteinte."
+  wrong_city:
+    "Ce QR appartient à une autre ville Bo’CitéArt. L’opération ne peut pas être validée ici.",
 
-      };
+  invalid_operation:
+    "Ce QR dynamique n’est pas valide. Demandez au club d’en afficher un nouveau.",
+
+  scan_expired:
+    "Ce QR dynamique a expiré. Demandez au club d’en afficher un nouveau.",
+
+  qr_already_used:
+    "Ce QR a déjà été utilisé. Demandez au club d’afficher un nouveau QR dynamique.",
+
+  food_limit_reached:
+    "La limite applicable à cette catégorie est atteinte."
+
+};
 
 
       throw new Error(
