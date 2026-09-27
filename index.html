@@ -17590,11 +17590,30 @@ cityName:
             ""
           ),
 
-        bocitecoins:
-          amountApplied,
+       bocitecoins:
+  amountApplied,
 
-        solidarity:
-          detail.solidarity &&
+materialAmount:
+  Number(
+    detail.materialAmount ||
+    0
+  ),
+
+researchAmount:
+  Number(
+    detail.researchAmount ||
+    0
+  ),
+
+remainingAmount:
+  Number(
+    detail.remainingAmount != null
+      ? detail.remainingAmount
+      : newAmount
+  ),
+
+solidarity:
+  detail.solidarity &&
           typeof detail.solidarity ===
             "object"
 
@@ -17791,7 +17810,20 @@ function schoolParseMairieReturnCode(
         : payload.bocitecoins
     );
 
+const materialAmount =
+  Number(
+    payload.m != null
+      ? payload.m
+      : 0
+  );
 
+const researchAmount =
+  Number(
+    payload.r != null
+      ? payload.r
+      : 0
+  );
+ 
   const expectedBalance =
     Number(
       payload.b != null
@@ -17894,6 +17926,18 @@ if(
       amount ||
 
     Number(
+      pendingExchange.materialAmount ||
+      0
+    ) !==
+      materialAmount ||
+
+    Number(
+      pendingExchange.researchAmount ||
+      0
+    ) !==
+      researchAmount ||
+
+    Number(
       pendingExchange.remainingAmount ||
       0
     ) !==
@@ -17905,6 +17949,23 @@ if(
     "Les montants du retour Mairie ne correspondent pas à l’opération présentée."
   );
 }
+
+if(
+  !Number.isInteger(materialAmount) ||
+  materialAmount < 0 ||
+
+  !Number.isInteger(researchAmount) ||
+  researchAmount < 0 ||
+
+  materialAmount +
+    researchAmount !==
+    amount
+){
+
+  throw new Error(
+    "La répartition Matériel / Recherche transmise par la Mairie est invalide."
+  );
+} 
 
 /* =========================================================
    ÇA FINIT ICI
@@ -17985,11 +18046,17 @@ if(
       operationId:
         operationId,
 
-      amount:
-        amount,
+     amount:
+  amount,
 
-      expectedBalance:
-        expectedBalance,
+materialAmount:
+  materialAmount,
+
+researchAmount:
+  researchAmount,
+
+expectedBalance:
+  expectedBalance,
 
       validatedTs:
         validatedTs
@@ -18034,11 +18101,17 @@ if(
     operationId:
       operationId,
 
-    amount:
-      amount,
+   amount:
+  amount,
 
-    expectedBalance:
-      expectedBalance,
+materialAmount:
+  materialAmount,
+
+researchAmount:
+  researchAmount,
+
+expectedBalance:
+  expectedBalance,
 
     validatedTs:
       validatedTs
@@ -18129,13 +18202,26 @@ function schoolApplyMairieReturnCode(
             className:
               schoolCurrentClass(),
 
-            bocitecoins:
-              parsed.amount,
+           bocitecoins:
+  parsed.amount,
 
-            solidarity:{
-              mode:"none",
-              associations:[]
-            },
+materialAmount:
+  parsed.materialAmount,
+
+researchAmount:
+  parsed.researchAmount,
+
+remainingAmount:
+  parsed.expectedBalance,
+
+solidarity:{
+  mode:
+    parsed.researchAmount > 0
+      ? "research"
+      : "none",
+
+  associations:[]
+},
 
             validatedAt:
               parsed.validatedTs
