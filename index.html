@@ -16602,6 +16602,23 @@ function schoolPrepareMairieExchange(){
     type:
       "school_wallet",
 
+  if(
+  schoolSolidarityStatus
+){
+
+  schoolSolidarityStatus.textContent =
+
+    saved &&
+    Number(
+      saved.totalAmount ||
+      0
+    ) > 0
+
+      ? "✓ Choix déjà validé pour cette classe."
+
+      : "";
+} 
+
     cityId:
       city.cityId,
 
@@ -16664,12 +16681,14 @@ function schoolPrepareMairieExchange(){
 
       associations:[]
     },
-
-    ts:
-      Date.now()
-  };
-
-
+ 
+t:
+  Number(
+    pending.operationCreatedAt ||
+    pending.ts ||
+    Date.now()
+  )
+ 
   try{
 
     localStorage.setItem(
