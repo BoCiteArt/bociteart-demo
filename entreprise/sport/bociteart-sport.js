@@ -4748,34 +4748,6 @@ if(
     };
   }
 
-   /* =========================================================
-   ÇA COMMENCE ICI — EXPIRATION QR SPORT LU PAR LA MAIRIE
-   ========================================================= */
-
-if(
-  Number(
-    scan.expiresAt ||
-    0
-  ) > 0 &&
-  Number(
-    scan.expiresAt
-  ) <
-  Date.now()
-){
-
-  return {
-
-    ok:false,
-
-    reason:
-      "scan_expired"
-  };
-}
-
-/* =========================================================
-   ÇA FINIT ICI — EXPIRATION QR SPORT LU PAR LA MAIRIE
-   ========================================================= */
-
 const alreadyUsed=
   sportExchanges()
     .some(
@@ -5716,6 +5688,34 @@ if(
       "invalid_operation"
   };
 }
+
+/* =========================================================
+   ÇA COMMENCE ICI — EXPIRATION QR SPORT LU PAR LA MAIRIE
+   ========================================================= */
+
+if(
+  Number(
+    scan.expiresAt ||
+    0
+  ) > 0 &&
+  Number(
+    scan.expiresAt
+  ) <
+  Date.now()
+){
+
+  return {
+
+    ok:false,
+
+    reason:
+      "scan_expired"
+  };
+}
+
+/* =========================================================
+   ÇA FINIT ICI — EXPIRATION QR SPORT LU PAR LA MAIRIE
+   ========================================================= */
      
 const alreadyUsed=
   sportExchanges()
