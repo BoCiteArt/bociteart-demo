@@ -5500,7 +5500,390 @@ function mairieReadSportScan(){
   }
 }
 
+/* =========================================================
+   ÇA COMMENCE ICI
+   MAIRIE — SCANNER LE QR SPORT AVEC LA CAMÉRA
+   ========================================================= */
 
+async function mairieScanSportQrWithCamera(){
+
+  const input =
+    mairieEl(
+      "mairieSportScanInput"
+    );
+
+  const out =
+    mairieEl(
+      "mairieSportReadOut"
+    );
+
+
+  if(!input){
+    return;
+  }
+
+
+  if(
+    typeof window.BarcodeDetector !==
+      "function" ||
+    !navigator.mediaDevices ||
+    typeof navigator.mediaDevices.getUserMedia !==
+      "function"
+  ){
+
+    if(out){
+
+      out.dataset.state =
+        "warn";
+
+      out.textContent =
+        "Le scanner caméra n’est pas disponible sur cet appareil. Collez le code du club dans le champ prévu.";
+    }
+
+    return;
+  }
+
+
+  let supported =
+    [];
+
+
+  try{
+
+    if(
+      typeof window.BarcodeDetector.getSupportedFormats ===
+        "function"
+    ){
+
+      supported =
+        await window.BarcodeDetector
+          .getSupportedFormats();
+    }
+
+  }catch(error){}
+
+
+  if(
+    supported.length &&
+    !supported.includes(
+      "qr_code"
+    )
+  ){
+
+    if(out){
+
+      out.dataset.state =
+        "warn";
+
+      out.textContent =
+        "La lecture des QR n’est pas disponible sur cet appareil. Collez le code du club.";
+    }
+
+    return;
+  }
+
+
+  const detector =
+    new window.BarcodeDetector({
+      formats:[
+        "qr_code"
+      ]
+    });
+
+
+  const overlay =
+    document.createElement(
+      "div"
+    );
+
+
+  overlay.id =
+    "mairieSportCameraOverlay";
+
+
+  overlay.style.cssText =
+    "position:fixed;" +
+    "inset:0;" +
+    "z-index:100050;" +
+    "background:rgba(0,0,0,.78);" +
+    "padding:16px;" +
+    "display:flex;" +
+    "align-items:center;" +
+    "justify-content:center;" +
+    "box-sizing:border-box;";
+
+
+  overlay.innerHTML = `
+
+    <div
+      style="
+        width:100%;
+        max-width:420px;
+        background:#ffffff;
+        border-radius:16px;
+        padding:14px;
+        box-sizing:border-box;
+      "
+    >
+
+      <div
+        style="
+          color:#2f5d46;
+          font-size:17px;
+          font-weight:700;
+        "
+      >
+        Scanner le QR du club
+      </div>
+
+      <div
+        style="
+          margin-top:8px;
+          color:#111111;
+          font-size:14px;
+          font-weight:400;
+          line-height:1.5;
+        "
+      >
+        Placez le QR présenté par le responsable du club
+        dans le cadre de la caméra.
+      </div>
+
+      <video
+        id="mairieSportCameraVideo"
+        autoplay
+        muted
+        playsinline
+        style="
+          width:100%;
+          margin-top:12px;
+          border-radius:12px;
+          background:#111111;
+        "
+      ></video>
+
+      <button
+        id="mairieSportCameraClose"
+        class="mairieBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-top:12px;
+        "
+      >
+        Annuler le scan
+      </button>
+
+    </div>
+
+  `;
+
+
+  document.body.appendChild(
+    overlay
+  );
+
+
+  const video =
+    document.getElementById(
+      "mairieSportCameraVideo"
+    );
+
+
+  const closeBtn =
+    document.getElementById(
+      "mairieSportCameraClose"
+    );
+
+
+  let stream =
+    null;
+
+  let timer =
+    null;
+
+  let active =
+    true;
+
+  let detecting =
+    false;
+
+
+  function closeCamera(){
+
+    active =
+      false;
+
+
+    if(timer){
+
+      window.clearInterval(
+        timer
+      );
+
+      timer =
+        null;
+    }
+
+
+    if(stream){
+
+      stream
+        .getTracks()
+        .forEach(
+          function(track){
+
+            track.stop();
+          }
+        );
+    }
+
+
+    if(
+      overlay &&
+      overlay.parentNode
+    ){
+
+      overlay.remove();
+    }
+  }
+
+
+  if(closeBtn){
+
+    closeBtn.onclick =
+      closeCamera;
+  }
+
+
+  try{
+
+    stream =
+      await navigator.mediaDevices
+        .getUserMedia({
+
+          audio:false,
+
+          video:{
+            facingMode:{
+              ideal:"environment"
+            }
+          }
+
+        });
+
+
+    video.srcObject =
+      stream;
+
+
+    await video.play();
+
+
+    if(out){
+
+      out.dataset.state =
+        "warn";
+
+      out.textContent =
+        "Scanner actif : présentez le QR du club.";
+    }
+
+
+    timer =
+      window.setInterval(
+
+        async function(){
+
+          if(
+            !active ||
+            detecting ||
+            !video ||
+            video.readyState < 2
+          ){
+
+            return;
+          }
+
+
+          detecting =
+            true;
+
+
+          try{
+
+            const codes =
+              await detector.detect(
+                video
+              );
+
+
+            if(
+              codes &&
+              codes.length &&
+              codes[0] &&
+              codes[0].rawValue
+            ){
+
+              const raw =
+                String(
+                  codes[0].rawValue
+                ).trim();
+
+
+              if(raw){
+
+                input.value =
+                  raw;
+
+                closeCamera();
+
+                mairieReadSportScan();
+
+                return;
+              }
+            }
+
+          }catch(error){
+
+            console.warn(
+              "Bo'CitéArt Mairie : lecture QR Sport en cours.",
+              error
+            );
+
+          }finally{
+
+            detecting =
+              false;
+          }
+
+        },
+
+        450
+      );
+
+
+  }catch(error){
+
+    closeCamera();
+
+
+    if(out){
+
+      out.dataset.state =
+        "error";
+
+      out.textContent =
+        "La caméra n’a pas pu être ouverte. Autorisez son accès ou collez le code du club.";
+    }
+  }
+}
+
+/* =========================================================
+   ÇA FINIT ICI
+   MAIRIE — SCANNER LE QR SPORT AVEC LA CAMÉRA
+   ========================================================= */
+   
 async function mairieValidateSportExchange(){
 
   const bridge =
@@ -7058,6 +7441,17 @@ de la tuile Mairie.
     placeholder="Lire ou coller le code présenté par le club"
   ></textarea>
 
+<div class="mairieActions">
+
+  <button
+    class="mairieBtn mairieFull"
+    id="mairieSportCameraBtn"
+    type="button"
+  >
+    Scanner le QR du club
+  </button>
+
+</div>
 
   <div class="mairieActions">
 
@@ -8320,6 +8714,29 @@ if(
   /* =====================================================
      SPORT → MAIRIE
      ===================================================== */
+
+   /* =====================================================
+   ÇA COMMENCE ICI
+   MAIRIE — BOUTON CAMÉRA SPORT
+   ===================================================== */
+
+const sportCamera =
+  mairieEl(
+    "mairieSportCameraBtn"
+  );
+
+if(
+  sportCamera
+){
+
+  sportCamera.onclick =
+    mairieScanSportQrWithCamera;
+}
+
+/* =====================================================
+   ÇA FINIT ICI
+   MAIRIE — BOUTON CAMÉRA SPORT
+   ===================================================== */
 
   const sportRead =
     mairieEl(
