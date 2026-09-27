@@ -4677,55 +4677,6 @@ async function sportValidateBag(
     };
   }
 
-const city=
-  sportActiveCity();
-
-const scanCityId=
-  String(
-    scan.cityId ||
-    ""
-  )
-    .trim()
-    .toLowerCase();
-
-const operationId=
-  String(
-    scan.operationId ||
-    ""
-  )
-    .trim()
-    .toUpperCase();
-
-
-if(
-  !city.cityId ||
-  !scanCityId ||
-  scanCityId !==
-    city.cityId
-){
-
-  return {
-    ok:false,
-    reason:
-      "wrong_city"
-  };
-}
-
-
-if(
-  !/^BCA-S-[A-Z0-9]{12,40}$/.test(
-    operationId
-  )
-){
-
-  return {
-    ok:false,
-    reason:
-      "invalid_operation"
-  };
-}
-
-
 if(
   Number(
     scan.expiresAt ||
@@ -4796,6 +4747,34 @@ if(
         "invalid_operation"
     };
   }
+
+   /* =========================================================
+   ÇA COMMENCE ICI — EXPIRATION QR SPORT LU PAR LA MAIRIE
+   ========================================================= */
+
+if(
+  Number(
+    scan.expiresAt ||
+    0
+  ) > 0 &&
+  Number(
+    scan.expiresAt
+  ) <
+  Date.now()
+){
+
+  return {
+
+    ok:false,
+
+    reason:
+      "scan_expired"
+  };
+}
+
+/* =========================================================
+   ÇA FINIT ICI — EXPIRATION QR SPORT LU PAR LA MAIRIE
+   ========================================================= */
 
 const alreadyUsed=
   sportExchanges()
