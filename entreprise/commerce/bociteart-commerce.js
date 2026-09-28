@@ -1081,19 +1081,6 @@ function openCommerceModule(){
               placeholder="Ex : TICKET-20260928-001"
             >
 
-            <div
-              class="commerceSmall"
-              style="margin-top:8px;"
-            >
-
-              L’achat crédite aussi
-              le portefeuille territorial
-              du porteur :
-              1 bocitecoin
-              par tranche complète de 10 €.
-
-            </div>
-
             <div class="commerceActions">
 
               <button
