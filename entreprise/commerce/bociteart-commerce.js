@@ -3726,7 +3726,7 @@ if(
       }
 
 
-      merchantInternalSpace.style.display =
+      merchantInternalSpace.style.display = 
         "block";
 
 
