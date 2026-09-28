@@ -5441,7 +5441,7 @@ function acceptCollaboratorInvitation(
     Le collaborateur doit disposer
     de son propre compte Bo'CitéArt.
 
-    Ce compte deviendra le compte
+    Ce compte devient le compte
     définitivement rattaché
     à cet accès collaborateur.
   */
@@ -5676,7 +5676,6 @@ function acceptCollaboratorInvitation(
     }
   );
 }
-   
 /* =========================================================
    MODIFICATION D'UN COLLABORATEUR
    ========================================================= */
