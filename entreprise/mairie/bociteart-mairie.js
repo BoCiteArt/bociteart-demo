@@ -5459,7 +5459,7 @@ function mairieReadSportScan(){
 
         " bocitecoins" +
 
-        "<br>Cabas disponible : " +
+       "<br>Cabas possible chez un commerçant partenaire : " +
 
         (
           result.canRedeemBag
@@ -5467,7 +5467,7 @@ function mairieReadSportScan(){
             : "non"
         ) +
 
-        "<br>Reliquat de fin de saison transférable : " +
+        "<br>Reliquat orientable vers la recherche médicale : " +
 
         (
           result.canTransferRemainder
@@ -6175,7 +6175,7 @@ function mairieExportSportReport(){
       : [];
 
 
-  const remainders =
+  const researchOrientations =
     typeof bridge.solidarityHistory ===
       "function"
 
@@ -6194,12 +6194,12 @@ function mairieExportSportReport(){
       : [];
 
 
-  const remainderRows =
+  const researchRows =
     Array.isArray(
-      remainders
+      researchOrientations
     )
 
-      ? remainders
+      ? researchOrientations
 
       : [];
 
@@ -6228,8 +6228,8 @@ function mairieExportSportReport(){
     );
 
 
-  const totalRemainders =
-    remainderRows.reduce(
+  const totalResearch =
+    researchRows.reduce(
       function(
         total,
         item
@@ -6241,7 +6241,10 @@ function mairieExportSportReport(){
             0,
             Number(
               item &&
-              item.bocitecoins ||
+              (
+                item.pointsCancelled ||
+                item.bocitecoins
+              ) ||
               0
             )
           )
@@ -6271,11 +6274,15 @@ function mairieExportSportReport(){
       bocitecoinsExchanged:
         totalExchanged,
 
+      /*
+        Clés historiques conservées
+        pour ne pas casser un ancien lecteur du rapport.
+      */
       remainders:
-        remainderRows.length,
+        researchRows.length,
 
       bocitecoinsRemainders:
-        totalRemainders
+        totalResearch
 
     },
 
@@ -6286,7 +6293,7 @@ function mairieExportSportReport(){
 
     remainders:
       mairieClone(
-        remainderRows
+        researchRows
       )
 
   };
@@ -6361,22 +6368,23 @@ function mairieExportSportReport(){
     },
     0
   );
-
 }
 
 /* =========================================================
    ÇA FINIT ICI
    EXPORT RAPPORT SPORT → MAIRIE
    BOCITECOINS VERT
-   ========================================================= */ 
-   /* =========================================================
+   ========================================================= */
+
+
+/* =========================================================
    ÇA COMMENCE ICI
    RAPPORT SPORT → MAIRIE
    BOCITECOINS VERT
    ========================================================= */
 
 function mairieShowSportHistory(){
-   
+
   const bridge =
     mairieSportBridge();
 
@@ -6402,7 +6410,11 @@ function mairieShowSportHistory(){
       : [];
 
 
-  const solidarity =
+  /*
+    Nom de la fonction conservé côté Sport
+    pour compatibilité avec les données anciennes.
+  */
+  const researchOrientations =
     typeof bridge.solidarityHistory ===
       "function"
 
@@ -6423,12 +6435,12 @@ function mairieShowSportHistory(){
       : [];
 
 
-  const solidarityRows =
+  const researchRows =
     Array.isArray(
-      solidarity
+      researchOrientations
     )
 
-      ? solidarity
+      ? researchOrientations
           .slice()
           .reverse()
 
@@ -6453,13 +6465,14 @@ function mairieShowSportHistory(){
             )
           )
         );
+
       },
       0
     );
 
 
-  const totalRemainders =
-    solidarityRows.reduce(
+  const totalResearch =
+    researchRows.reduce(
       function(
         total,
         item
@@ -6471,11 +6484,15 @@ function mairieShowSportHistory(){
             0,
             Number(
               item &&
-              item.bocitecoins ||
+              (
+                item.pointsCancelled ||
+                item.bocitecoins
+              ) ||
               0
             )
           )
         );
+
       },
       0
     );
@@ -6499,7 +6516,7 @@ function mairieShowSportHistory(){
 
           <div class="mairieText">
 
-            Échanges validés :
+            Échanges Cabas validés :
             <strong>
               ${mairieEsc(
                 exchangeRows.length
@@ -6508,7 +6525,7 @@ function mairieShowSportHistory(){
 
             <br>
 
-            Bocitecoins VERT utilisés :
+            Bocitecoins VERT utilisés en Cabas :
             <strong>
               ${mairieEsc(
                 totalExchanged
@@ -6517,14 +6534,12 @@ function mairieShowSportHistory(){
 
             <br>
 
-            Reliquats de fin de saison transmis :
+            Bocitecoins VERT orientés vers la recherche médicale :
             <strong>
               ${mairieEsc(
-                totalRemainders
+                totalResearch
               )}
             </strong>
-
-            bocitecoins VERT
 
           </div>
 
@@ -6534,7 +6549,7 @@ function mairieShowSportHistory(){
         <div class="mairieCard mairieSport">
 
           ${mairieCardTitle(
-            "Échanges des clubs"
+            "Échanges Cabas des clubs"
           )}
 
 
@@ -6650,7 +6665,7 @@ function mairieShowSportHistory(){
 
                     .join("")
 
-                : "Aucun échange Sport enregistré."
+                : "Aucun échange Cabas Sport enregistré."
             }
 
           </div>
@@ -6661,7 +6676,7 @@ function mairieShowSportHistory(){
         <div class="mairieCard mairieSport">
 
           ${mairieCardTitle(
-            "Reliquats de fin de saison"
+            "Orientations vers la recherche médicale"
           )}
 
 
@@ -6669,9 +6684,9 @@ function mairieShowSportHistory(){
 
             ${
 
-              solidarityRows.length
+              researchRows.length
 
-                ? solidarityRows
+                ? researchRows
 
                     .slice(
                       0,
@@ -6682,6 +6697,45 @@ function mairieShowSportHistory(){
                       function(
                         item
                       ){
+
+                        const points =
+                          Number(
+                            item &&
+                            (
+                              item.pointsCancelled ||
+                              item.bocitecoins
+                            ) ||
+                            0
+                          );
+
+
+                        let status =
+                          item &&
+                          item.status ||
+                          "recorded";
+
+
+                        if(
+                          status ===
+                            "validated"
+                        ){
+
+                          status =
+                            "validée";
+                        }
+
+
+                        if(
+                          status ===
+                            "orientation_recorded" ||
+                          status ===
+                            "recorded"
+                        ){
+
+                          status =
+                            "orientation enregistrée";
+                        }
+
 
                         return `
 
@@ -6702,33 +6756,26 @@ function mairieShowSportHistory(){
 
                             <br>
 
-                            Association :
+                            Bocitecoins VERT orientés et annulés :
                             ${mairieEsc(
-                              item.associationName ||
-                              "Association"
+                              points
                             )}
 
                             <br>
 
-                            Bocitecoins VERT transmis :
-                            ${mairieEsc(
-                              item.bocitecoins ||
-                              0
-                            )}
+                            Destination :
+                            recherche médicale
+
+                            <br>
+
+                            Conversion monétaire :
+                            aucune
 
                             <br>
 
                             État :
                             ${mairieEsc(
-                              item.status ===
-                                "validated"
-
-                                ? "validé"
-
-                                : (
-                                    item.status ||
-                                    "enregistré"
-                                  )
+                              status
                             )}
 
                             <br>
@@ -6758,7 +6805,7 @@ function mairieShowSportHistory(){
 
                     .join("")
 
-                : "Aucun reliquat Sport enregistré."
+                : "Aucune orientation Sport vers la recherche médicale enregistrée."
             }
 
           </div>
@@ -7472,7 +7519,7 @@ de la tuile Mairie.
       id="mairieSportValidateBtn"
       type="button"
     >
-      Confirmer l’opération Sport
+      Orienter 30 VERT vers la recherche médicale
     </button>
 
 
