@@ -1147,8 +1147,8 @@ function openCommerceModule(){
 
             <div class="commerceTitle">
 
-              Historique local
-              de démonstration
+              Historique des opérations
+            
 
             </div>
 
