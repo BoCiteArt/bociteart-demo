@@ -5984,7 +5984,7 @@ const messages = {
           result.reason
         ] ||
 
-        "L’échange Sport n’a pas pu être validé."
+       "L’orientation vers la recherche médicale n’a pas pu être enregistrée." 
       );
     }
 
@@ -5998,7 +5998,7 @@ const messages = {
 
 
       out.textContent =
-        "Échange Sport → Mairie confirmé. Nouveau solde du club : " +
+       "Orientation de 30 bocitecoins VERT vers la recherche médicale enregistrée. Nouveau solde du club : " +
         String(
           result.balance == null
             ? "—"
@@ -6022,7 +6022,7 @@ const messages = {
 
       out.textContent =
         error.message ||
-        "La validation Sport a échoué.";
+       "L’orientation Sport vers la recherche médicale a échoué."
     }
   }
 }
