@@ -1748,7 +1748,7 @@ function openCommerceModule(){
         data
       ){
 
-        try{
+        try{ 
 
           localStorage.setItem(
             ENTREPRISE_MUTUALISATION_KEY,
