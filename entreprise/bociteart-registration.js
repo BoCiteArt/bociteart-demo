@@ -7114,9 +7114,9 @@ console.log(
   "✅ Étape création du compte Bo'CitéArt V7 prête"
 );
 
-
 /* =========================================================
    ÇA FINIT ICI
    BO'CITÉART — ORGANISATIONS
    DOSSIER — VALIDATION — ACCÈS
    ========================================================= */
+})();
