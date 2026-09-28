@@ -215,7 +215,173 @@ const ACCESS_ROLES = {
 
 };
 
+/* =====================================================
+   MOTEUR CENTRAL DE DÉCISION
+   VALIDATION DES ORGANISATIONS
+   ===================================================== */
 
+function runOrganizationValidationDecision(
+  decision,
+  options
+){
+
+  const organization =
+    getOrganization();
+
+  if(
+    !organization ||
+    !organization.organizationId
+  ){
+    return {
+      ok: false,
+      reason: "organization_not_found"
+    };
+  }
+
+
+  const data =
+    options &&
+    typeof options === "object"
+      ? options
+      : {};
+
+
+  const nextDecision =
+    String(
+      decision ||
+      ""
+    ).trim();
+
+
+  const allowedDecisions = [
+    "needs_information",
+    "unfavorable",
+    "validated"
+  ];
+
+
+  if(
+    !allowedDecisions.includes(
+      nextDecision
+    )
+  ){
+    return {
+      ok: false,
+      reason: "invalid_validation_decision"
+    };
+  }
+
+
+  /*
+    Une validation favorable exige
+    que tous les contrôles obligatoires
+    de la catégorie soient terminés.
+  */
+
+  if(
+    nextDecision === "validated"
+  ){
+
+    const validationState =
+      getOrganizationValidationState();
+
+    if(
+      !validationState.ok
+    ){
+      return validationState;
+    }
+
+
+    if(
+      validationState.complete !== true
+    ){
+      return {
+        ok: false,
+        reason:
+          "validation_checks_incomplete",
+
+        missing:
+          validationState.missing
+      };
+    }
+  }
+
+
+  /*
+    La modification réelle du statut
+    reste centralisée dans une seule fonction.
+  */
+
+  const result =
+    setOrganizationValidationStatus(
+      nextDecision,
+      {
+        reason:
+          String(
+            data.reason ||
+            ""
+          ).trim(),
+
+        reviewedBy:
+          String(
+            data.reviewedBy ||
+            "bociteart_validation_agent"
+          ).trim()
+      }
+    );
+
+
+  if(
+    !result ||
+    result.ok !== true
+  ){
+    return result || {
+      ok: false,
+      reason:
+        "validation_status_update_failed"
+    };
+  }
+
+
+  addSecurityLog(
+    "organization_validation_decision",
+    {
+      organizationId:
+        organization.organizationId,
+
+      category:
+        organization.category,
+
+      decision:
+        nextDecision,
+
+      reviewedBy:
+        String(
+          data.reviewedBy ||
+          "bociteart_validation_agent"
+        ).trim(),
+
+      reason:
+        String(
+          data.reason ||
+          ""
+        ).trim()
+    }
+  );
+
+
+  return {
+    ok: true,
+
+    decision:
+      nextDecision,
+
+    organization:
+      result.organization ||
+      getOrganization()
+  };
+}
+   
 /* =====================================================
    PERMISSIONS DISPONIBLES
    ===================================================== */
@@ -1356,14 +1522,80 @@ if(
       account.phone ||
       "",
 
+     organizationProfile: {
+
+  organizationName:
+    "",
+
+  siretOrSiren:
+    "",
+
+  associationIdentifier:
+    "",
+
+  clubIdentifier:
+    "",
+
+  schoolIdentifier:
+    "",
+
+  municipalityIdentifier:
+    "",
+
+  establishmentAddress:
+    "",
+
+  registeredAddress:
+    "",
+
+  registeredOffice:
+    "",
+
+  schoolAddress:
+    "",
+
+  businessActivity:
+    "",
+
+  legalStructure:
+    "",
+
+  responsibleIdentity:
+    account.displayName || "",
+
+  responsibleAuthority:
+    "",
+
+  presidentOrLegalRepresentative:
+    "",
+
+  directionOrAuthorizedRepresentative:
+    "",
+
+  institutionalAuthority:
+    "",
+
+  email:
+    account.email || "",
+
+  phone:
+    account.phone || ""
+},
+
  active:
       false,
 
     validationStatus:
       "pending_review",
 
+          active:
+      false,
+
+    validationStatus:
+      "draft",
+
     validationRequestedAt:
-      new Date().toISOString(),
+      null,
 
     validationReviewedAt:
       null,
@@ -1373,6 +1605,12 @@ if(
 
     validationReason:
       "",
+
+    validationChecks:
+      {},
+
+    validationChecksUpdatedAt:
+      null,
 
     createdAt:
       new Date().toISOString(),
@@ -1405,7 +1643,898 @@ if(
   return organization;
 }
 
+/* =====================================================
+   FICHE D'IDENTIFICATION DE L'ORGANISATION
+   ===================================================== */
 
+function updateOrganizationProfile(
+  data
+){
+
+  const organization =
+    getOrganization();
+
+  if(
+    !organization ||
+    !organization.organizationId
+  ){
+    return {
+      ok: false,
+      reason: "organization_not_found"
+    };
+  }
+
+
+  const account =
+    getAccount();
+
+  if(
+    !account ||
+    !account.accountId
+  ){
+    return {
+      ok: false,
+      reason: "account_not_found"
+    };
+  }
+
+
+  /*
+    Seul le responsable principal
+    peut modifier l'identité
+    de l'organisation.
+  */
+
+  if(
+    String(
+      organization.ownerAccountId ||
+      ""
+    ) !==
+    String(
+      account.accountId ||
+      ""
+    )
+  ){
+    return {
+      ok: false,
+      reason: "organization_owner_required"
+    };
+  }
+
+
+  const source =
+    data &&
+    typeof data === "object"
+      ? data
+      : {};
+
+
+  const current =
+    (
+      organization.organizationProfile &&
+      typeof organization.organizationProfile === "object"
+    )
+      ? organization.organizationProfile
+      : {};
+
+
+  const allowedFields = [
+
+    "organizationName",
+
+    "siretOrSiren",
+
+    "associationIdentifier",
+
+    "clubIdentifier",
+
+    "schoolIdentifier",
+
+    "municipalityIdentifier",
+
+    "establishmentAddress",
+
+    "registeredAddress",
+
+    "registeredOffice",
+
+    "schoolAddress",
+
+    "businessActivity",
+
+    "legalStructure",
+
+    "responsibleIdentity",
+
+    "responsibleAuthority",
+
+    "presidentOrLegalRepresentative",
+
+    "directionOrAuthorizedRepresentative",
+
+    "institutionalAuthority",
+
+    "email",
+
+    "phone"
+  ];
+
+
+  const next = {
+    ...current
+  };
+
+
+  allowedFields.forEach(
+    function(field){
+
+      if(
+        Object.prototype.hasOwnProperty.call(
+          source,
+          field
+        )
+      ){
+
+        next[field] =
+          String(
+            source[field] ||
+            ""
+          ).trim();
+      }
+    }
+  );
+
+
+  organization.organizationProfile =
+    next;
+
+
+  /*
+    Le nom principal de l'organisation
+    reste également disponible
+    directement sur sa fiche.
+  */
+
+  if(
+    next.organizationName
+  ){
+    organization.name =
+      next.organizationName;
+  }
+
+
+  organization.updatedAt =
+    new Date().toISOString();
+
+
+  /*
+    Si l'organisation était déjà validée,
+    une modification de son identité
+    déclenche un nouveau contrôle.
+
+    L'accès privé est donc suspendu
+    jusqu'à la nouvelle validation.
+  */
+
+  if(
+    organization.validationStatus ===
+      "validated"
+  ){
+
+    organization.validationStatus =
+      "pending_review";
+
+    organization.active =
+      false;
+
+    organization.validationRequestedAt =
+      new Date().toISOString();
+
+    organization.validationReviewedAt =
+      null;
+
+    organization.validationReviewedBy =
+      null;
+
+    organization.validationReason =
+      "organization_profile_updated";
+
+
+    /*
+      Les anciens contrôles ne doivent
+      pas permettre une revalidation
+      automatique après modification
+      de l'identité de l'organisation.
+    */
+
+    organization.validationChecks =
+      {};
+
+    organization.validationChecksUpdatedAt =
+      null;
+  }
+
+
+  saveOrganization(
+    organization
+  );
+
+
+  addSecurityLog(
+    "organization_profile_updated",
+    {
+      organizationId:
+        organization.organizationId,
+
+      category:
+        organization.category,
+
+      accountId:
+        account.accountId
+    }
+  );
+
+
+  return {
+    ok: true,
+
+    organization:
+      organization,
+
+    profile:
+      organization.organizationProfile
+  };
+}
+
+     /* =====================================================
+   CHAMPS DE LA FICHE ORGANISATION
+   SELON LA CATÉGORIE
+   ===================================================== */
+
+function getOrganizationProfileFields(
+  category
+){
+
+  const type =
+    String(
+      category ||
+      ""
+    ).trim().toLowerCase();
+
+
+  const common = [
+
+    {
+      name: "organizationName",
+      label: "Nom de l'organisation",
+      required: true
+    },
+
+    {
+      name: "responsibleIdentity",
+      label: "Nom et prénom du responsable",
+      required: true
+    },
+
+    {
+      name: "responsibleAuthority",
+      label: "Qualité ou fonction du responsable",
+      required: true
+    },
+
+    {
+      name: "email",
+      label: "Adresse e-mail professionnelle",
+      required: true
+    },
+
+    {
+      name: "phone",
+      label: "Téléphone professionnel",
+      required: true
+    }
+  ];
+
+
+  const specific = {
+
+    commerce: [
+
+      {
+        name: "siretOrSiren",
+        label: "SIRET ou SIREN",
+        required: true
+      },
+
+      {
+        name: "establishmentAddress",
+        label: "Adresse de l'établissement",
+        required: true
+      },
+
+      {
+        name: "businessActivity",
+        label: "Activité du commerce",
+        required: true
+      }
+    ],
+
+
+    entreprise: [
+
+      {
+        name: "siretOrSiren",
+        label: "SIRET ou SIREN",
+        required: true
+      },
+
+      {
+        name: "registeredAddress",
+        label: "Adresse du siège ou de l'entreprise",
+        required: true
+      },
+
+      {
+        name: "businessActivity",
+        label: "Activité de l'entreprise",
+        required: true
+      }
+    ],
+
+
+    association: [
+
+      {
+        name: "associationIdentifier",
+        label: "RNA, SIREN ou identifiant de l'association",
+        required: true
+      },
+
+      {
+        name: "registeredOffice",
+        label: "Adresse du siège de l'association",
+        required: true
+      }
+    ],
+
+
+    sport: [
+
+      {
+        name: "clubIdentifier",
+        label: "Identifiant du club",
+        required: true
+      },
+
+      {
+        name: "legalStructure",
+        label: "Structure juridique ou affiliation",
+        required: true
+      },
+
+      {
+        name: "presidentOrLegalRepresentative",
+        label: "Président ou responsable légal",
+        required: true
+      }
+    ],
+
+
+    ecole: [
+
+      {
+        name: "schoolIdentifier",
+        label: "Identifiant de l'établissement",
+        required: true
+      },
+
+      {
+        name: "schoolAddress",
+        label: "Adresse de l'établissement",
+        required: true
+      },
+
+      {
+        name: "directionOrAuthorizedRepresentative",
+        label: "Direction ou responsable autorisé",
+        required: true
+      }
+    ],
+
+
+    mairie: [
+
+      {
+        name: "municipalityIdentifier",
+        label: "Identifiant de la commune",
+        required: true
+      },
+
+      {
+        name: "institutionalAuthority",
+        label: "Autorité ou responsable habilité",
+        required: true
+      }
+    ]
+  };
+
+
+  if(
+    !Object.prototype.hasOwnProperty.call(
+      specific,
+      type
+    )
+  ){
+    return [];
+  }
+
+
+  return [
+    ...common,
+    ...specific[type]
+  ];
+}
+
+/* =====================================================
+   ÉCRAN D'IDENTIFICATION DE L'ORGANISATION
+   ===================================================== */
+
+function openOrganizationProfileForm(){
+
+  const account =
+    getAccount();
+
+  const organization =
+    getOrganization();
+
+
+  if(
+    !account ||
+    !organization ||
+    !organization.organizationId
+  ){
+    return false;
+  }
+
+
+  if(
+    String(
+      organization.ownerAccountId ||
+      ""
+    ) !==
+    String(
+      account.accountId ||
+      ""
+    )
+  ){
+    return false;
+  }
+
+
+  const fields =
+    getOrganizationProfileFields(
+      organization.category
+    );
+
+
+  if(
+    !fields.length
+  ){
+    return false;
+  }
+
+
+  const current =
+    (
+      organization.organizationProfile &&
+      typeof organization.organizationProfile === "object"
+    )
+      ? organization.organizationProfile
+      : {};
+
+
+  const oldOverlay =
+    document.getElementById(
+      "bociteOrganizationProfileOverlay"
+    );
+
+
+  if(oldOverlay){
+    oldOverlay.remove();
+  }
+
+
+  const overlay =
+    document.createElement(
+      "div"
+    );
+
+
+  overlay.id =
+    "bociteOrganizationProfileOverlay";
+
+
+  overlay.style.cssText = [
+    "position:fixed",
+    "inset:0",
+    "z-index:100000",
+    "background:rgba(0,0,0,.45)",
+    "overflow:auto",
+    "padding:18px",
+    "box-sizing:border-box"
+  ].join(";");
+
+
+  const card =
+    document.createElement(
+      "div"
+    );
+
+
+  card.style.cssText = [
+    "max-width:620px",
+    "margin:20px auto",
+    "background:#fff",
+    "border-radius:16px",
+    "padding:20px",
+    "box-sizing:border-box",
+    "box-shadow:0 8px 28px rgba(0,0,0,.18)"
+  ].join(";");
+
+
+  const title =
+    document.createElement(
+      "div"
+    );
+
+
+  title.textContent =
+    "Identification de votre organisation";
+
+
+  title.style.cssText = [
+    "font-size:17px",
+    "font-weight:700",
+    "color:#24713b",
+    "margin-bottom:8px"
+  ].join(";");
+
+
+  const introduction =
+    document.createElement(
+      "div"
+    );
+
+
+  introduction.textContent =
+    "Complétez les informations nécessaires à la vérification de votre organisation par Bo’CitéArt.";
+
+
+  introduction.style.cssText = [
+    "font-size:14px",
+    "line-height:1.5",
+    "margin-bottom:18px"
+  ].join(";");
+
+
+  card.appendChild(
+    title
+  );
+
+  card.appendChild(
+    introduction
+  );
+
+
+  const inputs = {};
+
+
+  fields.forEach(
+    function(field){
+
+      const wrapper =
+        document.createElement(
+          "div"
+        );
+
+
+      wrapper.style.marginBottom =
+        "14px";
+
+
+      const label =
+        document.createElement(
+          "label"
+        );
+
+
+      label.textContent =
+        field.label +
+        (
+          field.required
+            ? " *"
+            : ""
+        );
+
+
+      label.style.cssText = [
+        "display:block",
+        "font-size:14px",
+        "font-weight:600",
+        "margin-bottom:6px"
+      ].join(";");
+
+
+      const input =
+        document.createElement(
+          "input"
+        );
+
+
+      input.type =
+        field.name === "email"
+          ? "email"
+          : (
+              field.name === "phone"
+                ? "tel"
+                : "text"
+            );
+
+
+      input.value =
+        String(
+          current[field.name] ||
+          ""
+        );
+
+
+      input.style.cssText = [
+        "width:100%",
+        "box-sizing:border-box",
+        "padding:11px",
+        "font-size:14px",
+        "border:1px solid #b9b9b9",
+        "border-radius:9px",
+        "background:#fff"
+      ].join(";");
+
+
+      wrapper.appendChild(
+        label
+      );
+
+      wrapper.appendChild(
+        input
+      );
+
+      card.appendChild(
+        wrapper
+      );
+
+
+      inputs[field.name] = {
+        input:
+          input,
+
+        required:
+          field.required === true
+      };
+    }
+  );
+
+
+  const message =
+    document.createElement(
+      "div"
+    );
+
+
+  message.style.cssText = [
+    "font-size:14px",
+    "margin-top:8px",
+    "margin-bottom:12px"
+  ].join(";");
+
+
+  card.appendChild(
+    message
+  );
+
+
+  const actions =
+    document.createElement(
+      "div"
+    );
+
+
+  actions.style.cssText = [
+    "display:flex",
+    "gap:10px",
+    "flex-wrap:wrap",
+    "margin-top:8px"
+  ].join(";");
+
+
+  const saveButton =
+    document.createElement(
+      "button"
+    );
+
+
+  saveButton.type =
+    "button";
+
+
+  saveButton.textContent =
+    "Enregistrer et transmettre";
+
+
+  saveButton.style.cssText = [
+    "background:#fff",
+    "color:#24713b",
+    "border:2px solid #24713b",
+    "border-radius:10px",
+    "padding:10px 15px",
+    "font-size:14px",
+    "font-weight:700",
+    "cursor:pointer"
+  ].join(";");
+
+
+  const closeButton =
+    document.createElement(
+      "button"
+    );
+
+
+  closeButton.type =
+    "button";
+
+
+  closeButton.textContent =
+    "Fermer";
+
+
+  closeButton.style.cssText = [
+    "background:#fff",
+    "color:#24713b",
+    "border:1px solid #24713b",
+    "border-radius:10px",
+    "padding:10px 15px",
+    "font-size:14px",
+    "cursor:pointer"
+  ].join(";");
+
+
+  actions.appendChild(
+    saveButton
+  );
+
+  actions.appendChild(
+    closeButton
+  );
+
+  card.appendChild(
+    actions
+  );
+
+  overlay.appendChild(
+    card
+  );
+
+  document.body.appendChild(
+    overlay
+  );
+
+
+  closeButton.addEventListener(
+    "click",
+    function(){
+
+      overlay.remove();
+    }
+  );
+
+
+  saveButton.addEventListener(
+    "click",
+    function(){
+
+      const data = {};
+
+      let missingField =
+        false;
+
+
+      Object.keys(
+        inputs
+      ).forEach(
+        function(name){
+
+          const row =
+            inputs[name];
+
+          const value =
+            String(
+              row.input.value ||
+              ""
+            ).trim();
+
+
+          if(
+            row.required &&
+            !value
+          ){
+            missingField =
+              true;
+
+            row.input.style.borderColor =
+              "#b42318";
+          }else{
+
+            row.input.style.borderColor =
+              "#b9b9b9";
+          }
+
+
+          data[name] =
+            value;
+        }
+      );
+
+
+      if(missingField){
+
+        message.textContent =
+          "Complétez tous les champs obligatoires.";
+
+        return;
+      }
+
+
+      const result =
+        updateOrganizationProfile(
+          data
+        );
+
+
+      if(
+        !result ||
+        result.ok !== true
+      ){
+
+        message.textContent =
+          "L'enregistrement de la fiche n'a pas abouti.";
+
+        return;
+      }
+
+
+      message.textContent =
+        "Votre dossier est enregistré et transmis pour vérification.";
+
+
+      setTimeout(
+        function(){
+
+          if(
+            document.body.contains(
+              overlay
+            )
+          ){
+            overlay.remove();
+          }
+
+        },
+        900
+      );
+    }
+  );
+
+
+  return true;
+}
+   
 /* =====================================================
    RESPONSABLE PRINCIPAL
    ===================================================== */
@@ -1444,17 +2573,8 @@ function isOrganizationOwner(
   d'une fiche collaborateur.
 */
 
-function getOwnerAccess(){
 
-  const organization =
-    getOrganization();
-
-  if(
-    !organization ||
-    !organization.ownerAccountId
-
-     /* =========================================================
-   ÇA COMMENCE ICI
+/* =========================================================
    ACCÈS DU RESPONSABLE PRINCIPAL
    APRÈS VALIDATION DE L'ORGANISATION
    ========================================================= */
@@ -1506,9 +2626,9 @@ function getOwnerAccess(){
   };
 }
 
+
 /* =========================================================
-   ÇA FINIT ICI
-   ACCÈS DU RESPONSABLE PRINCIPAL
+   FIN ACCÈS DU RESPONSABLE PRINCIPAL
    ========================================================= */
 
    /* =========================================================
@@ -1582,11 +2702,24 @@ function setOrganizationValidationStatus(
     nextStatus === "validated"
   ){
 
-    const validationResult =
-      checkOrganizationValidation(
-        organization,
-        data.checks
+    const validationChecks =
+  (
+    data.checks &&
+    typeof data.checks === "object"
+  )
+    ? data.checks
+    : (
+        organization.validationChecks &&
+        typeof organization.validationChecks === "object"
+          ? organization.validationChecks
+          : {}
       );
+
+const validationResult =
+  checkOrganizationValidation(
+    organization,
+    validationChecks
+  );
 
     if(
       !validationResult.ok ||
@@ -1612,7 +2745,19 @@ function setOrganizationValidationStatus(
   organization.validationStatus =
     nextStatus; 
 
+if(
+  data.checks &&
+  typeof data.checks === "object"
+){
 
+  organization.validationChecks = {
+    ...data.checks
+  };
+
+  organization.validationChecksUpdatedAt =
+    new Date().toISOString();
+}
+   
   organization.active =
     (
       nextStatus ===
@@ -1867,6 +3012,204 @@ function checkOrganizationValidation(
    ÇA FINIT ICI
    CONTRÔLE COMPLET AVANT VALIDATION D'UNE ORGANISATION
    ========================================================= */
+
+/* =====================================================
+   MISE À JOUR D'UN CONTRÔLE DE VALIDATION
+   ===================================================== */
+
+function setOrganizationValidationCheck(
+  checkName,
+  value
+){
+
+  const organization =
+    getOrganization();
+
+  if(
+    !organization ||
+    !organization.organizationId
+  ){
+    return {
+      ok: false,
+      reason: "organization_not_found"
+    };
+  }
+
+  const requirementsResult =
+    getOrganizationValidationRequirements(
+      organization.category
+    );
+
+  const name =
+    String(
+      checkName ||
+      ""
+    ).trim();
+
+  if(
+    !requirementsResult.ok ||
+    !requirementsResult.requirements.includes(
+      name
+    )
+  ){
+    return {
+      ok: false,
+      reason: "invalid_validation_check"
+    };
+  }
+
+  if(
+    typeof value !== "boolean"
+  ){
+    return {
+      ok: false,
+      reason: "invalid_validation_check_value"
+    };
+  }
+
+  const checks =
+    (
+      organization.validationChecks &&
+      typeof organization.validationChecks === "object"
+    )
+      ? {
+          ...organization.validationChecks
+        }
+      : {};
+
+  checks[name] =
+    value;
+
+  organization.validationChecks =
+    checks;
+
+  organization.validationChecksUpdatedAt =
+    new Date().toISOString();
+
+  organization.updatedAt =
+    new Date().toISOString();
+
+  saveOrganization(
+    organization
+  );
+
+  addSecurityLog(
+    "organization_validation_check_updated",
+    {
+      organizationId:
+        organization.organizationId,
+
+      category:
+        organization.category,
+
+      check:
+        name,
+
+      value:
+        checks[name]
+    }
+  );
+
+  return {
+    ok: true,
+
+    check:
+      name,
+
+    value:
+      checks[name],
+
+    organization:
+      organization
+  };
+}
+
+/* =====================================================
+   ÉTAT DES CONTRÔLES DE VALIDATION
+   ===================================================== */
+
+function getOrganizationValidationState(){
+
+  const organization =
+    getOrganization();
+
+  if(
+    !organization ||
+    !organization.organizationId
+  ){
+    return {
+      ok: false,
+      reason: "organization_not_found"
+    };
+  }
+
+
+  const requirementsResult =
+    getOrganizationValidationRequirements(
+      organization.category
+    );
+
+  if(
+    !requirementsResult.ok
+  ){
+    return requirementsResult;
+  }
+
+
+  const checks =
+    (
+      organization.validationChecks &&
+      typeof organization.validationChecks === "object"
+    )
+      ? organization.validationChecks
+      : {};
+
+
+  const validationResult =
+    checkOrganizationValidation(
+      organization,
+      checks
+    );
+
+
+  return {
+
+    ok: true,
+
+    organizationId:
+      organization.organizationId,
+
+    category:
+      organization.category,
+
+    status:
+      organization.validationStatus ||
+      "pending_review",
+
+    active:
+      organization.active === true,
+
+    requirements:
+      requirementsResult.requirements,
+
+    checks:
+      checks,
+
+    complete:
+      validationResult.complete === true,
+
+    missing:
+      Array.isArray(
+        validationResult.missing
+      )
+        ? validationResult.missing
+        : [],
+
+    validationChecksUpdatedAt:
+      organization.validationChecksUpdatedAt ||
+      null
+  };
+}
    
 /* =====================================================
    PERMISSIONS
@@ -2500,21 +3843,44 @@ function getCurrentAccessContext(){
   const organization =
     getOrganization();
 
+
+  /*
+    Aucun compte identifié.
+  */
+
   if(!account){
 
     return {
-     /* =========================================================
-   ÇA COMMENCE ICI
-   ACCÈS RESPONSABLE PRINCIPAL
-   ORGANISATION VALIDÉE UNIQUEMENT
-   ========================================================= */
+
+      authenticated:
+        false,
+
+      account:
+        null,
+
+      organization:
+        organization || null,
+
+      role:
+        null,
+
+      permissions:
+        [],
+
+      collaborator:
+        null
+    };
+  }
+
 
   /*
-    Le responsable principal est bien identifié
-    comme propriétaire de l'organisation.
+    RESPONSABLE PRINCIPAL
 
-    Mais l'accès privé de l'organisation
-    n'est ouvert qu'après validation Bo'CitéArt.
+    Le responsable est reconnu comme
+    propriétaire de l'organisation.
+
+    L'accès privé n'est ouvert qu'après
+    validation de l'organisation par Bo'CitéArt.
   */
 
   if(
@@ -2572,55 +3938,11 @@ function getCurrentAccessContext(){
     };
   }
 
-/* =========================================================
-   ÇA FINIT ICI
-   ACCÈS RESPONSABLE PRINCIPAL
-   ========================================================= */
-
 
   /*
-    Cas du responsable principal.
-  */
+    COMPTE PERSONNEL
 
-  if(
-    organization &&
-    organization.organizationId &&
-    String(
-      organization.ownerAccountId ||
-      ""
-    ) ===
-    String(
-      account.accountId ||
-      ""
-    )
-  ){
-
-    return {
-
-      authenticated:
-        accountSecurityReady(),
-
-      account:
-        account,
-
-      organization:
-        organization,
-
-      role:
-        "owner",
-
-      permissions:[
-        "all"
-      ],
-
-      collaborator:
-        null
-    };
-  }
-
-
-  /*
-    Cas d'un compte personnel
+    Citoyen ou autre profil
     sans organisation.
   */
 
@@ -2655,13 +3977,10 @@ function getCurrentAccessContext(){
 
 
   /*
-    Si plus tard un collaborateur
-    ouvre une session distincte,
-    son identifiant de collaborateur
-    pourra être placé dans la session active.
+    COLLABORATEUR
 
-    Pour la démo, on prépare déjà
-    le contrôle sans simuler de faux accès.
+    On recherche une session active
+    rattachée à un collaborateur.
   */
 
   const activeSession =
@@ -2672,7 +3991,7 @@ function getCurrentAccessContext(){
           session &&
           session.active === true &&
           session.accountId ===
-          account.accountId
+            account.accountId
         );
       });
 
@@ -2687,10 +4006,22 @@ function getCurrentAccessContext(){
         activeSession.collaboratorId
       );
 
+
+    const organizationValidated =
+      Boolean(
+        organization &&
+        organization.organizationId &&
+        organization.active === true &&
+        organization.validationStatus ===
+          "validated"
+      );
+
+
     if(
       collaborator &&
       collaborator.enabled === true &&
-      collaborator.invitationAccepted === true
+      collaborator.invitationAccepted === true &&
+      organizationValidated
     ){
 
       return {
@@ -2716,15 +4047,26 @@ function getCurrentAccessContext(){
             : [],
 
         collaborator:
-          collaborator
+          collaborator,
+
+        organizationValidated:
+          true,
+
+        validationStatus:
+          "validated"
       };
     }
   }
 
 
+  /*
+    Aucun accès privé autorisé.
+  */
+
   return {
 
-    authenticated:false,
+    authenticated:
+      false,
 
     account:
       account,
@@ -2735,14 +4077,23 @@ function getCurrentAccessContext(){
     role:
       null,
 
-    permissions:[],
+    permissions:
+      [],
 
     collaborator:
-      null
+      null,
+
+    organizationValidated:
+      false,
+
+    validationStatus:
+      organization &&
+      organization.validationStatus
+        ? organization.validationStatus
+        : "pending_review"
   };
 }
-
-
+ 
 /* =====================================================
    AUTORISATION D'UNE ACTION
    ===================================================== */
@@ -3739,7 +5090,6 @@ function createAccount(data){
       account
     );
   }
-
 
   addStatistic({
     type:
@@ -4898,8 +6248,7 @@ function openAccountSecuritySetup(
 
               });
 
-
-            addSecurityLog(
+                      addSecurityLog(
               "account_security_configured",
               {
 
@@ -4915,10 +6264,49 @@ function openAccountSecuritySetup(
             );
 
 
+            /*
+              Le compte personnel est maintenant
+              correctement sécurisé.
+
+              Pour une organisation,
+              on termine d'abord l'inscription
+              puis on ouvre sa fiche
+              d'identification.
+            */
+
+            if(
+              isOrganizationCategory(
+                updatedAccount.category
+              )
+            ){
+
+              finishRegistration(
+                updatedAccount
+              );
+
+
+              setTimeout(
+                function(){
+
+                  openOrganizationProfileForm();
+
+                },
+                100
+              );
+
+
+              return;
+            }
+
+
+            /*
+              Citoyen et autres profils personnels :
+              fin normale de l'inscription.
+            */
+
             finishRegistration(
               updatedAccount
             );
-
           }
         )
         .catch(
@@ -5266,6 +6654,15 @@ isOrganizationOwner:
 
 getOwnerAccess:
   getOwnerAccess,
+
+    getOrganizationValidationRequirements:
+  getOrganizationValidationRequirements,
+
+checkOrganizationValidation:
+  checkOrganizationValidation,
+
+getOrganizationValidationState:
+  getOrganizationValidationState, 
 
 getCollaborators:
   loadCollaborators,
