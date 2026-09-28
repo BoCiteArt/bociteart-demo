@@ -5332,25 +5332,190 @@ window.BociteSportMerchant={
               false;
 
 
-      const club=
-        sportClub();
+     const club=
+  sportClub();
 
 
-      const validClubScan=
-        !!(
-          club.clubRef &&
-          scan &&
-          scan.type ===
-            "sport_club_ref" &&
+/*
+  CONTRÔLE DU QR AVANT TOUT EFFET DE L'ACHAT.
+
+  Aucun bocitecoin ne doit être crédité
+  et aucun événement d'achat personnel ne doit être émis
+  avec un QR expiré, déjà utilisé,
+  d'une autre ville ou invalide.
+*/
+
+const city=
+  sportActiveCity();
+
+
+const scanCityId=
+  String(
+    scan &&
+    scan.cityId ||
+    ""
+  )
+    .trim()
+    .toLowerCase();
+
+
+const operationId=
+  String(
+    scan &&
+    scan.operationId ||
+    ""
+  )
+    .trim()
+    .toUpperCase();
+
+
+const scanExpired=
+  !!(
+    scan &&
+    Number(
+      scan.expiresAt ||
+      0
+    ) > 0 &&
+    Number(
+      scan.expiresAt
+    ) <
+    Date.now()
+  );
+
+
+const scanAlreadyUsed=
+  !!(
+    operationId &&
+    (
+      sportExchanges()
+        .some(
+          item =>
+            String(
+              item &&
+              item.operationRef ||
+              ""
+            ) ===
+            operationId
+        )
+      ||
+      sportMairieTransfers()
+        .some(
+          item =>
+            String(
+              item &&
+              (
+                item.qrOperationId ||
+                item.operationRef
+              ) ||
+              ""
+            ) ===
+            operationId
+        )
+    )
+  );
+
+
+const validClubScan=
+  !!(
+    club.clubRef &&
+    scan &&
+    scan.type ===
+      "sport_club_ref" &&
+    String(
+      scan.clubRef ||
+      ""
+    ) ===
+      String(
+        club.clubRef
+      ) &&
+    city.cityId &&
+    scanCityId ===
+      city.cityId &&
+    /^BCA-S-[A-Z0-9]{12,40}$/.test(
+      operationId
+    ) &&
+    !scanExpired &&
+    !scanAlreadyUsed &&
+    (
+      SPORT_CONFIG.mode !==
+        "production" ||
+      String(
+        scan.scanToken ||
+        ""
+      ).trim()
+    )
+  );
+
+
+if(
+  !validClubScan
+){
+
+  return sportValidateBag(
+    scan,
+    {
+      type:
+        "merchant"
+    }
+  );
+}
+
+
+/*
+  ANTI DOUBLE TICKET AVANT TOUT CRÉDIT.
+
+  Un ticket déjà traité ne doit pas
+  déclencher un nouveau crédit
+  ni un nouvel événement.
+*/
+
+if(
+  purchaseReference
+){
+
+  const existingPurchase=
+    sportExchanges()
+      .find(
+        item =>
+          item &&
           String(
-            scan.clubRef ||
+            item.clubRef ||
             ""
           ) ===
             String(
-              club.clubRef
-            )
-        );
+              club.clubRef ||
+              ""
+            ) &&
+          String(
+            item.purchase &&
+            item.purchase.reference ||
+            ""
+          ) ===
+            purchaseReference &&
+          String(
+            item.actor &&
+            item.actor.merchantId ||
+            ""
+          ) ===
+            merchantId
+      );
 
+
+  if(existingPurchase){
+
+    return {
+      ok:true,
+      duplicate:true,
+      balance:
+        sportWallet().vert,
+      operationRef:
+        String(
+          existingPurchase.operationRef ||
+          ""
+        )
+    };
+  }
+}
 
       /* =====================================================
          ACHAT RÉEL D'AU MOINS 10 €
