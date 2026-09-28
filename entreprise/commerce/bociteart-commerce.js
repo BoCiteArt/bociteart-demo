@@ -1924,10 +1924,6 @@ function openCommerceModule(){
                 et rapprochez directement
                 les compétences disponibles
                 de votre territoire.
-
-              </div>
-
-                  <div class="box">
           Pourquoi chercher plus loin si votre futur collaborateur
           est peut-être déjà près de chez vous ?
         </div>
