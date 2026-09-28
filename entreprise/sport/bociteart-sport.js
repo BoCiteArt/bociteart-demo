@@ -2416,7 +2416,7 @@ function sportDebitRemainder(){
      ======================================================= */
 
   sportNotifyEvent(
-    "sport_medical_research_orientation_recorded"
+    "sport_medical_research_orientation_recorded",
     {
 
       operationRef:
@@ -5610,6 +5610,689 @@ window.BociteSportMerchant={
 };
 
 
+/* =========================================================
+   ÇA COMMENCE ICI — SPORT → MAIRIE
+   ORIENTATION DE 30 VERT VERS LA RECHERCHE MÉDICALE
+   AUCUN CABAS N'EST CRÉÉ PAR LA MAIRIE
+   ========================================================= */
+
+async function sportValidateMairieResearch(scan){
+
+  const c=
+    sportClub();
+
+
+  if(
+    !c.clubRef ||
+    !scan ||
+    scan.type !==
+      "sport_club_ref"
+  ){
+
+    return {
+
+      ok:false,
+
+      reason:
+        "invalid_scan"
+    };
+  }
+
+
+  const city=
+    sportActiveCity();
+
+
+  const scanCityId=
+    String(
+      scan.cityId ||
+      ""
+    )
+      .trim()
+      .toLowerCase();
+
+
+  if(
+    !city.cityId ||
+    !scanCityId ||
+    scanCityId !==
+      city.cityId
+  ){
+
+    return {
+
+      ok:false,
+
+      reason:
+        "wrong_city"
+    };
+  }
+
+
+  const operationId=
+    String(
+      scan.operationId ||
+      ""
+    )
+      .trim()
+      .toUpperCase();
+
+
+  if(
+    !/^BCA-S-[A-Z0-9]{12,40}$/.test(
+      operationId
+    )
+  ){
+
+    return {
+
+      ok:false,
+
+      reason:
+        "invalid_operation"
+    };
+  }
+
+
+  if(
+    String(
+      scan.clubRef ||
+      ""
+    ) !==
+    String(
+      c.clubRef ||
+      ""
+    )
+  ){
+
+    return {
+
+      ok:false,
+
+      reason:
+        "wrong_club"
+    };
+  }
+
+
+  if(
+    Number(
+      scan.expiresAt ||
+      0
+    ) > 0 &&
+    Number(
+      scan.expiresAt
+    ) <
+    Date.now()
+  ){
+
+    return {
+
+      ok:false,
+
+      reason:
+        "scan_expired"
+    };
+  }
+
+
+  const alreadyUsed=
+    sportExchanges()
+      .some(
+        item =>
+          String(
+            item &&
+            item.operationRef ||
+            ""
+          ) ===
+          operationId
+      )
+    ||
+    sportMairieTransfers()
+      .some(
+        item =>
+          String(
+            item &&
+            (
+              item.qrOperationId ||
+              item.operationRef
+            ) ||
+            ""
+          ) ===
+          operationId
+      );
+
+
+  if(alreadyUsed){
+
+    return {
+
+      ok:false,
+
+      duplicate:true,
+
+      reason:
+        "qr_already_used",
+
+      balance:
+        sportWallet().vert
+    };
+  }
+
+
+  if(
+    SPORT_CONFIG.mode ===
+      "production" &&
+    !String(
+      scan.scanToken ||
+      ""
+    ).trim()
+  ){
+
+    return {
+
+      ok:false,
+
+      reason:
+        "scan_token_required"
+    };
+  }
+
+
+  const wallet=
+    sportWallet();
+
+
+  if(
+    Number(
+      wallet.vert ||
+      0
+    ) < 30
+  ){
+
+    return {
+
+      ok:false,
+
+      reason:
+        "insufficient_balance",
+
+      balance:
+        Number(
+          wallet.vert ||
+          0
+        )
+    };
+  }
+
+
+  const representative={
+
+    ref:
+      String(
+        scan.presentedBy &&
+        scan.presentedBy.ref ||
+        ""
+      ),
+
+    name:
+      String(
+        scan.presentedBy &&
+        scan.presentedBy.name ||
+        "Responsable du club"
+      ),
+
+    role:
+      String(
+        scan.presentedBy &&
+        scan.presentedBy.role ||
+        ""
+      ),
+
+    team:
+      String(
+        scan.presentedBy &&
+        scan.presentedBy.team ||
+        ""
+      )
+  };
+
+
+  /* =======================================================
+     PRODUCTION :
+     LE SERVEUR DEVIENT AUTORITAIRE
+     ======================================================= */
+
+  if(
+    SPORT_CONFIG.scanEndpoint
+  ){
+
+    try{
+
+      const response=
+        await fetch(
+          SPORT_CONFIG.scanEndpoint,
+          {
+
+            method:
+              "POST",
+
+            credentials:
+              "include",
+
+            headers:{
+
+              "Content-Type":
+                "application/json"
+            },
+
+            body:
+              JSON.stringify({
+
+                action:
+                  "orient_sport_medical_research",
+
+                cityId:
+                  city.cityId,
+
+                operationId:
+                  operationId,
+
+                operationCreatedAt:
+                  Number(
+                    scan.operationCreatedAt ||
+                    scan.issuedAt ||
+                    0
+                  ),
+
+                expiresAt:
+                  Number(
+                    scan.expiresAt ||
+                    0
+                  ),
+
+                clubRef:
+                  c.clubRef,
+
+                scanToken:
+                  String(
+                    scan.scanToken ||
+                    ""
+                  ),
+
+                amount:
+                  30,
+
+                orientation:
+                  "medical_research",
+
+                representative:
+                  representative
+              })
+          }
+        );
+
+
+      return response.ok
+
+        ? await response.json()
+
+        : {
+
+            ok:false,
+
+            reason:
+              "service_unavailable"
+          };
+
+
+    }catch(error){
+
+      return {
+
+        ok:false,
+
+        reason:
+          "service_unavailable"
+      };
+    }
+  }
+
+
+  /* =======================================================
+     DÉMO / PRÉPRODUCTION :
+     ANNULATION DE 30 VERT
+     ======================================================= */
+
+  const oldBalance=
+    Number(
+      wallet.vert ||
+      0
+    );
+
+
+  wallet.vert=
+    oldBalance - 30;
+
+
+  if(
+    !sportSaveWallet(
+      wallet
+    )
+  ){
+
+    return {
+
+      ok:false,
+
+      reason:
+        "wallet_save_failed",
+
+      balance:
+        oldBalance
+    };
+  }
+
+
+  /* =======================================================
+     HISTORIQUE DU CLUB
+     ======================================================= */
+
+  const ledger=
+    sportLedger();
+
+
+  ledger.push({
+
+    id:
+      sportId(
+        "mairie-medical-research"
+      ),
+
+    operationRef:
+      operationId,
+
+    direction:
+      "medical_research_orientation",
+
+    pointsCancelled:
+      30,
+
+    amount:
+      30,
+
+    pointNature:
+      "non_monetary_participation",
+
+    financialConversion:
+      false,
+
+    cashValue:
+      null,
+
+    currency:
+      null,
+
+    beneficiaryType:
+      "medical_research",
+
+    reason:
+      "Sport → Mairie — orientation de 30 bocitecoins VERT vers la recherche médicale, sans conversion monétaire",
+
+    actor:{
+
+      type:
+        "mairie",
+
+      label:
+        "Mairie — service Sport",
+
+      municipalAccountCode:
+        SPORT_CONFIG
+          .mairieSportAccountCode
+    },
+
+    representative:
+      representative,
+
+    status:
+      "recorded",
+
+    ts:
+      Date.now(),
+
+    date:
+      new Date()
+        .toLocaleString(
+          "fr-FR"
+        )
+  });
+
+
+  if(
+    !sportSaveLedger(
+      ledger
+    )
+  ){
+
+    sportSaveWallet({
+
+      vert:
+        oldBalance
+    });
+
+
+    return {
+
+      ok:false,
+
+      reason:
+        "ledger_save_failed",
+
+      balance:
+        oldBalance
+    };
+  }
+
+
+  /* =======================================================
+     REGISTRE SPORT → MAIRIE
+     ======================================================= */
+
+  const transfers=
+    sportMairieTransfers();
+
+
+  transfers.push({
+
+    id:
+      sportId(
+        "mairie-medical-research"
+      ),
+
+    qrOperationId:
+      operationId,
+
+    operationRef:
+      operationId,
+
+    recordType:
+      "medical_research_orientation",
+
+    cityId:
+      String(
+        city.cityId ||
+        ""
+      ),
+
+    cityName:
+      String(
+        city.cityName ||
+        ""
+      ),
+
+    clubRef:
+      String(
+        c.clubRef ||
+        ""
+      ),
+
+    clubName:
+      String(
+        c.name ||
+        ""
+      ),
+
+    commune:
+      String(
+        c.commune ||
+        ""
+      ),
+
+    pointsCancelled:
+      30,
+
+    pointNature:
+      "non_monetary_participation",
+
+    financialConversion:
+      false,
+
+    cashValue:
+      null,
+
+    currency:
+      null,
+
+    beneficiaryType:
+      "medical_research",
+
+    associationId:
+      null,
+
+    associationName:
+      null,
+
+    financialSettlement:
+      "not_applicable",
+
+    representative:
+      representative,
+
+    validatedBy:
+      "mairie",
+
+    status:
+      "orientation_recorded",
+
+    createdAt:
+      Date.now(),
+
+    date:
+      new Date()
+        .toLocaleString(
+          "fr-FR"
+        )
+  });
+
+
+  if(
+    !sportSaveMairieTransfers(
+      transfers
+    )
+  ){
+
+    sportSaveWallet({
+
+      vert:
+        oldBalance
+    });
+
+
+    sportSaveLedger(
+      sportLedger()
+        .filter(
+          item =>
+            String(
+              item &&
+              item.operationRef ||
+              ""
+            ) !==
+            operationId
+        )
+    );
+
+
+    return {
+
+      ok:false,
+
+      reason:
+        "mairie_history_save_failed",
+
+      balance:
+        oldBalance
+    };
+  }
+
+
+  sportNotifyEvent(
+    "sport_mairie_medical_research_orientation_validated",
+    {
+
+      operationRef:
+        operationId,
+
+      cityId:
+        String(
+          city.cityId ||
+          ""
+        ),
+
+      clubRef:
+        String(
+          c.clubRef ||
+          ""
+        ),
+
+      pointsCancelled:
+        30,
+
+      financialConversion:
+        false,
+
+      balance:
+        wallet.vert
+    }
+  );
+
+
+  return {
+
+    ok:true,
+
+    operationRef:
+      operationId,
+
+    pointsCancelled:
+      30,
+
+    balance:
+      wallet.vert,
+
+    financialConversion:
+      false,
+
+    orientation:
+      "medical_research"
+  };
+}
+
+/* =========================================================
+   ÇA FINIT ICI — SPORT → MAIRIE
+   ORIENTATION DE 30 VERT VERS LA RECHERCHE MÉDICALE
+   ========================================================= */
+   
 window.BociteSportMairie={
 
   readClub(scan){
@@ -5810,23 +6493,11 @@ if(
     };
   },
 
-  validateClubScan:
-    scan =>
-      sportValidateBag(
-        scan,
-        {
-
-          type:
-            "mairie",
-
-          label:
-            "Mairie — service Sport",
-
-          municipalAccountCode:
-            SPORT_CONFIG
-              .mairieSportAccountCode
-        }
-      ),
+ validateClubScan:
+  scan =>
+    sportValidateMairieResearch(
+      scan
+    ),
 
   /* =========================================================
      RELIQUAT SPORT — ORIENTATION SOLIDAIRE
@@ -6208,7 +6879,7 @@ if(
        ======================================================= */
 
     sportNotifyEvent(
-      "sport_medical_research_orientation_validated"
+      "sport_medical_research_orientation_validated",
       {
 
         operationRef:
