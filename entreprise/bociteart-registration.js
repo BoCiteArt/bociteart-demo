@@ -1356,8 +1356,23 @@ if(
       account.phone ||
       "",
 
-    active:
-      true,
+ active:
+      false,
+
+    validationStatus:
+      "pending_review",
+
+    validationRequestedAt:
+      new Date().toISOString(),
+
+    validationReviewedAt:
+      null,
+
+    validationReviewedBy:
+      null,
+
+    validationReason:
+      "",
 
     createdAt:
       new Date().toISOString(),
@@ -1366,7 +1381,7 @@ if(
       new Date().toISOString(),
 
     version:
-      "1"
+      "2"
   };
 
   saveOrganization(
@@ -1437,10 +1452,34 @@ function getOwnerAccess(){
   if(
     !organization ||
     !organization.ownerAccountId
+
+     /* =========================================================
+   ÇA COMMENCE ICI
+   ACCÈS DU RESPONSABLE PRINCIPAL
+   APRÈS VALIDATION DE L'ORGANISATION
+   ========================================================= */
+
+function getOwnerAccess(){
+
+  const organization =
+    getOrganization();
+
+  if(
+    !organization ||
+    !organization.ownerAccountId
   ){
 
     return null;
   }
+
+
+  const organizationValidated =
+    (
+      organization.active === true &&
+      organization.validationStatus ===
+        "validated"
+    );
+
 
   return {
 
@@ -1450,16 +1489,385 @@ function getOwnerAccess(){
     role:
       "owner",
 
-    permissions:[
-      "all"
-    ],
+    permissions:
+      organizationValidated
+        ? ["all"]
+        : [],
 
     enabled:
-      true
+      organizationValidated,
+
+    organizationValidated:
+      organizationValidated,
+
+    validationStatus:
+      organization.validationStatus ||
+      "pending_review"
   };
 }
 
+/* =========================================================
+   ÇA FINIT ICI
+   ACCÈS DU RESPONSABLE PRINCIPAL
+   ========================================================= */
 
+   /* =========================================================
+   ÇA COMMENCE ICI
+   MOTEUR CENTRAL DE VALIDATION DES ORGANISATIONS Bo'CitéArt
+   ========================================================= */
+
+function setOrganizationValidationStatus(
+  status,
+  options
+){
+
+  const allowedStatuses = [
+    "pending_review",
+    "needs_information",
+    "validated",
+    "unfavorable"
+  ];
+
+  const nextStatus =
+    String(
+      status ||
+      ""
+    ).trim();
+
+
+  if(
+    !allowedStatuses.includes(
+      nextStatus
+    )
+  ){
+
+    return {
+      ok: false,
+      reason: "invalid_status"
+    };
+  }
+
+
+  const organization =
+    getOrganization();
+
+
+  if(
+    !organization ||
+    !organization.organizationId
+  ){
+
+    return {
+      ok: false,
+      reason: "organization_not_found"
+    };
+  }
+
+
+  const data =
+    options &&
+    typeof options === "object"
+      ? options
+      : {};
+
+
+  /*
+    Une demande de validation définitive
+    doit obligatoirement passer tous les
+    contrôles prévus pour la catégorie
+    de l'organisation.
+  */
+
+  if(
+    nextStatus === "validated"
+  ){
+
+    const validationResult =
+      checkOrganizationValidation(
+        organization,
+        data.checks
+      );
+
+    if(
+      !validationResult.ok ||
+      !validationResult.complete
+    ){
+
+      return {
+
+        ok: false,
+
+        reason:
+          "validation_checks_incomplete",
+
+        category:
+          organization.category,
+
+        missing:
+          validationResult.missing || []
+      };
+    }
+  }
+
+  organization.validationStatus =
+    nextStatus; 
+
+
+  organization.active =
+    (
+      nextStatus ===
+      "validated"
+    );
+
+
+  organization.validationReason =
+    String(
+      data.reason ||
+      ""
+    ).trim();
+
+
+  organization.validationReviewedAt =
+    new Date().toISOString();
+
+
+  organization.validationReviewedBy =
+    String(
+      data.reviewedBy ||
+      "bociteart"
+    ).trim();
+
+
+  organization.updatedAt =
+    new Date().toISOString();
+
+
+  saveOrganization(
+    organization
+  );
+
+
+  addSecurityLog(
+    "organization_validation_status_changed",
+    {
+      organizationId:
+        organization.organizationId,
+
+      category:
+        organization.category,
+
+      validationStatus:
+        organization.validationStatus,
+
+      active:
+        organization.active,
+
+      reviewedBy:
+        organization.validationReviewedBy
+    }
+  );
+
+
+  return {
+    ok: true,
+    organization:
+      organization
+  };
+}
+
+/* =========================================================
+   ÇA FINIT ICI
+   MOTEUR CENTRAL DE VALIDATION DES ORGANISATIONS Bo'CitéArt
+   ========================================================= */
+
+   /* =========================================================
+   ÇA COMMENCE ICI
+   RÈGLES DE CONTRÔLE PAR TYPE D'ORGANISATION
+   ========================================================= */
+
+function getOrganizationValidationRequirements(
+  category
+){
+
+  const type =
+    String(
+      category ||
+      ""
+    ).trim().toLowerCase();
+
+
+  const common = [
+    "organization_name",
+    "commune",
+    "responsible_identity",
+    "responsible_authority",
+    "email",
+    "phone"
+  ];
+
+
+  const requirements = {
+
+    commerce: [
+      ...common,
+      "siret_or_siren",
+      "establishment_address",
+      "business_activity"
+    ],
+
+    entreprise: [
+      ...common,
+      "siret_or_siren",
+      "registered_address",
+      "business_activity"
+    ],
+
+    association: [
+      ...common,
+      "association_identifier",
+      "registered_office"
+    ],
+
+    sport: [
+      ...common,
+      "club_identifier",
+      "legal_structure",
+      "president_or_legal_representative"
+    ],
+
+    ecole: [
+      ...common,
+      "school_identifier",
+      "school_address",
+      "direction_or_authorized_representative"
+    ],
+
+    mairie: [
+      ...common,
+      "municipality_identifier",
+      "institutional_authority"
+    ]
+  };
+
+
+  if(
+    !Object.prototype.hasOwnProperty.call(
+      requirements,
+      type
+    )
+  ){
+
+    return {
+      ok: false,
+      category:
+        type,
+      requirements: [],
+      reason:
+        "unsupported_organization_category"
+    };
+  }
+
+
+  return {
+    ok: true,
+    category:
+      type,
+    requirements:
+      requirements[type]
+  };
+}
+
+/* =========================================================
+   ÇA FINIT ICI
+   RÈGLES DE CONTRÔLE PAR TYPE D'ORGANISATION
+   ========================================================= */
+
+/* =========================================================
+   ÇA COMMENCE ICI
+   CONTRÔLE COMPLET AVANT VALIDATION D'UNE ORGANISATION
+   ========================================================= */
+
+function checkOrganizationValidation(
+  organization,
+  checks
+){
+
+  if(
+    !organization ||
+    !organization.organizationId
+  ){
+
+    return {
+      ok: false,
+      complete: false,
+      reason: "organization_not_found",
+      missing: []
+    };
+  }
+
+
+  const requirementsResult =
+    getOrganizationValidationRequirements(
+      organization.category
+    );
+
+
+  if(
+    !requirementsResult.ok
+  ){
+
+    return {
+      ok: false,
+      complete: false,
+      reason:
+        requirementsResult.reason,
+      missing: []
+    };
+  }
+
+
+  const validationChecks =
+    checks &&
+    typeof checks === "object"
+      ? checks
+      : {};
+
+
+  const missing =
+    requirementsResult.requirements.filter(
+      function(requirement){
+
+        return (
+          validationChecks[requirement] !==
+          true
+        );
+      }
+    );
+
+
+  return {
+
+    ok: true,
+
+    complete:
+      missing.length === 0,
+
+    category:
+      requirementsResult.category,
+
+    required:
+      requirementsResult.requirements,
+
+    missing:
+      missing
+  };
+}
+
+/* =========================================================
+   ÇA FINIT ICI
+   CONTRÔLE COMPLET AVANT VALIDATION D'UNE ORGANISATION
+   ========================================================= */
+   
 /* =====================================================
    PERMISSIONS
    ===================================================== */
@@ -2095,14 +2503,79 @@ function getCurrentAccessContext(){
   if(!account){
 
     return {
-      authenticated:false,
-      account:null,
-      organization:null,
-      role:null,
-      permissions:[],
-      collaborator:null
+     /* =========================================================
+   ÇA COMMENCE ICI
+   ACCÈS RESPONSABLE PRINCIPAL
+   ORGANISATION VALIDÉE UNIQUEMENT
+   ========================================================= */
+
+  /*
+    Le responsable principal est bien identifié
+    comme propriétaire de l'organisation.
+
+    Mais l'accès privé de l'organisation
+    n'est ouvert qu'après validation Bo'CitéArt.
+  */
+
+  if(
+    organization &&
+    organization.organizationId &&
+    String(
+      organization.ownerAccountId ||
+      ""
+    ) ===
+    String(
+      account.accountId ||
+      ""
+    )
+  ){
+
+    const organizationValidated =
+      (
+        organization.active === true &&
+        organization.validationStatus ===
+          "validated"
+      );
+
+
+    return {
+
+      authenticated:
+        Boolean(
+          accountSecurityReady() &&
+          organizationValidated
+        ),
+
+      account:
+        account,
+
+      organization:
+        organization,
+
+      role:
+        "owner",
+
+      permissions:
+        organizationValidated
+          ? ["all"]
+          : [],
+
+      collaborator:
+        null,
+
+      organizationValidated:
+        organizationValidated,
+
+      validationStatus:
+        organization.validationStatus ||
+        "pending_review"
     };
   }
+
+/* =========================================================
+   ÇA FINIT ICI
+   ACCÈS RESPONSABLE PRINCIPAL
+   ========================================================= */
 
 
   /*
