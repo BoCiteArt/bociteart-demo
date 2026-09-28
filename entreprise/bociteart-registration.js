@@ -5196,20 +5196,15 @@ function createCollaboratorAccess(
     getAccount();
 
 
+  /*
+    L'organisation doit exister,
+    être validée et son accès
+    professionnel doit avoir été activé.
+  */
+
   if(
     !organization ||
-    !organization.organizationId
-  ){
-
-    return Promise.reject(
-      new Error(
-        "Organisation introuvable."
-      )
-    );
-  }
-
-
-  if(
+    !organization.organizationId ||
     organization.active !== true ||
     organization.validationStatus !==
       "validated" ||
@@ -5219,11 +5214,17 @@ function createCollaboratorAccess(
 
     return Promise.reject(
       new Error(
-        "L'accès professionnel doit être activé avant d'ajouter un collaborateur."
+        "L'accès professionnel de l'organisation doit être validé et activé avant d'ajouter un collaborateur."
       )
     );
   }
 
+
+  /*
+    Seul le responsable principal,
+    depuis son compte sécurisé,
+    peut créer un collaborateur.
+  */
 
   if(
     !account ||
@@ -5263,20 +5264,10 @@ function createCollaboratorAccess(
     );
 
 
-  const role =
-    ACCESS_ROLES[
-      source.role
-    ]
-      ? source.role
-      : "custom";
-
-
-  const permissions =
-    getRolePermissions(
-      role,
-      source.permissions
-    );
-
+  /*
+    Un nom et au moins un moyen
+    de contact sont obligatoires.
+  */
 
   if(
     !displayName ||
@@ -5294,6 +5285,21 @@ function createCollaboratorAccess(
   }
 
 
+  const role =
+    ACCESS_ROLES[
+      source.role
+    ]
+      ? source.role
+      : "custom";
+
+
+  const permissions =
+    getRolePermissions(
+      role,
+      source.permissions
+    );
+
+
   const invitationCode =
     createNumericCode(6);
 
@@ -5309,6 +5315,9 @@ function createCollaboratorAccess(
       const collaborators =
         loadCollaborators();
 
+      const now =
+        new Date().toISOString();
+
 
       const collaborator = {
 
@@ -5319,6 +5328,13 @@ function createCollaboratorAccess(
 
         organizationId:
           organization.organizationId,
+
+        /*
+          Le compte du collaborateur
+          n'est rattaché qu'au moment
+          où celui-ci accepte lui-même
+          son invitation.
+        */
 
         accountId:
           "",
@@ -5348,7 +5364,10 @@ function createCollaboratorAccess(
           invitationCodeHash,
 
         invitedAt:
-          new Date().toISOString(),
+          now,
+
+        createdAt:
+          now,
 
         acceptedAt:
           null,
@@ -5357,7 +5376,7 @@ function createCollaboratorAccess(
           null,
 
         updatedAt:
-          new Date().toISOString(),
+          now,
 
         version:
           "3"
@@ -5398,6 +5417,14 @@ function createCollaboratorAccess(
       );
 
 
+      /*
+        Le code n'est renvoyé qu'ici
+        pour permettre sa transmission
+        initiale au collaborateur.
+
+        Seul son hash reste enregistré.
+      */
+
       return {
 
         collaborator:
@@ -5409,7 +5436,7 @@ function createCollaboratorAccess(
     }
   );
 }
-/* =========================================================
+  /* =========================================================
    ACCEPTATION DE L'INVITATION
    ========================================================= */
 
@@ -5426,8 +5453,8 @@ function acceptCollaboratorInvitation(
 
 
   /*
-    L'organisation doit exister
-    et être validée.
+    L'organisation doit exister,
+    être active et validée.
   */
 
   if(
@@ -5446,11 +5473,8 @@ function acceptCollaboratorInvitation(
 
   /*
     Le collaborateur doit disposer
-    de son propre compte Bo'CitéArt.
-
-    Ce compte devient le compte
-    définitivement rattaché
-    à cet accès collaborateur.
+    de son propre compte Bo'CitéArt
+    et de la sécurité de compte active.
   */
 
   if(
@@ -5509,7 +5533,7 @@ function acceptCollaboratorInvitation(
 
   /*
     Une invitation déjà acceptée
-    ne doit jamais être réutilisée.
+    ne peut jamais être réutilisée.
   */
 
   if(
@@ -5527,8 +5551,8 @@ function acceptCollaboratorInvitation(
 
   /*
     Le compte du responsable principal
-    ne doit pas être transformé
-    en compte collaborateur.
+    ne peut pas devenir lui-même
+    un compte collaborateur.
   */
 
   if(
@@ -5549,8 +5573,8 @@ function acceptCollaboratorInvitation(
 
 
   /*
-    Un même compte ne doit pas être
-    rattaché deux fois à la même
+    Un même compte ne peut pas être
+    rattaché plusieurs fois à la même
     organisation comme collaborateur.
   */
 
@@ -5631,7 +5655,7 @@ function acceptCollaboratorInvitation(
       /*
         Rattachement définitif
         de l'accès collaborateur
-        à son compte personnel.
+        à son propre compte.
       */
 
       collaborator.accountId =
@@ -5683,7 +5707,8 @@ function acceptCollaboratorInvitation(
     }
   );
 }
-/* =========================================================
+
+  /* =========================================================
    MODIFICATION D'UN COLLABORATEUR
    ========================================================= */
 
@@ -5698,27 +5723,37 @@ function updateCollaboratorAccess(
   const account =
     getAccount();
 
-if(
-  !organization ||
-  organization.active !== true ||
-  organization.validationStatus !==
-    "validated" ||
-  organization.professionalAccessReady !==
-    true
-){
-  return null;
-}
+
+  /*
+    Une modification n'est autorisée
+    qu'après validation et activation
+    de l'accès professionnel.
+  */
+
+  if(
+    !organization ||
+    !organization.organizationId ||
+    organization.active !== true ||
+    organization.validationStatus !==
+      "validated" ||
+    organization.professionalAccessReady !==
+      true
+  ){
+
+    return null;
+  }
 
 
-if(
-  !account ||
-  !accountSecurityReady()
-){
-  return null;
-}
+  /*
+    Seul le responsable principal,
+    depuis son compte sécurisé,
+    peut modifier un collaborateur.
+  */
 
   if(
     !account ||
+    !account.accountId ||
+    !accountSecurityReady() ||
     String(
       organization.ownerAccountId ||
       ""
@@ -5728,6 +5763,7 @@ if(
       ""
     )
   ){
+
     return null;
   }
 
@@ -5741,14 +5777,22 @@ if(
       function(item){
 
         return (
-          String(item.id) ===
-          String(collaboratorId) &&
+          item &&
+          String(
+            item.id ||
+            ""
+          ) ===
+          String(
+            collaboratorId ||
+            ""
+          ) &&
           String(
             item.organizationId ||
             ""
           ) ===
           String(
-            organization.organizationId
+            organization.organizationId ||
+            ""
           )
         );
       }
@@ -5756,6 +5800,7 @@ if(
 
 
   if(!collaborator){
+
     return null;
   }
 
@@ -5772,8 +5817,9 @@ if(
 
   if(
     source.displayName !==
-    undefined
+      undefined
   ){
+
     collaborator.displayName =
       normalizeText(
         source.displayName
@@ -5783,8 +5829,9 @@ if(
 
   if(
     source.email !==
-    undefined
+      undefined
   ){
+
     collaborator.email =
       normalizeEmail(
         source.email
@@ -5794,8 +5841,9 @@ if(
 
   if(
     source.phone !==
-    undefined
+      undefined
   ){
+
     collaborator.phone =
       normalizePhone(
         source.phone
@@ -5805,7 +5853,7 @@ if(
 
   if(
     source.role !==
-    undefined
+      undefined
   ){
 
     const role =
@@ -5861,6 +5909,9 @@ if(
       organizationId:
         organization.organizationId,
 
+      ownerAccountId:
+        account.accountId,
+
       role:
         collaborator.role,
 
@@ -5872,117 +5923,7 @@ if(
 
   return collaborator;
 }
-
-
-/* =========================================================
-   RÉACTIVATION D'UN COLLABORATEUR
-   ========================================================= */
-
-function restoreCollaboratorAccess(
-  collaboratorId
-){
-
-  const organization =
-    getOrganization();
-
-  const account =
-    getAccount();
-
-
- if(
-  !organization ||
-  organization.active !== true ||
-  organization.validationStatus !==
-    "validated" ||
-  organization.professionalAccessReady !==
-    true
-){
-  return false;
-}
-
-
-if(
-  !account ||
-  !accountSecurityReady()
-){
-  return false;
-} 
-
-
-  if(
-    !account ||
-    String(
-      organization.ownerAccountId ||
-      ""
-    ) !==
-    String(
-      account.accountId ||
-      ""
-    )
-  ){
-    return false;
-  }
-
-
-  const collaborators =
-    loadCollaborators();
-
-
-  const collaborator =
-    collaborators.find(
-      function(item){
-
-        return (
-          String(item.id) ===
-          String(collaboratorId) &&
-          String(
-            item.organizationId ||
-            ""
-          ) ===
-          String(
-            organization.organizationId
-          )
-        );
-      }
-    );
-
-
-  if(!collaborator){
-    return false;
-  }
-
-
-  collaborator.enabled =
-    true;
-
-  collaborator.revokedAt =
-    null;
-
-  collaborator.updatedAt =
-    new Date().toISOString();
-
-
-  saveCollaborators(
-    collaborators
-  );
-
-
-  addSecurityLog(
-    "collaborator_access_restored",
-    {
-      collaboratorId:
-        collaborator.id,
-
-      organizationId:
-        organization.organizationId
-    }
-  );
-
-
-  return true;
-}
-
-
+   
 /* =========================================================
    SUPPRESSION DÉFINITIVE D'UN COLLABORATEUR
    ========================================================= */
