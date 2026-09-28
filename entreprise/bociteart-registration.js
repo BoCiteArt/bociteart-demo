@@ -5414,13 +5414,44 @@ function acceptCollaboratorInvitation(
   const organization =
     getOrganization();
 
+  const account =
+    getAccount();
+
+
+  /*
+    L'organisation doit exister
+    et être validée.
+  */
 
   if(
     !organization ||
+    !organization.organizationId ||
     organization.active !== true ||
     organization.validationStatus !==
       "validated"
   ){
+
+    return Promise.resolve(
+      false
+    );
+  }
+
+
+  /*
+    Le collaborateur doit disposer
+    de son propre compte Bo'CitéArt.
+
+    Ce compte deviendra le compte
+    définitivement rattaché
+    à cet accès collaborateur.
+  */
+
+  if(
+    !account ||
+    !account.accountId ||
+    !accountSecurityReady()
+  ){
+
     return Promise.resolve(
       false
     );
@@ -5436,18 +5467,22 @@ function acceptCollaboratorInvitation(
       function(item){
 
         return (
+          item &&
           String(
-            item.id
+            item.id ||
+            ""
           ) ===
           String(
-            collaboratorId
+            collaboratorId ||
+            ""
           ) &&
           String(
             item.organizationId ||
             ""
           ) ===
           String(
-            organization.organizationId
+            organization.organizationId ||
+            ""
           )
         );
       }
@@ -5456,9 +5491,99 @@ function acceptCollaboratorInvitation(
 
   if(
     !collaborator ||
-    collaborator.enabled !==
-      true
+    collaborator.enabled !== true
   ){
+
+    return Promise.resolve(
+      false
+    );
+  }
+
+
+  /*
+    Une invitation déjà acceptée
+    ne doit jamais être réutilisée.
+  */
+
+  if(
+    collaborator.invitationAccepted ===
+      true ||
+    collaborator.acceptedAt ||
+    !collaborator.invitationCodeHash
+  ){
+
+    return Promise.resolve(
+      false
+    );
+  }
+
+
+  /*
+    Le compte du responsable principal
+    ne doit pas être transformé
+    en compte collaborateur.
+  */
+
+  if(
+    String(
+      organization.ownerAccountId ||
+      ""
+    ) ===
+    String(
+      account.accountId ||
+      ""
+    )
+  ){
+
+    return Promise.resolve(
+      false
+    );
+  }
+
+
+  /*
+    Un même compte ne doit pas être
+    rattaché deux fois à la même
+    organisation comme collaborateur.
+  */
+
+  const accountAlreadyLinked =
+    collaborators.some(
+      function(item){
+
+        return (
+          item &&
+          String(
+            item.organizationId ||
+            ""
+          ) ===
+          String(
+            organization.organizationId ||
+            ""
+          ) &&
+          String(
+            item.accountId ||
+            ""
+          ) ===
+          String(
+            account.accountId ||
+            ""
+          ) &&
+          String(
+            item.id ||
+            ""
+          ) !==
+          String(
+            collaborator.id ||
+            ""
+          )
+        );
+      }
+    );
+
+
+  if(accountAlreadyLinked){
+
     return Promise.resolve(
       false
     );
@@ -5473,9 +5598,37 @@ function acceptCollaboratorInvitation(
     function(valid){
 
       if(!valid){
+
+        addSecurityLog(
+          "collaborator_invitation_rejected",
+          {
+            collaboratorId:
+              collaborator.id,
+
+            organizationId:
+              organization.organizationId,
+
+            accountId:
+              account.accountId,
+
+            reason:
+              "invalid_invitation_code"
+          }
+        );
+
+
         return false;
       }
 
+
+      /*
+        Rattachement définitif
+        de l'accès collaborateur
+        à son compte personnel.
+      */
+
+      collaborator.accountId =
+        account.accountId;
 
       collaborator.invitationAccepted =
         true;
@@ -5485,6 +5638,9 @@ function acceptCollaboratorInvitation(
 
       collaborator.acceptedAt =
         new Date().toISOString();
+
+      collaborator.revokedAt =
+        null;
 
       collaborator.updatedAt =
         new Date().toISOString();
@@ -5502,7 +5658,16 @@ function acceptCollaboratorInvitation(
             collaborator.id,
 
           organizationId:
-            organization.organizationId
+            organization.organizationId,
+
+          accountId:
+            account.accountId,
+
+          role:
+            collaborator.role,
+
+          permissions:
+            collaborator.permissions
         }
       );
 
@@ -5511,8 +5676,7 @@ function acceptCollaboratorInvitation(
     }
   );
 }
-
-
+   
 /* =========================================================
    MODIFICATION D'UN COLLABORATEUR
    ========================================================= */
