@@ -3655,7 +3655,498 @@ function getOrganizationValidationState(){
   };
 }
 
+/* =========================================================
+   ACCÈS PROFESSIONNEL INITIAL
+   IDENTIFIANT + CODE INITIAL À USAGE UNIQUE
+   ========================================================= */
 
+function createProfessionalIdentifier(
+  organization
+){
+
+  if(
+    !organization ||
+    !organization.organizationId
+  ){
+    return "";
+  }
+
+
+  const categoryCodes = {
+
+    commerce:
+      "COM",
+
+    entreprise:
+      "ENT",
+
+    association:
+      "ASS",
+
+    sport:
+      "SPO",
+
+    ecole:
+      "ECO",
+
+    mairie:
+      "MAI"
+
+  };
+
+
+  const categoryCode =
+    categoryCodes[
+      String(
+        organization.category ||
+        ""
+      ).trim().toLowerCase()
+    ] ||
+    "ORG";
+
+
+  const year =
+    new Date()
+      .getFullYear();
+
+
+  const source =
+    String(
+      organization.organizationId ||
+      ""
+    )
+    .replace(
+      /[^a-zA-Z0-9]/g,
+      ""
+    )
+    .toUpperCase();
+
+
+  const suffix =
+    (
+      source.slice(-6) ||
+      String(
+        Date.now()
+      ).slice(-6)
+    );
+
+
+  return [
+    "BCA",
+    categoryCode,
+    year,
+    suffix
+  ].join("-");
+}
+
+
+/* =========================================================
+   ÉMISSION DE L'ACCÈS INITIAL
+   ========================================================= */
+
+function issueProfessionalInitialAccess(
+  organization
+){
+
+  if(
+    !organization ||
+    !organization.organizationId
+  ){
+
+    return Promise.resolve({
+      ok:false,
+      reason:"organization_not_found"
+    });
+  }
+
+
+  if(
+    organization.validationStatus !==
+      "validated" ||
+    organization.active !==
+      true
+  ){
+
+    return Promise.resolve({
+      ok:false,
+      reason:"organization_not_validated"
+    });
+  }
+
+
+  /*
+    L'identifiant professionnel reste permanent.
+    Il n'est pas recréé à chaque émission
+    d'un nouveau code initial.
+  */
+
+  const professionalIdentifier =
+    organization.professionalIdentifier ||
+    createProfessionalIdentifier(
+      organization
+    );
+
+
+  const initialAccessCode =
+    createNumericCode(6);
+
+
+  return hashSecret(
+    initialAccessCode
+  )
+  .then(
+    function(
+      initialAccessCodeHash
+    ){
+
+      organization.professionalIdentifier =
+        professionalIdentifier;
+
+      organization.initialAccessCodeHash =
+        initialAccessCodeHash;
+
+      organization.initialAccessCodeIssuedAt =
+        new Date().toISOString();
+
+      organization.initialAccessCodeUsedAt =
+        null;
+
+      organization.professionalAccessReady =
+        false;
+
+      organization.updatedAt =
+        new Date().toISOString();
+
+
+      saveOrganization(
+        organization
+      );
+
+
+      addSecurityLog(
+        "professional_initial_access_issued",
+        {
+          organizationId:
+            organization.organizationId,
+
+          category:
+            organization.category,
+
+          professionalIdentifier:
+            professionalIdentifier
+        }
+      );
+
+
+      /*
+        Le code en clair n'est retourné
+        qu'au moment de son émission.
+
+        Il n'est jamais enregistré
+        dans l'organisation.
+      */
+
+      return {
+
+        ok:true,
+
+        professionalIdentifier:
+          professionalIdentifier,
+
+        initialAccessCode:
+          initialAccessCode
+      };
+    }
+  );
+}
+
+
+/* =========================================================
+   CONTRÔLE DU PREMIER ACCÈS PROFESSIONNEL
+   ========================================================= */
+
+function verifyProfessionalInitialAccess(
+  professionalIdentifier,
+  enteredCode
+){
+
+  const organization =
+    getOrganization();
+
+
+  if(
+    !organization ||
+    !organization.organizationId
+  ){
+
+    return Promise.resolve({
+      ok:false,
+      reason:"organization_not_found"
+    });
+  }
+
+
+  if(
+    organization.validationStatus !==
+      "validated" ||
+    organization.active !==
+      true
+  ){
+
+    return Promise.resolve({
+      ok:false,
+      reason:"organization_not_validated"
+    });
+  }
+
+
+  if(
+    !organization.professionalIdentifier ||
+    String(
+      organization.professionalIdentifier
+    ) !==
+    String(
+      professionalIdentifier ||
+      ""
+    ).trim()
+  ){
+
+    addSecurityLog(
+      "professional_initial_access_refused",
+      {
+        organizationId:
+          organization.organizationId,
+
+        reason:
+          "invalid_identifier"
+      }
+    );
+
+
+    return Promise.resolve({
+      ok:false,
+      reason:"invalid_identifier"
+    });
+  }
+
+
+  /*
+    Un code déjà utilisé ne fonctionne
+    jamais une deuxième fois.
+  */
+
+  if(
+    organization.initialAccessCodeUsedAt
+  ){
+
+    return Promise.resolve({
+      ok:false,
+      reason:"initial_code_already_used"
+    });
+  }
+
+
+  if(
+    !organization.initialAccessCodeHash
+  ){
+
+    return Promise.resolve({
+      ok:false,
+      reason:"initial_code_not_available"
+    });
+  }
+
+
+  return verifySecret(
+    enteredCode,
+    organization.initialAccessCodeHash
+  )
+  .then(
+    function(
+      valid
+    ){
+
+      if(!valid){
+
+        addSecurityLog(
+          "professional_initial_access_refused",
+          {
+            organizationId:
+              organization.organizationId,
+
+            reason:
+              "invalid_code"
+          }
+        );
+
+
+        return {
+          ok:false,
+          reason:"invalid_code"
+        };
+      }
+
+
+      organization.initialAccessCodeUsedAt =
+        new Date().toISOString();
+
+      /*
+        Le code devient définitivement
+        inutilisable après validation.
+      */
+
+      organization.initialAccessCodeHash =
+        "";
+
+      organization.professionalAccessReady =
+        true;
+
+      organization.updatedAt =
+        new Date().toISOString();
+
+
+      saveOrganization(
+        organization
+      );
+
+
+      addSecurityLog(
+        "professional_initial_access_accepted",
+        {
+          organizationId:
+            organization.organizationId,
+
+          professionalIdentifier:
+            organization.professionalIdentifier
+        }
+      );
+
+
+      return {
+
+        ok:true,
+
+        organizationId:
+          organization.organizationId,
+
+        professionalIdentifier:
+          organization.professionalIdentifier,
+
+        professionalAccessReady:
+          true
+      };
+    }
+  );
+}
+
+
+/* =========================================================
+   ÉTAT DE L'ACCÈS PROFESSIONNEL
+   ========================================================= */
+
+function getProfessionalAccessState(){
+
+  const organization =
+    getOrganization();
+
+
+  if(
+    !organization ||
+    !organization.organizationId
+  ){
+
+    return {
+      ok:false,
+      reason:"organization_not_found"
+    };
+  }
+
+
+  return {
+
+    ok:true,
+
+    organizationId:
+      organization.organizationId,
+
+    category:
+      organization.category,
+
+    professionalIdentifier:
+      organization.professionalIdentifier ||
+      "",
+
+    identifierIssued:
+      Boolean(
+        organization.professionalIdentifier
+      ),
+
+    initialAccessIssued:
+      Boolean(
+        organization.initialAccessCodeIssuedAt
+      ),
+
+    initialAccessUsed:
+      Boolean(
+        organization.initialAccessCodeUsedAt
+      ),
+
+    professionalAccessReady:
+      organization.professionalAccessReady ===
+        true,
+
+    organizationValidated:
+      (
+        organization.active === true &&
+        organization.validationStatus ===
+          "validated"
+      )
+  };
+}
+
+
+/* =========================================================
+   RÉÉMISSION D'UN CODE INITIAL
+   ========================================================= */
+
+function reissueProfessionalInitialAccess(){
+
+  const organization =
+    getOrganization();
+
+
+  if(
+    !organization ||
+    !organization.organizationId
+  ){
+
+    return Promise.resolve({
+      ok:false,
+      reason:"organization_not_found"
+    });
+  }
+
+
+  if(
+    organization.validationStatus !==
+      "validated" ||
+    organization.active !==
+      true
+  ){
+
+    return Promise.resolve({
+      ok:false,
+      reason:"organization_not_validated"
+    });
+  }
+
+
+  return issueProfessionalInitialAccess(
+    organization
+  );
+}
+
+   
 /* =========================================================
    DÉCISION DE VALIDATION
    ========================================================= */
@@ -3870,7 +4361,10 @@ function setOrganizationValidationStatus(
   };
 }
 
-
+/* =========================================================
+   DÉCISION DE VALIDATION
+   ========================================================= */
+   
 function runOrganizationValidationDecision(
   decision,
   options
@@ -7027,6 +7521,11 @@ window.BoCiteArtRegistration = {
   getOrganizationValidationState:
     getOrganizationValidationState,
 
+     getProfessionalAccessState:
+    getProfessionalAccessState,
+
+  verifyProfessionalInitialAccess:
+    verifyProfessionalInitialAccess,
 
   getCollaborators:
     loadCollaborators,
