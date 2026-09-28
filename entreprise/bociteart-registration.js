@@ -3709,211 +3709,6 @@ function getOrganizationValidationState(){
 }
 
 /* =========================================================
-   ACCÈS PROFESSIONNEL INITIAL
-   IDENTIFIANT + CODE INITIAL À USAGE UNIQUE
-   ========================================================= */
-
-function createProfessionalIdentifier(
-  organization
-){
-
-  if(
-    !organization ||
-    !organization.organizationId
-  ){
-    return "";
-  }
-
-
-  const categoryCodes = {
-
-    commerce:
-      "COM",
-
-    entreprise:
-      "ENT",
-
-    association:
-      "ASS",
-
-    sport:
-      "SPO",
-
-    ecole:
-      "ECO",
-
-    mairie:
-      "MAI"
-
-  };
-
-
-  const categoryCode =
-    categoryCodes[
-      String(
-        organization.category ||
-        ""
-      ).trim().toLowerCase()
-    ] ||
-    "ORG";
-
-
-  const year =
-    new Date()
-      .getFullYear();
-
-
-  const source =
-    String(
-      organization.organizationId ||
-      ""
-    )
-    .replace(
-      /[^a-zA-Z0-9]/g,
-      ""
-    )
-    .toUpperCase();
-
-
-  const suffix =
-    (
-      source.slice(-6) ||
-      String(
-        Date.now()
-      ).slice(-6)
-    );
-
-
-  return [
-    "BCA",
-    categoryCode,
-    year,
-    suffix
-  ].join("-");
-}
-
-
-/* =========================================================
-   ÉMISSION DE L'ACCÈS INITIAL
-   ========================================================= */
-
-function issueProfessionalInitialAccess(
-  organization
-){
-
-  if(
-    !organization ||
-    !organization.organizationId
-  ){
-
-    return Promise.resolve({
-      ok:false,
-      reason:"organization_not_found"
-    });
-  }
-
-
-  if(
-    organization.validationStatus !==
-      "validated" ||
-    organization.active !==
-      true
-  ){
-
-    return Promise.resolve({
-      ok:false,
-      reason:"organization_not_validated"
-    });
-  }
-
-
-  /*
-    L'identifiant professionnel reste permanent.
-    Il n'est pas recréé à chaque émission
-    d'un nouveau code initial.
-  */
-
-  const professionalIdentifier =
-    organization.professionalIdentifier ||
-    createProfessionalIdentifier(
-      organization
-    );
-
-
-  const initialAccessCode =
-    createNumericCode(6);
-
-
-  return hashSecret(
-    initialAccessCode
-  )
-  .then(
-    function(
-      initialAccessCodeHash
-    ){
-
-      organization.professionalIdentifier =
-        professionalIdentifier;
-
-      organization.initialAccessCodeHash =
-        initialAccessCodeHash;
-
-      organization.initialAccessCodeIssuedAt =
-        new Date().toISOString();
-
-      organization.initialAccessCodeUsedAt =
-        null;
-
-      organization.professionalAccessReady =
-        false;
-
-      organization.updatedAt =
-        new Date().toISOString();
-
-
-      saveOrganization(
-        organization
-      );
-
-
-      addSecurityLog(
-        "professional_initial_access_issued",
-        {
-          organizationId:
-            organization.organizationId,
-
-          category:
-            organization.category,
-
-          professionalIdentifier:
-            professionalIdentifier
-        }
-      );
-
-
-      /*
-        Le code en clair n'est retourné
-        qu'au moment de son émission.
-
-        Il n'est jamais enregistré
-        dans l'organisation.
-      */
-
-      return {
-
-        ok:true,
-
-        professionalIdentifier:
-          professionalIdentifier,
-
-        initialAccessCode:
-          initialAccessCode
-      };
-    }
-  );
-}
-
-/* =========================================================
    ACCÈS PROFESSIONNEL APRÈS VALIDATION
    IDENTIFIANT + CODE INITIAL À USAGE UNIQUE
    ========================================================= */
@@ -6137,7 +5932,6 @@ function getActiveCollaborators(){
     );
 }
 
-
 /* =========================================================
    CONTRÔLE CENTRAL DES ACCÈS PRIVÉS
    ========================================================= */
@@ -6151,36 +5945,8 @@ function getCurrentAccessContext(){
     getOrganization();
 
 
-  if(!account){
-
-    return {
-
-      authenticated:false,
-      account:null,
-      organization:null,
-      role:null,
-      permissions:[],
-      collaborator:null,
-      organizationValidated:false,
-      validationStatus:null
-    };
-  }
-   
-/* =========================================================
-   CONTEXTE D'ACCÈS COURANT
-   ========================================================= */
-
-function getCurrentAccessContext(){
-
-  const account =
-    getAccount();
-
-  const organization =
-    getOrganization();
-
-
   /*
-    Aucun compte identifié.
+    AUCUN COMPTE
   */
 
   if(
@@ -6217,27 +5983,50 @@ function getCurrentAccessContext(){
     };
   }
 
+
   /*
-    RESPONSABLE PRINCIPAL D'UNE ORGANISATION
-
-    Commerce
-    Entreprise
-    Association
-    Sport
-    École
-    Mairie
-
-    Trois conditions sont nécessaires :
-
-    1. le compte personnel est sécurisé ;
-    2. l'organisation est active et validée ;
-    3. le premier accès professionnel
-       a été activé avec le code initial.
+    COMPTE PERSONNEL
+    SANS ORGANISATION
   */
 
   if(
-    organization &&
-    organization.organizationId &&
+    !organization ||
+    !organization.organizationId
+  ){
+
+    return {
+
+      authenticated:
+        Boolean(
+          accountSecurityReady()
+        ),
+
+      account:
+        account,
+
+      organization:null,
+
+      role:
+        "account",
+
+      permissions:[],
+
+      collaborator:null,
+
+      organizationValidated:false,
+
+      professionalAccessReady:false,
+
+      validationStatus:null
+    };
+  }
+
+
+  /*
+    RESPONSABLE PRINCIPAL
+  */
+
+  if(
     String(
       organization.ownerAccountId ||
       ""
@@ -6290,8 +6079,7 @@ function getCurrentAccessContext(){
           ? ["all"]
           : [],
 
-      collaborator:
-        null,
+      collaborator:null,
 
       organizationValidated:
         organizationValidated,
@@ -6305,183 +6093,179 @@ function getCurrentAccessContext(){
     };
   }
 
+
   /*
-    COLLABORATEUR D'UNE ORGANISATION
+    COLLABORATEUR
 
-    Le collaborateur possède son propre accès
-    et uniquement les droits qui lui ont
-    été attribués.
-
-    L'organisation doit rester active
-    et validée.
+    L'organisation doit être active
+    et validée avant qu'un collaborateur
+    puisse disposer d'un accès privé.
   */
 
-  if(
-    organization &&
-    organization.organizationId
-  ){
-
-    const collaborators =
-      getActiveCollaborators();
-
-    const collaborator =
-      Array.isArray(
-        collaborators
-      )
-        ? collaborators.find(
-            function(item){
-
-              if(!item){
-                return false;
-              }
+  const organizationValidated =
+    (
+      organization.active === true &&
+      organization.validationStatus ===
+        "validated"
+    );
 
 
-              const collaboratorAccountId =
-                String(
-                  item.accountId ||
-                  ""
-                );
+  if(!organizationValidated){
 
+    return {
 
-              const currentAccountId =
-                String(
-                  account.accountId ||
-                  ""
-                );
+      authenticated:false,
 
+      account:
+        account,
 
-              return (
-                collaboratorAccountId &&
-                collaboratorAccountId ===
-                  currentAccountId
-              );
-            }
-          )
-        : null;
+      organization:
+        organization,
 
+      role:null,
 
-    if(collaborator){
+      permissions:[],
 
-      const organizationValidated =
-        (
-          organization.active === true &&
-          organization.validationStatus ===
-            "validated"
-        );
+      collaborator:null,
 
+      organizationValidated:false,
 
-      const collaboratorEnabled =
-        (
-          collaborator.active !== false &&
-          collaborator.revoked !== true
-        );
+      professionalAccessReady:
+        organization.professionalAccessReady ===
+          true,
 
-
-      const authenticated =
-        Boolean(
-          accountSecurityReady() &&
-          organizationValidated &&
-          collaboratorEnabled
-        );
-
-
-      const collaboratorPermissions =
-        authenticated &&
-        Array.isArray(
-          collaborator.permissions
-        )
-          ? collaborator.permissions.slice()
-          : [];
-
-
-      return {
-
-        authenticated:
-          authenticated,
-
-        account:
-          account,
-
-        organization:
-          organization,
-
-        role:
-          collaborator.role ||
-          "collaborator",
-
-        permissions:
-          collaboratorPermissions,
-
-        collaborator:
-          collaborator,
-
-        organizationValidated:
-          organizationValidated,
-
-        professionalAccessReady:
-          false,
-
-        validationStatus:
-          organization.validationStatus ||
-          "draft"
-      };
-    }
+      validationStatus:
+        organization.validationStatus ||
+        "draft"
+    };
   }
 
+
+  const collaborators =
+    loadCollaborators();
+
+
+  const collaborator =
+    Array.isArray(
+      collaborators
+    )
+      ? collaborators.find(
+          function(item){
+
+            if(!item){
+              return false;
+            }
+
+
+            return (
+              String(
+                item.organizationId ||
+                ""
+              ) ===
+              String(
+                organization.organizationId ||
+                ""
+              ) &&
+
+              String(
+                item.accountId ||
+                ""
+              ) ===
+              String(
+                account.accountId ||
+                ""
+              ) &&
+
+              item.enabled === true &&
+
+              item.invitationAccepted === true
+            );
+          }
+        ) || null
+      : null;
+
+
   /*
-    COMPTE PERSONNEL
-
-    Citoyen ou autre profil ne disposant
-    pas d'un accès privé d'organisation.
-
-    Ici, la sécurisation du compte suffit
-    pour reconnaître le compte personnel.
-
-    Aucun droit professionnel n'est accordé.
+    AUCUN DROIT PROFESSIONNEL
+    POUR CE COMPTE
   */
+
+  if(!collaborator){
+
+    return {
+
+      authenticated:false,
+
+      account:
+        account,
+
+      organization:
+        organization,
+
+      role:null,
+
+      permissions:[],
+
+      collaborator:null,
+
+      organizationValidated:true,
+
+      professionalAccessReady:
+        organization.professionalAccessReady ===
+          true,
+
+      validationStatus:
+        organization.validationStatus ||
+        "validated"
+    };
+  }
+
+
+  /*
+    COLLABORATEUR AUTORISÉ
+  */
+
+  const collaboratorAuthenticated =
+    Boolean(
+      accountSecurityReady()
+    );
+
 
   return {
 
     authenticated:
-      Boolean(
-        accountSecurityReady()
-      ),
+      collaboratorAuthenticated,
 
     account:
       account,
 
     organization:
-      organization || null,
+      organization,
 
     role:
-      "account",
+      collaborator.role ||
+      "collaborator",
 
-    permissions:[],
+    permissions:
+      collaboratorAuthenticated &&
+      Array.isArray(
+        collaborator.permissions
+      )
+        ? collaborator.permissions.slice()
+        : [],
 
-    collaborator:null,
+    collaborator:
+      collaborator,
 
-    organizationValidated:
-      Boolean(
-        organization &&
-        organization.active === true &&
-        organization.validationStatus ===
-          "validated"
-      ),
+    organizationValidated:true,
 
     professionalAccessReady:
-      Boolean(
-        organization &&
-        organization.professionalAccessReady ===
-          true
-      ),
+      organization.professionalAccessReady ===
+        true,
 
     validationStatus:
-      organization
-        ? (
-            organization.validationStatus ||
-            "draft"
-          )
-        : null
+      organization.validationStatus ||
+      "validated"
   };
 }
 
