@@ -2359,7 +2359,7 @@ function sportDebitRemainder(){
       null,
 
     beneficiaryType:
-      "none",
+    "medical_research",
 
     reason:
       "Orientation du reliquat vers la recherche médicale — points annulés sans conversion monétaire",
