@@ -6106,64 +6106,101 @@ function permanentlyDeleteCollaborator(
   const account =
     getAccount();
 
+
+  /*
+    La suppression définitive
+    est réservée au responsable principal
+    de l'organisation.
+  */
+
   if(
     !organization ||
-    !organization.organizationId
-  ){
-    return false;
-  }
-
-  if(
+    !organization.organizationId ||
     !account ||
     !account.accountId ||
-    !accountSecurityReady()
+    !accountSecurityReady() ||
+    String(
+      organization.ownerAccountId ||
+      ""
+    ) !==
+    String(
+      account.accountId ||
+      ""
+    )
   ){
+
     return false;
   }
 
-  if(
-    organization.ownerAccountId !==
-    account.accountId
-  ){
-    return false;
-  }
 
-  const collaborators =
-    getCollaborators();
-
-  const collaboratorIndex =
-    collaborators.findIndex(
-      function(item){
-        return (
-          item &&
-          item.id === collaboratorId &&
-          item.organizationId ===
-            organization.organizationId
-        );
-      }
+  const previous =
+    getCollaboratorById(
+      collaboratorId
     );
 
-  if(collaboratorIndex === -1){
+
+  /*
+    Le collaborateur doit appartenir
+    à l'organisation actuellement ouverte.
+  */
+
+  if(
+    !previous ||
+    String(
+      previous.organizationId ||
+      ""
+    ) !==
+    String(
+      organization.organizationId ||
+      ""
+    )
+  ){
+
     return false;
   }
 
-  const collaborator =
-    collaborators[collaboratorIndex];
 
-  collaborators.splice(
-    collaboratorIndex,
-    1
+  /*
+    Toute session encore liée
+    au collaborateur est révoquée
+    avant sa suppression.
+  */
+
+  revokeCollaboratorSessions(
+    collaboratorId
   );
+
+
+  const collaborators =
+    loadCollaborators()
+      .filter(
+        function(item){
+
+          return (
+            String(
+              item.id ||
+              ""
+            ) !==
+            String(
+              collaboratorId ||
+              ""
+            )
+          );
+
+        }
+      );
+
 
   saveCollaborators(
     collaborators
   );
 
-  logEvent(
+
+  addSecurityLog(
     "collaborator_deleted",
     {
       collaboratorId:
-        collaborator.id,
+        collaboratorId,
 
       organizationId:
         organization.organizationId,
@@ -6172,12 +6209,15 @@ function permanentlyDeleteCollaborator(
         account.accountId,
 
       displayName:
-        collaborator.displayName || "",
+        previous.displayName ||
+        "",
 
       role:
-        collaborator.role || ""
+        previous.role ||
+        ""
     }
   );
+
 
   return true;
 }
