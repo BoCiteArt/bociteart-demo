@@ -14,7 +14,7 @@
 (function(){
 
 "use strict";
-
+ 
 
 /* =========================================================
    PROTECTION CONTRE UN DOUBLE CHARGEMENT
