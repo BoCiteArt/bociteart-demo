@@ -20480,6 +20480,35 @@ if(key === "mairie"){
 
 /* COMMERCE RESTE INTACT */
 
+/* =====================================================
+   ÇA COMMENCE ICI — COMMERCE / ENTREPRISE — MODULE EXTERNE
+   ===================================================== */
+
+if(key === "commerces"){
+
+  if(
+    window.BociteCommerceModule &&
+    window.BociteCommerceModule.ready === true &&
+    typeof window.BociteCommerceModule.open === "function"
+  ){
+
+    window.BociteCommerceModule.open();
+
+    return;
+  }
+
+
+  alert(
+    "L’espace Commerces & entreprises est momentanément indisponible."
+  );
+
+  return;
+}
+
+/* =====================================================
+   ÇA FINIT ICI — COMMERCE / ENTREPRISE — MODULE EXTERNE
+   ===================================================== */
+   
   });
 });
   
@@ -24861,6 +24890,8 @@ const contacts =
     };
 }
 
+
+   
 const ACK_PREFIX = "bociteart_ack_v2_";
 const ACK_SALT = "BoCiteArt|ack|v2";
 
