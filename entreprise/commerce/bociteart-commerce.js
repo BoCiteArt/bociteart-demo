@@ -715,58 +715,6 @@ function openCommerceModule(){
 
         </div>
 
-
-        <div class="commerceCard">
-
-          <div class="commerceTitle">
-
-            Votre portefeuille territorial
-
-          </div>
-
-          <div class="commerceWallet">
-
-            <div class="commerceText">
-
-              Ville active :
-              <strong
-                id="commerceActiveCityName"
-              ></strong>
-
-              <br>
-
-              <span
-                id="commerceCoinName"
-              ></span>
-              disponibles
-
-            </div>
-
-            <div
-              class="commerceWalletValue"
-              id="citizenCoinBalance"
-            >
-              0
-            </div>
-
-          </div>
-
-          <div
-            class="commerceSmall"
-            style="margin-top:8px;"
-          >
-
-            Chaque ville conserve
-            son propre portefeuille.
-
-            Les soldes ne se mélangent
-            pas entre les villes.
-
-          </div>
-
-        </div>
-
-
         <div class="commerceCard">
 
           <div class="commerceTitle">
