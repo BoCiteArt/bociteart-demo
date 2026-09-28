@@ -1927,15 +1927,6 @@ function openCommerceModule(){
 
               </div>
 
-            `
-
-          },
-
-/* =========================================================
-   ÇA FINIT ICI — BLOC 1/3
-   NE PAS COMMITER ENCORE
-   ========================================================= */
-
                   <div class="box">
           Pourquoi chercher plus loin si votre futur collaborateur
           est peut-être déjà près de chez vous ?
