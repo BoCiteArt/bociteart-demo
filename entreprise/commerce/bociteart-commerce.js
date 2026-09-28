@@ -3626,16 +3626,350 @@ if(
   merchantRequestAccessBtn
 ){
 
+/* =========================================================
+   ÇA COMMENCE ICI — PREMIÈRE DEMANDE D'ACCÈS COMMERCE
+   ========================================================= */
+
+if(
+  merchantRequestAccessBtn
+){
+
   merchantRequestAccessBtn.onclick =
     ()=>{
 
-      alert(
-        "La demande d'accès professionnel sera reliée à la fiche d'inscription Commerce et au contrôle Bo’CitéArt. Après validation, le responsable recevra son identifiant professionnel et son code d'accès initial."
+      openModal(
+        "Première demande d'accès Commerce",
+        `
+
+          <div class="bociteCommerceRoot">
+
+            <div class="commerceCard commerceRule">
+
+              <div class="commerceTitle">
+                Inscription de votre commerce
+              </div>
+
+              <div class="commerceText">
+
+                Complétez les informations
+                concernant votre établissement
+                et son responsable.
+
+                <br><br>
+
+                La demande est contrôlée
+                avant l'ouverture de l'accès
+                professionnel Bo’CitéArt.
+
+              </div>
+
+            </div>
+
+
+            <div class="commerceCard">
+
+              <label
+                class="commerceLabel"
+                for="merchantRequestShopName"
+              >
+                Nom du commerce *
+              </label>
+
+              <input
+                class="commerceField"
+                id="merchantRequestShopName"
+                type="text"
+                autocomplete="organization"
+              >
+
+
+              <label
+                class="commerceLabel"
+                for="merchantRequestSiret"
+              >
+                SIREN / SIRET *
+              </label>
+
+              <input
+                class="commerceField"
+                id="merchantRequestSiret"
+                type="text"
+                inputmode="numeric"
+              >
+
+
+              <label
+                class="commerceLabel"
+                for="merchantRequestAddress"
+              >
+                Adresse du commerce *
+              </label>
+
+              <input
+                class="commerceField"
+                id="merchantRequestAddress"
+                type="text"
+                autocomplete="street-address"
+              >
+
+
+              <label
+                class="commerceLabel"
+                for="merchantRequestManager"
+              >
+                Nom et prénom du responsable *
+              </label>
+
+              <input
+                class="commerceField"
+                id="merchantRequestManager"
+                type="text"
+                autocomplete="name"
+              >
+
+
+              <label
+                class="commerceLabel"
+                for="merchantRequestEmail"
+              >
+                E-mail professionnel *
+              </label>
+
+              <input
+                class="commerceField"
+                id="merchantRequestEmail"
+                type="email"
+                autocomplete="email"
+              >
+
+
+              <label
+                class="commerceLabel"
+                for="merchantRequestPhone"
+              >
+                Téléphone *
+              </label>
+
+              <input
+                class="commerceField"
+                id="merchantRequestPhone"
+                type="tel"
+                autocomplete="tel"
+              >
+
+
+              <div class="commerceActions">
+
+                <button
+                  class="commerceBtn"
+                  id="merchantRequestSendBtn"
+                  type="button"
+                >
+                  Envoyer ma demande
+                </button>
+
+              </div>
+
+
+              <div
+                id="merchantRequestStatus"
+                class="commerceStatus"
+                data-state="warn"
+                style="display:none;"
+              ></div>
+
+            </div>
+
+          </div>
+
+        `
+      );
+
+
+      setTimeout(
+        ()=>{
+
+          const sendBtn =
+            $("merchantRequestSendBtn");
+
+          const status =
+            $("merchantRequestStatus");
+
+
+          if(!sendBtn){
+            return;
+          }
+
+
+          sendBtn.onclick =
+            ()=>{
+
+              const shopName =
+                String(
+                  $("merchantRequestShopName")
+                    ? $("merchantRequestShopName").value
+                    : ""
+                ).trim();
+
+              const siret =
+                String(
+                  $("merchantRequestSiret")
+                    ? $("merchantRequestSiret").value
+                    : ""
+                ).trim();
+
+              const address =
+                String(
+                  $("merchantRequestAddress")
+                    ? $("merchantRequestAddress").value
+                    : ""
+                ).trim();
+
+              const manager =
+                String(
+                  $("merchantRequestManager")
+                    ? $("merchantRequestManager").value
+                    : ""
+                ).trim();
+
+              const email =
+                String(
+                  $("merchantRequestEmail")
+                    ? $("merchantRequestEmail").value
+                    : ""
+                ).trim();
+
+              const phone =
+                String(
+                  $("merchantRequestPhone")
+                    ? $("merchantRequestPhone").value
+                    : ""
+                ).trim();
+
+
+              if(
+                !shopName ||
+                !siret ||
+                !address ||
+                !manager ||
+                !email ||
+                !phone
+              ){
+
+                if(status){
+
+                  status.style.display =
+                    "block";
+
+                  status.dataset.state =
+                    "warn";
+
+                  status.textContent =
+                    "Complétez tous les champs obligatoires.";
+
+                }
+
+                return;
+              }
+
+
+              const request = {
+
+                requestId:
+                  "BCA-COM-" +
+                  Date.now(),
+
+                shopName:
+                  shopName,
+
+                sirenSiret:
+                  siret,
+
+                address:
+                  address,
+
+                manager:
+                  manager,
+
+                email:
+                  email,
+
+                phone:
+                  phone,
+
+                cityId:
+                  city.cityId,
+
+                cityName:
+                  city.cityName,
+
+                status:
+                  "pending_review",
+
+                createdAt:
+                  Date.now()
+
+              };
+
+
+              try{
+
+                localStorage.setItem(
+                  "bociteart_commerce_access_request_v1__" +
+                  city.cityId,
+                  JSON.stringify(
+                    request
+                  )
+                );
+
+              }catch(error){
+
+                if(status){
+
+                  status.style.display =
+                    "block";
+
+                  status.dataset.state =
+                    "error";
+
+                  status.textContent =
+                    "La demande n'a pas pu être enregistrée.";
+
+                }
+
+                return;
+              }
+
+
+              if(status){
+
+                status.style.display =
+                  "block";
+
+                status.dataset.state =
+                  "ok";
+
+                status.textContent =
+                  "Votre demande est enregistrée. Elle doit maintenant être contrôlée et validée avant l'ouverture de votre accès professionnel.";
+
+              }
+
+
+              sendBtn.disabled =
+                true;
+
+            };
+
+        },
+        0
       );
 
     };
 }
 
+/* =========================================================
+   ÇA FINIT ICI — PREMIÈRE DEMANDE D'ACCÈS COMMERCE
+   ========================================================= */
 
 if(
   merchantLoginOpenBtn &&
