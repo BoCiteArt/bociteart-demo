@@ -5175,10 +5175,19 @@ function collaboratorHasPermission(
    CRÉATION D'UN COLLABORATEUR
    ========================================================= */
 
-function updateCollaboratorAccess(
-  collaboratorId,
-  changes
+function createCollaboratorAccess(
+  data
 ){
+
+  const source =
+    (
+      data &&
+      typeof data ===
+        "object"
+    )
+      ? data
+      : {};
+
 
   const organization =
     getOrganization();
@@ -5187,30 +5196,34 @@ function updateCollaboratorAccess(
     getAccount();
 
 
-  /*
-    Modification autorisée uniquement
-    après validation ET activation
-    de l'accès professionnel.
-  */
-
   if(
     !organization ||
-    !organization.organizationId ||
+    !organization.organizationId
+  ){
+
+    return Promise.reject(
+      new Error(
+        "Organisation introuvable."
+      )
+    );
+  }
+
+
+  if(
     organization.active !== true ||
     organization.validationStatus !==
       "validated" ||
     organization.professionalAccessReady !==
       true
   ){
-    return null;
+
+    return Promise.reject(
+      new Error(
+        "L'accès professionnel doit être activé avant d'ajouter un collaborateur."
+      )
+    );
   }
 
-
-  /*
-    Seul le responsable principal
-    avec son compte sécurisé
-    peut modifier les collaborateurs.
-  */
 
   if(
     !account ||
@@ -5225,166 +5238,177 @@ function updateCollaboratorAccess(
       ""
     )
   ){
-    return null;
+
+    return Promise.reject(
+      new Error(
+        "Accès réservé au responsable principal."
+      )
+    );
   }
 
 
-  const collaborators =
-    loadCollaborators();
+  const displayName =
+    normalizeText(
+      source.displayName
+    );
 
+  const email =
+    normalizeEmail(
+      source.email
+    );
 
-  const collaborator =
-    collaborators.find(
-      function(item){
-
-        return (
-          item &&
-          String(
-            item.id ||
-            ""
-          ) ===
-          String(
-            collaboratorId ||
-            ""
-          ) &&
-          String(
-            item.organizationId ||
-            ""
-          ) ===
-          String(
-            organization.organizationId ||
-            ""
-          )
-        );
-      }
+  const phone =
+    normalizePhone(
+      source.phone
     );
 
 
-  if(!collaborator){
-    return null;
-  }
+  const role =
+    ACCESS_ROLES[
+      source.role
+    ]
+      ? source.role
+      : "custom";
 
 
-  const source =
+  const permissions =
+    getRolePermissions(
+      role,
+      source.permissions
+    );
+
+
+  if(
+    !displayName ||
     (
-      changes &&
-      typeof changes ===
-        "object"
+      !email &&
+      !phone
     )
-      ? changes
-      : {};
-
-
-  if(
-    source.displayName !==
-    undefined
   ){
 
-    collaborator.displayName =
-      normalizeText(
-        source.displayName
-      );
+    return Promise.reject(
+      new Error(
+        "Nom et moyen de contact obligatoires."
+      )
+    );
   }
 
 
-  if(
-    source.email !==
-    undefined
-  ){
+  const invitationCode =
+    createNumericCode(6);
 
-    collaborator.email =
-      normalizeEmail(
-        source.email
+
+  return hashSecret(
+    invitationCode
+  )
+  .then(
+    function(
+      invitationCodeHash
+    ){
+
+      const collaborators =
+        loadCollaborators();
+
+
+      const collaborator = {
+
+        id:
+          createUniqueId(
+            "bociteart-collaborator"
+          ),
+
+        organizationId:
+          organization.organizationId,
+
+        accountId:
+          "",
+
+        displayName:
+          displayName,
+
+        email:
+          email,
+
+        phone:
+          phone,
+
+        role:
+          role,
+
+        permissions:
+          permissions,
+
+        enabled:
+          true,
+
+        invitationAccepted:
+          false,
+
+        invitationCodeHash:
+          invitationCodeHash,
+
+        invitedAt:
+          new Date().toISOString(),
+
+        acceptedAt:
+          null,
+
+        revokedAt:
+          null,
+
+        updatedAt:
+          new Date().toISOString(),
+
+        version:
+          "3"
+      };
+
+
+      collaborators.push(
+        collaborator
       );
-  }
 
 
-  if(
-    source.phone !==
-    undefined
-  ){
-
-    collaborator.phone =
-      normalizePhone(
-        source.phone
+      saveCollaborators(
+        collaborators
       );
-  }
 
 
-  if(
-    source.role !==
-    undefined
-  ){
+      addSecurityLog(
+        "collaborator_invited",
+        {
+          collaboratorId:
+            collaborator.id,
 
-    const role =
-      ACCESS_ROLES[
-        source.role
-      ]
-        ? source.role
-        : "custom";
+          organizationId:
+            organization.organizationId,
 
+          ownerAccountId:
+            account.accountId,
 
-    collaborator.role =
-      role;
+          displayName:
+            collaborator.displayName,
 
+          role:
+            collaborator.role,
 
-    collaborator.permissions =
-      getRolePermissions(
-        role,
-        source.permissions
+          permissions:
+            collaborator.permissions
+        }
       );
-  }
 
 
-  if(
-    source.permissions !==
-      undefined &&
-    collaborator.role ===
-      "custom"
-  ){
+      return {
 
-    collaborator.permissions =
-      getRolePermissions(
-        "custom",
-        source.permissions
-      );
-  }
+        collaborator:
+          collaborator,
 
-
-  collaborator.updatedAt =
-    new Date().toISOString();
-
-
-  saveCollaborators(
-    collaborators
-  );
-
-
-  addSecurityLog(
-    "collaborator_access_updated",
-    {
-      collaboratorId:
-        collaborator.id,
-
-      organizationId:
-        organization.organizationId,
-
-      ownerAccountId:
-        account.accountId,
-
-      role:
-        collaborator.role,
-
-      permissions:
-        collaborator.permissions
+        invitationCode:
+          invitationCode
+      };
     }
   );
-
-
-  return collaborator;
 }
-
-
 /* =========================================================
    ACCEPTATION DE L'INVITATION
    ========================================================= */
@@ -5674,16 +5698,24 @@ function updateCollaboratorAccess(
   const account =
     getAccount();
 
+if(
+  !organization ||
+  organization.active !== true ||
+  organization.validationStatus !==
+    "validated" ||
+  organization.professionalAccessReady !==
+    true
+){
+  return null;
+}
 
-  if(
-    !organization ||
-    organization.active !== true ||
-    organization.validationStatus !==
-      "validated"
-  ){
-    return null;
-  }
 
+if(
+  !account ||
+  !accountSecurityReady()
+){
+  return null;
+}
 
   if(
     !account ||
@@ -5857,14 +5889,24 @@ function restoreCollaboratorAccess(
     getAccount();
 
 
-  if(
-    !organization ||
-    organization.active !== true ||
-    organization.validationStatus !==
-      "validated"
-  ){
-    return false;
-  }
+ if(
+  !organization ||
+  organization.active !== true ||
+  organization.validationStatus !==
+    "validated" ||
+  organization.professionalAccessReady !==
+    true
+){
+  return false;
+}
+
+
+if(
+  !account ||
+  !accountSecurityReady()
+){
+  return false;
+} 
 
 
   if(
