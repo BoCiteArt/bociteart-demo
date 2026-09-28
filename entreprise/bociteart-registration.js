@@ -1,7 +1,7 @@
 
 /* =========================================================
    BO'CITÉART — PORTE D'ENTRÉE
-   ÉTAPE 3 — CRÉATION DU COMPTE
+   ÉTAPE 3 — CRÉATION DU COMPTE 
 
    INTRODUCTION
    → CRÉATION DU COMPTE
