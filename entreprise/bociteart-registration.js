@@ -6052,6 +6052,150 @@ function restoreCollaboratorAccess(
 
   return true;
 } 
+
+/* =========================================================
+   RESTAURATION D'UN ACCÈS COLLABORATEUR
+   ========================================================= */
+
+function restoreCollaboratorAccess(
+  collaboratorId
+){
+
+  const organization =
+    getOrganization();
+
+  const account =
+    getAccount();
+
+
+  /*
+    La restauration n'est autorisée
+    qu'après validation et activation
+    de l'accès professionnel.
+  */
+
+  if(
+    !organization ||
+    !organization.organizationId ||
+    organization.active !== true ||
+    organization.validationStatus !==
+      "validated" ||
+    organization.professionalAccessReady !==
+      true
+  ){
+    return false;
+  }
+
+
+  /*
+    Le compte du responsable principal
+    doit être sécurisé.
+  */
+
+  if(
+    !account ||
+    !account.accountId ||
+    !accountSecurityReady()
+  ){
+    return false;
+  }
+
+
+  /*
+    Seul le responsable principal
+    de l'organisation peut restaurer
+    un collaborateur.
+  */
+
+  if(
+    String(
+      organization.ownerAccountId ||
+      ""
+    ) !==
+    String(
+      account.accountId ||
+      ""
+    )
+  ){
+    return false;
+  }
+
+
+  const collaborators =
+    loadCollaborators();
+
+  const collaborator =
+    collaborators.find(
+      function(item){
+
+        return (
+          item &&
+          String(
+            item.id ||
+            ""
+          ) ===
+          String(
+            collaboratorId ||
+            ""
+          ) &&
+          String(
+            item.organizationId ||
+            ""
+          ) ===
+          String(
+            organization.organizationId ||
+            ""
+          )
+        );
+
+      }
+    );
+
+
+  if(
+    !collaborator
+  ){
+    return false;
+  }
+
+
+  /*
+    Réactivation du collaborateur.
+    Ses droits existants sont conservés.
+  */
+
+  collaborator.enabled =
+    true;
+
+  collaborator.revokedAt =
+    null;
+
+  collaborator.updatedAt =
+    new Date().toISOString();
+
+
+  saveCollaborators(
+    collaborators
+  );
+
+
+  addSecurityLog(
+    "collaborator_access_restored",
+    {
+      organizationId:
+        organization.organizationId,
+
+      collaboratorId:
+        collaborator.id,
+
+      accountId:
+        account.accountId
+    }
+  );
+
+
+  return true;
+}
    
 /* =========================================================
    SUPPRESSION DÉFINITIVE D'UN COLLABORATEUR
