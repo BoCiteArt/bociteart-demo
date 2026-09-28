@@ -1,5 +1,2019 @@
 
 /* =========================================================
+   BO'CITÉART — PORTE D'ENTRÉE
+   ÉTAPE 3 — CRÉATION DU COMPTE
+
+   INTRODUCTION
+   → CRÉATION DU COMPTE
+   → SYNOPTIQUE
+
+   Ce fichier gère :
+   → l'écran « Je crée mon compte » ;
+   → l'identifiant anonyme d'installation ;
+   → l'activation unique ;
+   → la catégorie déclarée ;
+   → la commune déclarée ;
+   → le compte local ;
+   → la sécurisation du compte ;
+   → les organisations ;
+   → les collaborateurs ;
+   → les statistiques anonymes.
+
+   Ce fichier ne décide jamais lui-même
+   de la page suivante.
+   ========================================================= */
+
+(function initBociteartRegistration(){
+
+  "use strict";
+
+
+/* =========================================================
+   CONSTANTES
+   ========================================================= */
+
+const OVERLAY_ID =
+  "bociteRegistrationOverlay";
+
+
+const STORAGE = {
+
+  installation:
+    "bociteart_installation_id_v1",
+
+  activation:
+    "bociteart_activation_v1",
+
+  account:
+    "bociteart_account_demo_v1",
+
+  registration:
+    "bociteart_registration_completed_v1",
+
+  statistics:
+    "bociteart_statistics_queue_v1",
+
+  profile:
+    "bociteart_visit_profile_v1",
+
+  commune:
+    "bociteart_declared_commune_v1",
+
+  security:
+    "bociteart_account_security_v1",
+
+  verification:
+    "bociteart_account_verification_v1",
+
+  organization:
+    "bociteart_organization_v1",
+
+  collaborators:
+    "bociteart_collaborators_v1",
+
+  sessions:
+    "bociteart_account_sessions_v1",
+
+  securityLog:
+    "bociteart_security_log_v1"
+};
+
+
+const MAX_STATISTICS =
+  500;
+
+
+const MAX_SECURITY_LOG =
+  500;
+
+
+const ACCOUNT_SECURITY_VERSION =
+  "3";
+
+
+const ALLOWED_CATEGORIES = [
+
+  "jeune",
+  "citoyen",
+  "commerce",
+  "entreprise",
+  "association",
+  "sport",
+  "ecole",
+  "mairie"
+
+];
+
+
+const ORGANIZATION_CATEGORIES = [
+
+  "commerce",
+  "entreprise",
+  "association",
+  "sport",
+  "ecole",
+  "mairie"
+
+];
+
+
+/* =========================================================
+   RÔLES
+   ========================================================= */
+
+const ACCESS_ROLES = {
+
+  owner: {
+    label:
+      "Responsable principal",
+
+    permissions:[
+      "all"
+    ]
+  },
+
+
+  administrator: {
+    label:
+      "Administrateur",
+
+    permissions:[
+      "profile",
+      "messages",
+      "publications",
+      "bocitecoins",
+      "employment",
+      "directory",
+      "sport",
+      "billing",
+      "collaborators"
+    ]
+  },
+
+
+  communication: {
+    label:
+      "Communication",
+
+    permissions:[
+      "profile",
+      "messages",
+      "publications",
+      "directory"
+    ]
+  },
+
+
+  employment: {
+    label:
+      "Emploi",
+
+    permissions:[
+      "employment",
+      "directory"
+    ]
+  },
+
+
+  finance: {
+    label:
+      "Finance",
+
+    permissions:[
+      "billing"
+    ]
+  },
+
+
+  sport: {
+    label:
+      "Sport",
+
+    permissions:[
+      "sport",
+      "messages",
+      "publications"
+    ]
+  },
+
+
+  custom: {
+    label:
+      "Accès personnalisé",
+
+    permissions:[]
+  }
+
+};
+
+
+const ACCESS_PERMISSIONS = {
+
+  profile:
+    "Profil",
+
+  messages:
+    "Messages",
+
+  publications:
+    "Publications",
+
+  bocitecoins:
+    "Bocitecoins",
+
+  employment:
+    "Emploi",
+
+  directory:
+    "Annuaire",
+
+  sport:
+    "Sport",
+
+  billing:
+    "Facturation",
+
+  collaborators:
+    "Collaborateurs"
+
+};
+
+
+/* =========================================================
+   OUTILS GÉNÉRAUX
+   ========================================================= */
+
+function getElement(
+  id
+){
+
+  return document.getElementById(
+    id
+  );
+}
+
+
+function normalizeText(
+  value
+){
+
+  return String(
+    value ||
+    ""
+  ).trim();
+}
+
+
+function normalizeEmail(
+  value
+){
+
+  return normalizeText(
+    value
+  ).toLowerCase();
+}
+
+
+function normalizePhone(
+  value
+){
+
+  return normalizeText(
+    value
+  )
+  .replace(
+    /[^\d+]/g,
+    ""
+  );
+}
+
+
+function safeParse(
+  value,
+  fallback
+){
+
+  try{
+
+    return JSON.parse(
+      value
+    );
+
+  }catch(error){
+
+    return fallback;
+  }
+}
+
+
+function createUniqueId(
+  prefix
+){
+
+  return (
+    String(
+      prefix ||
+      "bociteart"
+    ) +
+    "-" +
+    Date.now() +
+    "-" +
+    Math.random()
+      .toString(36)
+      .slice(2,10)
+  );
+}
+
+
+function createNumericCode(
+  length
+){
+
+  const size =
+    Math.max(
+      4,
+      Number(length) ||
+      6
+    );
+
+
+  let code =
+    "";
+
+
+  for(
+    let index = 0;
+    index < size;
+    index += 1
+  ){
+
+    code +=
+      String(
+        Math.floor(
+          Math.random() * 10
+        )
+      );
+  }
+
+
+  return code;
+}
+
+
+/* =========================================================
+   STOCKAGE LOCAL
+   ========================================================= */
+
+function getLocalStorageItem(
+  key
+){
+
+  try{
+
+    return localStorage.getItem(
+      key
+    );
+
+  }catch(error){
+
+    console.error(
+      "Bo'CitéArt : lecture locale impossible.",
+      error
+    );
+
+    return null;
+  }
+}
+
+
+function setLocalStorageItem(
+  key,
+  value
+){
+
+  try{
+
+    localStorage.setItem(
+      key,
+      value
+    );
+
+    return true;
+
+  }catch(error){
+
+    console.error(
+      "Bo'CitéArt : enregistrement local impossible.",
+      error
+    );
+
+    return false;
+  }
+}
+
+
+function removeLocalStorageItem(
+  key
+){
+
+  try{
+
+    localStorage.removeItem(
+      key
+    );
+
+    return true;
+
+  }catch(error){
+
+    console.error(
+      "Bo'CitéArt : suppression locale impossible.",
+      error
+    );
+
+    return false;
+  }
+}
+
+
+/* =========================================================
+   CATÉGORIES
+   ========================================================= */
+
+function normalizeCategory(
+  category
+){
+
+  const normalized =
+    normalizeText(
+      category
+    )
+    .toLowerCase();
+
+
+  const aliases = {
+
+    citoyenne:
+      "citoyen",
+
+    citoyen:
+      "citoyen",
+
+    jeune:
+      "jeune",
+
+    commerce:
+      "commerce",
+
+    commercant:
+      "commerce",
+
+    commerçant:
+      "commerce",
+
+    entreprise:
+      "entreprise",
+
+    association:
+      "association",
+
+    sport:
+      "sport",
+
+    club:
+      "sport",
+
+    ecole:
+      "ecole",
+
+    école:
+      "ecole",
+
+    scolaire:
+      "ecole",
+
+    mairie:
+      "mairie",
+
+    commune:
+      "mairie"
+
+  };
+
+
+  const value =
+    aliases[normalized] ||
+    normalized;
+
+
+  return ALLOWED_CATEGORIES
+    .includes(value)
+      ? value
+      : "";
+}
+
+
+function isOrganizationCategory(
+  category
+){
+
+  return ORGANIZATION_CATEGORIES
+    .includes(
+      normalizeCategory(
+        category
+      )
+    );
+}
+
+
+function isProfessionalCategory(
+  category
+){
+
+  return isOrganizationCategory(
+    category
+  );
+}
+
+
+/* =========================================================
+   IDENTIFIANT D'INSTALLATION
+   ========================================================= */
+
+function createInstallationId(){
+
+  return createUniqueId(
+    "bociteart-installation"
+  );
+}
+
+
+function getInstallationId(){
+
+  let installationId =
+    getLocalStorageItem(
+      STORAGE.installation
+    );
+
+
+  if(!installationId){
+
+    installationId =
+      createInstallationId();
+
+
+    setLocalStorageItem(
+      STORAGE.installation,
+      installationId
+    );
+  }
+
+
+  return installationId;
+}
+
+
+/* =========================================================
+   ACTIVATION
+   ========================================================= */
+
+function activateInstallation(
+  data
+){
+
+  const source =
+    data &&
+    typeof data ===
+      "object"
+      ? data
+      : {};
+
+
+  const activation = {
+
+    installationId:
+      getInstallationId(),
+
+    activated:
+      true,
+
+    category:
+      normalizeCategory(
+        source.category
+      ),
+
+    commune:
+      normalizeText(
+        source.commune
+      ),
+
+    activatedAt:
+      new Date().toISOString(),
+
+    version:
+      "2"
+  };
+
+
+  setLocalStorageItem(
+    STORAGE.activation,
+    JSON.stringify(
+      activation
+    )
+  );
+
+
+  return activation;
+}
+
+
+function getActivation(){
+
+  const saved =
+    getLocalStorageItem(
+      STORAGE.activation
+    );
+
+
+  return saved
+    ? safeParse(
+        saved,
+        null
+      )
+    : null;
+}
+
+
+function hasActivation(){
+
+  const activation =
+    getActivation();
+
+
+  return Boolean(
+    activation &&
+    activation.activated ===
+      true
+  );
+}
+
+
+/* =========================================================
+   PROFIL ET COMMUNE DÉCLARÉS
+   ========================================================= */
+
+function saveDeclaredProfile(
+  profile
+){
+
+  const category =
+    normalizeCategory(
+      profile
+    );
+
+
+  if(!category){
+    return false;
+  }
+
+
+  setLocalStorageItem(
+    STORAGE.profile,
+    category
+  );
+
+
+  return true;
+}
+
+
+function getDeclaredProfile(){
+
+  return normalizeCategory(
+    getLocalStorageItem(
+      STORAGE.profile
+    )
+  );
+}
+
+
+function saveDeclaredCommune(
+  commune
+){
+
+  const value =
+    normalizeText(
+      commune
+    );
+
+
+  if(!value){
+    return false;
+  }
+
+
+  setLocalStorageItem(
+    STORAGE.commune,
+    value
+  );
+
+
+  return true;
+}
+
+
+function getDeclaredCommune(){
+
+  return normalizeText(
+    getLocalStorageItem(
+      STORAGE.commune
+    )
+  );
+}
+
+
+/* =========================================================
+   STATISTIQUES
+   ========================================================= */
+
+function getStatistics(){
+
+  const saved =
+    getLocalStorageItem(
+      STORAGE.statistics
+    );
+
+
+  const rows =
+    saved
+      ? safeParse(
+          saved,
+          []
+        )
+      : [];
+
+
+  return Array.isArray(rows)
+    ? rows
+    : [];
+}
+
+
+function addStatistic(
+  data
+){
+
+  const rows =
+    getStatistics();
+
+
+  rows.push(
+    Object.assign(
+      {
+        id:
+          createUniqueId(
+            "bociteart-stat"
+          ),
+
+        installationId:
+          getInstallationId(),
+
+        date:
+          new Date().toISOString(),
+
+        sent:
+          false
+      },
+      data &&
+      typeof data ===
+        "object"
+        ? data
+        : {}
+    )
+  );
+
+
+  setLocalStorageItem(
+    STORAGE.statistics,
+    JSON.stringify(
+      rows.slice(
+        -MAX_STATISTICS
+      )
+    )
+  );
+
+
+  return true;
+}
+
+
+function getPendingStatistics(){
+
+  return getStatistics()
+    .filter(
+      function(item){
+
+        return (
+          item &&
+          item.sent !==
+            true
+        );
+      }
+    );
+}
+
+
+function markStatisticsAsSent(
+  ids
+){
+
+  const selected =
+    new Set(
+      Array.isArray(ids)
+        ? ids.map(String)
+        : []
+    );
+
+
+  const rows =
+    getStatistics()
+      .map(
+        function(item){
+
+          if(
+            item &&
+            selected.has(
+              String(item.id)
+            )
+          ){
+
+            return Object.assign(
+              {},
+              item,
+              {
+                sent:true,
+                sentAt:
+                  new Date()
+                    .toISOString()
+              }
+            );
+          }
+
+
+          return item;
+        }
+      );
+
+
+  setLocalStorageItem(
+    STORAGE.statistics,
+    JSON.stringify(rows)
+  );
+
+
+  return true;
+}
+
+
+function clearStatistics(){
+
+  removeLocalStorageItem(
+    STORAGE.statistics
+  );
+
+
+  return true;
+}
+
+
+/* =========================================================
+   CRYPTOGRAPHIE LOCALE
+   ========================================================= */
+
+function hashSecret(
+  value
+){
+
+  const text =
+    String(
+      value ||
+      ""
+    );
+
+
+  if(
+    window.crypto &&
+    window.crypto.subtle &&
+    window.TextEncoder
+  ){
+
+    const bytes =
+      new TextEncoder()
+        .encode(text);
+
+
+    return window.crypto.subtle
+      .digest(
+        "SHA-256",
+        bytes
+      )
+      .then(
+        function(buffer){
+
+          return Array.from(
+            new Uint8Array(buffer)
+          )
+          .map(
+            function(byte){
+
+              return byte
+                .toString(16)
+                .padStart(
+                  2,
+                  "0"
+                );
+            }
+          )
+          .join("");
+        }
+      );
+  }
+
+
+  /*
+    Repli local uniquement.
+    Le raccordement officiel utilisera
+    la sécurité du serveur.
+  */
+
+  let hash =
+    0;
+
+
+  for(
+    let index = 0;
+    index < text.length;
+    index += 1
+  ){
+
+    hash =
+      (
+        (
+          hash << 5
+        ) -
+        hash
+      ) +
+      text.charCodeAt(index);
+
+    hash |=
+      0;
+  }
+
+
+  return Promise.resolve(
+    "local-" +
+    Math.abs(hash)
+  );
+}
+
+
+function verifySecret(
+  value,
+  expectedHash
+){
+
+  return hashSecret(
+    value
+  )
+  .then(
+    function(hash){
+
+      return (
+        String(hash) ===
+        String(
+          expectedHash ||
+          ""
+        )
+      );
+    }
+  );
+}
+
+
+/* =========================================================
+   SÉCURITÉ PRINCIPALE DU COMPTE
+   ========================================================= */
+
+function getAccountSecurity(){
+
+  const saved =
+    getLocalStorageItem(
+      STORAGE.security
+    );
+
+
+  const data =
+    saved
+      ? safeParse(
+          saved,
+          {}
+        )
+      : {};
+
+
+  return (
+    data &&
+    typeof data ===
+      "object"
+  )
+    ? data
+    : {};
+}
+
+
+function saveAccountSecurity(
+  data
+){
+
+  const source =
+    data &&
+    typeof data ===
+      "object"
+      ? data
+      : {};
+
+
+  source.version =
+    ACCOUNT_SECURITY_VERSION;
+
+  source.updatedAt =
+    new Date().toISOString();
+
+
+  setLocalStorageItem(
+    STORAGE.security,
+    JSON.stringify(source)
+  );
+
+
+  return source;
+}
+
+
+function accountSecurityReady(){
+
+  const security =
+    getAccountSecurity();
+
+
+  return Boolean(
+    security &&
+    security.activated === true &&
+    security.passwordConfigured === true
+  );
+}
+
+
+/* =========================================================
+   VÉRIFICATION E-MAIL / TÉLÉPHONE
+   ========================================================= */
+
+function getAccountVerification(){
+
+  const saved =
+    getLocalStorageItem(
+      STORAGE.verification
+    );
+
+
+  const data =
+    saved
+      ? safeParse(
+          saved,
+          {}
+        )
+      : {};
+
+
+  return (
+    data &&
+    typeof data ===
+      "object"
+  )
+    ? data
+    : {};
+}
+
+
+function saveAccountVerification(
+  data
+){
+
+  const source =
+    data &&
+    typeof data ===
+      "object"
+      ? data
+      : {};
+
+
+  source.updatedAt =
+    new Date().toISOString();
+
+
+  setLocalStorageItem(
+    STORAGE.verification,
+    JSON.stringify(source)
+  );
+
+
+  return source;
+}
+
+
+/* =========================================================
+   ORGANISATION — STOCKAGE
+   ========================================================= */
+
+function getOrganization(){
+
+  const saved =
+    getLocalStorageItem(
+      STORAGE.organization
+    );
+
+
+  const data =
+    saved
+      ? safeParse(
+          saved,
+          {}
+        )
+      : {};
+
+
+  return (
+    data &&
+    typeof data ===
+      "object"
+  )
+    ? data
+    : {};
+}
+
+
+function saveOrganization(
+  data
+){
+
+  const source =
+    data &&
+    typeof data ===
+      "object"
+      ? data
+      : {};
+
+
+  source.updatedAt =
+    new Date().toISOString();
+
+
+  setLocalStorageItem(
+    STORAGE.organization,
+    JSON.stringify(source)
+  );
+
+
+  return source;
+}
+
+
+/* =========================================================
+   COLLABORATEURS — STOCKAGE
+   ========================================================= */
+
+function loadCollaborators(){
+
+  const saved =
+    getLocalStorageItem(
+      STORAGE.collaborators
+    );
+
+
+  const rows =
+    saved
+      ? safeParse(
+          saved,
+          []
+        )
+      : [];
+
+
+  return Array.isArray(rows)
+    ? rows
+    : [];
+}
+
+
+function saveCollaborators(
+  rows
+){
+
+  const safeRows =
+    Array.isArray(rows)
+      ? rows
+      : [];
+
+
+  setLocalStorageItem(
+    STORAGE.collaborators,
+    JSON.stringify(safeRows)
+  );
+
+
+  return safeRows;
+}
+
+
+function getCollaboratorById(
+  collaboratorId
+){
+
+  return loadCollaborators()
+    .find(
+      function(item){
+
+        return (
+          String(
+            item.id
+          ) ===
+          String(
+            collaboratorId
+          )
+        );
+      }
+    ) ||
+    null;
+}
+
+
+/* =========================================================
+   JOURNAL DE SÉCURITÉ
+   ========================================================= */
+
+function loadSecurityLog(){
+
+  const saved =
+    getLocalStorageItem(
+      STORAGE.securityLog
+    );
+
+
+  const rows =
+    saved
+      ? safeParse(
+          saved,
+          []
+        )
+      : [];
+
+
+  return Array.isArray(rows)
+    ? rows
+    : [];
+}
+
+
+function addSecurityLog(
+  type,
+  details
+){
+
+  const rows =
+    loadSecurityLog();
+
+
+  rows.unshift({
+
+    id:
+      createUniqueId(
+        "bociteart-security"
+      ),
+
+    type:
+      normalizeText(
+        type ||
+        "information"
+      ),
+
+    details:
+      details &&
+      typeof details ===
+        "object"
+        ? details
+        : {},
+
+    date:
+      new Date().toISOString()
+
+  });
+
+
+  setLocalStorageItem(
+    STORAGE.securityLog,
+    JSON.stringify(
+      rows.slice(
+        0,
+        MAX_SECURITY_LOG
+      )
+    )
+  );
+
+
+  return true;
+}
+
+
+/* =========================================================
+   SESSIONS
+   ========================================================= */
+
+function loadSessions(){
+
+  const saved =
+    getLocalStorageItem(
+      STORAGE.sessions
+    );
+
+
+  const rows =
+    saved
+      ? safeParse(
+          saved,
+          []
+        )
+      : [];
+
+
+  return Array.isArray(rows)
+    ? rows
+    : [];
+}
+
+
+function saveSessions(
+  rows
+){
+
+  const safeRows =
+    Array.isArray(rows)
+      ? rows
+      : [];
+
+
+  setLocalStorageItem(
+    STORAGE.sessions,
+    JSON.stringify(safeRows)
+  );
+
+
+  return safeRows;
+}
+
+
+function revokeCollaboratorSessions(
+  collaboratorId
+){
+
+  const rows =
+    loadSessions();
+
+
+  let changed =
+    false;
+
+
+  rows.forEach(
+    function(session){
+
+      if(
+        session &&
+        String(
+          session.collaboratorId ||
+          ""
+        ) ===
+        String(
+          collaboratorId ||
+          ""
+        ) &&
+        session.active ===
+          true
+      ){
+
+        session.active =
+          false;
+
+        session.revokedAt =
+          new Date().toISOString();
+
+        changed =
+          true;
+      }
+    }
+  );
+
+
+  if(changed){
+
+    saveSessions(
+      rows
+    );
+  }
+
+
+  return changed;
+}
+
+
+/* =========================================================
+   RÉVOCATION D'UN COLLABORATEUR
+   ========================================================= */
+
+function revokeCollaboratorAccess(
+  collaboratorId
+){
+
+  const organization =
+    getOrganization();
+
+  const account =
+    typeof getAccount ===
+      "function"
+      ? getAccount()
+      : null;
+
+
+  if(
+    !organization ||
+    !organization.organizationId ||
+    !account ||
+    String(
+      organization.ownerAccountId ||
+      ""
+    ) !==
+    String(
+      account.accountId ||
+      ""
+    )
+  ){
+    return false;
+  }
+
+
+  const collaborators =
+    loadCollaborators();
+
+
+  const collaborator =
+    collaborators.find(
+      function(item){
+
+        return (
+          String(
+            item.id
+          ) ===
+          String(
+            collaboratorId
+          ) &&
+          String(
+            item.organizationId ||
+            ""
+          ) ===
+          String(
+            organization.organizationId
+          )
+        );
+      }
+    );
+
+
+  if(!collaborator){
+    return false;
+  }
+
+
+  collaborator.enabled =
+    false;
+
+  collaborator.revokedAt =
+    new Date().toISOString();
+
+  collaborator.updatedAt =
+    new Date().toISOString();
+
+
+  saveCollaborators(
+    collaborators
+  );
+
+
+  revokeCollaboratorSessions(
+    collaboratorId
+  );
+
+
+  addSecurityLog(
+    "collaborator_access_revoked",
+    {
+      collaboratorId:
+        collaborator.id,
+
+      organizationId:
+        organization.organizationId
+    }
+  );
+
+
+  return true;
+}
+
+
+/* =========================================================
+   PASSKEY / CAPACITÉS
+   ========================================================= */
+
+function passkeyAvailable(){
+
+  return Boolean(
+    window.PublicKeyCredential &&
+    navigator.credentials
+  );
+}
+
+
+function getSecurityCapabilities(){
+
+  return {
+
+    password:
+      true,
+
+    emailCode:
+      true,
+
+    smsCode:
+      true,
+
+    twoFactor:
+      true,
+
+    passkey:
+      passkeyAvailable(),
+
+    biometric:
+      passkeyAvailable(),
+
+    collaboratorManagement:
+      true
+
+  };
+}
+
+
+function getProfessionalSecurityCapabilities(){
+
+  return getSecurityCapabilities();
+}
+
+
+/* =========================================================
+   INTERFACE D'INSCRIPTION — OUTILS
+   ========================================================= */
+
+function getLogoHtml(){
+
+  return (
+    '<span style="color:#2f5d46;font-weight:700;">Bo’Cité</span>' +
+    '<span style="color:#a52a2a;font-weight:700;">Art</span>'
+  );
+}
+
+
+function installStyles(){
+
+  if(
+    document.getElementById(
+      "bociteRegistrationStyles"
+    )
+  ){
+    return;
+  }
+
+
+  const style =
+    document.createElement(
+      "style"
+    );
+
+
+  style.id =
+    "bociteRegistrationStyles";
+
+
+  style.textContent = `
+
+    #${OVERLAY_ID}{
+      position:fixed;
+      inset:0;
+      z-index:999999;
+      overflow:auto;
+      padding:24px 14px;
+      box-sizing:border-box;
+      background:#f7f3ea;
+    }
+
+    #bociteRegistrationCard{
+      width:min(620px,100%);
+      margin:0 auto;
+      padding:22px;
+      box-sizing:border-box;
+      background:#ffffff;
+      border:2px solid #2f5d46;
+      border-radius:15px;
+    }
+
+    .bociteRegistrationTitle{
+      margin:0 0 14px 0;
+      color:#2f5d46;
+      font-size:17px;
+      font-weight:700;
+      line-height:1.35;
+      text-align:center;
+    }
+
+    .bociteRegistrationIntro,
+    .bociteRegistrationPrivacy,
+    .bociteRegistrationHelp{
+      color:#111;
+      font-size:14px;
+      line-height:1.5;
+    }
+
+    .bociteRegistrationPrivacy{
+      margin:14px 0;
+      padding:14px;
+      background:#f7f3ea;
+      border-radius:10px;
+    }
+
+    .bociteRegistrationField{
+      margin-top:13px;
+    }
+
+    .bociteRegistrationField label{
+      display:block;
+      margin-bottom:5px;
+      color:#111;
+      font-size:14px;
+      font-weight:700;
+    }
+
+    .bociteRegistrationField input,
+    .bociteRegistrationField select{
+      width:100%;
+      box-sizing:border-box;
+      padding:11px 12px;
+      border:2px solid #2f5d46;
+      border-radius:9px;
+      background:#fff;
+      color:#111;
+      font-size:14px;
+    }
+
+    #bociteRegistrationMessage{
+      display:none;
+      margin-top:14px;
+      padding:13px;
+      border-left:6px solid #b00020;
+      background:#f7f3ea;
+      color:#111;
+      font-size:14px;
+      line-height:1.45;
+    }
+
+    #bociteRegistrationContinueBtn,
+    .choiceBtn{
+      width:100%;
+      margin-top:16px;
+      padding:14px 12px;
+      border:2px solid #2f5d46;
+      border-radius:10px;
+      background:#fff;
+      color:#2f5d46;
+      font-size:15px;
+      font-weight:700;
+      cursor:pointer;
+    }
+
+  `;
+
+
+  document.head.appendChild(
+    style
+  );
+}
+
+
+/* =========================================================
+   INTERFACE D'INSCRIPTION
+   ========================================================= */
+
+function getRegistrationHtml(){
+
+  const savedCommune =
+    getDeclaredCommune();
+
+
+  return `
+
+    <div id="bociteRegistrationCard">
+
+      <h2 class="bociteRegistrationTitle">
+        Je crée mon compte
+        <br>
+        ${getLogoHtml()}
+      </h2>
+
+      <div class="bociteRegistrationIntro">
+        Votre compte permet de retrouver
+        votre profil et les services
+        correspondant à votre situation.
+      </div>
+
+      <div class="bociteRegistrationField">
+
+        <label for="bociteRegistrationName">
+          Nom et prénom
+        </label>
+
+        <input
+          id="bociteRegistrationName"
+          type="text"
+          autocomplete="name"
+          placeholder="Votre nom et prénom">
+
+      </div>
+
+
+      <div class="bociteRegistrationField">
+
+        <label for="bociteRegistrationEmail">
+          Adresse e-mail
+        </label>
+
+        <input
+          id="bociteRegistrationEmail"
+          type="email"
+          autocomplete="email"
+          placeholder="Votre adresse e-mail">
+
+      </div>
+
+
+      <div class="bociteRegistrationField">
+
+        <label for="bociteRegistrationPhone">
+          Téléphone
+        </label>
+
+        <input
+          id="bociteRegistrationPhone"
+          type="tel"
+          autocomplete="tel"
+          placeholder="Votre numéro de téléphone">
+
+      </div>
+
+
+      <div class="bociteRegistrationField">
+
+        <label for="bociteRegistrationCategory">
+          Je suis
+        </label>
+
+        <select
+          id="bociteRegistrationCategory">
+
+          <option value="">
+            Sélectionnez votre profil
+          </option>
+
+          <option value="jeune">
+            Jeune
+          </option>
+
+          <option value="citoyen">
+            Citoyen
+          </option>
+
+          <option value="commerce">
+            Commerce
+          </option>
+
+          <option value="entreprise">
+            Entreprise
+          </option>
+
+          <option value="association">
+            Association
+          </option>
+
+          <option value="sport">
+            Club sportif
+          </option>
+
+          <option value="ecole">
+            École ou milieu scolaire
+          </option>
+
+          <option value="mairie">
+            Mairie ou collectivité
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <div class="bociteRegistrationField">
+
+        <label for="bociteRegistrationCommune">
+          Ma commune
+        </label>
+
+        <input
+          id="bociteRegistrationCommune"
+          type="text"
+          autocomplete="address-level2"
+          value="${savedCommune || ""}"
+          placeholder="Exemple : Wattignies">
+
+      </div>
+
+
+      <div
+        id="bociteRegistrationMessage"
+        role="alert">
+
+        Complétez les informations nécessaires
+        avant de continuer.
+
+      </div>
+
+
+      <button
+        id="bociteRegistrationContinueBtn"
+        type="button">
+
+        Continuer
+
+      </button>
+
+
+      <div class="bociteRegistrationPrivacy">
+
+        Les statistiques anonymes
+        ne contiennent ni votre nom
+        ni votre adresse électronique.
+
+        <br><br>
+
+        Elles distinguent uniquement
+        l'activation,
+        la catégorie d'utilisateur déclarée
+        et la commune afin de produire
+        des bilans anonymes.
+
+      </div>
+
+    </div>
+
+  `;
+}
+
+
+/* =========================================================
+   OUVERTURE ET FERMETURE
+   ========================================================= */
+
+function closeRegistration(){
+
+  const overlay =
+    getElement(
+      OVERLAY_ID
+    );
+
+
+  if(overlay){
+    overlay.remove();
+  }
+}
+
+
+function openRegistration(){
+
+  installStyles();
+
+  closeRegistration();
+
+
+  const overlay =
+    document.createElement(
+      "div"
+    );
+
+
+  overlay.id =
+    OVERLAY_ID;
+
+  overlay.innerHTML =
+    getRegistrationHtml();
+
+
+  document.body.appendChild(
+    overlay
+  );
+
+
+  const category =
+    getElement(
+      "bociteRegistrationCategory"
+    );
+
+
+  const account =
+    typeof getAccount ===
+      "function"
+      ? (
+          getAccount() ||
+          {}
+        )
+      : {};
+
+
+  const savedProfile =
+    account.category ||
+    getDeclaredProfile();
+
+
+  if(
+    category &&
+    savedProfile
+  ){
+
+    category.value =
+      savedProfile;
+  }
+
+
+  bindRegistration();
+
+  overlay.scrollTop =
+    0;
+}
+
+
+/* =========================================================
+   LIAISON DU FORMULAIRE
+   ========================================================= */
+
+function bindRegistration(){
+
+  const button =
+    getElement(
+      "bociteRegistrationContinueBtn"
+    );
+
+
+  if(!button){
+    return;
+  }
+
+
+  button.onclick =
+    function(){
+
+      if(
+        typeof completeRegistration ===
+        "function"
+      ){
+
+        completeRegistration();
+      }
+    };
+}
+
+/* =========================================================
    ÇA COMMENCE ICI
    BO'CITÉART — ORGANISATIONS
    DOSSIER — VALIDATION — ACCÈS
