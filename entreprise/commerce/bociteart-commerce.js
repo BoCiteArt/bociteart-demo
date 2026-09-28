@@ -1,58 +1,50 @@
 /* =========================================================
-   ÇA COMMENCE ICI — BO'CITÉART COMMERCE / ENTREPRISE
+   ÇA COMMENCE ICI — BO’CITÉART COMMERCE / ENTREPRISE
    Fichier : entreprise/commerce/bociteart-commerce.js
    ========================================================= */
 
 (function(){
+
 "use strict";
 
-if(window.__bociteCommerceModuleLoaded === true) return;
-window.__bociteCommerceModuleLoaded = true;
-
-const STYLE_ID = "bociteartCommerceStylesV3";
-
-const $id = id =>
-  document.getElementById(id);
-
-const esc = value =>
-  String(value == null ? "" : value)
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
-
-
 /* =========================================================
-   IDENTITÉ VISUELLE
+   PROTECTION CONTRE UN DOUBLE CHARGEMENT
    ========================================================= */
 
-function brand(){
-
-  return `
-    <span class="commerceBrand">
-      <span class="commerceBrandGreen">Bo'Cité</span>
-      <span class="commerceBrandRed">Art</span>
-    </span>
-  `;
+if(
+  window.__bociteCommerceModuleLoaded === true
+){
+  return;
 }
 
+window.__bociteCommerceModuleLoaded = true;
+
 
 /* =========================================================
-   STYLES
+   PRÉSENTATION + OUTILS COMMERCE
    ========================================================= */
 
-function ensureStyles(){
+const COMMERCE_STYLE_ID =
+  "bociteartCommerceStylesV2";
 
-  if(document.getElementById(STYLE_ID)){
+
+function commerceEnsureStyles(){
+
+  if(
+    document.getElementById(
+      COMMERCE_STYLE_ID
+    )
+  ){
     return;
   }
 
   const style =
-    document.createElement("style");
+    document.createElement(
+      "style"
+    );
 
   style.id =
-    STYLE_ID;
+    COMMERCE_STYLE_ID;
 
   style.textContent = `
 
@@ -64,21 +56,22 @@ function ensureStyles(){
     .bociteCommerceRoot{
       color:#111;
       font-size:14px;
+      font-weight:400;
       line-height:1.5;
     }
 
-    .bociteCommerceRoot .commerceCard,
-    .bociteCommerceRoot .box{
+    .bociteCommerceRoot .commerceCard{
       background:#fff;
       border:2px solid rgba(0,0,0,.08);
       border-radius:14px;
       padding:12px;
       margin:10px 0;
       color:#111;
+      font-size:14px;
+      font-weight:400;
     }
 
-    .bociteCommerceRoot .commerceTitle,
-    .bociteCommerceRoot .entrepriseSectionTitle{
+    .bociteCommerceRoot .commerceTitle{
       color:#2f5d46;
       font-size:17px;
       line-height:1.25;
@@ -86,8 +79,19 @@ function ensureStyles(){
       margin:0 0 8px;
     }
 
+    .bociteCommerceRoot .commerceText,
+    .bociteCommerceRoot .commerceStatus,
+    .bociteCommerceRoot .commerceLabel,
+    .bociteCommerceRoot li{
+      color:#111;
+      font-size:14px;
+      line-height:1.5;
+      font-weight:400;
+    }
+
     .bociteCommerceRoot .commerceBrand{
       display:inline-flex;
+      gap:0;
       white-space:nowrap;
       font-weight:800;
     }
@@ -100,8 +104,7 @@ function ensureStyles(){
       color:#a51e22;
     }
 
-    .bociteCommerceRoot .commerceBtn,
-    .bociteCommerceRoot .choiceBtn{
+    .bociteCommerceRoot .commerceBtn{
       border:2px solid #2f5d46;
       background:#fff;
       color:#2f5d46;
@@ -113,7 +116,7 @@ function ensureStyles(){
       font-family:inherit;
     }
 
-    .bociteCommerceRoot button:disabled{
+    .bociteCommerceRoot .commerceBtn:disabled{
       opacity:.55;
       cursor:not-allowed;
     }
@@ -125,8 +128,7 @@ function ensureStyles(){
       margin-top:10px;
     }
 
-    .bociteCommerceRoot .commerceField,
-    .bociteCommerceRoot .miniField{
+    .bociteCommerceRoot .commerceField{
       width:100%;
       border:2px solid rgba(0,0,0,.12);
       border-radius:12px;
@@ -134,12 +136,12 @@ function ensureStyles(){
       background:#fff;
       color:#111;
       font-size:14px;
+      font-weight:400;
       font-family:inherit;
       outline:none;
     }
 
-    .bociteCommerceRoot textarea.commerceField,
-    .bociteCommerceRoot textarea.miniField{
+    .bociteCommerceRoot textarea.commerceField{
       min-height:90px;
       resize:vertical;
     }
@@ -157,16 +159,33 @@ function ensureStyles(){
       background:#f5f1ea;
     }
 
-    .bociteCommerceRoot .commerceStatus[data-state="ok"]{
+    .bociteCommerceRoot
+    .commerceStatus[data-state="ok"]{
       border-left:4px solid #2f5d46;
     }
 
-    .bociteCommerceRoot .commerceStatus[data-state="error"]{
+    .bociteCommerceRoot
+    .commerceStatus[data-state="error"]{
       border-left:4px solid #a51e22;
     }
 
-    .bociteCommerceRoot .commerceStatus[data-state="warn"]{
+    .bociteCommerceRoot
+    .commerceStatus[data-state="warn"]{
       border-left:4px solid #d4bb18;
+    }
+
+    .bociteCommerceRoot .commerceWallet{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+
+    .bociteCommerceRoot .commerceWalletValue{
+      font-size:26px;
+      font-weight:800;
+      color:#9a7000;
+      white-space:nowrap;
     }
 
     .bociteCommerceRoot .commerceRule{
@@ -182,44 +201,10 @@ function ensureStyles(){
       display:none;
     }
 
-    .bociteCommerceRoot .muted,
     .bociteCommerceRoot .commerceSmall{
       font-size:12px;
       color:#6e6a63;
-    }
-
-    .bociteCommerceRoot .entrepriseBand{
-      display:block;
-      width:100%;
-      margin:7px 0;
-      padding:11px;
-      border:2px solid #2f5d46;
-      border-radius:10px;
-      background:#fffaf1;
-      color:#111;
-      text-align:left;
-      cursor:pointer;
-      font-weight:800;
-    }
-
-    .bociteCommerceRoot .entreprisePrivate{
-      border:2px solid #2f5d46;
-      background:#f7f2e8;
-      border-radius:14px;
-      padding:12px;
-      margin-top:12px;
-    }
-
-    .bociteCommerceRoot .entrepriseCounter{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:10px;
-      padding:10px;
-      margin-top:8px;
-      border:2px solid rgba(0,0,0,.08);
-      border-radius:12px;
-      background:#fff;
+      font-weight:400;
     }
 
   `;
@@ -230,38 +215,35 @@ function ensureStyles(){
 }
 
 
-/* =========================================================
-   MODALE GÉNÉRALE
-   ========================================================= */
+function commerceBrandHtml(){
 
-function modal(
-  title,
-  html
+  return (
+    '<span class="commerceBrand">' +
+      '<span class="commerceBrandGreen">' +
+        "Bo'Cité" +
+      '</span>' +
+      '<span class="commerceBrandRed">' +
+        "Art" +
+      '</span>' +
+    '</span>'
+  );
+}
+
+
+function commerceEsc(
+  value
 ){
 
-  if(
-    typeof window.openModal ===
-    "function"
-  ){
-    return window.openModal(
-      title,
-      html
-    );
-  }
-
-  if(
-    typeof openModal ===
-    "function"
-  ){
-    return openModal(
-      title,
-      html
-    );
-  }
-
-  alert(
-    "Le module d’affichage Bo’CitéArt n’est pas disponible."
-  );
+  return String(
+    value == null
+      ? ""
+      : value
+  )
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
 }
 
 
@@ -269,7 +251,7 @@ function modal(
    VILLE ACTIVE
    ========================================================= */
 
-function city(){
+function commerceActiveCity(){
 
   try{
 
@@ -279,54 +261,64 @@ function city(){
         "function"
     ){
 
-      const c =
+      const city =
         window.BociteCityContext.get();
 
       if(
-        c &&
-        c.cityId
+        city &&
+        city.cityId
       ){
 
         return {
 
           cityId:
             String(
-              c.cityId
+              city.cityId
             )
-            .trim()
-            .toLowerCase(),
+              .trim()
+              .toLowerCase(),
 
           cityName:
             String(
-              c.cityName ||
-              c.name ||
+              city.cityName ||
+              city.name ||
               "Ville"
-            ).trim(),
+            )
+              .trim(),
 
           coinPlural:
             String(
-              c.coinPlural ||
+              city.coinPlural ||
               "bocitecoins"
-            ).trim()
+            )
+              .trim()
+
         };
       }
     }
 
-  }catch(e){}
+  }catch(error){}
 
   return {
-    cityId:"wattignies",
-    cityName:"Wattignies",
-    coinPlural:"Watticoins"
+
+    cityId:
+      "wattignies",
+
+    cityName:
+      "Wattignies",
+
+    coinPlural:
+      "Watticoins"
+
   };
 }
 
 
 /* =========================================================
-   RACCORDEMENT AU COMPTE CENTRAL
+   COMPTE CENTRAL BO'CITÉART
    ========================================================= */
 
-function accountApi(){
+function commerceAccountApi(){
 
   return (
     window.BoCiteArtRegistration ||
@@ -336,32 +328,10 @@ function accountApi(){
 }
 
 
-function organization(){
+function commerceCentralAccount(){
 
   const api =
-    accountApi();
-
-  try{
-
-    return (
-      api &&
-      typeof api.getOrganization ===
-        "function"
-    )
-      ? api.getOrganization()
-      : null;
-
-  }catch(e){
-
-    return null;
-  }
-}
-
-
-function account(){
-
-  const api =
-    accountApi();
+    commerceAccountApi();
 
   try{
 
@@ -373,102 +343,290 @@ function account(){
       ? api.getAccount()
       : null;
 
-  }catch(e){
+  }catch(error){
 
     return null;
   }
 }
 
 
-function categoryOf(
-  org
-){
+function commerceCentralOrganization(){
 
-  return String(
-    org &&
-    org.category ||
-    ""
-  )
-  .trim()
-  .toLowerCase();
+  const api =
+    commerceAccountApi();
+
+  try{
+
+    return (
+      api &&
+      typeof api.getOrganization ===
+        "function"
+    )
+      ? api.getOrganization()
+      : null;
+
+  }catch(error){
+
+    return null;
+  }
 }
 
 
-function profileOf(
-  org
+function commerceCentralAccessState(
+  expectedCategory
 ){
 
-  return (
-    org &&
-    org.organizationProfile &&
-    typeof org.organizationProfile ===
-      "object"
-  )
-    ? org.organizationProfile
-    : {};
+  const api =
+    commerceAccountApi();
+
+  const account =
+    commerceCentralAccount();
+
+  const organization =
+    commerceCentralOrganization();
+
+
+  if(!api){
+
+    return {
+      ok:false,
+      reason:"central_unavailable"
+    };
+  }
+
+
+  if(
+    !account ||
+    !account.accountId
+  ){
+
+    return {
+      ok:false,
+      reason:"account_missing"
+    };
+  }
+
+
+  if(
+    !organization ||
+    !organization.organizationId
+  ){
+
+    return {
+      ok:false,
+      reason:"organization_missing"
+    };
+  }
+
+
+  const category =
+    String(
+      organization.category ||
+      ""
+    )
+      .trim()
+      .toLowerCase();
+
+
+  if(
+    expectedCategory &&
+    category !== expectedCategory
+  ){
+
+    return {
+      ok:false,
+      reason:"wrong_category",
+      category:category,
+      organization:organization,
+      account:account
+    };
+  }
+
+
+  const validated =
+    (
+      organization.active === true &&
+      organization.validationStatus ===
+        "validated"
+    );
+
+
+  const ready =
+    organization.professionalAccessReady ===
+      true;
+
+
+  let context =
+    null;
+
+
+  try{
+
+    if(
+      typeof api.getCurrentAccessContext ===
+        "function"
+    ){
+
+      context =
+        api.getCurrentAccessContext();
+    }
+
+  }catch(error){}
+
+
+  return {
+
+    ok:
+      validated &&
+      ready,
+
+    reason:
+      !validated
+        ? (
+            organization.validationStatus ||
+            "draft"
+          )
+        : (
+            !ready
+              ? "initial_access_required"
+              : "access_denied"
+          ),
+
+    account:
+      account,
+
+    organization:
+      organization,
+
+    category:
+      category,
+
+    validated:
+      validated,
+
+    ready:
+      ready,
+
+    context:
+      context
+
+  };
 }
 
 
-function isProfessionalCategory(
-  category
+function commerceCentralAccessMessage(
+  state
 ){
 
+  const messages = {
+
+    central_unavailable:
+      "Le compte central Bo’CitéArt n’est pas chargé.",
+
+    account_missing:
+      "Créez d’abord votre compte Bo’CitéArt puis choisissez votre profil professionnel.",
+
+    organization_missing:
+      "Votre compte existe, mais aucun dossier d’organisation n’est encore rattaché à ce profil.",
+
+    wrong_category:
+      "Le compte actuellement ouvert ne correspond pas à cet espace professionnel.",
+
+    draft:
+      "Votre dossier d’organisation doit être complété puis transmis avant l’ouverture de l’espace professionnel.",
+
+    pending_review:
+      "Votre dossier a été transmis et attend la validation Bo’CitéArt.",
+
+    needs_information:
+      "Votre dossier nécessite des informations complémentaires avant validation.",
+
+    unfavorable:
+      "Le dossier n’a pas été validé. Consultez les informations communiquées par Bo’CitéArt.",
+
+    initial_access_required:
+      "Votre organisation est validée. Utilisez votre identifiant professionnel et votre code d’accès initial.",
+
+    access_denied:
+      "L’accès professionnel n’est pas encore ouvert."
+
+  };
+
+
+  const reason =
+    state &&
+    state.reason ||
+    "access_denied";
+
+
   return (
-    category === "commerce" ||
-    category === "entreprise"
+    messages[reason] ||
+    messages.access_denied
   );
 }
 
 
 /* =========================================================
-   IDENTITÉ COMMERCE CENTRALISÉE
+   IDENTITÉ COMMERCE ISSUE DU COMPTE CENTRAL
    ========================================================= */
 
-function centralMerchant(){
+function commerceReadMerchant(){
 
-  const org =
-    organization();
+  const organization =
+    commerceCentralOrganization();
+
 
   if(
-    !org ||
-    categoryOf(org) !==
+    !organization ||
+    String(
+      organization.category ||
+      ""
+    )
+      .trim()
+      .toLowerCase() !==
       "commerce"
   ){
 
     return {
+
       id:"",
+      professionalIdentifier:"",
       shopName:"",
       address:"",
       phone:"",
       email:"",
       sirenSiret:"",
-      partnerActive:false,
-      central:false
+      activity:"",
+      partnerActive:false
+
     };
   }
 
+
   const profile =
-    profileOf(org);
+    organization.organizationProfile ||
+    {};
+
 
   return {
 
     id:
       String(
-        org.organizationId ||
-        org.professionalIdentifier ||
+        organization.organizationId ||
+        organization.professionalIdentifier ||
         ""
       ),
 
     professionalIdentifier:
       String(
-        org.professionalIdentifier ||
+        organization.professionalIdentifier ||
         ""
       ),
 
     shopName:
       String(
         profile.organizationName ||
-        org.name ||
+        organization.name ||
         ""
       ),
 
@@ -481,14 +639,14 @@ function centralMerchant(){
     phone:
       String(
         profile.phone ||
-        org.ownerPhone ||
+        organization.ownerPhone ||
         ""
       ),
 
     email:
       String(
         profile.email ||
-        org.ownerEmail ||
+        organization.ownerEmail ||
         ""
       ),
 
@@ -506,292 +664,143 @@ function centralMerchant(){
 
     partnerActive:
       (
-        org.active === true &&
-        org.validationStatus ===
+        organization.active === true &&
+        organization.validationStatus ===
           "validated" &&
-        org.professionalAccessReady ===
+        organization.professionalAccessReady ===
           true
-      ),
+      )
 
-    central:true,
-
-    organization:
-      org
   };
 }
 
 
 /* =========================================================
-   ÉTAT D'ACCÈS PROFESSIONNEL
+   IDENTITÉ ENTREPRISE ISSUE DU COMPTE CENTRAL
+
+   Aucun texte du parcours Entreprise d'origine
+   n'est remplacé par cette fonction.
+
+   Elle sert uniquement aux accès professionnels,
+   à la publicité et au futur QR Entreprise.
    ========================================================= */
 
-function accessState(
-  expectedCategory
-){
+function commerceReadEnterprise(){
 
-  const api =
-    accountApi();
-
-  const org =
-    organization();
-
-  const acc =
-    account();
-
-
-  if(!api){
-
-    return {
-      ok:false,
-      reason:"central_unavailable"
-    };
-  }
+  const organization =
+    commerceCentralOrganization();
 
 
   if(
-    !acc ||
-    !acc.accountId
+    !organization ||
+    String(
+      organization.category ||
+      ""
+    )
+      .trim()
+      .toLowerCase() !==
+      "entreprise"
   ){
 
     return {
-      ok:false,
-      reason:"account_missing"
+
+      id:"",
+      professionalIdentifier:"",
+      companyName:"",
+      address:"",
+      phone:"",
+      email:"",
+      sirenSiret:"",
+      activity:"",
+      active:false
+
     };
   }
 
 
-  if(
-    !org ||
-    !org.organizationId
-  ){
-
-    return {
-      ok:false,
-      reason:"organization_missing",
-      account:acc
-    };
-  }
-
-
-  const category =
-    categoryOf(org);
-
-
-  if(
-    expectedCategory &&
-    category !== expectedCategory
-  ){
-
-    return {
-      ok:false,
-      reason:"wrong_category",
-      category:category,
-      organization:org
-    };
-  }
-
-
-  let professional =
+  const profile =
+    organization.organizationProfile ||
     {};
-
-  try{
-
-    professional =
-      (
-        typeof api.getProfessionalAccessState ===
-        "function"
-      )
-        ? (
-            api.getProfessionalAccessState() ||
-            {}
-          )
-        : {};
-
-  }catch(e){}
-
-
-  const validated =
-    (
-      org.active === true &&
-      org.validationStatus ===
-        "validated"
-    );
-
-
-  const ready =
-    (
-      org.professionalAccessReady ===
-        true ||
-      professional.professionalAccessReady ===
-        true
-    );
-
-
-  let context =
-    null;
-
-  try{
-
-    context =
-      (
-        typeof api.getCurrentAccessContext ===
-        "function"
-      )
-        ? api.getCurrentAccessContext()
-        : null;
-
-  }catch(e){}
 
 
   return {
 
-    ok:
-      (
-        validated &&
-        ready
+    id:
+      String(
+        organization.organizationId ||
+        organization.professionalIdentifier ||
+        ""
       ),
 
-    reason:
-      !validated
-        ? (
-            org.validationStatus ||
-            "draft"
-          )
-        : (
-            !ready
-              ? "initial_access_required"
-              : "access_denied"
-          ),
+    professionalIdentifier:
+      String(
+        organization.professionalIdentifier ||
+        ""
+      ),
 
-    account:
-      acc,
+    companyName:
+      String(
+        profile.organizationName ||
+        organization.name ||
+        ""
+      ),
 
-    organization:
-      org,
+    address:
+      String(
+        profile.registeredAddress ||
+        ""
+      ),
 
-    professional:
-      professional,
+    phone:
+      String(
+        profile.phone ||
+        organization.ownerPhone ||
+        ""
+      ),
 
-    context:
-      context,
+    email:
+      String(
+        profile.email ||
+        organization.ownerEmail ||
+        ""
+      ),
 
-    validated:
-      validated,
+    sirenSiret:
+      String(
+        profile.siretOrSiren ||
+        ""
+      ),
 
-    ready:
-      ready,
+    activity:
+      String(
+        profile.businessActivity ||
+        ""
+      ),
 
-    category:
-      category
+    active:
+      (
+        organization.active === true &&
+        organization.validationStatus ===
+          "validated" &&
+        organization.professionalAccessReady ===
+          true
+      )
+
   };
 }
 
 
 /* =========================================================
-   MESSAGES D'ACCÈS
+   INSCRIPTION CENTRALE
    ========================================================= */
 
-function accessMessage(
-  state,
-  label
+function commerceOpenCentralRegistration(
+  expectedCategory
 ){
 
-  const name =
-    label ||
-    "professionnel";
-
-  switch(
-    state &&
-    state.reason
-  ){
-
-    case "central_unavailable":
-
-      return (
-        "Le compte central Bo’CitéArt n’est pas chargé."
-      );
-
-
-    case "account_missing":
-
-      return (
-        "Créez d’abord votre compte Bo’CitéArt puis choisissez le profil " +
-        name +
-        "."
-      );
-
-
-    case "organization_missing":
-
-      return (
-        "Votre compte existe, mais aucun dossier d’organisation n’est encore rattaché à ce profil."
-      );
-
-
-    case "wrong_category":
-
-      return (
-        "Le compte actuellement ouvert est rattaché au profil « " +
-        String(
-          state.category ||
-          "autre"
-        ) +
-        " ». Ouvrez le compte correspondant à cet espace."
-      );
-
-
-    case "pending_review":
-
-      return (
-        "Votre dossier a été transmis et attend la validation Bo’CitéArt."
-      );
-
-
-    case "needs_information":
-
-      return (
-        "Votre dossier nécessite des informations complémentaires avant validation."
-      );
-
-
-    case "unfavorable":
-
-      return (
-        "Le dossier n’a pas été validé. Consultez les informations communiquées par Bo’CitéArt."
-      );
-
-
-    case "initial_access_required":
-
-      return (
-        "Votre organisation est validée. Utilisez maintenant votre identifiant professionnel et votre code d’accès initial."
-      );
-
-
-    case "draft":
-
-      return (
-        "Votre dossier d’organisation doit être complété puis transmis avant l’ouverture de l’espace professionnel."
-      );
-
-
-    default:
-
-      return (
-        "L’accès professionnel n’est pas encore ouvert."
-      );
-  }
-}
-
-
-/* =========================================================
-   PREMIÈRE DEMANDE
-   ========================================================= */
-
-function startCentralRegistration(){
-
   const api =
-    accountApi();
+    commerceAccountApi();
+
 
   if(
     !api ||
@@ -800,626 +809,448 @@ function startCentralRegistration(){
   ){
 
     alert(
-      "Le service central de création de compte n’est pas disponible."
+      "Le service central Bo’CitéArt n’est pas disponible."
     );
 
     return;
   }
 
 
-  const acc =
-    account();
-
-  const org =
-    organization();
+  const organization =
+    commerceCentralOrganization();
 
 
   if(
-    !acc ||
-    !acc.accountId
+    organization &&
+    organization.organizationId
   ){
 
-    api.open();
+    const category =
+      String(
+        organization.category ||
+        ""
+      )
+        .trim()
+        .toLowerCase();
 
-    return;
-  }
 
+    if(
+      expectedCategory &&
+      category !== expectedCategory
+    ){
 
-  if(
-    org &&
-    isProfessionalCategory(
-      categoryOf(org)
-    )
-  ){
-
-    const state =
-      accessState(
-        categoryOf(org)
+      alert(
+        "Le compte actuellement ouvert est rattaché à un autre profil professionnel."
       );
 
-    alert(
-      accessMessage(
-        state,
-        categoryOf(org) ===
-          "commerce"
-          ? "Commerce"
-          : "Entreprise"
-      )
-    );
+      return;
+    }
+  }
+
+
+  api.open();
+}
+
+
+/* =========================================================
+   PUBLICITÉ — GRAND BANDEAU
+   ========================================================= */
+
+function commerceOpenLargeAdvertising(){
+
+  if(
+    typeof window.openTicker ===
+      "function"
+  ){
+
+    window.openTicker();
 
     return;
   }
 
 
   alert(
-    "Un compte Bo’CitéArt est déjà présent sur cet appareil. Utilisez le profil correspondant à l’organisation que vous souhaitez ouvrir."
+    "Le calendrier Publicités & visibilité n’est pas chargé."
   );
 }
 
 
 /* =========================================================
-   ACTIVATION INITIALE
+   PUBLICITÉ — PETIT BANDEAU
+
+   Commerce + Entreprise.
+   Le raccord reste centralisé afin de ne pas créer
+   un second moteur publicitaire dans ce fichier.
    ========================================================= */
 
-async function activateInitialAccess(
-  expectedCategory,
-  identifier,
-  code
+function commerceOpenSmallAdvertising(
+  profile
 ){
 
-  const api =
-    accountApi();
+  const candidates = [
 
-  const state =
-    accessState(
-      expectedCategory
-    );
+    window.openSmallAdvertising,
+    window.openSmallAdBooking,
+    window.openPetitBandeauPublicite,
+    window.openMedicalCommerceAdvertising
+
+  ];
 
 
-  if(state.ok){
+  for(
+    const fn of candidates
+  ){
 
-    return {
-      ok:true,
-      alreadyReady:true
-    };
+    if(
+      typeof fn ===
+        "function"
+    ){
+
+      fn(
+        profile
+      );
+
+      return;
+    }
   }
 
 
-  if(!state.validated){
+  alert(
+    "L’accès au petit bandeau est préparé pour ce profil. " +
+    "Le raccord au gestionnaire du petit bandeau sera activé " +
+    "depuis le module publicitaire central."
+  );
+}
 
-    return {
-      ok:false,
-      message:
-        accessMessage(
-          state,
-          expectedCategory
-        )
-    };
-  }
+
+window.BociteCommerceAdvertising = {
+
+  openLarge:
+    commerceOpenLargeAdvertising,
+
+  openSmall:
+    commerceOpenSmallAdvertising
+
+};
+
+
+/* =========================================================
+   PRÉPARATION DU FUTUR QR ENTREPRISE
+
+   Aucun QR Entreprise n'est inventé ici.
+
+   La porte technique est prévue afin qu'un QR puisse
+   ensuite être rattaché à l'identifiant permanent
+   de l'entreprise sans modifier son identité.
+   ========================================================= */
+
+function commerceEnterpriseQrIdentity(){
+
+  const enterprise =
+    commerceReadEnterprise();
 
 
   if(
-    !api ||
-    typeof api.verifyProfessionalInitialAccess !==
-      "function"
+    !enterprise.id ||
+    !enterprise.active
   ){
 
-    return {
-      ok:false,
-      message:
-        "Le service central d’activation professionnelle n’est pas disponible."
-    };
+    return null;
   }
+
+
+  return {
+
+    type:
+      "enterprise_ref",
+
+    organizationId:
+      enterprise.id,
+
+    professionalIdentifier:
+      enterprise.professionalIdentifier,
+
+    companyName:
+      enterprise.companyName,
+
+    cityId:
+      commerceActiveCity().cityId
+
+  };
+}
+
+
+window.BociteEnterpriseQr = {
+
+  getIdentity:
+    commerceEnterpriseQrIdentity
+
+};
+
+
+/* =========================================================
+   QR SPORT → COMMERCE
+   ========================================================= */
+
+function commerceParseSportScan(
+  raw
+){
+
+  const text =
+    String(
+      raw ||
+      ""
+    )
+      .trim();
+
+
+  if(!text){
+
+    throw new Error(
+      "Scannez ou collez d’abord le QR du club."
+    );
+  }
+
+
+  let scan;
 
 
   try{
 
-    const result =
-      await api.verifyProfessionalInitialAccess(
-        String(
-          identifier ||
-          ""
-        ).trim(),
-
-        String(
-          code ||
-          ""
-        ).trim()
+    scan =
+      JSON.parse(
+        text
       );
 
+  }catch(error){
 
-    if(
-      result &&
-      result.ok === true
-    ){
-
-      return result;
-    }
-
-
-    const reasons = {
-
-      invalid_professional_identifier:
-        "Identifiant professionnel incorrect.",
-
-      invalid_initial_access_code:
-        "Code d’accès initial incorrect.",
-
-      initial_access_already_used:
-        "Ce code initial a déjà été utilisé. L’accès professionnel est déjà activé.",
-
-      initial_access_not_issued:
-        "Aucun code initial n’a encore été émis.",
-
-      organization_not_validated:
-        "L’organisation n’est pas encore validée.",
-
-      organization_not_found:
-        "Aucune organisation professionnelle n’a été trouvée."
-    };
-
-
-    return {
-
-      ok:false,
-
-      message:
-        reasons[
-          result &&
-          result.reason
-        ] ||
-        "L’activation professionnelle a échoué."
-    };
-
-  }catch(e){
-
-    return {
-      ok:false,
-      message:
-        "L’activation professionnelle a échoué."
-    };
+    throw new Error(
+      "Le QR Sport n’est pas lisible."
+    );
   }
+
+
+  if(
+    !scan ||
+    typeof scan !==
+      "object" ||
+    scan.type !==
+      "sport_club_ref"
+  ){
+
+    throw new Error(
+      "Ce QR ne correspond pas à un club Sport."
+    );
+  }
+
+
+  return scan;
 }
 
 
-/* =========================================================
-   CARTE D'ACCÈS CENTRALISÉE
-   ========================================================= */
-
-function renderAccessCard(
-  type
+function commerceSportError(
+  reason
 ){
 
-  const label =
-    type === "commerce"
-      ? "Commerce"
-      : "Entreprise";
+  const messages = {
 
-  return `
+    invalid_scan:
+      "Le QR du club n’est pas reconnu.",
 
-    <div
-      class="commerceCard"
-      data-central-access="${esc(type)}"
-    >
+    wrong_city:
+      "Ce QR appartient à une autre ville Bo’CitéArt.",
 
-      <div class="commerceTitle">
-        Accès professionnel ${esc(label)}
-      </div>
+    wrong_club:
+      "Ce QR ne correspond pas au club attendu.",
 
-      <div class="commerceText">
-        Votre espace professionnel est rattaché
-        au compte central ${brand()}.
-      </div>
+    invalid_operation:
+      "Ce QR dynamique n’est pas valide. Demandez au club d’en afficher un nouveau.",
 
-      <div class="commerceActions">
+    scan_expired:
+      "Ce QR dynamique a expiré. Demandez au club d’en afficher un nouveau.",
 
-        <button
-          class="commerceBtn"
-          type="button"
-          data-central-start="${esc(type)}"
-        >
-          Première demande d'accès
-        </button>
+    qr_already_used:
+      "Ce QR a déjà été utilisé. Demandez au club d’en afficher un nouveau.",
 
-        <button
-          class="commerceBtn"
-          type="button"
-          data-central-existing="${esc(type)}"
-        >
-          J'ai déjà mes accès
-        </button>
+    insufficient_balance:
+      "Le club ne dispose pas des 30 bocitecoins VERT nécessaires.",
 
-      </div>
+    merchant_rotation_required:
+      "Le dernier Cabas a déjà été retiré dans ce commerce. Le club doit choisir un autre commerce partenaire.",
 
-      <div
-        class="commerceStatus"
-        data-central-status="${esc(type)}"
-        data-state="warn"
-      >
-        L'accès privé s'ouvre après validation
-        de l'organisation et activation
-        de l'accès professionnel.
-      </div>
+    merchant_not_active_partner:
+      "Ce commerce n’est pas actif comme partenaire Bo’CitéArt.",
 
-      <div
-        class="commerceHidden"
-        data-central-activation="${esc(type)}"
-      >
+    merchant_partner_verification_required:
+      "Le statut partenaire du commerce doit être vérifié.",
 
-        <label class="commerceLabel">
-          Identifiant professionnel
-        </label>
+    merchant_identity_required:
+      "L’identité du commerce est requise.",
 
-        <input
-          class="commerceField"
-          type="text"
-          autocomplete="username"
-          data-central-identifier="${esc(type)}"
-          placeholder="BCA-COM-… ou BCA-ENT-…"
-        >
+    purchase_required:
+      "Un achat réel d’au moins 10 € TTC est obligatoire avant l’échange du Cabas.",
 
-        <label class="commerceLabel">
-          Code d'accès initial
-        </label>
+    wallet_save_failed:
+      "Le nouveau solde Sport n’a pas pu être enregistré.",
 
-        <input
-          class="commerceField"
-          type="password"
-          inputmode="numeric"
-          autocomplete="one-time-code"
-          data-central-code="${esc(type)}"
-          placeholder="Code initial"
-        >
+    ledger_save_failed:
+      "L’historique Sport n’a pas pu être enregistré.",
 
-        <div class="commerceActions">
+    service_unavailable:
+      "Le service de validation est momentanément indisponible."
 
-          <button
-            class="commerceBtn"
-            type="button"
-            data-central-activate="${esc(type)}"
-          >
-            Activer mon accès
-          </button>
+  };
 
-        </div>
 
-      </div>
-
-    </div>
-  `;
+  return (
+    messages[reason] ||
+    "L’échange n’a pas été validé."
+  );
 }
 
 
 /* =========================================================
-   BOUTONS D'ACCÈS
+   OUVERTURE COMMERCE / ENTREPRISE
    ========================================================= */
 
-function bindCentralButtons(){
+function openCommerceModule(){
 
-  document
-    .querySelectorAll(
-      "[data-central-start]"
-    )
-    .forEach(
-      button => {
+  commerceEnsureStyles();
 
-        button.onclick =
-          function(){
 
-            startCentralRegistration();
-          };
-      }
-    );
+  openModal(
+    "Commerces & Entreprises",
+    `
 
+    <div class="bociteCommerceRoot">
 
-  document
-    .querySelectorAll(
-      "[data-central-existing]"
-    )
-    .forEach(
-      button => {
-
-        button.onclick =
-          function(){
-
-            const type =
-              button.getAttribute(
-                "data-central-existing"
-              );
-
-            const state =
-              accessState(
-                type
-              );
-
-            const status =
-              document.querySelector(
-                '[data-central-status="' +
-                type +
-                '"]'
-              );
-
-            const activation =
-              document.querySelector(
-                '[data-central-activation="' +
-                type +
-                '"]'
-              );
-
-
-            if(state.ok){
-
-              if(status){
-
-                status.dataset.state =
-                  "ok";
-
-                status.textContent =
-                  "Accès professionnel actif.";
-              }
-
-
-              if(
-                type ===
-                "commerce"
-              ){
-
-                openCommercePrivate();
-
-              }else{
-
-                openDirection();
-              }
-
-              return;
-            }
-
-
-            if(
-              state.validated &&
-              !state.ready
-            ){
-
-              if(activation){
-
-                activation.classList.remove(
-                  "commerceHidden"
-                );
-              }
-
-
-              if(status){
-
-                status.dataset.state =
-                  "warn";
-
-                status.textContent =
-                  accessMessage(
-                    state,
-                    type
-                  );
-              }
-
-              return;
-            }
-
-
-            if(status){
-
-              status.dataset.state =
-                "warn";
-
-              status.textContent =
-                accessMessage(
-                  state,
-                  type
-                );
-            }
-          };
-      }
-    );
-
-
-  document
-    .querySelectorAll(
-      "[data-central-activate]"
-    )
-    .forEach(
-      button => {
-
-        button.onclick =
-          async function(){
-
-            const type =
-              button.getAttribute(
-                "data-central-activate"
-              );
-
-            const identifier =
-              document.querySelector(
-                '[data-central-identifier="' +
-                type +
-                '"]'
-              );
-
-            const code =
-              document.querySelector(
-                '[data-central-code="' +
-                type +
-                '"]'
-              );
-
-            const status =
-              document.querySelector(
-                '[data-central-status="' +
-                type +
-                '"]'
-              );
-
-
-            button.disabled =
-              true;
-
-
-            const result =
-              await activateInitialAccess(
-                type,
-                identifier
-                  ? identifier.value
-                  : "",
-                code
-                  ? code.value
-                  : ""
-              );
-
-
-            button.disabled =
-              false;
-
-
-            if(
-              !result ||
-              result.ok !== true
-            ){
-
-              if(status){
-
-                status.dataset.state =
-                  "error";
-
-                status.textContent =
-                  result &&
-                  result.message
-                    ? result.message
-                    : "Activation refusée.";
-              }
-
-              return;
-            }
-
-
-            if(status){
-
-              status.dataset.state =
-                "ok";
-
-              status.textContent =
-                "Accès professionnel activé.";
-            }
-
-
-            if(
-              type ===
-              "commerce"
-            ){
-
-              openCommercePrivate();
-
-            }else{
-
-              openDirection();
-            }
-          };
-      }
-    );
-}
-
- /* =========================================================
-   COMMERCE — ESPACE PRIVÉ
-   ========================================================= */
-
-function commercePrivateHtml(){
-
-  return `
-
-    <div
-      id="merchantInternalSpace"
-      class="commerceHidden"
-    >
-
-      <div class="commerceCard">
+      <div
+        class="commerceCard"
+        id="commerceEntrepriseChoice"
+        style="text-align:center;"
+      >
 
         <div class="commerceTitle">
-          Mon établissement
-        </div>
 
-        <div
-          id="commerceCentralMerchantProfile"
-          class="commerceText"
-        ></div>
+          Commerces & Entreprises avec
+          ${commerceBrandHtml()}
 
-      </div>
-
-
-      <div class="commerceCard commerceSport">
-
-        <div class="commerceTitle">
-          Sport — échange 30 VERT contre 1 Cabas
         </div>
 
         <div class="commerceText">
 
-          Le représentant du club présente
-          son QR dynamique.
-
-          Un achat réel distinct
-          d'au moins 10 € TTC est obligatoire
-          avant l'échange.
-
-          Les 30 bocitecoins VERT sont retirés
-          par le moteur Sport après validation.
-
-          Le commerce ne modifie jamais
-          directement le portefeuille du club.
+          Choisissez l’espace
+          que vous souhaitez ouvrir.
 
         </div>
 
-
-        <label class="commerceLabel">
-          QR dynamique du club
-        </label>
-
-        <textarea
-          id="commerceSportQrRaw"
-          class="commerceField"
-          placeholder="Scannez ou collez ici le QR dynamique du club."
-        ></textarea>
-
-
-        <div class="commerceActions">
+        <div
+          class="commerceActions"
+          style="justify-content:center;"
+        >
 
           <button
-            id="commerceSportScanBtn"
             class="commerceBtn"
+            id="openCommerceSpace"
             type="button"
           >
-            Scanner le QR
+            Commerce
+          </button>
+
+          <button
+            class="commerceBtn"
+            id="openEntrepriseSpace"
+            type="button"
+          >
+            Entreprise
           </button>
 
         </div>
 
+      </div>
+
+            <!-- =========================================================
+           ESPACE COMMERCE
+           ========================================================= -->
+
+      <div
+        id="commerceSpace"
+        style="display:none;"
+      >
 
         <div
-          id="commerceSportCameraBox"
-          class="commerceHidden"
-          style="margin-top:10px"
+          class="commerceCard commerceRule"
         >
 
-          <video
-            id="commerceSportCamera"
-            playsinline
-            muted
-            style="width:100%;max-height:300px;border-radius:12px;background:#111"
-          ></video>
+          <div class="commerceTitle">
+            Les commerces partenaires
+            dans votre ville
+          </div>
+
+          <div class="commerceText">
+
+            Retrouvez les commerces partenaires
+            Bo’CitéArt de votre ville,
+            leurs activités,
+            leurs services
+            et les opérations proposées.
+
+          </div>
+
+        </div>
+
+
+        <div class="commerceCard">
+
+          <div class="commerceTitle">
+            Commerces partenaires
+          </div>
+
+          <div
+            id="commercePartnersList"
+            class="commerceText"
+          >
+            Les commerces partenaires
+            de la ville apparaissent ici.
+          </div>
+
+        </div>
+
+
+        <div class="commerceCard">
+
+          <div class="commerceTitle">
+            Publicités & visibilité
+          </div>
+
+          <div class="commerceText">
+
+            Le commerce partenaire
+            dispose de plusieurs espaces
+            pour présenter son activité,
+            ses produits,
+            ses services
+            et ses opérations.
+
+          </div>
+
 
           <div class="commerceActions">
 
             <button
-              id="commerceSportCameraStopBtn"
               class="commerceBtn"
+              id="commerceLargeAdvertisingBtn"
               type="button"
             >
-              Arrêter la caméra
+              Publicité — grand bandeau
+            </button>
+
+            <button
+              class="commerceBtn"
+              id="commerceSmallAdvertisingBtn"
+              type="button"
+            >
+              Publicité — petit bandeau
             </button>
 
           </div>
@@ -1427,1001 +1258,4086 @@ function commercePrivateHtml(){
         </div>
 
 
-        <label class="commerceLabel">
-          Montant de l'achat TTC
-        </label>
+        <div class="commerceCard">
 
-        <input
-          id="commerceSportPurchaseAmount"
-          class="commerceField"
-          type="number"
-          min="10"
-          step="0.01"
-          inputmode="decimal"
-          placeholder="10,00"
-        >
+          <div class="commerceTitle">
+            Accès professionnel Commerce
+          </div>
+
+          <div class="commerceText">
+
+            L’espace professionnel
+            est réservé aux commerces
+            enregistrés et validés
+            par Bo’CitéArt.
+
+            <br><br>
+
+            Lors de votre première inscription,
+            votre fiche d’identité professionnelle
+            est rattachée à votre compte Bo’CitéArt.
+
+            <br><br>
+
+            Après contrôle et validation,
+            votre identifiant professionnel
+            et votre code d’accès initial
+            permettent d’activer
+            votre espace Commerce.
+
+          </div>
 
 
-        <label class="commerceLabel">
-          Référence ticket / achat
-        </label>
+          <div class="commerceActions">
 
-        <input
-          id="commerceSportPurchaseRef"
-          class="commerceField"
-          type="text"
-          placeholder="Référence du ticket"
-        >
+            <button
+              class="commerceBtn"
+              id="merchantRequestAccessBtn"
+              type="button"
+            >
+              Première inscription
+            </button>
+
+            <button
+              class="commerceBtn"
+              id="merchantLoginOpenBtn"
+              type="button"
+            >
+              J’ai déjà mes accès
+            </button>
+
+          </div>
 
 
-        <div class="commerceActions">
-
-          <button
-            id="commerceSportValidateBtn"
-            class="commerceBtn"
-            type="button"
+          <div
+            id="merchantLoginGate"
+            style="
+              display:none;
+              margin-top:14px;
+            "
           >
-            Valider l'échange
-          </button>
+
+            <label
+              class="commerceLabel"
+              for="merchantLoginId"
+            >
+              Identifiant professionnel
+            </label>
+
+            <input
+              class="commerceField"
+              id="merchantLoginId"
+              type="text"
+              autocomplete="username"
+            >
+
+
+            <label
+              class="commerceLabel"
+              for="merchantLoginCode"
+            >
+              Code d’accès initial
+            </label>
+
+            <input
+              class="commerceField"
+              id="merchantLoginCode"
+              type="password"
+              inputmode="numeric"
+              autocomplete="one-time-code"
+            >
+
+
+            <div class="commerceActions">
+
+              <button
+                class="commerceBtn"
+                id="merchantInternalOpenBtn"
+                type="button"
+              >
+                Entrer dans mon espace Commerce
+              </button>
+
+            </div>
+
+
+            <div
+              id="merchantLoginStatus"
+              class="commerceStatus"
+              data-state="warn"
+              style="display:none;"
+            ></div>
+
+          </div>
 
         </div>
 
 
+        <!-- =====================================================
+             ESPACE PRIVÉ COMMERCE
+             ===================================================== -->
+
         <div
-          id="commerceSportExchangeStatus"
-          class="commerceStatus"
-          data-state="warn"
+          id="merchantInternalSpace"
+          style="display:none;"
         >
-          En attente du QR dynamique du club.
+
+          <div class="commerceCard">
+
+            <div class="commerceTitle">
+              Fiche d’identité du commerce
+            </div>
+
+            <div class="commerceText">
+
+              Cette fiche reprend
+              les informations professionnelles
+              enregistrées dans votre compte Bo’CitéArt.
+
+            </div>
+
+
+            <label
+              class="commerceLabel"
+              for="merchantShopName"
+            >
+              Nom du commerce
+            </label>
+
+            <input
+              class="commerceField"
+              id="merchantShopName"
+              type="text"
+              readonly
+            >
+
+
+            <label
+              class="commerceLabel"
+              for="merchantAddress"
+            >
+              Adresse
+            </label>
+
+            <input
+              class="commerceField"
+              id="merchantAddress"
+              type="text"
+              readonly
+            >
+
+
+            <label
+              class="commerceLabel"
+              for="merchantActivity"
+            >
+              Activité
+            </label>
+
+            <input
+              class="commerceField"
+              id="merchantActivity"
+              type="text"
+              readonly
+            >
+
+
+            <label
+              class="commerceLabel"
+              for="merchantPhone"
+            >
+              Téléphone
+            </label>
+
+            <input
+              class="commerceField"
+              id="merchantPhone"
+              type="tel"
+              readonly
+            >
+
+
+            <label
+              class="commerceLabel"
+              for="merchantEmail"
+            >
+              E-mail
+            </label>
+
+            <input
+              class="commerceField"
+              id="merchantEmail"
+              type="email"
+              readonly
+            >
+
+
+            <label
+              class="commerceLabel"
+              for="merchantSiret"
+            >
+              SIREN / SIRET
+            </label>
+
+            <input
+              class="commerceField"
+              id="merchantSiret"
+              type="text"
+              readonly
+            >
+
+
+            <div
+              id="merchantProfileStatus"
+              class="commerceStatus"
+              data-state="warn"
+            >
+              Vérification du dossier professionnel…
+            </div>
+
+          </div>
+
+
+          <div class="commerceCard">
+
+            <div class="commerceTitle">
+              Publicités & visibilité
+            </div>
+
+            <div class="commerceText">
+
+              Depuis votre espace professionnel,
+              vous accédez aux emplacements
+              publicitaires prévus par Bo’CitéArt.
+
+            </div>
+
+
+            <div class="commerceActions">
+
+              <button
+                class="commerceBtn"
+                id="merchantLargeAdvertisingBtn"
+                type="button"
+              >
+                Grand bandeau publicitaire
+              </button>
+
+              <button
+                class="commerceBtn"
+                id="merchantSmallAdvertisingBtn"
+                type="button"
+              >
+                Petit bandeau publicitaire
+              </button>
+
+            </div>
+
+          </div>
+
+
+          <div
+            class="commerceCard commerceSport"
+          >
+
+            <div class="commerceTitle">
+              Club sportif —
+              30 bocitecoins VERT → 1 Cabas
+            </div>
+
+            <div class="commerceText">
+
+              Le représentant du club
+              présente son QR dynamique
+              depuis son espace Sport.
+
+              <br><br>
+
+              Avant l’échange,
+              il réalise dans le commerce
+              un achat réel et distinct
+              d’au moins 10 € TTC.
+
+              <br><br>
+
+              Le commerce scanne ensuite
+              le QR dynamique du club.
+
+              Le système contrôle automatiquement
+              la ville,
+              le club,
+              la validité du QR,
+              son délai d’utilisation,
+              son usage unique,
+              le solde du club
+              et la rotation entre commerces partenaires.
+
+              <br><br>
+
+              Après validation,
+              30 bocitecoins VERT
+              sont retirés du portefeuille Sport
+              et le commerce remet un Cabas.
+
+              <br><br>
+
+              Les bocitecoins VERT
+              restent totalement séparés
+              des bocitecoins OR du citoyen.
+
+            </div>
+
+
+            <div
+              class="commerceStatus"
+              data-state="warn"
+            >
+
+              Pour faciliter l’accueil,
+              privilégiez lorsque cela est possible
+              un moment plus calme dans le commerce.
+
+              Cette indication reste une courtoisie :
+              elle ne bloque jamais l’échange
+              lorsque les conditions sont remplies.
+
+            </div>
+
+
+            <label
+              class="commerceLabel"
+              for="commerceSportQrRaw"
+            >
+              QR dynamique du club
+            </label>
+
+            <textarea
+              class="commerceField"
+              id="commerceSportQrRaw"
+              readonly
+              placeholder="Le QR dynamique scanné apparaîtra ici."
+            ></textarea>
+
+
+            <div class="commerceActions">
+
+              <button
+                class="commerceBtn"
+                id="commerceSportScanBtn"
+                type="button"
+              >
+                Scanner le QR du club
+              </button>
+
+            </div>
+
+
+            <div
+              id="commerceSportCameraBox"
+              class="commerceStatus commerceHidden"
+              data-state="warn"
+            >
+
+              <video
+                id="commerceSportCamera"
+                playsinline
+                muted
+                style="
+                  width:100%;
+                  max-height:300px;
+                  border-radius:10px;
+                  background:#111;
+                "
+              ></video>
+
+
+              <div class="commerceActions">
+
+                <button
+                  class="commerceBtn"
+                  id="commerceSportCameraStopBtn"
+                  type="button"
+                >
+                  Arrêter la caméra
+                </button>
+
+              </div>
+
+            </div>
+
+
+            <label
+              class="commerceLabel"
+              for="commerceSportPurchaseAmount"
+            >
+              Montant de l’achat TTC
+            </label>
+
+            <input
+              class="commerceField"
+              id="commerceSportPurchaseAmount"
+              type="number"
+              min="10"
+              step="0.01"
+              inputmode="decimal"
+              placeholder="Minimum 10,00 €"
+            >
+
+
+            <label
+              class="commerceLabel"
+              for="commerceSportPurchaseRef"
+            >
+              Référence du ticket / achat
+            </label>
+
+            <input
+              class="commerceField"
+              id="commerceSportPurchaseRef"
+              type="text"
+            >
+
+
+            <div class="commerceActions">
+
+              <button
+                class="commerceBtn"
+                id="commerceSportValidateBtn"
+                type="button"
+              >
+                Valider 30 VERT → 1 Cabas
+              </button>
+
+            </div>
+
+
+            <div
+              id="commerceSportExchangeStatus"
+              class="commerceStatus"
+              data-state="warn"
+            >
+              En attente du QR dynamique du club.
+            </div>
+
+          </div>
+
+
+          <div class="commerceCard">
+
+            <div class="commerceTitle">
+              Historique des opérations
+            </div>
+
+            <div class="commerceText">
+
+              Les opérations restent rattachées
+              au commerce,
+              à la ville
+              et à l’identifiant professionnel
+              correspondant.
+
+            </div>
+
+
+            <div class="commerceActions">
+
+              <button
+                class="commerceBtn"
+                id="merchantHistoryExportBtn"
+                type="button"
+              >
+                Exporter l’historique
+              </button>
+
+            </div>
+
+          </div>
+
         </div>
 
       </div>
 
 
-      <div class="commerceCard">
+      <!-- =====================================================
+           ESPACE ENTREPRISE
+           CONTENU D'ORIGINE CONSERVÉ
+           ===================================================== -->
 
-        <div class="commerceTitle">
-          Historique
+      <div
+        id="entrepriseSpace"
+        style="display:none;"
+      >
+
+        <style>
+
+          @keyframes entrepriseBandScroll {
+
+            from {
+              transform:translateX(100%);
+            }
+
+            to {
+              transform:translateX(-100%);
+            }
+
+          }
+
+
+          .entrepriseBand{
+
+            display:block;
+            width:100%;
+            overflow:hidden;
+            margin:7px 0;
+            padding:0;
+
+            border:
+              2px solid #2f5d46;
+
+            border-radius:10px;
+
+            background:#fffaf1;
+            color:#111;
+
+            text-align:left;
+            cursor:pointer;
+
+          }
+
+
+          .entrepriseBandText{
+
+            display:inline-block;
+            min-width:100%;
+            padding:12px 0;
+
+            white-space:nowrap;
+            font-weight:900;
+
+            animation:
+              entrepriseBandScroll
+              70s linear infinite;
+
+            will-change:transform;
+
+          }
+
+
+          .entrepriseBandAction{
+
+            color:#b00020;
+            font-weight:900;
+
+          }
+
+
+          .entrepriseSectionTitle{
+
+            margin-top:16px;
+            font-size:18px;
+            font-weight:900;
+            color:#2f5d46;
+
+          }
+
+
+          .entreprisePrivate{
+
+            border:
+              2px solid #2f5d46;
+
+            background:#f7f2e8;
+            border-radius:14px;
+
+            padding:12px;
+            margin-top:12px;
+
+          }
+
+
+          .entrepriseCounter{
+
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+
+            gap:10px;
+            padding:10px;
+            margin-top:8px;
+
+            border:
+              2px solid rgba(0,0,0,.08);
+
+            border-radius:12px;
+            background:#fff;
+
+          }
+
+
+          .entrepriseCounterValue{
+
+            font-size:18px;
+            font-weight:900;
+            color:#2f5d46;
+            white-space:nowrap;
+
+          }
+
+
+          .entrepriseStatus{
+
+            display:inline-block;
+
+            padding:5px 8px;
+            border-radius:999px;
+
+            background:#efe4d3;
+
+            font-size:11px;
+            font-weight:900;
+
+          }
+
+        </style>
+
+
+        <div
+          style="
+            font-weight:900;
+            font-size:20px;
+            margin:4px 0 10px;
+          "
+        >
+          Entreprises
         </div>
 
-        <div class="commerceText">
 
-          Les opérations sont rattachées
-          à la ville active et
-          à l'organisation professionnelle.
+        <div
+          class="box"
+          style="
+            border-left:
+              6px solid #2f5d46;
+          "
+        >
+
+          <strong>
+            Découvrez les entreprises
+            de votre ville.
+          </strong>
+
+          <br><br>
+
+          Retrouvez leurs activités,
+          leurs métiers
+          et leurs savoir-faire.
+
+          La recherche commence toujours
+          dans votre commune
+          avant de s’élargir
+          aux communes voisines
+          lorsque cela est nécessaire.
 
         </div>
 
-        <div class="commerceActions">
+
+        <div
+          style="
+            display:flex;
+            gap:8px;
+            flex-wrap:wrap;
+            margin-bottom:12px;
+          "
+        >
 
           <button
-            class="commerceBtn"
-            id="merchantHistoryExportBtn"
+            class="choiceBtn"
+            id="openOfficialCompanies"
             type="button"
           >
-            Exporter l'historique
+            Les entreprises de votre ville
           </button>
+
+          <button
+            class="choiceBtn"
+            id="openEntrepriseDirection"
+            type="button"
+          >
+            Tableau de Direction
+          </button>
+
+        </div>
+
+
+        <!-- =================================================
+             AJOUT TECHNIQUE AUTOUR DU CONTENU ENTREPRISE
+             ================================================= -->
+
+        <div class="commerceCard">
+
+          <div class="commerceTitle">
+            Accès professionnel Entreprise
+          </div>
+
+          <div class="commerceText">
+
+            La fiche d’identité professionnelle
+            et les accès de l’entreprise
+            sont rattachés au compte central
+            Bo’CitéArt.
+
+          </div>
+
+
+          <div class="commerceActions">
+
+            <button
+              class="commerceBtn"
+              id="enterpriseRegistrationBtn"
+              type="button"
+            >
+              Inscription / fiche d’identité
+            </button>
+
+            <button
+              class="commerceBtn"
+              id="enterpriseProfessionalAccessBtn"
+              type="button"
+            >
+              Accéder à mon espace professionnel
+            </button>
+
+          </div>
+
+
+          <div
+            id="enterpriseProfessionalStatus"
+            class="commerceStatus"
+            data-state="warn"
+          >
+            Vérification de l’accès professionnel…
+          </div>
+
+        </div>
+
+
+        <div class="commerceCard">
+
+          <div class="commerceTitle">
+            Publicités & visibilité
+          </div>
+
+          <div class="commerceText">
+
+            L’entreprise enregistrée
+            et validée dispose des espaces
+            publicitaires prévus dans Bo’CitéArt.
+
+          </div>
+
+
+          <div class="commerceActions">
+
+            <button
+              class="commerceBtn"
+              id="enterpriseLargeAdvertisingBtn"
+              type="button"
+            >
+              Publicité — grand bandeau
+            </button>
+
+            <button
+              class="commerceBtn"
+              id="enterpriseSmallAdvertisingBtn"
+              type="button"
+            >
+              Publicité — petit bandeau
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <button
+          class="entrepriseBand"
+          type="button"
+          data-enterprise-topic="emploi"
+        >
+
+          <span class="entrepriseBandText">
+
+            Déposez votre offre •
+            Trouvez la personne près de chez vous •
+
+            <span class="entrepriseBandAction">
+              Cliquez ici…
+            </span>
+
+          </span>
+
+        </button>
+
+
+        <button
+          class="entrepriseBand"
+          type="button"
+          data-enterprise-topic="fidelisation"
+        >
+
+          <span class="entrepriseBandText">
+
+            Attirez •
+            Fidélisez vos salariés autrement •
+
+            <span class="entrepriseBandAction">
+              Cliquez ici…
+            </span>
+
+          </span>
+
+        </button>
+
+
+        <button
+          class="entrepriseBand"
+          type="button"
+          data-enterprise-topic="developpement"
+        >
+
+          <span class="entrepriseBandText">
+
+            Développement de votre entreprise •
+            Nouvelles opportunités •
+
+            <span class="entrepriseBandAction">
+              Cliquez ici…
+            </span>
+
+          </span>
+
+        </button>
+
+
+        <button
+          class="entrepriseBand"
+          type="button"
+          data-enterprise-topic="mutualisation"
+        >
+
+          <span class="entrepriseBandText">
+
+            Réduisez vos charges •
+            Élec • Gaz • Assur. • Tél. •
+
+            <span class="entrepriseBandAction">
+              Cliquez ici…
+            </span>
+
+          </span>
+
+        </button>
+
+
+        <button
+          class="entrepriseBand"
+          type="button"
+          data-enterprise-topic="visibilite"
+        >
+
+          <span class="entrepriseBandText">
+
+            Faites connaître vos métiers •
+            Votre savoir-faire •
+
+            <span class="entrepriseBandAction">
+              Cliquez ici…
+            </span>
+
+          </span>
+
+        </button>
+
+
+        <button
+          class="entrepriseBand"
+          type="button"
+          data-enterprise-topic="economies"
+        >
+
+          <span class="entrepriseBandText">
+
+            Comparez • Choisissez • Validez •
+
+            <span class="entrepriseBandAction">
+              Cliquez ici…
+            </span>
+
+          </span>
+
+        </button>
+
+
+        <button
+          class="entrepriseBand"
+          type="button"
+          data-enterprise-topic="perennite"
+        >
+
+          <span class="entrepriseBandText">
+
+            Préparez l’avenir •
+            Transmission • Reprise •
+
+            <span class="entrepriseBandAction">
+              Cliquez ici…
+            </span>
+
+          </span>
+
+        </button>
+
+
+        <button
+          class="entrepriseBand"
+          type="button"
+          data-enterprise-topic="mecenat"
+        >
+
+          <span class="entrepriseBandText">
+
+            Savez-vous à qui
+            et à quoi sert le mécénat ? •
+
+            <span class="entrepriseBandAction">
+              Cliquez ici…
+            </span>
+
+          </span>
+
+        </button>
+
+
+        <div
+          id="entrepriseTopicPanel"
+          class="box"
+          style="
+            display:none;
+            margin-top:12px;
+          "
+        >
+
+          <div
+            id="entrepriseTopicTitle"
+            style="
+              font-weight:900;
+              font-size:19px;
+              color:#2f5d46;
+            "
+          ></div>
+
+
+          <div
+            id="entrepriseTopicText"
+            style="
+              margin-top:10px;
+              line-height:1.55;
+            "
+          ></div>
+
+
+          <div
+            id="entrepriseTopicActions"
+            style="
+              display:flex;
+              gap:8px;
+              flex-wrap:wrap;
+              margin-top:14px;
+            "
+          ></div>
+
+        </div>
+
+
+        <div
+          class="box"
+          style="margin-top:14px;"
+        >
+
+          <strong>
+            Vous avez une question précise ?
+          </strong>
+
+          <br><br>
+
+          L’IA Bo’CitéArt répondra
+          en recherchant d’abord
+          les solutions disponibles
+          dans votre ville,
+          puis dans les communes voisines
+          avant d’élargir la recherche.
+
+          <textarea
+            id="entrepriseAiQuestion"
+            class="miniField"
+            style="
+              min-height:85px;
+              margin-top:10px;
+            "
+            placeholder="Exemple : je cherche un électricien, un salarié, un avocat ou une solution pour réduire mes charges."
+          ></textarea>
+
+          <button
+            class="choiceBtn"
+            id="entrepriseAiAskBtn"
+            type="button"
+            style="margin-top:10px;"
+          >
+            Poser ma question
+          </button>
+
+          <div
+            id="entrepriseAiAnswer"
+            class="muted"
+            style="margin-top:10px;"
+          ></div>
 
         </div>
 
       </div>
 
     </div>
-  `;
-}
 
-
-/* =========================================================
-   OUVERTURE ESPACE COMMERCE PRIVÉ
-   ========================================================= */
-
-function openCommercePrivate(){
-
-  const state =
-    accessState(
-      "commerce"
-    );
-
-  if(!state.ok){
-
-    alert(
-      accessMessage(
-        state,
-        "Commerce"
-      )
-    );
-
-    return false;
-  }
-
-
-  const merchant =
-    centralMerchant();
-
-
-  if(
-    !merchant.central ||
-    !merchant.partnerActive
-  ){
-
-    alert(
-      "Le commerce doit être validé et actif avant l'ouverture de cet espace."
-    );
-
-    return false;
-  }
-
-
-  const space =
-    $id(
-      "merchantInternalSpace"
-    );
-
-  const profile =
-    $id(
-      "commerceCentralMerchantProfile"
-    );
-
-
-  if(profile){
-
-    profile.innerHTML = `
-
-      <strong>
-        ${esc(
-          merchant.shopName ||
-          "Commerce"
-        )}
-      </strong>
-
-      <br>
-
-      Identifiant professionnel :
-      ${esc(
-        merchant.professionalIdentifier ||
-        "—"
-      )}
-
-      <br>
-
-      SIRET / SIREN :
-      ${esc(
-        merchant.sirenSiret ||
-        "—"
-      )}
-
-      <br>
-
-      Activité :
-      ${esc(
-        merchant.activity ||
-        "—"
-      )}
-
-      <br>
-
-      Adresse :
-      ${esc(
-        merchant.address ||
-        "—"
-      )}
-
-      <br>
-
-      E-mail :
-      ${esc(
-        merchant.email ||
-        "—"
-      )}
-
-      <br>
-
-      Téléphone :
-      ${esc(
-        merchant.phone ||
-        "—"
-      )}
-    `;
-  }
-
-
-  if(space){
-
-    space.classList.remove(
-      "commerceHidden"
-    );
-  }
-
-
-  return true;
-}
-
-
-/* =========================================================
-   QR SPORT — LECTURE
-   ========================================================= */
-
-function parseSportScan(
-  raw
-){
-
-  const value =
-    String(
-      raw ||
-      ""
-    ).trim();
-
-
-  if(!value){
-
-    throw new Error(
-      "Présentez ou collez le QR dynamique du club."
-    );
-  }
-
-
-  let data =
-    null;
-
-
-  try{
-
-    data =
-      JSON.parse(
-        value
-      );
-
-  }catch(e){
-
-    try{
-
-      const decoded =
-        decodeURIComponent(
-          value
-        );
-
-      data =
-        JSON.parse(
-          decoded
-        );
-
-    }catch(e2){
-
-      throw new Error(
-        "Le contenu du QR Sport n'est pas reconnu."
-      );
-    }
-  }
-
-
-  if(
-    !data ||
-    typeof data !==
-      "object"
-  ){
-
-    throw new Error(
-      "Le QR Sport est invalide."
-    );
-  }
-
-
-  if(
-    String(
-      data.type ||
-      ""
-    ) !==
-    "sport_club_ref"
-  ){
-
-    throw new Error(
-      "Ce QR n'est pas un QR Sport Bo’CitéArt."
-    );
-  }
-
-
-  return data;
-}
-
-
-/* =========================================================
-   MESSAGES ERREURS SPORT
-   ========================================================= */
-
-function sportError(
-  reason
-){
-
-  const errors = {
-
-    invalid_scan:
-      "Le QR Sport n'est pas valide.",
-
-    wrong_city:
-      "Ce QR appartient à une autre ville Bo’CitéArt.",
-
-    expired:
-      "Ce QR dynamique a expiré. Demandez au club d'en afficher un nouveau.",
-
-    already_used:
-      "Ce QR dynamique a déjà été utilisé.",
-
-    insufficient_balance:
-      "Le club ne dispose pas des 30 bocitecoins VERT nécessaires.",
-
-    merchant_rotation:
-      "Ce commerce ne peut pas être utilisé pour cet échange. Le moteur Sport applique la rotation prévue.",
-
-    merchant_inactive:
-      "Le commerce n'est pas actif pour cette opération.",
-
-    invalid_merchant:
-      "L'identité du commerce n'a pas été reconnue.",
-
-    purchase_required:
-      "Un achat réel distinct est obligatoire avant l'échange.",
-
-    purchase_too_low:
-      "L'achat doit atteindre au moins 10 € TTC.",
-
-    ticket_reference_required:
-      "La référence du ticket ou de l'achat est obligatoire.",
-
-    invalid_operation:
-      "L'opération Sport n'est pas valide.",
-
-    club_not_found:
-      "Le club n'a pas été reconnu.",
-
-    exchange_not_allowed:
-      "L'échange n'est pas autorisé."
-  };
-
-
-  return (
-    errors[
-      String(
-        reason ||
-        ""
-      )
-    ] ||
-    "L'échange n'a pas pu être validé."
+    `
   );
-}
 
 
-/* =========================================================
-   QR SPORT — CAMÉRA + VALIDATION
-   ========================================================= */
+  setTimeout(
+    ()=>{
 
-function bindSport(){
-
-  const input =
-    $id(
-      "commerceSportQrRaw"
-    );
-
-  const scanBtn =
-    $id(
-      "commerceSportScanBtn"
-    );
-
-  const box =
-    $id(
-      "commerceSportCameraBox"
-    );
-
-  const video =
-    $id(
-      "commerceSportCamera"
-    );
-
-  const stopBtn =
-    $id(
-      "commerceSportCameraStopBtn"
-    );
-
-  const amount =
-    $id(
-      "commerceSportPurchaseAmount"
-    );
-
-  const reference =
-    $id(
-      "commerceSportPurchaseRef"
-    );
-
-  const validate =
-    $id(
-      "commerceSportValidateBtn"
-    );
-
-  const status =
-    $id(
-      "commerceSportExchangeStatus"
-    );
-
-
-  if(!validate){
-
-    return;
-  }
-
-
-  let current =
-    null;
-
-  let stream =
-    null;
-
-  let timer =
-    null;
-
-  let busy =
-    false;
-
-
-  const setStatus =
-    function(
-      state,
-      text
-    ){
-
-      if(status){
-
-        status.dataset.state =
-          state;
-
-        status.textContent =
-          text;
-      }
-    };
-
-
-  const stop =
-    function(){
-
-      if(timer){
-
-        clearInterval(
-          timer
+      const openCommerceSpace =
+        document.getElementById(
+          "openCommerceSpace"
         );
 
-        timer =
-          null;
+      const openEntrepriseSpace =
+        document.getElementById(
+          "openEntrepriseSpace"
+        );
+
+      const commerceSpace =
+        document.getElementById(
+          "commerceSpace"
+        );
+
+      const entrepriseSpace =
+        document.getElementById(
+          "entrepriseSpace"
+        );
+
+
+      function showProfessionalSpace(
+        spaceName
+      ){
+
+        if(commerceSpace){
+
+          commerceSpace.style.display =
+            spaceName === "commerce"
+              ? "block"
+              : "none";
+        }
+
+
+        if(entrepriseSpace){
+
+          entrepriseSpace.style.display =
+            spaceName === "entreprise"
+              ? "block"
+              : "none";
+        }
       }
 
 
-      if(stream){
+      if(openCommerceSpace){
 
-        stream
-          .getTracks()
-          .forEach(
-            track => {
+        openCommerceSpace.onclick =
+          ()=>{
 
-              try{
+            showProfessionalSpace(
+              "commerce"
+            );
+          };
+      }
 
-                track.stop();
 
-              }catch(e){}
+      if(openEntrepriseSpace){
+
+        openEntrepriseSpace.onclick =
+          ()=>{
+
+            showProfessionalSpace(
+              "entreprise"
+            );
+          };
+      }
+
+
+      /* =====================================================
+         PUBLICITÉ COMMERCE
+         ===================================================== */
+
+      const commerceLargeAdvertisingBtn =
+        document.getElementById(
+          "commerceLargeAdvertisingBtn"
+        );
+
+      const commerceSmallAdvertisingBtn =
+        document.getElementById(
+          "commerceSmallAdvertisingBtn"
+        );
+
+
+      if(commerceLargeAdvertisingBtn){
+
+        commerceLargeAdvertisingBtn.onclick =
+          ()=>{
+
+            const state =
+              commerceCentralAccessState(
+                "commerce"
+              );
+
+
+            if(!state.ok){
+
+              alert(
+                commerceCentralAccessMessage(
+                  state
+                )
+              );
+
+              return;
             }
-          );
 
-        stream =
-          null;
+
+            commerceOpenLargeAdvertising();
+          };
       }
 
 
-      if(video){
+      if(commerceSmallAdvertisingBtn){
 
-        try{
+        commerceSmallAdvertisingBtn.onclick =
+          ()=>{
 
-          video.pause();
+            const state =
+              commerceCentralAccessState(
+                "commerce"
+              );
 
-        }catch(e){}
 
-        video.srcObject =
-          null;
+            if(!state.ok){
+
+              alert(
+                commerceCentralAccessMessage(
+                  state
+                )
+              );
+
+              return;
+            }
+
+
+            commerceOpenSmallAdvertising(
+              commerceReadMerchant()
+            );
+          };
       }
 
 
-      if(box){
+      /* =====================================================
+         PUBLICITÉ ENTREPRISE
+         ===================================================== */
 
-        box.classList.add(
-          "commerceHidden"
+      const enterpriseLargeAdvertisingBtn =
+        document.getElementById(
+          "enterpriseLargeAdvertisingBtn"
         );
-      }
 
-
-      busy =
-        false;
-    };
-
-
-  const read =
-    function(){
-
-      try{
-
-        const scan =
-          parseSportScan(
-            input
-              ? input.value
-              : ""
-          );
-
-
-        const activeCity =
-          city();
-
-
-        const scanCity =
-          String(
-            scan.cityId ||
-            ""
-          )
-          .trim()
-          .toLowerCase();
-
-
-        const operationId =
-          String(
-            scan.operationId ||
-            ""
-          )
-          .trim()
-          .toUpperCase();
-
-
-        if(
-          scanCity !==
-          activeCity.cityId
-        ){
-
-          throw new Error(
-            "Ce QR appartient à une autre ville Bo’CitéArt."
-          );
-        }
-
-
-        if(
-          !/^BCA-S-[A-Z0-9]{12,40}$/.test(
-            operationId
-          )
-        ){
-
-          throw new Error(
-            "Ce QR dynamique Sport n'est pas valide."
-          );
-        }
-
-
-        if(
-          Number(
-            scan.expiresAt ||
-            0
-          ) > 0 &&
-          Number(
-            scan.expiresAt
-          ) <
-          Date.now()
-        ){
-
-          throw new Error(
-            "Ce QR dynamique a expiré. Demandez au club d'en afficher un nouveau."
-          );
-        }
-
-
-        current =
-          scan;
-
-
-        setStatus(
-          "ok",
-          "QR Sport reconnu — club : " +
-          String(
-            scan.clubName ||
-            scan.name ||
-            scan.clubRef ||
-            "Club partenaire"
-          ) +
-          ". Le contrôle final vérifiera le solde, l'usage unique et le commerce."
+      const enterpriseSmallAdvertisingBtn =
+        document.getElementById(
+          "enterpriseSmallAdvertisingBtn"
         );
 
 
-        return scan;
+      if(enterpriseLargeAdvertisingBtn){
 
-      }catch(e){
+        enterpriseLargeAdvertisingBtn.onclick =
+          ()=>{
 
-        current =
-          null;
+            const state =
+              commerceCentralAccessState(
+                "entreprise"
+              );
 
 
-        setStatus(
-          "error",
-          e &&
-          e.message
-            ? e.message
-            : "QR Sport non reconnu."
+            if(!state.ok){
+
+              alert(
+                commerceCentralAccessMessage(
+                  state
+                )
+              );
+
+              return;
+            }
+
+
+            commerceOpenLargeAdvertising();
+          };
+      }
+
+
+      if(enterpriseSmallAdvertisingBtn){
+
+        enterpriseSmallAdvertisingBtn.onclick =
+          ()=>{
+
+            const state =
+              commerceCentralAccessState(
+                "entreprise"
+              );
+
+
+            if(!state.ok){
+
+              alert(
+                commerceCentralAccessMessage(
+                  state
+                )
+              );
+
+              return;
+            }
+
+
+            commerceOpenSmallAdvertising(
+              commerceReadEnterprise()
+            );
+          };
+      }
+
+           /* =====================================================
+         ACCÈS COMMERCE CENTRAL
+         ===================================================== */
+
+      const merchantRequestAccessBtn =
+        document.getElementById(
+          "merchantRequestAccessBtn"
+        );
+
+      const merchantLoginOpenBtn =
+        document.getElementById(
+          "merchantLoginOpenBtn"
+        );
+
+      const merchantLoginGate =
+        document.getElementById(
+          "merchantLoginGate"
+        );
+
+      const merchantLoginId =
+        document.getElementById(
+          "merchantLoginId"
+        );
+
+      const merchantLoginCode =
+        document.getElementById(
+          "merchantLoginCode"
+        );
+
+      const merchantLoginStatus =
+        document.getElementById(
+          "merchantLoginStatus"
+        );
+
+      const merchantInternalOpenBtn =
+        document.getElementById(
+          "merchantInternalOpenBtn"
+        );
+
+      const merchantInternalSpace =
+        document.getElementById(
+          "merchantInternalSpace"
         );
 
 
-        return null;
-      }
-    };
+      if(merchantRequestAccessBtn){
 
+        merchantRequestAccessBtn.onclick =
+          ()=>{
 
-  const camera =
-    async function(){
-
-      if(!input){
-
-        return;
+            commerceOpenCentralRegistration(
+              "commerce"
+            );
+          };
       }
 
 
       if(
-        typeof window.BarcodeDetector !==
-          "function" ||
-        !navigator.mediaDevices ||
-        typeof navigator.mediaDevices.getUserMedia !==
-          "function"
+        merchantLoginOpenBtn &&
+        merchantLoginGate
       ){
 
-        setStatus(
-          "warn",
-          "Le scanner caméra n'est pas disponible sur cet appareil. Collez le contenu du QR dans le champ prévu."
-        );
+        merchantLoginOpenBtn.onclick =
+          ()=>{
 
-        return;
+            const state =
+              commerceCentralAccessState(
+                "commerce"
+              );
+
+
+            if(state.ok){
+
+              merchantInternalSpace.style.display =
+                "block";
+
+              fillMerchantIdentity();
+
+              merchantInternalSpace.scrollIntoView({
+                behavior:"smooth",
+                block:"start"
+              });
+
+              return;
+            }
+
+
+            const open =
+              merchantLoginGate.style.display !==
+                "block";
+
+
+            merchantLoginGate.style.display =
+              open
+                ? "block"
+                : "none";
+
+
+            merchantLoginOpenBtn.textContent =
+              open
+                ? "Fermer l’accès"
+                : "J’ai déjà mes accès";
+
+
+            if(
+              open &&
+              merchantLoginStatus
+            ){
+
+              merchantLoginStatus.style.display =
+                "block";
+
+              merchantLoginStatus.dataset.state =
+                "warn";
+
+              merchantLoginStatus.textContent =
+                commerceCentralAccessMessage(
+                  state
+                );
+            }
+          };
       }
 
 
-      stop();
+      if(
+        merchantInternalOpenBtn &&
+        merchantInternalSpace
+      ){
+
+        merchantInternalOpenBtn.onclick =
+          async ()=>{
+
+            const api =
+              commerceAccountApi();
+
+            let state =
+              commerceCentralAccessState(
+                "commerce"
+              );
 
 
-      let detector;
+            if(state.ok){
 
+              merchantInternalSpace.style.display =
+                "block";
 
-      try{
+              fillMerchantIdentity();
 
-        detector =
-          new window.BarcodeDetector({
-            formats:[
-              "qr_code"
-            ]
-          });
+              merchantLoginGate.style.display =
+                "none";
 
+              merchantInternalSpace.scrollIntoView({
+                behavior:"smooth",
+                block:"start"
+              });
 
-        stream =
-          await navigator.mediaDevices.getUserMedia({
-
-            audio:false,
-
-            video:{
-              facingMode:{
-                ideal:"environment"
-              }
+              return;
             }
-          });
 
 
-        if(!video){
+            if(
+              state.reason !==
+                "initial_access_required"
+            ){
 
-          stop();
+              if(merchantLoginStatus){
 
-          return;
-        }
+                merchantLoginStatus.style.display =
+                  "block";
 
+                merchantLoginStatus.dataset.state =
+                  "warn";
 
-        video.srcObject =
-          stream;
+                merchantLoginStatus.textContent =
+                  commerceCentralAccessMessage(
+                    state
+                  );
+              }
 
-
-        await video.play();
-
-
-        if(box){
-
-          box.classList.remove(
-            "commerceHidden"
-          );
-        }
-
-
-        setStatus(
-          "warn",
-          "Scanner actif : présentez le QR dynamique du club."
-        );
+              return;
+            }
 
 
-        timer =
-          setInterval(
-            async function(){
+            const identifier =
+              String(
+                merchantLoginId
+                  ? merchantLoginId.value
+                  : ""
+              ).trim();
+
+
+            const code =
+              String(
+                merchantLoginCode
+                  ? merchantLoginCode.value
+                  : ""
+              ).trim();
+
+
+            if(
+              !identifier ||
+              !code
+            ){
+
+              merchantLoginStatus.style.display =
+                "block";
+
+              merchantLoginStatus.dataset.state =
+                "warn";
+
+              merchantLoginStatus.textContent =
+                "Renseignez votre identifiant professionnel et votre code d’accès initial.";
+
+              return;
+            }
+
+
+            if(
+              !api ||
+              typeof api.verifyProfessionalInitialAccess !==
+                "function"
+            ){
+
+              merchantLoginStatus.style.display =
+                "block";
+
+              merchantLoginStatus.dataset.state =
+                "error";
+
+              merchantLoginStatus.textContent =
+                "Le service central d’activation professionnelle n’est pas disponible.";
+
+              return;
+            }
+
+
+            merchantInternalOpenBtn.disabled =
+              true;
+
+
+            try{
+
+              const result =
+                await api.verifyProfessionalInitialAccess(
+                  identifier,
+                  code
+                );
+
 
               if(
-                busy ||
-                !video ||
-                video.readyState < 2
+                !result ||
+                result.ok !== true
               ){
+
+                const reasons = {
+
+                  invalid_professional_identifier:
+                    "Identifiant professionnel incorrect.",
+
+                  invalid_initial_access_code:
+                    "Code d’accès initial incorrect.",
+
+                  initial_access_already_used:
+                    "Ce code initial a déjà été utilisé.",
+
+                  initial_access_not_issued:
+                    "Aucun code initial n’a encore été émis.",
+
+                  organization_not_validated:
+                    "L’organisation n’est pas encore validée.",
+
+                  organization_not_found:
+                    "Aucune organisation professionnelle n’a été trouvée."
+
+                };
+
+
+                merchantLoginStatus.style.display =
+                  "block";
+
+                merchantLoginStatus.dataset.state =
+                  "warn";
+
+                merchantLoginStatus.textContent =
+                  reasons[
+                    result &&
+                    result.reason
+                  ] ||
+                  "L’activation professionnelle a échoué.";
 
                 return;
               }
 
 
-              busy =
-                true;
+              state =
+                commerceCentralAccessState(
+                  "commerce"
+                );
 
 
-              try{
+              if(!state.ok){
 
-                const codes =
-                  await detector.detect(
-                    video
+                merchantLoginStatus.style.display =
+                  "block";
+
+                merchantLoginStatus.dataset.state =
+                  "warn";
+
+                merchantLoginStatus.textContent =
+                  commerceCentralAccessMessage(
+                    state
                   );
 
-
-                if(
-                  codes &&
-                  codes[0] &&
-                  codes[0].rawValue
-                ){
-
-                  input.value =
-                    String(
-                      codes[0].rawValue
-                    ).trim();
-
-
-                  stop();
-
-                  read();
-                }
-
-              }catch(e){
-
-              }finally{
-
-                busy =
-                  false;
+                return;
               }
 
-            },
-            450
+
+              merchantLoginStatus.style.display =
+                "block";
+
+              merchantLoginStatus.dataset.state =
+                "ok";
+
+              merchantLoginStatus.textContent =
+                "Accès professionnel activé.";
+
+
+              merchantInternalSpace.style.display =
+                "block";
+
+              merchantLoginGate.style.display =
+                "none";
+
+
+              fillMerchantIdentity();
+
+
+              merchantInternalSpace.scrollIntoView({
+                behavior:"smooth",
+                block:"start"
+              });
+
+            }catch(error){
+
+              merchantLoginStatus.style.display =
+                "block";
+
+              merchantLoginStatus.dataset.state =
+                "error";
+
+              merchantLoginStatus.textContent =
+                "L’activation professionnelle a échoué.";
+
+            }finally{
+
+              merchantInternalOpenBtn.disabled =
+                false;
+            }
+          };
+      }
+
+
+      /* =====================================================
+         FICHE COMMERCE CENTRALE
+         ===================================================== */
+
+      function fillMerchantIdentity(){
+
+        const merchant =
+          commerceReadMerchant();
+
+
+        const fields = {
+
+          merchantShopName:
+            merchant.shopName,
+
+          merchantAddress:
+            merchant.address,
+
+          merchantActivity:
+            merchant.activity,
+
+          merchantPhone:
+            merchant.phone,
+
+          merchantEmail:
+            merchant.email,
+
+          merchantSiret:
+            merchant.sirenSiret
+
+        };
+
+
+        Object.keys(
+          fields
+        )
+          .forEach(
+            id =>{
+
+              const element =
+                document.getElementById(
+                  id
+                );
+
+
+              if(element){
+
+                element.value =
+                  fields[id] ||
+                  "";
+              }
+            }
           );
 
-      }catch(e){
 
-        stop();
+        const status =
+          document.getElementById(
+            "merchantProfileStatus"
+          );
 
 
-        setStatus(
-          "error",
-          "La caméra n'a pas pu être ouverte. Autorisez son accès ou collez le QR du club."
-        );
+        if(status){
+
+          if(
+            merchant.id &&
+            merchant.partnerActive
+          ){
+
+            status.dataset.state =
+              "ok";
+
+            status.textContent =
+              "Commerce validé — identifiant professionnel : " +
+              (
+                merchant.professionalIdentifier ||
+                merchant.id
+              );
+
+          }else{
+
+            status.dataset.state =
+              "warn";
+
+            status.textContent =
+              "Le dossier professionnel doit être validé avant l’ouverture complète de cet espace.";
+          }
+        }
       }
-    };
 
 
-  if(scanBtn){
+      fillMerchantIdentity();
 
-    scanBtn.onclick =
-      async function(){
 
-        if(
-          input &&
-          String(
-            input.value ||
-            ""
-          ).trim()
-        ){
+      /* =====================================================
+         PUBLICITÉ DEPUIS L'ESPACE PRIVÉ COMMERCE
+         ===================================================== */
 
-          read();
+      const merchantLargeAdvertisingBtn =
+        document.getElementById(
+          "merchantLargeAdvertisingBtn"
+        );
+
+      const merchantSmallAdvertisingBtn =
+        document.getElementById(
+          "merchantSmallAdvertisingBtn"
+        );
+
+
+      if(merchantLargeAdvertisingBtn){
+
+        merchantLargeAdvertisingBtn.onclick =
+          ()=>{
+
+            const state =
+              commerceCentralAccessState(
+                "commerce"
+              );
+
+
+            if(!state.ok){
+
+              alert(
+                commerceCentralAccessMessage(
+                  state
+                )
+              );
+
+              return;
+            }
+
+
+            commerceOpenLargeAdvertising();
+          };
+      }
+
+
+      if(merchantSmallAdvertisingBtn){
+
+        merchantSmallAdvertisingBtn.onclick =
+          ()=>{
+
+            const state =
+              commerceCentralAccessState(
+                "commerce"
+              );
+
+
+            if(!state.ok){
+
+              alert(
+                commerceCentralAccessMessage(
+                  state
+                )
+              );
+
+              return;
+            }
+
+
+            commerceOpenSmallAdvertising(
+              commerceReadMerchant()
+            );
+          };
+      }
+
+
+      /* =====================================================
+         ACCÈS ENTREPRISE CENTRAL
+         ===================================================== */
+
+      const enterpriseRegistrationBtn =
+        document.getElementById(
+          "enterpriseRegistrationBtn"
+        );
+
+      const enterpriseProfessionalAccessBtn =
+        document.getElementById(
+          "enterpriseProfessionalAccessBtn"
+        );
+
+      const enterpriseProfessionalStatus =
+        document.getElementById(
+          "enterpriseProfessionalStatus"
+        );
+
+
+      function refreshEnterpriseAccess(){
+
+        if(!enterpriseProfessionalStatus){
+          return;
+        }
+
+
+        const state =
+          commerceCentralAccessState(
+            "entreprise"
+          );
+
+
+        if(state.ok){
+
+          const enterprise =
+            commerceReadEnterprise();
+
+
+          enterpriseProfessionalStatus.dataset.state =
+            "ok";
+
+          enterpriseProfessionalStatus.textContent =
+            "Entreprise validée — identifiant professionnel : " +
+            (
+              enterprise.professionalIdentifier ||
+              enterprise.id
+            );
 
           return;
         }
 
 
-        await camera();
-      };
-  }
+        enterpriseProfessionalStatus.dataset.state =
+          "warn";
+
+        enterpriseProfessionalStatus.textContent =
+          commerceCentralAccessMessage(
+            state
+          );
+      }
 
 
-  if(stopBtn){
+      if(enterpriseRegistrationBtn){
 
-    stopBtn.onclick =
-      stop;
-  }
+        enterpriseRegistrationBtn.onclick =
+          ()=>{
+
+            commerceOpenCentralRegistration(
+              "entreprise"
+            );
+          };
+      }
 
 
-  validate.onclick =
-    async function(){
+      if(enterpriseProfessionalAccessBtn){
 
-      const state =
-        accessState(
-          "commerce"
+        enterpriseProfessionalAccessBtn.onclick =
+          ()=>{
+
+            const state =
+              commerceCentralAccessState(
+                "entreprise"
+              );
+
+
+            if(!state.ok){
+
+              alert(
+                commerceCentralAccessMessage(
+                  state
+                )
+              );
+
+              return;
+            }
+
+
+            openEntrepriseDirectionPanel();
+          };
+      }
+
+
+      refreshEnterpriseAccess();
+
+
+      /* =====================================================
+         QR SPORT
+         ===================================================== */
+
+      const city =
+        commerceActiveCity();
+
+      const sportInput =
+        document.getElementById(
+          "commerceSportQrRaw"
+        );
+
+      const sportScanBtn =
+        document.getElementById(
+          "commerceSportScanBtn"
+        );
+
+      const sportCameraBox =
+        document.getElementById(
+          "commerceSportCameraBox"
+        );
+
+      const sportCameraVideo =
+        document.getElementById(
+          "commerceSportCamera"
+        );
+
+      const sportCameraStopBtn =
+        document.getElementById(
+          "commerceSportCameraStopBtn"
+        );
+
+      const sportAmount =
+        document.getElementById(
+          "commerceSportPurchaseAmount"
+        );
+
+      const sportPurchaseRef =
+        document.getElementById(
+          "commerceSportPurchaseRef"
+        );
+
+      const sportValidateBtn =
+        document.getElementById(
+          "commerceSportValidateBtn"
+        );
+
+      const sportStatus =
+        document.getElementById(
+          "commerceSportExchangeStatus"
         );
 
 
-      if(!state.ok){
+      let currentSportScan =
+        null;
 
-        setStatus(
-          "error",
-          accessMessage(
-            state,
-            "Commerce"
+      let sportCameraStream =
+        null;
+
+      let sportCameraTimer =
+        null;
+
+      let sportCameraBusy =
+        false;
+
+
+      function setSportStatus(
+        state,
+        text
+      ){
+
+        if(!sportStatus){
+          return;
+        }
+
+
+        sportStatus.dataset.state =
+          state;
+
+        sportStatus.textContent =
+          text;
+      }
+
+
+      function stopSportCamera(){
+
+        if(sportCameraTimer){
+
+          clearInterval(
+            sportCameraTimer
+          );
+
+          sportCameraTimer =
+            null;
+        }
+
+
+        if(sportCameraStream){
+
+          sportCameraStream
+            .getTracks()
+            .forEach(
+              track =>{
+
+                try{
+
+                  track.stop();
+
+                }catch(error){}
+              }
+            );
+
+
+          sportCameraStream =
+            null;
+        }
+
+
+        if(sportCameraVideo){
+
+          try{
+
+            sportCameraVideo.pause();
+
+          }catch(error){}
+
+
+          sportCameraVideo.srcObject =
+            null;
+        }
+
+
+        if(sportCameraBox){
+
+          sportCameraBox.classList.add(
+            "commerceHidden"
+          );
+        }
+
+
+        sportCameraBusy =
+          false;
+      }
+
+
+      function readSportQr(){
+
+        try{
+
+          const scan =
+            commerceParseSportScan(
+              sportInput
+                ? sportInput.value
+                : ""
+            );
+
+
+          const scanCity =
+            String(
+              scan.cityId ||
+              ""
+            )
+              .trim()
+              .toLowerCase();
+
+
+          const operationId =
+            String(
+              scan.operationId ||
+              ""
+            )
+              .trim()
+              .toUpperCase();
+
+
+          if(
+            scanCity !==
+              city.cityId
+          ){
+
+            throw new Error(
+              "Ce QR appartient à une autre ville Bo’CitéArt."
+            );
+          }
+
+
+          if(
+            !/^BCA-S-[A-Z0-9]{12,40}$/.test(
+              operationId
+            )
+          ){
+
+            throw new Error(
+              "Ce QR dynamique Sport n’est pas valide."
+            );
+          }
+
+
+          if(
+            Number(
+              scan.expiresAt ||
+              0
+            ) > 0 &&
+            Number(
+              scan.expiresAt
+            ) < Date.now()
+          ){
+
+            throw new Error(
+              "Ce QR dynamique a expiré. Demandez au club d’en afficher un nouveau."
+            );
+          }
+
+
+          currentSportScan =
+            scan;
+
+
+          setSportStatus(
+            "ok",
+            "QR Sport reconnu — club : " +
+            String(
+              scan.clubName ||
+              scan.name ||
+              scan.clubRef ||
+              "Club partenaire"
+            ) +
+            "."
+          );
+
+
+          return scan;
+
+        }catch(error){
+
+          currentSportScan =
+            null;
+
+
+          setSportStatus(
+            "error",
+            error &&
+            error.message
+              ? error.message
+              : "QR Sport non reconnu."
+          );
+
+
+          return null;
+        }
+      }
+
+           async function scanSportWithCamera(){
+
+        if(!sportInput){
+          return;
+        }
+
+
+        if(
+          typeof window.BarcodeDetector !==
+            "function" ||
+          !navigator.mediaDevices ||
+          typeof navigator.mediaDevices.getUserMedia !==
+            "function"
+        ){
+
+          setSportStatus(
+            "warn",
+            "Le scanner QR n’est pas disponible sur cet appareil."
+          );
+
+          return;
+        }
+
+
+        let supported =
+          [];
+
+
+        try{
+
+          if(
+            typeof window.BarcodeDetector.getSupportedFormats ===
+              "function"
+          ){
+
+            supported =
+              await window.BarcodeDetector
+                .getSupportedFormats();
+          }
+
+        }catch(error){}
+
+
+        if(
+          supported.length &&
+          !supported.includes(
+            "qr_code"
           )
-        );
+        ){
 
-        return;
+          setSportStatus(
+            "warn",
+            "La lecture des QR codes n’est pas disponible sur cet appareil."
+          );
+
+          return;
+        }
+
+
+        stopSportCamera();
+
+
+        let detector;
+
+
+        try{
+
+          detector =
+            new window.BarcodeDetector({
+
+              formats:[
+                "qr_code"
+              ]
+
+            });
+
+        }catch(error){
+
+          setSportStatus(
+            "error",
+            "Le lecteur QR n’a pas pu démarrer."
+          );
+
+          return;
+        }
+
+
+        try{
+
+          sportCameraStream =
+            await navigator.mediaDevices
+              .getUserMedia({
+
+                audio:false,
+
+                video:{
+
+                  facingMode:{
+                    ideal:"environment"
+                  }
+
+                }
+
+              });
+
+
+          if(!sportCameraVideo){
+
+            stopSportCamera();
+            return;
+          }
+
+
+          sportCameraVideo.srcObject =
+            sportCameraStream;
+
+
+          await sportCameraVideo.play();
+
+
+          if(sportCameraBox){
+
+            sportCameraBox.classList.remove(
+              "commerceHidden"
+            );
+          }
+
+
+          setSportStatus(
+            "warn",
+            "Scanner actif : présentez le QR dynamique du club."
+          );
+
+
+          sportCameraTimer =
+            setInterval(
+              async ()=>{
+
+                if(
+                  sportCameraBusy ||
+                  !sportCameraVideo ||
+                  sportCameraVideo.readyState < 2
+                ){
+
+                  return;
+                }
+
+
+                sportCameraBusy =
+                  true;
+
+
+                try{
+
+                  const codes =
+                    await detector.detect(
+                      sportCameraVideo
+                    );
+
+
+                  if(
+                    codes &&
+                    codes[0] &&
+                    codes[0].rawValue
+                  ){
+
+                    sportInput.value =
+                      String(
+                        codes[0].rawValue
+                      ).trim();
+
+
+                    stopSportCamera();
+
+                    readSportQr();
+                  }
+
+                }catch(error){
+
+                  console.warn(
+                    "Bo'CitéArt Commerce : lecture QR Sport.",
+                    error
+                  );
+
+                }finally{
+
+                  sportCameraBusy =
+                    false;
+                }
+
+              },
+              450
+            );
+
+        }catch(error){
+
+          stopSportCamera();
+
+
+          setSportStatus(
+            "error",
+            "La caméra n’a pas pu être ouverte. Vérifiez l’autorisation d’accès à la caméra."
+          );
+        }
       }
 
 
-      const bridge =
-        window.BociteSportMerchant;
+      if(sportScanBtn){
+
+        sportScanBtn.onclick =
+          async ()=>{
+
+            await scanSportWithCamera();
+          };
+      }
 
 
-      if(
-        !bridge ||
-        typeof bridge.validateClubScan !==
-          "function"
+      if(sportCameraStopBtn){
+
+        sportCameraStopBtn.onclick =
+          stopSportCamera;
+      }
+
+
+      /* =====================================================
+         VALIDATION SPORT → COMMERCE
+         ===================================================== */
+
+      if(sportValidateBtn){
+
+        sportValidateBtn.onclick =
+          async ()=>{
+
+            const state =
+              commerceCentralAccessState(
+                "commerce"
+              );
+
+
+            if(!state.ok){
+
+              setSportStatus(
+                "error",
+                commerceCentralAccessMessage(
+                  state
+                )
+              );
+
+              return;
+            }
+
+
+            const bridge =
+              window.BociteSportMerchant;
+
+
+            if(
+              !bridge ||
+              typeof bridge.validateClubScan !==
+                "function"
+            ){
+
+              setSportStatus(
+                "error",
+                "Le raccord Sport → Commerce n’est pas chargé."
+              );
+
+              return;
+            }
+
+
+            const scan =
+              currentSportScan ||
+              readSportQr();
+
+
+            if(!scan){
+              return;
+            }
+
+
+            const merchant =
+              commerceReadMerchant();
+
+
+            if(
+              !merchant.id ||
+              !merchant.shopName
+            ){
+
+              setSportStatus(
+                "error",
+                "La fiche professionnelle du commerce doit être complète."
+              );
+
+              return;
+            }
+
+
+            if(
+              merchant.partnerActive !== true
+            ){
+
+              setSportStatus(
+                "error",
+                "Le commerce doit être validé et actif dans Bo’CitéArt."
+              );
+
+              return;
+            }
+
+
+            const amount =
+              Number(
+                sportAmount
+                  ? sportAmount.value
+                  : 0
+              );
+
+
+            const reference =
+              String(
+                sportPurchaseRef
+                  ? sportPurchaseRef.value
+                  : ""
+              ).trim();
+
+
+            if(
+              !Number.isFinite(
+                amount
+              ) ||
+              amount < 10
+            ){
+
+              setSportStatus(
+                "error",
+                "Un achat réel d’au moins 10 € TTC est obligatoire avant l’échange."
+              );
+
+              return;
+            }
+
+
+            if(!reference){
+
+              setSportStatus(
+                "error",
+                "Renseignez la référence du ticket ou de l’achat."
+              );
+
+              return;
+            }
+
+
+            sportValidateBtn.disabled =
+              true;
+
+
+            setSportStatus(
+              "warn",
+              "Validation de l’échange en cours…"
+            );
+
+
+            try{
+
+              const result =
+                await bridge.validateClubScan(
+
+                  scan,
+
+                  {
+
+                    id:
+                      merchant.id,
+
+                    merchantId:
+                      merchant.id,
+
+                    professionalIdentifier:
+                      merchant.professionalIdentifier,
+
+                    name:
+                      merchant.shopName,
+
+                    shopName:
+                      merchant.shopName,
+
+                    sirenSiret:
+                      merchant.sirenSiret,
+
+                    partnerActive:
+                      merchant.partnerActive === true,
+
+                    bociteartPartner:
+                      merchant.partnerActive === true,
+
+                    partnerStatus:
+                      merchant.partnerActive === true
+                        ? "active"
+                        : "inactive"
+
+                  },
+
+                  {
+
+                    amountTTC:
+                      amount,
+
+                    reference:
+                      reference,
+
+                    bocitecoinRecipient:
+                      "club",
+
+                    exchangeAccepted:
+                      true
+
+                  }
+
+                );
+
+
+              if(
+                !result ||
+                result.ok !== true
+              ){
+
+                setSportStatus(
+                  "error",
+                  commerceSportError(
+                    result &&
+                    result.reason
+                  )
+                );
+
+                return;
+              }
+
+
+              setSportStatus(
+                "ok",
+                "Échange validé : 30 bocitecoins VERT retirés du portefeuille du club et 1 Cabas remis. Nouveau solde : " +
+                Number(
+                  result.balance ||
+                  0
+                ) +
+                " VERT."
+              );
+
+
+              currentSportScan =
+                null;
+
+
+              if(sportInput){
+
+                sportInput.value =
+                  "";
+              }
+
+
+              if(sportAmount){
+
+                sportAmount.value =
+                  "";
+              }
+
+
+              if(sportPurchaseRef){
+
+                sportPurchaseRef.value =
+                  "";
+              }
+
+            }catch(error){
+
+              console.error(
+                "Bo'CitéArt Commerce : validation Sport impossible.",
+                error
+              );
+
+
+              setSportStatus(
+                "error",
+                "La validation de l’échange a échoué."
+              );
+
+            }finally{
+
+              sportValidateBtn.disabled =
+                false;
+            }
+          };
+      }
+
+
+      /* =====================================================
+         HISTORIQUE COMMERCE
+         ===================================================== */
+
+      const merchantHistoryExportBtn =
+        document.getElementById(
+          "merchantHistoryExportBtn"
+        );
+
+
+      if(merchantHistoryExportBtn){
+
+        merchantHistoryExportBtn.onclick =
+          ()=>{
+
+            const merchant =
+              commerceReadMerchant();
+
+
+            const exportObject = {
+
+              exportedAt:
+                new Date().toISOString(),
+
+              city:
+                commerceActiveCity(),
+
+              merchant:{
+                organizationId:
+                  merchant.id,
+
+                professionalIdentifier:
+                  merchant.professionalIdentifier,
+
+                shopName:
+                  merchant.shopName,
+
+                sirenSiret:
+                  merchant.sirenSiret
+              }
+
+            };
+
+
+            const exportText =
+              "HISTORIQUE COMMERCE — BO’CITÉART\n\n" +
+              JSON.stringify(
+                exportObject,
+                null,
+                2
+              );
+
+
+            if(
+              navigator.clipboard &&
+              navigator.clipboard.writeText
+            ){
+
+              navigator.clipboard
+                .writeText(
+                  exportText
+                )
+                .then(
+                  ()=>{
+
+                    alert(
+                      "Historique Commerce copié."
+                    );
+                  }
+                )
+                .catch(
+                  ()=>{
+
+                    alert(
+                      exportText
+                    );
+                  }
+                );
+
+            }else{
+
+              alert(
+                exportText
+              );
+            }
+          };
+      }
+
+
+      /* =====================================================
+         ENTREPRISE — CONTENU D'ORIGINE
+         ===================================================== */
+
+      const ENTREPRISE_MUTUALISATION_KEY =
+        "bociteart_entreprise_mutualisation_v1";
+
+
+      function loadEntrepriseMutualisation(){
+
+        try{
+
+          const raw =
+            localStorage.getItem(
+              ENTREPRISE_MUTUALISATION_KEY
+            );
+
+
+          const saved =
+            raw
+              ? JSON.parse(
+                  raw
+                )
+              : {};
+
+
+          return {
+
+            electricite:
+              Number(
+                saved.electricite ||
+                17
+              ),
+
+            gaz:
+              Number(
+                saved.gaz ||
+                9
+              ),
+
+            telephonie:
+              Number(
+                saved.telephonie ||
+                24
+              ),
+
+            assurances:
+              Number(
+                saved.assurances ||
+                12
+              ),
+
+            mutuelle:
+              Number(
+                saved.mutuelle ||
+                8
+              ),
+
+            fournitures:
+              Number(
+                saved.fournitures ||
+                6
+              )
+
+          };
+
+        }catch(error){
+
+          return {
+
+            electricite:17,
+            gaz:9,
+            telephonie:24,
+            assurances:12,
+            mutuelle:8,
+            fournitures:6
+
+          };
+        }
+      }
+
+
+      function saveEntrepriseMutualisation(
+        data
       ){
 
-        setStatus(
-          "error",
-          "Le raccord Sport → Commerce n'est pas chargé."
-        );
+        try{
 
-        return;
+          localStorage.setItem(
+            ENTREPRISE_MUTUALISATION_KEY,
+            JSON.stringify(
+              data
+            )
+          );
+
+        }catch(error){
+
+          console.warn(
+            "Enregistrement mutualisation impossible :",
+            error
+          );
+        }
       }
 
 
-      const scan =
-        current ||
-        read();
-
-
-      if(!scan){
-
-        return;
-      }
-
-
-      const merchant =
-        centralMerchant();
-
-
-      if(
-        !merchant.partnerActive ||
-        !merchant.id
+      function entrepriseOtherTopics(
+        current
       ){
 
-        setStatus(
-          "error",
-          "Le commerce central doit être validé et actif."
-        );
+        const topics = [
 
-        return;
+          [
+            "emploi",
+            "Recherche de personnel"
+          ],
+
+          [
+            "fidelisation",
+            "Fidélisation"
+          ],
+
+          [
+            "developpement",
+            "Développement"
+          ],
+
+          [
+            "mutualisation",
+            "Mutualisation"
+          ],
+
+          [
+            "visibilite",
+            "Visibilité"
+          ],
+
+          [
+            "economies",
+            "Économies"
+          ],
+
+          [
+            "perennite",
+            "Pérennité"
+          ],
+
+          [
+            "mecenat",
+            "Mécénat"
+          ]
+
+        ];
+
+
+        return `
+
+          <div
+            class="entrepriseSectionTitle"
+          >
+            Vous pourriez également
+            être intéressé par
+          </div>
+
+          <div
+            style="
+              display:flex;
+              gap:7px;
+              flex-wrap:wrap;
+              margin-top:9px;
+            "
+          >
+
+            ${
+              topics
+
+                .filter(
+                  item =>
+                    item[0] !== current
+                )
+
+                .map(
+                  item => `
+
+                    <button
+                      class="choiceBtn entrepriseRelatedTopic"
+                      type="button"
+                      data-related-topic="${item[0]}"
+                    >
+                      ${item[1]}
+                    </button>
+
+                  `
+                )
+
+                .join("")
+            }
+
+          </div>
+
+        `;
       }
 
-
-      const purchaseAmount =
-        Number(
-          amount
-            ? amount.value
-            : 0
-        );
-
-
-      const purchaseReference =
-        String(
-          reference
-            ? reference.value
-            : ""
-        ).trim();
-
-
-      if(
-        !Number.isFinite(
-          purchaseAmount
-        ) ||
-        purchaseAmount < 10
+           function renderEntrepriseTopic(
+        topicKey
       ){
 
-        setStatus(
-          "error",
-          "Un achat réel d'au moins 10 € TTC est obligatoire."
+        window.currentModule =
+          "entreprise";
+
+        window.currentEntrepriseScreen =
+          topicKey;
+
+
+        const panel =
+          document.getElementById(
+            "entrepriseTopicPanel"
+          );
+
+        const title =
+          document.getElementById(
+            "entrepriseTopicTitle"
+          );
+
+        const text =
+          document.getElementById(
+            "entrepriseTopicText"
+          );
+
+        const actions =
+          document.getElementById(
+            "entrepriseTopicActions"
+          );
+
+
+        if(
+          !panel ||
+          !title ||
+          !text ||
+          !actions
+        ){
+
+          return;
+        }
+
+
+        const topics = {
+
+          emploi:{
+
+            title:
+              "Vous recherchez du personnel ?",
+
+            html:`
+
+              <div class="box">
+
+                <strong>
+                  Les habitants de votre ville
+                  seront les premiers informés.
+                </strong>
+
+                <br><br>
+
+                Publiez vos besoins,
+                présentez votre entreprise
+                et rapprochez directement
+                les compétences disponibles
+                de votre territoire.
+
+                Pourquoi chercher plus loin
+                si votre futur collaborateur
+                est peut-être déjà près de chez vous ?
+
+              </div>
+
+              <div class="entrepriseSectionTitle">
+                Déposez votre offre
+              </div>
+
+              <p>
+                Bo’CitéArt la diffuse en priorité
+                dans votre commune puis,
+                si nécessaire,
+                élargit progressivement la recherche.
+              </p>
+
+              <p>
+                Les candidats répondent uniquement
+                à l’annonce qui les intéresse.
+                Le CV, le message et les coordonnées
+                restent liés à cette offre.
+              </p>
+
+              <div class="entrepriseSectionTitle">
+                Votre historique vous est offert
+              </div>
+
+              <p>
+                Toutes les candidatures restent disponibles
+                dans votre espace privé.
+                Vous pouvez retrouver un candidat
+                plusieurs mois plus tard
+                lorsqu’un nouveau besoin apparaît.
+              </p>
+
+              <p>
+                Votre carnet de candidats
+                se construit progressivement.
+              </p>
+
+              <div class="entrepriseSectionTitle">
+                Des annonces toujours à jour
+              </div>
+
+              <p>
+                Lorsque le recrutement est terminé,
+                indiquez simplement
+                <strong>Poste pourvu</strong>.
+              </p>
+
+              <p>
+                L’annonce est retirée afin que les habitants
+                ne perdent plus leur temps
+                à répondre à une offre déjà pourvue.
+              </p>
+
+              <p>
+                Cette règle respecte le temps du candidat
+                comme celui de l’entreprise.
+              </p>
+
+              <div class="box">
+                Parce que les compétences
+                que vous recherchez sont souvent
+                déjà près de chez vous.
+              </div>
+
+              ${entrepriseOtherTopics("emploi")}
+            `,
+
+            actions:[
+              [
+                "Publier une offre",
+                "emploi-publier"
+              ],
+              [
+                "Consulter les offres",
+                "emploi-consulter"
+              ],
+              [
+                "Répondre à une offre",
+                "emploi-repondre"
+              ]
+            ]
+
+          },
+
+
+          fidelisation:{
+
+            title:
+              "Attirez et fidélisez vos salariés autrement",
+
+            html:`
+
+              <div class="box">
+
+                Recruter près de l’entreprise
+                réduit déjà les temps
+                et les coûts de transport du salarié.
+
+              </div>
+
+              <p>
+                Un salarié ne recherche pas seulement
+                une rémunération.
+                Il regarde aussi la proximité,
+                la reconnaissance,
+                la qualité de vie
+                et l’engagement de son employeur.
+              </p>
+
+              <div class="entrepriseSectionTitle">
+                Quelques solutions concrètes
+              </div>
+
+              <p>
+                Recruter en priorité dans la commune
+                ou dans les communes voisines.
+              </p>
+
+              <p>
+                Faire connaître les commerces,
+                les services,
+                les clubs et les activités accessibles
+                près du lieu de travail.
+              </p>
+
+              <p>
+                Valoriser les initiatives locales
+                auxquelles l’entreprise participe.
+              </p>
+
+              <p>
+                Associer les salariés
+                à une action de mécénat
+                ou à un projet utile au territoire.
+              </p>
+
+              <p>
+                Mettre en avant les métiers,
+                les équipes et le savoir-faire
+                de l’entreprise afin de renforcer
+                le sentiment d’appartenance.
+              </p>
+
+              <div class="box">
+                Bo’CitéArt relie progressivement
+                l’entreprise aux solutions
+                qui existent réellement autour d’elle.
+              </div>
+
+              ${entrepriseOtherTopics("fidelisation")}
+            `,
+
+            actions:[
+              [
+                "Rechercher du personnel",
+                "emploi"
+              ],
+              [
+                "Découvrir les services locaux",
+                "annuaire"
+              ],
+              [
+                "Découvrir le mécénat",
+                "mecenat"
+              ]
+            ]
+
+          },
+
+
+          developpement:{
+
+            title:
+              "Développez votre entreprise",
+
+            html:`
+
+              <div class="box">
+                Votre prochain client,
+                fournisseur,
+                salarié ou partenaire
+                se trouve déjà dans votre ville
+                ou à proximité.
+              </div>
+
+              <p>
+                Une entreprise se développe
+                grâce à ses produits
+                et à ses services,
+                mais aussi grâce aux rencontres,
+                aux informations
+                et aux bonnes décisions
+                prises au bon moment.
+              </p>
+
+              <div class="entrepriseSectionTitle">
+                Commencez par regarder autour de vous
+              </div>
+
+              <p>
+                Découvrez les entreprises
+                présentes dans votre commune,
+                leurs métiers,
+                leurs savoir-faire
+                et leurs besoins.
+              </p>
+
+              <p>
+                Recherchez un fournisseur,
+                un sous-traitant,
+                une compétence complémentaire
+                ou un partenaire local.
+              </p>
+
+              <p>
+                Faites connaître votre propre activité
+                afin que les autres acteurs
+                puissent également vous identifier.
+              </p>
+
+              <div class="box">
+                Bo’CitéArt prépare des connexions utiles
+                entre les acteurs du territoire.
+              </div>
+
+              ${entrepriseOtherTopics("developpement")}
+            `,
+
+            actions:[
+              [
+                "Les entreprises de ma ville",
+                "annuaire"
+              ],
+              [
+                "Faire connaître mon entreprise",
+                "visibilite"
+              ],
+              [
+                "Rechercher un partenaire",
+                "partenaire"
+              ]
+            ]
+
+          },
+
+
+          mutualisation:{
+
+            title:
+              "Réduisez vos charges",
+
+            html:`
+
+              <div class="box">
+
+                <strong>
+                  Pourquoi continuer à négocier seul
+                  lorsqu’il est possible
+                  de construire des solutions communes ?
+                </strong>
+
+                <br><br>
+
+                Bo’CitéArt organise la démarche.
+
+              </div>
+
+              <p>
+                Cochez les sujets qui vous intéressent.
+                Chaque sélection augmente immédiatement
+                le compteur.
+              </p>
+
+              <p>
+                Plus les entreprises sont nombreuses,
+                plus le rapport de force devient favorable.
+              </p>
+
+              <div
+                id="entrepriseMutualisationCounters"
+              ></div>
+
+              <div
+                class="box"
+                style="margin-top:12px;"
+              >
+                Dès que le nombre nécessaire est atteint,
+                Bo’CitéArt prépare la consultation
+                auprès des prestataires.
+              </div>
+
+              <p>
+                Les propositions sont présentées clairement
+                dans le Tableau de Direction.
+              </p>
+
+              <p>
+                Chaque entreprise choisit ensuite
+                la proposition qu’elle souhaite.
+                La décision finale lui appartient.
+              </p>
+
+              ${entrepriseOtherTopics("mutualisation")}
+            `,
+
+            actions:[
+              [
+                "Voir mon Tableau de Direction",
+                "direction"
+              ]
+            ]
+
+          },
+
+
+          visibilite:{
+
+            title:
+              "Faites connaître vos métiers et votre savoir-faire",
+
+            html:`
+
+              <div class="box">
+                Avant d’acheter
+                ou de chercher ailleurs,
+                les habitants doivent déjà savoir
+                que vous existez.
+              </div>
+
+              <p>
+                Il reste difficile de savoir
+                qui fait quoi dans sa propre ville.
+              </p>
+
+              <div class="entrepriseSectionTitle">
+                Faire connaître votre entreprise crée des leviers
+              </div>
+
+              <p>
+                Emploi,
+                bouche-à-oreille,
+                partenariats,
+                découverte des métiers,
+                vocations chez les jeunes
+                et transmission future.
+              </p>
+
+              <p>
+                Même si vos produits
+                ne s’adressent pas directement
+                aux particuliers,
+                les habitants connaissent vos métiers,
+                parlent de vous
+                et transmettent votre nom.
+              </p>
+
+              <div class="box">
+                Une entreprise visible
+                devient progressivement un repère
+                pour les habitants,
+                les salariés,
+                les partenaires
+                et les autres entreprises du territoire.
+              </div>
+
+              ${entrepriseOtherTopics("visibilite")}
+            `,
+
+            actions:[
+              [
+                "Voir les entreprises de la ville",
+                "annuaire"
+              ],
+              [
+                "Présenter mon entreprise",
+                "fiche-enrichie"
+              ],
+              [
+                "Diffuser une publicité",
+                "publicite"
+              ]
+            ]
+
+          },
+
+
+          economies:{
+
+            title:
+              "Comparez, choisissez, validez",
+
+            html:`
+
+              <div class="box">
+                Recevez des propositions claires
+                et comparables
+                avant de prendre votre décision.
+              </div>
+
+              <p>
+                Bo’CitéArt prépare la consultation,
+                centralise les réponses
+                et présente les solutions reçues.
+              </p>
+
+              <p>
+                Les participants voient
+                les propositions disponibles,
+                le délai de réponse
+                et l’état d’avancement.
+              </p>
+
+              <p>
+                Chacun effectue son choix
+                dans son Tableau de Direction.
+              </p>
+
+              <div class="box">
+                Bo’CitéArt organise.
+                L’entreprise compare et décide.
+              </div>
+
+              ${entrepriseOtherTopics("economies")}
+            `,
+
+            actions:[
+              [
+                "Voir les solutions communes",
+                "mutualisation"
+              ],
+              [
+                "Ouvrir le Tableau de Direction",
+                "direction"
+              ]
+            ]
+
+          },
+
+
+          perennite:{
+
+            title:
+              "Préparez l’avenir de votre entreprise",
+
+            html:`
+
+              <div class="entrepriseSectionTitle">
+                Savez-vous combien vaut réellement votre entreprise ?
+              </div>
+
+              <p>
+                Cette première approche
+                se réalise avec votre expert-comptable.
+              </p>
+
+              <p>
+                Le chiffre d’affaires ne suffit pas.
+                La rentabilité,
+                la clientèle,
+                l’équipe,
+                la réputation,
+                le matériel,
+                l’organisation
+                et le savoir-faire comptent aussi.
+              </p>
+
+              <div class="entrepriseSectionTitle">
+                Souhaitez-vous la transmettre ?
+              </div>
+
+              <p>
+                À vos enfants,
+                à un salarié
+                ou à un repreneur extérieur ?
+              </p>
+
+              <p>
+                Commencez par en parler
+                avec vos proches,
+                puis avec votre expert-comptable
+                afin d’obtenir
+                une première approche chiffrée.
+              </p>
+
+              <p>
+                La CCI,
+                la CMA
+                et les réseaux professionnels
+                disposent également de services
+                consacrés à la transmission.
+              </p>
+
+              <div class="box">
+                Se renseigner avant d’agir
+                permet de découvrir plusieurs chemins
+                et de choisir celui
+                qui correspond à votre situation.
+              </div>
+
+              ${entrepriseOtherTopics("perennite")}
+            `,
+
+            actions:[
+              [
+                "Rechercher un expert local",
+                "expert"
+              ],
+              [
+                "Rechercher une chambre consulaire",
+                "chambre"
+              ],
+              [
+                "Faire connaître mon entreprise",
+                "visibilite"
+              ]
+            ]
+
+          },
+
+
+          mecenat:{
+
+            title:
+              "Savez-vous à qui et à quoi sert le mécénat ?",
+
+            html:`
+
+              <div class="box">
+
+                <strong>
+                  Le mécénat est accessible aux entreprises,
+                  quelle que soit leur taille.
+                </strong>
+
+              </div>
+
+              <p>
+                Le mécénat permet de soutenir
+                un projet culturel,
+                éducatif,
+                sportif,
+                associatif,
+                patrimonial
+                ou une autre action d’intérêt général.
+              </p>
+
+              <p>
+                Il témoigne aussi
+                de l’existence
+                et de l’identité de l’entreprise
+                dans sa ville.
+              </p>
+
+              <p>
+                Chaque remerciement rappelle
+                aux habitants
+                qu’une entreprise locale
+                a participé à un projet utile.
+              </p>
+
+              <p>
+                Sous les conditions prévues par la loi,
+                le mécénat ouvre droit
+                aux avantages fiscaux applicables.
+                L’expert-comptable précise
+                les règles correspondant à l’entreprise.
+              </p>
+
+              <div class="box">
+                Un geste discret
+                s’inscrit durablement
+                dans la vie de la ville.
+              </div>
+
+              ${entrepriseOtherTopics("mecenat")}
+            `,
+
+            actions:[
+              [
+                "Découvrir les projets locaux",
+                "projets-mecenat"
+              ],
+              [
+                "Faire connaître mon engagement",
+                "visibilite"
+              ],
+              [
+                "Poser une question",
+                "ia"
+              ]
+            ]
+
+          }
+
+        };
+
+
+        const topic =
+          topics[
+            topicKey
+          ];
+
+
+        if(!topic){
+          return;
+        }
+
+
+        title.textContent =
+          topic.title;
+
+        text.innerHTML =
+          topic.html;
+
+        actions.innerHTML =
+          "";
+
+
+        topic.actions.forEach(
+          action =>{
+
+            const button =
+              document.createElement(
+                "button"
+              );
+
+
+            button.className =
+              "choiceBtn";
+
+            button.type =
+              "button";
+
+            button.textContent =
+              action[0];
+
+            button.dataset.entrepriseAction =
+              action[1];
+
+
+            button.onclick =
+              ()=>{
+
+                handleEntrepriseAction(
+                  action[1]
+                );
+              };
+
+
+            actions.appendChild(
+              button
+            );
+          }
         );
 
-        return;
-      }
+
+        panel.style.display =
+          "block";
 
 
-      if(!purchaseReference){
+        panel
+          .querySelectorAll(
+            "[data-related-topic]"
+          )
+          .forEach(
+            button =>{
 
-        setStatus(
-          "error",
-          "Renseignez la référence du ticket ou de l'achat."
-        );
+              button.onclick =
+                ()=>{
 
-        return;
-      }
-
-
-      validate.disabled =
-        true;
-
-
-      setStatus(
-        "warn",
-        "Validation en cours…"
-      );
-
-
-      try{
-
-        const result =
-          await bridge.validateClubScan(
-
-            scan,
-
-            {
-
-              id:
-                merchant.id,
-
-              merchantId:
-                merchant.id,
-
-              name:
-                merchant.shopName,
-
-              shopName:
-                merchant.shopName,
-
-              sirenSiret:
-                merchant.sirenSiret,
-
-              partnerActive:
-                merchant.partnerActive,
-
-              bociteartPartner:
-                merchant.partnerActive,
-
-              partnerStatus:
-                merchant.partnerActive
-                  ? "active"
-                  : "inactive"
-            },
-
-            {
-
-              amountTTC:
-                purchaseAmount,
-
-              reference:
-                purchaseReference,
-
-              bocitecoinRecipient:
-                "club",
-
-              exchangeAccepted:
-                true
+                  renderEntrepriseTopic(
+                    button.getAttribute(
+                      "data-related-topic"
+                    )
+                  );
+                };
             }
           );
 
 
         if(
-          !result ||
-          result.ok !== true
+          topicKey ===
+            "mutualisation"
         ){
 
-          setStatus(
-            "error",
-            sportError(
-              result &&
-              result.reason
+          renderEntrepriseMutualisation();
+        }
+
+
+        panel.scrollIntoView({
+
+          behavior:"smooth",
+          block:"nearest"
+
+        });
+      }
+
+           function renderEntrepriseMutualisation(){
+
+        const host =
+          document.getElementById(
+            "entrepriseMutualisationCounters"
+          );
+
+
+        if(!host){
+          return;
+        }
+
+
+        const data =
+          loadEntrepriseMutualisation();
+
+
+        const items = [
+
+          [
+            "electricite",
+            "Électricité",
+            30
+          ],
+
+          [
+            "gaz",
+            "Gaz",
+            30
+          ],
+
+          [
+            "telephonie",
+            "Téléphonie",
+            30
+          ],
+
+          [
+            "assurances",
+            "Assurances",
+            30
+          ],
+
+          [
+            "mutuelle",
+            "Mutuelle",
+            30
+          ],
+
+          [
+            "fournitures",
+            "Fournitures professionnelles",
+            30
+          ]
+
+        ];
+
+
+        host.innerHTML =
+          items
+            .map(
+              item =>{
+
+                const key =
+                  item[0];
+
+                const label =
+                  item[1];
+
+                const target =
+                  item[2];
+
+                const value =
+                  Number(
+                    data[key] ||
+                    0
+                  );
+
+
+                return `
+
+                  <div class="entrepriseCounter">
+
+                    <div>
+
+                      <strong>
+                        ${label}
+                      </strong>
+
+                      <br>
+
+                      <span class="muted">
+                        Objectif conseillé :
+                        ${target} participants
+                      </span>
+
+                    </div>
+
+
+                    <div style="text-align:right;">
+
+                      <div
+                        class="entrepriseCounterValue"
+                      >
+                        ${value} / ${target}
+                      </div>
+
+                      <button
+                        class="choiceBtn entrepriseMutualisationVote"
+                        type="button"
+                        data-mutualisation-key="${key}"
+                        style="
+                          margin-top:6px;
+                          padding:7px 9px;
+                        "
+                      >
+                        Je suis intéressé
+                      </button>
+
+                    </div>
+
+                  </div>
+
+                `;
+              }
+            )
+            .join("");
+
+
+        host
+          .querySelectorAll(
+            ".entrepriseMutualisationVote"
+          )
+          .forEach(
+            button =>{
+
+              button.onclick =
+                ()=>{
+
+                  const key =
+                    button.getAttribute(
+                      "data-mutualisation-key"
+                    );
+
+
+                  const current =
+                    loadEntrepriseMutualisation();
+
+
+                  current[key] =
+                    Number(
+                      current[key] ||
+                      0
+                    ) + 1;
+
+
+                  saveEntrepriseMutualisation(
+                    current
+                  );
+
+
+                  renderEntrepriseMutualisation();
+
+
+                  alert(
+                    "Votre intérêt est enregistré.\n\n" +
+                    "Le compteur vient d’augmenter. " +
+                    "Cette première sélection ne constitue pas encore un engagement définitif."
+                  );
+                };
+            }
+          );
+      }
+
+
+      function openOfficialCompaniesDirectory(){
+
+        openModal(
+          "Les entreprises de votre ville",
+          `
+
+            <div class="box">
+
+              <strong>
+                Annuaire officiel de la commune
+              </strong>
+
+              <br><br>
+
+              Cet annuaire rassemble
+              les entreprises référencées
+              et leurs activités.
+
+            </div>
+
+            <input
+              id="officialCompanySearch"
+              class="miniField"
+              placeholder="Rechercher un métier ou une entreprise"
+            >
+
+            <div
+              id="officialCompaniesList"
+              style="margin-top:12px;"
+            ></div>
+
+          `
+        );
+
+
+        setTimeout(
+          ()=>{
+
+            const input =
+              document.getElementById(
+                "officialCompanySearch"
+              );
+
+            const list =
+              document.getElementById(
+                "officialCompaniesList"
+              );
+
+
+            function renderCompanies(){
+
+              if(!list){
+                return;
+              }
+
+
+              const query =
+                input
+                  ? String(
+                      input.value ||
+                      ""
+                    )
+                      .trim()
+                      .toLowerCase()
+                  : "";
+
+
+              let source =
+                [];
+
+
+              if(
+                Array.isArray(
+                  window.bociteartCompanies
+                )
+              ){
+
+                source =
+                  window.bociteartCompanies;
+              }
+
+
+              const filtered =
+                source.filter(
+                  company =>{
+
+                    const name =
+                      String(
+                        company.name ||
+                        company.nom ||
+                        ""
+                      )
+                        .toLowerCase();
+
+                    const activity =
+                      String(
+                        company.activity ||
+                        company.activite ||
+                        ""
+                      )
+                        .toLowerCase();
+
+
+                    return (
+                      !query ||
+                      name.includes(
+                        query
+                      ) ||
+                      activity.includes(
+                        query
+                      )
+                    );
+                  }
+                );
+
+
+              if(!filtered.length){
+
+                list.innerHTML = `
+
+                  <div class="box">
+
+                    Aucun résultat
+                    n’est actuellement disponible
+                    pour cette recherche.
+
+                  </div>
+
+                `;
+
+                return;
+              }
+
+
+              list.innerHTML =
+                filtered
+                  .map(
+                    company => `
+
+                      <div class="box">
+
+                        <strong>
+                          ${commerceEsc(
+                            company.name ||
+                            company.nom ||
+                            "Entreprise"
+                          )}
+                        </strong>
+
+                        <br>
+
+                        ${commerceEsc(
+                          company.activity ||
+                          company.activite ||
+                          ""
+                        )}
+
+                      </div>
+
+                    `
+                  )
+                  .join("");
+            }
+
+
+            if(input){
+
+              input.oninput =
+                renderCompanies;
+            }
+
+
+            renderCompanies();
+
+          },
+          0
+        );
+      }
+
+
+      function openEntrepriseDirectionPanel(){
+
+        const state =
+          commerceCentralAccessState(
+            "entreprise"
+          );
+
+
+        if(!state.ok){
+
+          alert(
+            commerceCentralAccessMessage(
+              state
             )
           );
 
@@ -2429,470 +5345,309 @@ function bindSport(){
         }
 
 
-        setStatus(
-          "ok",
-          "Échange validé : 30 bocitecoins VERT retirés, 1 Cabas remis. Nouveau solde du club : " +
-          Number(
-            result.balance ||
-            0
-          ) +
-          " VERT."
+        openModal(
+          "Tableau de Direction",
+          `
+
+            <div class="entreprisePrivate">
+
+              <strong>
+                Accès réservé à l’entreprise
+              </strong>
+
+              <br><br>
+
+              Cet espace est rattaché
+              au compte professionnel validé
+              de l’entreprise.
+
+            </div>
+
+
+            <div class="entrepriseSectionTitle">
+              Aperçu de votre activité
+            </div>
+
+
+            <div class="box">
+
+              Candidatures reçues :
+              <strong>3</strong>
+
+              <br>
+
+              Publicités programmées :
+              <strong>1</strong>
+
+              <br>
+
+              Demandes de devis :
+              <strong>2</strong>
+
+              <br>
+
+              Solutions communes suivies :
+              <strong>4</strong>
+
+            </div>
+
+
+            <div class="entrepriseSectionTitle">
+              Solutions communes
+            </div>
+
+
+            <div
+              id="directionMutualisationPreview"
+            ></div>
+
+
+            <div class="entrepriseSectionTitle">
+              Services professionnels
+            </div>
+
+
+            <div class="box">
+
+              <strong>
+                Adhésion annuelle professionnelle
+              </strong>
+
+              <br>
+
+              329 € HT par an.
+
+            </div>
+
+
+            <div class="box">
+
+              <strong>
+                Fiche enrichie optionnelle
+              </strong>
+
+              <br>
+
+              199 € HT par an.
+
+            </div>
+
+
+            <div class="box">
+
+              <strong>
+                Communication ponctuelle
+              </strong>
+
+              <br>
+
+              50 € HT par publication
+              ou offre d’emploi.
+
+            </div>
+
+
+            <div class="commerceCard">
+
+              <div class="commerceTitle">
+                Publicités & visibilité
+              </div>
+
+              <div class="commerceActions">
+
+                <button
+                  class="commerceBtn"
+                  id="directionLargeAdvertisingBtn"
+                  type="button"
+                >
+                  Grand bandeau publicitaire
+                </button>
+
+                <button
+                  class="commerceBtn"
+                  id="directionSmallAdvertisingBtn"
+                  type="button"
+                >
+                  Petit bandeau publicitaire
+                </button>
+
+              </div>
+
+            </div>
+
+          `
         );
 
 
-        current =
-          null;
+        setTimeout(
+          ()=>{
+
+            const host =
+              document.getElementById(
+                "directionMutualisationPreview"
+              );
 
 
-        if(input){
+            if(host){
 
-          input.value =
-            "";
-        }
-
-
-        if(amount){
-
-          amount.value =
-            "";
-        }
+              const data =
+                loadEntrepriseMutualisation();
 
 
-        if(reference){
+              host.innerHTML = `
 
-          reference.value =
-            "";
-        }
+                <div class="box">
 
-      }catch(e){
+                  Électricité :
+                  <strong>
+                    ${data.electricite} participants
+                  </strong>
 
-        setStatus(
-          "error",
-          "La validation de l'échange a échoué."
+                  <br>
+
+                  Gaz :
+                  <strong>
+                    ${data.gaz} participants
+                  </strong>
+
+                  <br>
+
+                  Téléphonie :
+                  <strong>
+                    ${data.telephonie} participants
+                  </strong>
+
+                  <br>
+
+                  Assurances :
+                  <strong>
+                    ${data.assurances} participants
+                  </strong>
+
+                </div>
+
+              `;
+            }
+
+
+            const large =
+              document.getElementById(
+                "directionLargeAdvertisingBtn"
+              );
+
+            const small =
+              document.getElementById(
+                "directionSmallAdvertisingBtn"
+              );
+
+
+            if(large){
+
+              large.onclick =
+                commerceOpenLargeAdvertising;
+            }
+
+
+            if(small){
+
+              small.onclick =
+                ()=>{
+
+                  commerceOpenSmallAdvertising(
+                    commerceReadEnterprise()
+                  );
+                };
+            }
+
+          },
+          0
         );
-
-      }finally{
-
-        validate.disabled =
-          false;
       }
-    };
-}
 
 
-/* =========================================================
-   EXPORT COMMERCE
-   ========================================================= */
-
-function bindExport(){
-
-  const button =
-    $id(
-      "merchantHistoryExportBtn"
-    );
-
-
-  if(!button){
-
-    return;
-  }
-
-
-  button.onclick =
-    function(){
-
-      const activeCity =
-        city();
-
-      const merchant =
-        centralMerchant();
-
-
-      const object = {
-
-        exported_at_fr:
-          new Date()
-            .toLocaleString(
-              "fr-FR"
-            ),
-
-        city:
-          activeCity,
-
-        organization_id:
-          merchant.id,
-
-        professional_identifier:
-          merchant.professionalIdentifier,
-
-        merchant_name:
-          merchant.shopName
-      };
-
-
-      const text =
-        "HISTORIQUE COMMERCE — EXPORT\n\n" +
-        JSON.stringify(
-          object,
-          null,
-          2
-        );
-
-
-      if(
-        navigator.clipboard &&
-        navigator.clipboard.writeText
+      function handleEntrepriseAction(
+        action
       ){
 
-        navigator.clipboard
-          .writeText(
-            text
-          )
-          .then(
-            function(){
+        if(
+          action ===
+            "annuaire"
+        ){
 
-              alert(
-                "Historique commerce copié."
-              );
-            }
-          )
-          .catch(
-            function(){
+          openOfficialCompaniesDirectory();
+          return;
+        }
 
-              alert(
-                text
-              );
-            }
+
+        if(
+          action ===
+            "direction"
+        ){
+
+          openEntrepriseDirectionPanel();
+          return;
+        }
+
+
+        if(
+          action ===
+            "emploi"
+        ){
+
+          renderEntrepriseTopic(
+            "emploi"
           );
 
-      }else{
+          return;
+        }
 
-        alert(
-          text
-        );
-      }
-    };
-}
 
+        if(
+          action ===
+            "mutualisation"
+        ){
 
-/* =========================================================
-   ENTREPRISE — 8 THÈMES
-   ========================================================= */
+          renderEntrepriseTopic(
+            "mutualisation"
+          );
 
-const ENTERPRISE_TOPICS = {
+          return;
+        }
 
-  emploi:{
-    title:"Emploi",
-    text:"Offres d'emploi, candidatures spontanées, métiers recherchés et suivi des réponses."
-  },
 
-  fidelisation:{
-    title:"Fidélisation",
-    text:"Créer des liens durables entre l'entreprise, ses salariés, ses clients et son territoire."
-  },
+        if(
+          action ===
+            "visibilite"
+        ){
 
-  developpement:{
-    title:"Développement",
-    text:"Faire connaître les savoir-faire, rechercher de nouvelles opportunités et développer l'activité locale."
-  },
+          renderEntrepriseTopic(
+            "visibilite"
+          );
 
-  economies:{
-    title:"Économies",
-    text:"Identifier les besoins communs, réduire certaines charges et rechercher des solutions territoriales."
-  },
+          return;
+        }
 
-  visibilite:{
-    title:"Visibilité",
-    text:"Présenter l'entreprise, ses activités, ses métiers, ses besoins et ses savoir-faire."
-  },
 
-  mutualisation:{
-    title:"Solutions communes",
-    text:"Regrouper certains besoins entre entreprises afin de rechercher des solutions communes."
-  },
+        if(
+          action ===
+            "mecenat"
+        ){
 
-  perennite:{
-    title:"Pérennité",
-    text:"Anticiper les besoins, les évolutions, la transmission des savoir-faire et la continuité de l'activité."
-  },
+          renderEntrepriseTopic(
+            "mecenat"
+          );
 
-  mecenat:{
-    title:"Mécénat",
-    text:"Découvrir les projets Bo’CitéArt ouverts au mécénat et les modalités associées."
-  }
-};
+          return;
+        }
 
 
-/* =========================================================
-   ANNUAIRE ENTREPRISE
-   ========================================================= */
-
-function publicCompaniesHtml(){
-
-  return `
-
-    <div class="commerceCard">
-
-      <div class="commerceTitle">
-        Annuaire professionnel
-      </div>
-
-      <div class="commerceText">
-
-        Recherchez les entreprises,
-        métiers et savoir-faire présents
-        sur le territoire.
-
-      </div>
-
-      <div class="commerceActions">
-
-        <button
-          id="openOfficialCompanies"
-          class="choiceBtn"
-          type="button"
-        >
-          Rechercher une entreprise
-        </button>
-
-      </div>
-
-    </div>
-  `;
-}
-
-
-function openDirectory(){
-
-  const activeCity =
-    city();
-
-
-  modal(
-    "Annuaire professionnel",
-    `
-
-      <div class="bociteCommerceRoot">
-
-        <div class="commerceCard">
-
-          <div class="commerceTitle">
-            Rechercher dans ${esc(
-              activeCity.cityName
-            )}
-          </div>
-
-          <div class="commerceText">
-
-            La recherche privilégie
-            les entreprises et commerces
-            présents dans la commune,
-            puis s'élargit au territoire
-            lorsque cela est nécessaire.
-
-          </div>
-
-          <label class="commerceLabel">
-            Métier, activité ou spécialité
-          </label>
-
-          <input
-            id="commerceDirectorySearch"
-            class="commerceField"
-            type="search"
-            placeholder="Exemple : électricien, menuisier, comptable…"
-          >
-
-          <div class="commerceActions">
-
-            <button
-              id="commerceDirectorySearchBtn"
-              class="commerceBtn"
-              type="button"
-            >
-              Rechercher
-            </button>
-
-          </div>
-
-          <div
-            id="commerceDirectoryResult"
-            class="commerceStatus"
-            data-state="warn"
-          >
-            Saisissez votre recherche.
-          </div>
-
-        </div>
-
-      </div>
-    `
-  );
-
-
-  setTimeout(
-    function(){
-
-      const input =
-        $id(
-          "commerceDirectorySearch"
-        );
-
-      const button =
-        $id(
-          "commerceDirectorySearchBtn"
-        );
-
-      const result =
-        $id(
-          "commerceDirectoryResult"
-        );
-
-
-      if(!button){
-
-        return;
-      }
-
-
-      button.onclick =
-        function(){
-
-          const query =
-            String(
-              input
-                ? input.value
-                : ""
-            ).trim();
-
-
-          if(!query){
-
-            if(result){
-
-              result.dataset.state =
-                "warn";
-
-              result.textContent =
-                "Indiquez un métier, une activité ou une spécialité.";
-            }
-
-            return;
-          }
-
-
-          if(result){
-
-            result.dataset.state =
-              "ok";
-
-            result.textContent =
-              "Recherche demandée : « " +
-              query +
-              " » — priorité à " +
-              activeCity.cityName +
-              ", puis élargissement territorial si nécessaire.";
-          }
-        };
-
-    },
-    0
-  );
-}
-
-
-/* =========================================================
-   ENTREPRISE — THÈME PUBLIC
-   ========================================================= */
-
-function renderEnterpriseTopic(
-  key
-){
-
-  const topic =
-    ENTERPRISE_TOPICS[
-      key
-    ];
-
-
-  if(!topic){
-
-    return;
-  }
-
-
-  const panel =
-    $id(
-      "entrepriseTopicPanel"
-    );
-
-  const title =
-    $id(
-      "entrepriseTopicTitle"
-    );
-
-  const text =
-    $id(
-      "entrepriseTopicText"
-    );
-
-  const actions =
-    $id(
-      "entrepriseTopicActions"
-    );
-
-
-  if(!panel){
-
-    return;
-  }
-
-
-  panel.style.display =
-    "block";
-
-
-  if(title){
-
-    title.textContent =
-      topic.title;
-  }
-
-
-  if(text){
-
-    text.textContent =
-      topic.text;
-  }
-
-
-  if(actions){
-
-    actions.innerHTML = `
-
-      <button
-        class="choiceBtn"
-        type="button"
-        data-enterprise-private-action="${esc(key)}"
-      >
-        Accéder aux services professionnels
-      </button>
-    `;
-
-
-    const button =
-      actions.querySelector(
-        "[data-enterprise-private-action]"
-      );
-
-
-    if(button){
-
-      button.onclick =
-        function(){
+        if(
+          action ===
+            "publicite"
+        ){
 
           const state =
-            accessState(
+            commerceCentralAccessState(
               "entreprise"
             );
 
@@ -2900,9 +5655,8 @@ function renderEnterpriseTopic(
           if(!state.ok){
 
             alert(
-              accessMessage(
-                state,
-                "Entreprise"
+              commerceCentralAccessMessage(
+                state
               )
             );
 
@@ -2910,817 +5664,439 @@ function renderEnterpriseTopic(
           }
 
 
-          openDirection(
-            key
-          );
-        };
-    }
-  }
-}
-
-/* =========================================================
-   ENTREPRISE — TABLEAU DE DIRECTION
-   ========================================================= */
-
-function openDirection(
-  requestedTopic
-){
-
-  const state =
-    accessState(
-      "entreprise"
-    );
+          commerceOpenLargeAdvertising();
+          return;
+        }
 
 
-  if(!state.ok){
-
-    alert(
-      accessMessage(
-        state,
-        "Entreprise"
-      )
-    );
-
-    return;
-  }
-
-
-  const org =
-    state.organization;
-
-  const profile =
-    profileOf(
-      org
-    );
-
-
-  const topics =
-    Object
-      .entries(
-        ENTERPRISE_TOPICS
-      )
-      .map(
-        function(
-          entry
+        if(
+          action ===
+            "ia"
         ){
 
-          const key =
-            entry[0];
-
-          const value =
-            entry[1];
-
-          return `
-
-            <div class="entrepriseCounter">
-
-              <div>
-
-                <strong>
-                  ${esc(
-                    value.title
-                  )}
-                </strong>
-
-                <div class="commerceSmall">
-                  ${esc(
-                    value.text
-                  )}
-                </div>
-
-              </div>
-
-              <button
-                class="choiceBtn"
-                type="button"
-                data-direction-topic="${esc(key)}"
-              >
-                Ouvrir
-              </button>
-
-            </div>
-          `;
-        }
-      )
-      .join("");
-
-
-  modal(
-    "Tableau de Direction",
-    `
-
-      <div class="bociteCommerceRoot">
-
-        <div class="entreprisePrivate">
-
-          <div class="commerceTitle">
-            Espace privé Entreprise
-          </div>
-
-          <div class="commerceText">
-
-            <strong>
-              ${esc(
-                profile.organizationName ||
-                org.name ||
-                "Entreprise"
-              )}
-            </strong>
-
-            <br>
-
-            Identifiant professionnel :
-            ${esc(
-              org.professionalIdentifier ||
-              "—"
-            )}
-
-            <br>
-
-            SIRET / SIREN :
-            ${esc(
-              profile.siretOrSiren ||
-              "—"
-            )}
-
-            <br>
-
-            Activité :
-            ${esc(
-              profile.businessActivity ||
-              "—"
-            )}
-
-            <br>
-
-            Adresse :
-            ${esc(
-              profile.registeredAddress ||
-              "—"
-            )}
-
-          </div>
-
-        </div>
-
-
-        <div class="commerceCard">
-
-          <div class="commerceTitle">
-            Piloter mon activité avec Bo’CitéArt
-          </div>
-
-          ${topics}
-
-        </div>
-
-
-        <div
-          id="directionTopicDetail"
-          class="commerceCard"
-        >
-
-          <div class="commerceTitle">
-            Sélectionnez un thème
-          </div>
-
-          <div class="commerceText">
-
-            Les fonctions privées
-            restent rattachées
-            à l'organisation validée
-            et aux droits de l'utilisateur.
-
-          </div>
-
-        </div>
-
-      </div>
-    `
-  );
-
-
-  setTimeout(
-    function(){
-
-      document
-        .querySelectorAll(
-          "[data-direction-topic]"
-        )
-        .forEach(
-          function(
-            button
-          ){
-
-            button.onclick =
-              function(){
-
-                const key =
-                  button.getAttribute(
-                    "data-direction-topic"
-                  );
-
-                const topic =
-                  ENTERPRISE_TOPICS[
-                    key
-                  ];
-
-                const detail =
-                  $id(
-                    "directionTopicDetail"
-                  );
-
-
-                if(
-                  !topic ||
-                  !detail
-                ){
-
-                  return;
-                }
-
-
-                detail.innerHTML = `
-
-                  <div class="commerceTitle">
-                    ${esc(
-                      topic.title
-                    )}
-                  </div>
-
-                  <div class="commerceText">
-                    ${esc(
-                      topic.text
-                    )}
-                  </div>
-
-                  <div class="commerceStatus" data-state="ok">
-
-                    Cet espace est rattaché
-                    au compte professionnel
-                    de l'entreprise.
-
-                  </div>
-                `;
-              };
-          }
-        );
-
-
-      if(
-        requestedTopic &&
-        ENTERPRISE_TOPICS[
-          requestedTopic
-        ]
-      ){
-
-        const button =
-          document.querySelector(
-            '[data-direction-topic="' +
-            requestedTopic +
-            '"]'
-          );
-
-
-        if(button){
-
-          button.click();
-        }
-      }
-
-    },
-    0
-  );
-}
-
-
-/* =========================================================
-   COMMERCE — STRUCTURE PUBLIQUE
-   ========================================================= */
-
-function commerceHtml(){
-
-  return `
-
-    <div
-      id="commerceSpace"
-      style="display:none"
-    >
-
-      <div class="commerceCard commerceRule">
-
-        <div class="commerceTitle">
-          Les commerces partenaires dans votre ville
-        </div>
-
-        <div class="commerceText">
-
-          Les bocitecoins territoriaux
-          accompagnent les achats réalisés
-          chez les commerces partenaires
-          ${brand()}.
-
-          Ils ne sont ni une monnaie,
-          ni un moyen de paiement
-          et ne sont jamais convertis
-          en euros.
-
-        </div>
-
-      </div>
-
-
-      <div class="commerceCard">
-
-        <div class="commerceTitle">
-          Commerces partenaires
-        </div>
-
-        <div
-          id="commercePartnersList"
-          class="commerceText"
-        >
-          Les commerces partenaires
-          de la ville active apparaissent ici.
-        </div>
-
-      </div>
-
-
-      <div class="commerceCard">
-
-        <div class="commerceTitle">
-          Publicités & visibilité
-        </div>
-
-        <div class="commerceText">
-
-          La programmation des publicités
-          et les services professionnels
-          sont rattachés au compte central
-          de l'établissement.
-
-        </div>
-
-      </div>
-
-
-      ${renderAccessCard(
-        "commerce"
-      )}
-
-
-      ${commercePrivateHtml()}
-
-    </div>
-  `;
-}
-
-
-/* =========================================================
-   ENTREPRISE — STRUCTURE PUBLIQUE
-   ========================================================= */
-
-function entrepriseHtml(){
-
-  const buttons =
-    Object
-      .entries(
-        ENTERPRISE_TOPICS
-      )
-      .map(
-        function(
-          entry
-        ){
-
-          const key =
-            entry[0];
-
-          const value =
-            entry[1];
-
-          return `
-
-            <button
-              class="entrepriseBand"
-              type="button"
-              data-enterprise-topic="${esc(key)}"
-            >
-              ${esc(
-                value.title
-              )} — Cliquez ici…
-            </button>
-          `;
-        }
-      )
-      .join("");
-
-
-  return `
-
-    <div
-      id="entrepriseSpace"
-      style="display:none"
-    >
-
-      <div class="commerceCard commerceRule">
-
-        <div class="commerceTitle">
-          Entreprises
-        </div>
-
-        <div class="commerceText">
-
-          Découvrez les activités,
-          métiers et savoir-faire
-          de votre ville.
-
-          La recherche commence
-          dans la commune avant
-          de s'élargir lorsque cela
-          est nécessaire.
-
-        </div>
-
-      </div>
-
-
-      ${publicCompaniesHtml()}
-
-
-      ${renderAccessCard(
-        "entreprise"
-      )}
-
-
-      <div class="commerceActions">
-
-        <button
-          class="choiceBtn"
-          id="openEntrepriseDirection"
-          type="button"
-        >
-          Tableau de Direction
-        </button>
-
-      </div>
-
-
-      ${buttons}
-
-
-      <div
-        id="entrepriseTopicPanel"
-        class="commerceCard"
-        style="display:none"
-      >
-
-        <div
-          id="entrepriseTopicTitle"
-          class="commerceTitle"
-        ></div>
-
-        <div
-          id="entrepriseTopicText"
-          class="commerceText"
-        ></div>
-
-        <div
-          id="entrepriseTopicActions"
-          class="commerceActions"
-        ></div>
-
-      </div>
-
-
-      <div class="commerceCard">
-
-        <div class="commerceTitle">
-          Vous avez une question précise ?
-        </div>
-
-        <div class="commerceText">
-
-          La recherche Bo’CitéArt commence
-          par les solutions disponibles
-          dans votre ville,
-          puis les communes voisines
-          avant de s'élargir.
-
-        </div>
-
-
-        <textarea
-          id="entrepriseAiQuestion"
-          class="miniField"
-          placeholder="Exemple : je cherche un électricien, un salarié, un avocat ou une solution pour réduire mes charges."
-        ></textarea>
-
-
-        <button
-          class="choiceBtn"
-          id="entrepriseAiAskBtn"
-          type="button"
-          style="margin-top:10px"
-        >
-          Poser ma question
-        </button>
-
-
-        <div
-          id="entrepriseAiAnswer"
-          class="commerceStatus"
-          data-state="warn"
-          style="display:none"
-        ></div>
-
-      </div>
-
-    </div>
-  `;
-}
-
-
-/* =========================================================
-   ENTREPRISE — ÉVÉNEMENTS
-   ========================================================= */
-
-function bindEntreprise(){
-
-  document
-    .querySelectorAll(
-      "[data-enterprise-topic]"
-    )
-    .forEach(
-      function(
-        button
-      ){
-
-        button.onclick =
-          function(){
-
-            renderEnterpriseTopic(
-              button.getAttribute(
-                "data-enterprise-topic"
-              )
+          const input =
+            document.getElementById(
+              "entrepriseAiQuestion"
             );
-          };
-      }
-    );
 
 
-  const direction =
-    $id(
-      "openEntrepriseDirection"
-    );
+          if(input){
 
-
-  if(direction){
-
-    direction.onclick =
-      function(){
-
-        openDirection();
-      };
-  }
-
-
-  const directory =
-    $id(
-      "openOfficialCompanies"
-    );
-
-
-  if(directory){
-
-    directory.onclick =
-      openDirectory;
-  }
-
-
-  const ask =
-    $id(
-      "entrepriseAiAskBtn"
-    );
-
-
-  if(ask){
-
-    ask.onclick =
-      function(){
-
-        const input =
-          $id(
-            "entrepriseAiQuestion"
-          );
-
-        const output =
-          $id(
-            "entrepriseAiAnswer"
-          );
-
-        const question =
-          String(
-            input
-              ? input.value
-              : ""
-          ).trim();
-
-
-        if(!question){
-
-          alert(
-            "Écrivez votre question."
-          );
+            input.focus();
+          }
 
           return;
         }
 
 
-        if(output){
-
-          output.style.display =
-            "block";
-
-          output.dataset.state =
-            "ok";
-
-          output.textContent =
-            "Votre demande est prise en compte. La recherche territoriale sera traitée en priorité dans la commune active, puis élargie si nécessaire.";
-        }
-      };
-  }
-}
-
-
-/* =========================================================
-   OUVERTURE DU MODULE
-   ========================================================= */
-
-function openCommerceModule(){
-
-  ensureStyles();
-
-
-  modal(
-    "Commerces & Entreprises",
-    `
-
-      <div class="bociteCommerceRoot">
-
-        <div
-          class="commerceCard"
-          id="commerceEntrepriseChoice"
-          style="text-align:center"
-        >
-
-          <div class="commerceTitle">
-            Commerces & Entreprises avec ${brand()}
-          </div>
-
-          <div class="commerceText">
-            Choisissez l'espace
-            que vous souhaitez ouvrir.
-          </div>
-
-          <div
-            class="commerceActions"
-            style="justify-content:center"
-          >
-
-            <button
-              class="commerceBtn"
-              id="openCommerceSpace"
-              type="button"
-            >
-              Commerce
-            </button>
-
-            <button
-              class="commerceBtn"
-              id="openEntrepriseSpace"
-              type="button"
-            >
-              Entreprise
-            </button>
-
-          </div>
-
-        </div>
-
-
-        ${commerceHtml()}
-
-        ${entrepriseHtml()}
-
-      </div>
-    `
-  );
-
-
-  setTimeout(
-    function(){
-
-      const commerce =
-        $id(
-          "commerceSpace"
+        alert(
+          "Cette fonction est rattachée à l’espace professionnel de l’entreprise."
         );
-
-      const entreprise =
-        $id(
-          "entrepriseSpace"
-        );
-
-      const commerceButton =
-        $id(
-          "openCommerceSpace"
-        );
-
-      const entrepriseButton =
-        $id(
-          "openEntrepriseSpace"
-        );
+      }
 
 
-      const show =
-        function(
-          name
-        ){
+      document
+        .querySelectorAll(
+          "[data-enterprise-topic]"
+        )
+        .forEach(
+          band =>{
 
-          if(commerce){
+            band.onclick =
+              ()=>{
 
-            commerce.style.display =
-              name === "commerce"
-                ? "block"
-                : "none";
+                renderEntrepriseTopic(
+                  band.getAttribute(
+                    "data-enterprise-topic"
+                  )
+                );
+              };
           }
+        );
 
 
-          if(entreprise){
-
-            entreprise.style.display =
-              name === "entreprise"
-                ? "block"
-                : "none";
-          }
-        };
+      const openOfficialCompanies =
+        document.getElementById(
+          "openOfficialCompanies"
+        );
 
 
-      if(commerceButton){
+      if(openOfficialCompanies){
 
-        commerceButton.onclick =
-          function(){
+        openOfficialCompanies.onclick =
+          openOfficialCompaniesDirectory;
+      }
 
-            show(
-              "commerce"
-            );
+
+      const openEntrepriseDirection =
+        document.getElementById(
+          "openEntrepriseDirection"
+        );
+
+
+      if(openEntrepriseDirection){
+
+        openEntrepriseDirection.onclick =
+          openEntrepriseDirectionPanel;
+      }
+
+           /* =====================================================
+         QUESTION ENTREPRISE
+         ===================================================== */
+
+      const entrepriseAiAskBtn =
+        document.getElementById(
+          "entrepriseAiAskBtn"
+        );
+
+
+      if(entrepriseAiAskBtn){
+
+        entrepriseAiAskBtn.onclick =
+          ()=>{
+
+            const input =
+              document.getElementById(
+                "entrepriseAiQuestion"
+              );
+
+            const answer =
+              document.getElementById(
+                "entrepriseAiAnswer"
+              );
+
+
+            const question =
+              input
+                ? String(
+                    input.value ||
+                    ""
+                  ).trim()
+                : "";
+
+
+            if(!question){
+
+              alert(
+                "Écrivez votre question."
+              );
+
+              return;
+            }
+
+
+            if(!answer){
+              return;
+            }
+
+
+            const lower =
+              question.toLowerCase();
+
+
+            if(
+              lower.includes(
+                "électricien"
+              ) ||
+              lower.includes(
+                "plombier"
+              ) ||
+              lower.includes(
+                "avocat"
+              ) ||
+              lower.includes(
+                "comptable"
+              )
+            ){
+
+              answer.innerHTML = `
+
+                <div class="box">
+
+                  Bo’CitéArt recherche d’abord
+                  les professionnels présents
+                  dans votre commune.
+
+                  <br><br>
+
+                  Si aucun résultat ne correspond,
+                  la recherche est élargie
+                  aux communes voisines puis,
+                  si nécessaire,
+                  à un territoire plus large.
+
+                  <br><br>
+
+                  <button
+                    class="choiceBtn"
+                    type="button"
+                    id="aiOpenDirectory"
+                  >
+                    Consulter les entreprises
+                    de la ville
+                  </button>
+
+                </div>
+
+              `;
+
+
+              setTimeout(
+                ()=>{
+
+                  const button =
+                    document.getElementById(
+                      "aiOpenDirectory"
+                    );
+
+
+                  if(button){
+
+                    button.onclick =
+                      openOfficialCompaniesDirectory;
+                  }
+
+                },
+                0
+              );
+
+
+              return;
+            }
+
+
+            if(
+              lower.includes(
+                "charge"
+              ) ||
+              lower.includes(
+                "électricité"
+              ) ||
+              lower.includes(
+                "gaz"
+              ) ||
+              lower.includes(
+                "assurance"
+              ) ||
+              lower.includes(
+                "téléphone"
+              )
+            ){
+
+              answer.innerHTML = `
+
+                <div class="box">
+
+                  Commencez par consulter
+                  les solutions communes
+                  déjà ouvertes dans votre ville.
+
+                  <br><br>
+
+                  Plus le nombre
+                  de participants augmente,
+                  plus les conditions
+                  de négociation deviennent favorables.
+
+                  <br><br>
+
+                  <button
+                    class="choiceBtn"
+                    type="button"
+                    id="aiOpenMutualisation"
+                  >
+                    Voir les solutions communes
+                  </button>
+
+                </div>
+
+              `;
+
+
+              setTimeout(
+                ()=>{
+
+                  const button =
+                    document.getElementById(
+                      "aiOpenMutualisation"
+                    );
+
+
+                  if(button){
+
+                    button.onclick =
+                      ()=>{
+
+                        renderEntrepriseTopic(
+                          "mutualisation"
+                        );
+                      };
+                  }
+
+                },
+                0
+              );
+
+
+              return;
+            }
+
+
+            if(
+              lower.includes(
+                "personnel"
+              ) ||
+              lower.includes(
+                "salarié"
+              ) ||
+              lower.includes(
+                "recrut"
+              )
+            ){
+
+              answer.innerHTML = `
+
+                <div class="box">
+
+                  Faites connaître votre besoin
+                  en priorité aux habitants
+                  de votre commune.
+
+                  <br><br>
+
+                  Les compétences recherchées
+                  sont déjà présentes
+                  à proximité.
+
+                  <br><br>
+
+                  <button
+                    class="choiceBtn"
+                    type="button"
+                    id="aiOpenEmployment"
+                  >
+                    Ouvrir le recrutement local
+                  </button>
+
+                </div>
+
+              `;
+
+
+              setTimeout(
+                ()=>{
+
+                  const button =
+                    document.getElementById(
+                      "aiOpenEmployment"
+                    );
+
+
+                  if(button){
+
+                    button.onclick =
+                      ()=>{
+
+                        renderEntrepriseTopic(
+                          "emploi"
+                        );
+                      };
+                  }
+
+                },
+                0
+              );
+
+
+              return;
+            }
+
+
+            answer.innerHTML = `
+
+              <div class="box">
+
+                Votre question
+                a bien été prise en compte.
+
+                <br><br>
+
+                Bo’CitéArt recherche d’abord
+                les solutions disponibles
+                dans votre ville,
+                puis dans les communes voisines
+                lorsque cela est nécessaire.
+
+              </div>
+
+            `;
           };
       }
 
 
-      if(entrepriseButton){
+      /* =====================================================
+         RAFRAÎCHISSEMENT DES ACCÈS
+         ===================================================== */
 
-        entrepriseButton.onclick =
-          function(){
-
-            show(
-              "entreprise"
-            );
-          };
-      }
-
-
-      bindCentralButtons();
-
-      bindSport();
-
-      bindExport();
-
-      bindEntreprise();
-
-
-      const closeButton =
-        $id(
-          "xBtn"
+      const initialCommerceState =
+        commerceCentralAccessState(
+          "commerce"
         );
 
 
       if(
-        closeButton &&
-        closeButton.focus
+        initialCommerceState.ok &&
+        merchantLoginStatus
       ){
 
-        closeButton.focus();
+        merchantLoginStatus.style.display =
+          "block";
+
+        merchantLoginStatus.dataset.state =
+          "ok";
+
+        merchantLoginStatus.textContent =
+          "Accès professionnel Commerce actif.";
+      }
+
+
+      const initialEnterpriseState =
+        commerceCentralAccessState(
+          "entreprise"
+        );
+
+
+      if(
+        initialEnterpriseState.ok &&
+        enterpriseProfessionalStatus
+      ){
+
+        const enterprise =
+          commerceReadEnterprise();
+
+
+        enterpriseProfessionalStatus.dataset.state =
+          "ok";
+
+        enterpriseProfessionalStatus.textContent =
+          "Entreprise validée — identifiant professionnel : " +
+          (
+            enterprise.professionalIdentifier ||
+            enterprise.id
+          );
       }
 
     },
     0
   );
+
+
+  return;
 }
 
 
 /* =========================================================
-   API PUBLIQUE
+   PORTE PUBLIQUE DU MODULE
    ========================================================= */
 
 window.BociteCommerceModule = {
@@ -3728,7 +6104,27 @@ window.BociteCommerceModule = {
   ready:true,
 
   open:
-    openCommerceModule
+    openCommerceModule,
+
+  getCommerceIdentity:
+    commerceReadMerchant,
+
+  getEnterpriseIdentity:
+    commerceReadEnterprise,
+
+  getEnterpriseQrIdentity:
+    commerceEnterpriseQrIdentity,
+
+  advertising:{
+
+    openLarge:
+      commerceOpenLargeAdvertising,
+
+    openSmall:
+      commerceOpenSmallAdvertising
+
+  }
+
 };
 
 
@@ -3743,5 +6139,5 @@ window.openCommerceModule =
 })();
 
 /* =========================================================
-   ÇA FINIT ICI — BO'CITÉART COMMERCE / ENTREPRISE
-   ========================================================= */ 
+   ÇA FINIT ICI — BO’CITÉART COMMERCE / ENTREPRISE
+   ========================================================= */
