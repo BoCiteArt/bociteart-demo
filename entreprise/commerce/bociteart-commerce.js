@@ -819,7 +819,7 @@ function openCommerceModule(){
       data-state="warn"
       style="margin-bottom:12px;"
     >
-      <strong>ACCÈS DÉMONSTRATION</strong>
+      <strong>ACCÈS PROFESSIONNEL</strong>
       <br>
       Identifiant : COMMERCE-DEMO
       <br>
@@ -2795,7 +2795,7 @@ function openOfficialCompaniesDirectory(){
 
                 <div class="box">
                   Aucun résultat trouvé
-                  dans cette démonstration.
+                  pour votre recherche.
                 </div>
 
               `;
@@ -3076,13 +3076,11 @@ function handleEntrepriseAction(
     return;
   }
 
-
-  alert(
-    "Cette fonction est préparée dans la démonstration.\n\n" +
-    "Elle sera raccordée au compte professionnel, " +
-    "aux paiements et aux données sécurisées " +
-    "dans la version définitive."
-  );
+alert(
+  "Cette fonction nécessite un accès professionnel validé.\n\n" +
+  "Les opérations sont rattachées au compte professionnel " +
+  "et aux données sécurisées de l’établissement."
+);
 }
 
 
@@ -3496,8 +3494,7 @@ if(demoCommercesList){
 
           Affichage de 20 commerces
           sur ${db.commerces.length}
-          partenaires générés
-          pour la démonstration.
+          partenaires référencés.
 
         </div>
 
@@ -3735,7 +3732,7 @@ if(
           "ok";
 
         merchantLoginStatus.textContent =
-          "Accès démonstration validé.";
+          "Accès professionnel validé.";
 
       }
 
