@@ -2381,6 +2381,20 @@ function getOwnerAccess(){
     );
 
 
+  const professionalAccessReady =
+    (
+      organization.professionalAccessReady ===
+        true
+    );
+
+
+  const ownerAccessEnabled =
+    (
+      organizationValidated &&
+      professionalAccessReady
+    );
+
+
   return {
 
     accountId:
@@ -2389,26 +2403,25 @@ function getOwnerAccess(){
     role:
       "owner",
 
-   permissions:
-  ownerAccessEnabled
-    ? ["all"]
-    : [],
+    permissions:
+      ownerAccessEnabled
+        ? ["all"]
+        : [],
 
-enabled:
-  ownerAccessEnabled,
+    enabled:
+      ownerAccessEnabled,
 
     organizationValidated:
       organizationValidated,
 
-     professionalAccessReady:
-  professionalAccessReady,
+    professionalAccessReady:
+      professionalAccessReady,
 
     validationStatus:
       organization.validationStatus ||
       "draft"
   };
 }
-
 
 /* =========================================================
    CHAMPS DU DOSSIER SELON L'ORGANISATION
@@ -3180,6 +3193,17 @@ organization.professionalAccessReady =
      
   }
 
+       organization.initialAccessCodeHash =
+      "";
+
+    organization.initialAccessCodeIssuedAt =
+      null;
+
+    organization.initialAccessCodeUsedAt =
+      null;
+
+    organization.professionalAccessReady =
+      false;
 
   organization.updatedAt =
     new Date().toISOString();
@@ -4934,7 +4958,6 @@ function runOrganizationValidationDecision(
   addSecurityLog(
     "organization_validation_decision",
     {
-
       organizationId:
         organization.organizationId,
 
@@ -4948,8 +4971,9 @@ function runOrganizationValidationDecision(
 
 
   /*
-    Si la décision n'est pas favorable,
-    aucun accès professionnel n'est créé.
+    Si le dossier n'est pas validé,
+    aucun accès professionnel
+    n'est délivré.
   */
 
   if(
@@ -4964,10 +4988,10 @@ function runOrganizationValidationDecision(
 
 
   /*
-    Une validation favorable déclenche
-    automatiquement la création de
-    l'identifiant professionnel et
-    du code initial à usage unique.
+    Après validation Bo'CitéArt,
+    création de l'identifiant
+    professionnel et émission
+    du code initial.
   */
 
   const validatedOrganization =
@@ -4979,7 +5003,9 @@ function runOrganizationValidationDecision(
     validatedOrganization
   )
   .then(
-    function(accessResult){
+    function(
+      accessResult
+    ){
 
       if(
         !accessResult ||
@@ -5011,7 +5037,7 @@ function runOrganizationValidationDecision(
           "validated",
 
         organization:
-          accessResult.organization,
+          getOrganization(),
 
         professionalIdentifier:
           accessResult.professionalIdentifier,
@@ -5022,7 +5048,6 @@ function runOrganizationValidationDecision(
     }
   );
 }
-
 /* =========================================================
    FORMULAIRE D'IDENTIFICATION DE L'ORGANISATION
    ========================================================= */
@@ -6340,248 +6365,80 @@ function getCurrentAccessContext(){
       validationStatus:null
     };
   }
-
-/*
-  RESPONSABLE PRINCIPAL
-*/
-
-if(
-  organization &&
-  organization.organizationId &&
-  String(
-    organization.ownerAccountId ||
-    ""
-  ) ===
-  String(
-    account.accountId ||
-    ""
-  )
-){
-
-  const organizationValidated =
-    (
-      organization.active === true &&
-      organization.validationStatus ===
-        "validated"
-    );
-
-
-  const professionalAccessReady =
-    (
-      organization.professionalAccessReady ===
-        true
-    );
-
-
-  return {
-
-    authenticated:
-      Boolean(
-        accountSecurityReady() &&
-        organizationValidated &&
-        professionalAccessReady
-      ),
-
-    account:
-      account,
-
-    organization:
-      organization,
-
-    role:
-      "owner",
-
-    permissions:
-      (
-        organizationValidated &&
-        professionalAccessReady
-      )
-        ? ["all"]
-        : [],
-
-    collaborator:
-      null,
-
-    organizationValidated:
-      organizationValidated,
-
-    professionalAccessReady:
-      professionalAccessReady,
-
-    validationStatus:
-      organization.validationStatus ||
-      "draft"
-  };
-}
-  /*
-    COMPTE PERSONNEL
+   
+    /*
+    RESPONSABLE PRINCIPAL
   */
 
   if(
-    !isOrganizationCategory(
-      account.category
+    organization &&
+    organization.organizationId &&
+    String(
+      organization.ownerAccountId ||
+      ""
+    ) ===
+    String(
+      account.accountId ||
+      ""
     )
   ){
+
+    const organizationValidated =
+      (
+        organization.active === true &&
+        organization.validationStatus ===
+          "validated"
+      );
+
+
+    const professionalAccessReady =
+      (
+        organization.professionalAccessReady ===
+          true
+      );
+
 
     return {
 
       authenticated:
-        accountSecurityReady(),
+        Boolean(
+          accountSecurityReady() &&
+          organizationValidated &&
+          professionalAccessReady
+        ),
 
       account:
         account,
 
       organization:
-        null,
+        organization,
 
       role:
-        "personal",
+        "owner",
 
-      permissions:[
-        "profile"
-      ],
+      permissions:
+        (
+          organizationValidated &&
+          professionalAccessReady
+        )
+          ? ["all"]
+          : [],
 
       collaborator:
         null,
 
       organizationValidated:
-        false,
+        organizationValidated,
+
+      professionalAccessReady:
+        professionalAccessReady,
 
       validationStatus:
-        null
+        organization.validationStatus ||
+        "draft"
     };
-  }
-
-
-  /*
-    COLLABORATEUR
-  */
-
-  const organizationValidated =
-    Boolean(
-      organization &&
-      organization.organizationId &&
-      organization.active === true &&
-      organization.validationStatus ===
-        "validated"
-    );
-
-
-  if(organizationValidated){
-
-    const activeSession =
-      loadSessions()
-        .find(
-          function(session){
-
-            return (
-              session &&
-              session.active === true &&
-              String(
-                session.accountId ||
-                ""
-              ) ===
-              String(
-                account.accountId ||
-                ""
-              ) &&
-              session.collaboratorId
-            );
-          }
-        );
-
-
-    if(
-      activeSession &&
-      activeSession.collaboratorId
-    ){
-
-      const collaborator =
-        getCollaboratorById(
-          activeSession.collaboratorId
-        );
-
-
-      if(
-        collaborator &&
-        collaborator.enabled === true &&
-        collaborator.invitationAccepted === true &&
-        String(
-          collaborator.organizationId ||
-          ""
-        ) ===
-        String(
-          organization.organizationId
-        )
-      ){
-
-        return {
-
-          authenticated:
-            accountSecurityReady(),
-
-          account:
-            account,
-
-          organization:
-            organization,
-
-          role:
-            collaborator.role ||
-            "custom",
-
-          permissions:
-            Array.isArray(
-              collaborator.permissions
-            )
-              ? collaborator.permissions
-              : [],
-
-          collaborator:
-            collaborator,
-
-          organizationValidated:
-            true,
-
-          validationStatus:
-            "validated"
-        };
-      }
-    }
-  }
-
-
-  return {
-
-    authenticated:false,
-
-    account:
-      account,
-
-    organization:
-      organization ||
-      null,
-
-    role:null,
-
-    permissions:[],
-
-    collaborator:null,
-
-    organizationValidated:
-      false,
-
-    validationStatus:
-      organization
-        ? (
-            organization.validationStatus ||
-            "draft"
-          )
-        : null
-  };
-}
-
-
+  } 
+     
 /* =========================================================
    AUTORISATION D'UNE ACTION
    ========================================================= */
