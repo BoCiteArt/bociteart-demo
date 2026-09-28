@@ -5175,57 +5175,47 @@ function collaboratorHasPermission(
    CRÉATION D'UN COLLABORATEUR
    ========================================================= */
 
-function createCollaboratorAccess(
-  data
+function updateCollaboratorAccess(
+  collaboratorId,
+  changes
 ){
-
-  const source =
-    (
-      data &&
-      typeof data ===
-        "object"
-    )
-      ? data
-      : {};
-
 
   const organization =
     getOrganization();
-
-
-  if(
-    !organization ||
-    !organization.organizationId
-  ){
-
-    return Promise.reject(
-      new Error(
-        "Organisation introuvable."
-      )
-    );
-  }
-
-
-  if(
-    organization.active !== true ||
-    organization.validationStatus !==
-      "validated"
-  ){
-
-    return Promise.reject(
-      new Error(
-        "L'organisation doit être validée avant d'ajouter un collaborateur."
-      )
-    );
-  }
-
 
   const account =
     getAccount();
 
 
+  /*
+    Modification autorisée uniquement
+    après validation ET activation
+    de l'accès professionnel.
+  */
+
+  if(
+    !organization ||
+    !organization.organizationId ||
+    organization.active !== true ||
+    organization.validationStatus !==
+      "validated" ||
+    organization.professionalAccessReady !==
+      true
+  ){
+    return null;
+  }
+
+
+  /*
+    Seul le responsable principal
+    avec son compte sécurisé
+    peut modifier les collaborateurs.
+  */
+
   if(
     !account ||
+    !account.accountId ||
+    !accountSecurityReady() ||
     String(
       organization.ownerAccountId ||
       ""
@@ -5235,170 +5225,163 @@ function createCollaboratorAccess(
       ""
     )
   ){
-
-    return Promise.reject(
-      new Error(
-        "Accès réservé au responsable principal."
-      )
-    );
+    return null;
   }
 
 
-  const displayName =
-    normalizeText(
-      source.displayName
+  const collaborators =
+    loadCollaborators();
+
+
+  const collaborator =
+    collaborators.find(
+      function(item){
+
+        return (
+          item &&
+          String(
+            item.id ||
+            ""
+          ) ===
+          String(
+            collaboratorId ||
+            ""
+          ) &&
+          String(
+            item.organizationId ||
+            ""
+          ) ===
+          String(
+            organization.organizationId ||
+            ""
+          )
+        );
+      }
     );
 
-  const email =
-    normalizeEmail(
-      source.email
-    );
 
-  const phone =
-    normalizePhone(
-      source.phone
-    );
+  if(!collaborator){
+    return null;
+  }
 
 
-  const role =
-    ACCESS_ROLES[
-      source.role
-    ]
-      ? source.role
-      : "custom";
-
-
-  const permissions =
-    getRolePermissions(
-      role,
-      source.permissions
-    );
+  const source =
+    (
+      changes &&
+      typeof changes ===
+        "object"
+    )
+      ? changes
+      : {};
 
 
   if(
-    !displayName ||
-    (
-      !email &&
-      !phone
-    )
+    source.displayName !==
+    undefined
   ){
 
-    return Promise.reject(
-      new Error(
-        "Nom et moyen de contact obligatoires."
-      )
-    );
+    collaborator.displayName =
+      normalizeText(
+        source.displayName
+      );
   }
 
 
-  const invitationCode =
-    createNumericCode(6);
+  if(
+    source.email !==
+    undefined
+  ){
 
-
-  return hashSecret(
-    invitationCode
-  )
-  .then(
-    function(
-      invitationCodeHash
-    ){
-
-      const collaborators =
-        loadCollaborators();
-
-
-      const collaborator = {
-
-        id:
-          createUniqueId(
-            "bociteart-collaborator"
-          ),
-
-        organizationId:
-          organization.organizationId,
-
-        displayName:
-          displayName,
-
-        email:
-          email,
-
-        phone:
-          phone,
-
-        role:
-          role,
-
-        permissions:
-          permissions,
-
-        enabled:
-          true,
-
-        invitationAccepted:
-          false,
-
-        invitationCodeHash:
-          invitationCodeHash,
-
-        invitedAt:
-          new Date().toISOString(),
-
-        acceptedAt:
-          null,
-
-        revokedAt:
-          null,
-
-        updatedAt:
-          new Date().toISOString(),
-
-        version:
-          "2"
-      };
-
-
-      collaborators.push(
-        collaborator
+    collaborator.email =
+      normalizeEmail(
+        source.email
       );
+  }
 
 
-      saveCollaborators(
-        collaborators
+  if(
+    source.phone !==
+    undefined
+  ){
+
+    collaborator.phone =
+      normalizePhone(
+        source.phone
       );
+  }
 
 
-      addSecurityLog(
-        "collaborator_invited",
-        {
-          collaboratorId:
-            collaborator.id,
+  if(
+    source.role !==
+    undefined
+  ){
 
-          organizationId:
-            organization.organizationId,
+    const role =
+      ACCESS_ROLES[
+        source.role
+      ]
+        ? source.role
+        : "custom";
 
-          displayName:
-            collaborator.displayName,
 
-          role:
-            collaborator.role,
+    collaborator.role =
+      role;
 
-          permissions:
-            collaborator.permissions
-        }
+
+    collaborator.permissions =
+      getRolePermissions(
+        role,
+        source.permissions
       );
+  }
 
 
-      return {
+  if(
+    source.permissions !==
+      undefined &&
+    collaborator.role ===
+      "custom"
+  ){
 
-        collaborator:
-          collaborator,
+    collaborator.permissions =
+      getRolePermissions(
+        "custom",
+        source.permissions
+      );
+  }
 
-        invitationCode:
-          invitationCode
-      };
+
+  collaborator.updatedAt =
+    new Date().toISOString();
+
+
+  saveCollaborators(
+    collaborators
+  );
+
+
+  addSecurityLog(
+    "collaborator_access_updated",
+    {
+      collaboratorId:
+        collaborator.id,
+
+      organizationId:
+        organization.organizationId,
+
+      ownerAccountId:
+        account.accountId,
+
+      role:
+        collaborator.role,
+
+      permissions:
+        collaborator.permissions
     }
   );
+
+
+  return collaborator;
 }
 
 
