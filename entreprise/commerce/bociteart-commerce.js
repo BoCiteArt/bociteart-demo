@@ -814,19 +814,6 @@ function openCommerceModule(){
     style="display:none;margin-top:14px;"
   >
 
-    <div
-      class="commerceStatus"
-      data-state="warn"
-      style="margin-bottom:12px;"
-    >
-      <strong>ACCÈS PROFESSIONNEL</strong>
-      <br>
-      Identifiant : COMMERCE-DEMO
-      <br>
-      Code : 2026
-    </div>
-
-
     <label
       class="commerceLabel"
       for="merchantLoginId"
@@ -3692,21 +3679,6 @@ if(
             ? merchantLoginId.value
             : ""
         ).trim();
-
-      const code =
-        String(
-          merchantLoginCode
-            ? merchantLoginCode.value
-            : ""
-        ).trim();
-
-
-      if(
-        login !== "COMMERCE-DEMO" ||
-        code !== "2026"
-      ){
-
-        if(merchantLoginStatus){
 
           merchantLoginStatus.style.display =
             "block";
