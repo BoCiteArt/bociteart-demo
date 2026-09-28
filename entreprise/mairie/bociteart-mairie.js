@@ -5461,19 +5461,19 @@ function mairieReadSportScan(){
 
        "<br>Cabas possible chez un commerçant partenaire : " +
 
-        (
-          result.canRedeemBag
-            ? "oui"
-            : "non"
-        ) +
+(
+  result.canRedeemBag
+    ? "oui"
+    : "non"
+) +
 
-        "<br>Reliquat orientable vers la recherche médicale : " +
+"<br>Reliquat orientable vers la recherche médicale : " +
 
-        (
-          result.canTransferRemainder
-            ? "oui"
-            : "non"
-        );
+(
+  result.canTransferRemainder
+    ? "oui"
+    : "non"
+);
     }
 
 
