@@ -760,39 +760,130 @@ function openCommerceModule(){
         </div>
 
 
-        <div class="commerceCard">
+      <!-- =========================================================
+     ÇA COMMENCE ICI — PORTE D'ACCÈS COMMERCE
+     ========================================================= -->
 
-          <div class="commerceTitle">
+<div class="commerceCard">
 
-            Espace interne commerçant
+  <div class="commerceTitle">
+    Accès professionnel Commerce
+  </div>
 
-          </div>
+  <div class="commerceText">
 
-          <div class="commerceText">
+    L'espace professionnel est réservé
+    aux commerces enregistrés et validés
+    par Bo’CitéArt.
 
-            Cet espace sert
-            au commerce partenaire
-            pour enregistrer sa fiche
-            et traiter les opérations
-            liées aux bocitecoins.
+    <br><br>
 
-          </div>
+    Lors de votre première inscription,
+    complétez votre demande d'accès.
 
-          <div class="commerceActions">
+    Après vérification et validation,
+    vous recevez votre identifiant
+    professionnel et un code d'accès initial.
 
-            <button
-              class="commerceBtn"
-              id="merchantInternalOpenBtn"
-              type="button"
-            >
-              Ouvrir mon espace Commerce
-            </button>
-
-          </div>
-
-        </div>
+  </div>
 
 
+  <div class="commerceActions">
+
+    <button
+      class="commerceBtn"
+      id="merchantRequestAccessBtn"
+      type="button"
+    >
+      Première demande d'accès
+    </button>
+
+    <button
+      class="commerceBtn"
+      id="merchantLoginOpenBtn"
+      type="button"
+    >
+      J'ai déjà mes accès
+    </button>
+
+  </div>
+
+
+  <div
+    id="merchantLoginGate"
+    style="display:none;margin-top:14px;"
+  >
+
+    <div
+      class="commerceStatus"
+      data-state="warn"
+      style="margin-bottom:12px;"
+    >
+      <strong>ACCÈS DÉMONSTRATION</strong>
+      <br>
+      Identifiant : COMMERCE-DEMO
+      <br>
+      Code : 2026
+    </div>
+
+
+    <label
+      class="commerceLabel"
+      for="merchantLoginId"
+    >
+      Identifiant professionnel
+    </label>
+
+    <input
+      class="commerceField"
+      id="merchantLoginId"
+      type="text"
+      autocomplete="username"
+    >
+
+
+    <label
+      class="commerceLabel"
+      for="merchantLoginCode"
+    >
+      Code d'accès
+    </label>
+
+    <input
+      class="commerceField"
+      id="merchantLoginCode"
+      type="password"
+      autocomplete="current-password"
+    >
+
+
+    <div class="commerceActions">
+
+      <button
+        class="commerceBtn"
+        id="merchantInternalOpenBtn"
+        type="button"
+      >
+        Entrer dans mon espace Commerce
+      </button>
+
+    </div>
+
+
+    <div
+      id="merchantLoginStatus"
+      class="commerceStatus"
+      data-state="warn"
+      style="display:none;"
+    ></div>
+
+  </div>
+
+</div>
+
+<!-- =========================================================
+     ÇA FINIT ICI — PORTE D'ACCÈS COMMERCE
+     ========================================================= -->
         <div
           id="merchantInternalSpace"
           style="display:none;"
@@ -3518,11 +3609,76 @@ if(
    ESPACE INTERNE COMMERCE
    ========================================================= */
 
+/* =========================================================
+   ÇA COMMENCE ICI — PORTE D'ACCÈS COMMERCE
+   ========================================================= */
+
+const merchantRequestAccessBtn =
+  $("merchantRequestAccessBtn");
+
+const merchantLoginOpenBtn =
+  $("merchantLoginOpenBtn");
+
+const merchantLoginGate =
+  $("merchantLoginGate");
+
+const merchantLoginId =
+  $("merchantLoginId");
+
+const merchantLoginCode =
+  $("merchantLoginCode");
+
+const merchantLoginStatus =
+  $("merchantLoginStatus");
+
 const merchantInternalOpenBtn =
   $("merchantInternalOpenBtn");
 
 const merchantInternalSpace =
   $("merchantInternalSpace");
+
+
+if(
+  merchantRequestAccessBtn
+){
+
+  merchantRequestAccessBtn.onclick =
+    ()=>{
+
+      alert(
+        "La demande d'accès professionnel sera reliée à la fiche d'inscription Commerce et au contrôle Bo’CitéArt. Après validation, le responsable recevra son identifiant professionnel et son code d'accès initial."
+      );
+
+    };
+}
+
+
+if(
+  merchantLoginOpenBtn &&
+  merchantLoginGate
+){
+
+  merchantLoginOpenBtn.onclick =
+    ()=>{
+
+      const isHidden =
+        merchantLoginGate.style.display ===
+          "none" ||
+        merchantLoginGate.style.display ===
+          "";
+
+      merchantLoginGate.style.display =
+        isHidden
+          ? "block"
+          : "none";
+
+      merchantLoginOpenBtn.textContent =
+        isHidden
+          ? "Fermer l'accès"
+          : "J'ai déjà mes accès";
+
+    };
+}
 
 
 if(
@@ -3533,26 +3689,87 @@ if(
   merchantInternalOpenBtn.onclick =
     ()=>{
 
-      const isHidden =
-        merchantInternalSpace.style.display ===
-          "none" ||
-        merchantInternalSpace.style.display ===
-          "";
+      const login =
+        String(
+          merchantLoginId
+            ? merchantLoginId.value
+            : ""
+        ).trim();
+
+      const code =
+        String(
+          merchantLoginCode
+            ? merchantLoginCode.value
+            : ""
+        ).trim();
+
+
+      if(
+        login !== "COMMERCE-DEMO" ||
+        code !== "2026"
+      ){
+
+        if(merchantLoginStatus){
+
+          merchantLoginStatus.style.display =
+            "block";
+
+          merchantLoginStatus.dataset.state =
+            "warn";
+
+          merchantLoginStatus.textContent =
+            "Identifiant ou code d'accès incorrect.";
+
+        }
+
+        return;
+      }
+
+
+      if(merchantLoginStatus){
+
+        merchantLoginStatus.style.display =
+          "block";
+
+        merchantLoginStatus.dataset.state =
+          "ok";
+
+        merchantLoginStatus.textContent =
+          "Accès démonstration validé.";
+
+      }
 
 
       merchantInternalSpace.style.display =
-        isHidden
-          ? "block"
-          : "none";
+        "block";
 
 
-      merchantInternalOpenBtn.textContent =
-        isHidden
-          ? "Fermer mon espace Commerce"
-          : "Ouvrir mon espace Commerce";
+      if(merchantLoginGate){
+
+        merchantLoginGate.style.display =
+          "none";
+      }
+
+
+      if(merchantLoginOpenBtn){
+
+        merchantLoginOpenBtn.textContent =
+          "J'ai déjà mes accès";
+      }
+
+
+      merchantInternalSpace.scrollIntoView({
+        behavior:"smooth",
+        block:"start"
+      });
 
     };
+
 }
+
+/* =========================================================
+   ÇA FINIT ICI — PORTE D'ACCÈS COMMERCE
+   ========================================================= */
 
 
 /* =========================================================
