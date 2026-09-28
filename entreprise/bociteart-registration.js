@@ -5923,6 +5923,135 @@ function updateCollaboratorAccess(
 
   return collaborator;
 }
+
+  /* =========================================================
+   RÉACTIVATION D'UN COLLABORATEUR
+   ========================================================= */
+
+function restoreCollaboratorAccess(
+  collaboratorId
+){
+
+  const organization =
+    getOrganization();
+
+  const account =
+    getAccount();
+
+
+  /*
+    Une réactivation n'est autorisée
+    qu'après validation et activation
+    de l'accès professionnel.
+  */
+
+  if(
+    !organization ||
+    !organization.organizationId ||
+    organization.active !== true ||
+    organization.validationStatus !==
+      "validated" ||
+    organization.professionalAccessReady !==
+      true
+  ){
+
+    return false;
+  }
+
+
+  /*
+    Seul le responsable principal,
+    depuis son compte sécurisé,
+    peut réactiver un collaborateur.
+  */
+
+  if(
+    !account ||
+    !account.accountId ||
+    !accountSecurityReady() ||
+    String(
+      organization.ownerAccountId ||
+      ""
+    ) !==
+    String(
+      account.accountId ||
+      ""
+    )
+  ){
+
+    return false;
+  }
+
+
+  const collaborators =
+    loadCollaborators();
+
+
+  const collaborator =
+    collaborators.find(
+      function(item){
+
+        return (
+          item &&
+          String(
+            item.id ||
+            ""
+          ) ===
+          String(
+            collaboratorId ||
+            ""
+          ) &&
+          String(
+            item.organizationId ||
+            ""
+          ) ===
+          String(
+            organization.organizationId ||
+            ""
+          )
+        );
+      }
+    );
+
+
+  if(!collaborator){
+
+    return false;
+  }
+
+
+  collaborator.enabled =
+    true;
+
+  collaborator.revokedAt =
+    null;
+
+  collaborator.updatedAt =
+    new Date().toISOString();
+
+
+  saveCollaborators(
+    collaborators
+  );
+
+
+  addSecurityLog(
+    "collaborator_access_restored",
+    {
+      collaboratorId:
+        collaborator.id,
+
+      organizationId:
+        organization.organizationId,
+
+      ownerAccountId:
+        account.accountId
+    }
+  );
+
+
+  return true;
+} 
    
 /* =========================================================
    SUPPRESSION DÉFINITIVE D'UN COLLABORATEUR
