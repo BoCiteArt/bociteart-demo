@@ -3664,6 +3664,9 @@ if(
     };
 }
 
+/* =========================================================
+   ÇA COMMENCE ICI — CONTRÔLE ACCÈS PROFESSIONNEL
+   ========================================================= */
 
 if(
   merchantInternalOpenBtn &&
@@ -3679,6 +3682,20 @@ if(
             ? merchantLoginId.value
             : ""
         ).trim();
+
+      const code =
+        String(
+          merchantLoginCode
+            ? merchantLoginCode.value
+            : ""
+        ).trim();
+
+      if(
+        login !== "COMMERCE-DEMO" ||
+        code !== "2026"
+      ){
+
+        if(merchantLoginStatus){
 
           merchantLoginStatus.style.display =
             "block";
@@ -3717,6 +3734,7 @@ if(
 
         merchantLoginGate.style.display =
           "none";
+
       }
 
 
@@ -3724,6 +3742,7 @@ if(
 
         merchantLoginOpenBtn.textContent =
           "J'ai déjà mes accès";
+
       }
 
 
@@ -3737,9 +3756,8 @@ if(
 }
 
 /* =========================================================
-   ÇA FINIT ICI — PORTE D'ACCÈS COMMERCE
+   ÇA FINIT ICI — CONTRÔLE ACCÈS PROFESSIONNEL
    ========================================================= */
-
 
 /* =========================================================
    FICHE COMMERCE
@@ -4801,7 +4819,7 @@ if(
 
 
       const exportText =
-        "HISTORIQUE COMMERCE — EXPORT DÉMO\n\n" +
+        "HISTORIQUE COMMERCE — EXPORT\n\n" +
         JSON.stringify(
           exportObj,
           null,
