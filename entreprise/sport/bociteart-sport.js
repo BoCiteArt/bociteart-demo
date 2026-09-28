@@ -12584,7 +12584,7 @@ function sportRenderExchangeHistory(){
               ${sportEsc(
                 x.actor &&
                 x.actor.label ||
-                "Validation commerçant / mairie"
+                "Validation commerçant partenaire"
               )}
 
               ${
@@ -14447,7 +14447,9 @@ function openClubReserve(){
 
             "- en période de forte affluence, le commerçant peut reporter l’échange\n" +
 
-            "- le commerçant partenaire ou la mairie scanne ensuite le club\n" +
+            "- pour un Cabas, le commerçant partenaire scanne le QR du club\n" +
+
+            "- pour la recherche médicale, la mairie scanne le QR du club et enregistre l’orientation des bocitecoins VERT\n" +
 
             "- le club ne valide jamais lui-même l’échange\n" +
 
