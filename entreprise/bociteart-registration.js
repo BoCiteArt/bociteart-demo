@@ -6093,6 +6093,96 @@ function getActiveCollaborators(){
 }
 
 /* =========================================================
+   SUPPRESSION DÉFINITIVE D'UN COLLABORATEUR
+   ========================================================= */
+
+function permanentlyDeleteCollaborator(
+  collaboratorId
+){
+
+  const organization =
+    getOrganization();
+
+  const account =
+    getAccount();
+
+  if(
+    !organization ||
+    !organization.organizationId
+  ){
+    return false;
+  }
+
+  if(
+    !account ||
+    !account.accountId ||
+    !accountSecurityReady()
+  ){
+    return false;
+  }
+
+  if(
+    organization.ownerAccountId !==
+    account.accountId
+  ){
+    return false;
+  }
+
+  const collaborators =
+    getCollaborators();
+
+  const collaboratorIndex =
+    collaborators.findIndex(
+      function(item){
+        return (
+          item &&
+          item.id === collaboratorId &&
+          item.organizationId ===
+            organization.organizationId
+        );
+      }
+    );
+
+  if(collaboratorIndex === -1){
+    return false;
+  }
+
+  const collaborator =
+    collaborators[collaboratorIndex];
+
+  collaborators.splice(
+    collaboratorIndex,
+    1
+  );
+
+  saveCollaborators(
+    collaborators
+  );
+
+  logEvent(
+    "collaborator_deleted",
+    {
+      collaboratorId:
+        collaborator.id,
+
+      organizationId:
+        organization.organizationId,
+
+      ownerAccountId:
+        account.accountId,
+
+      displayName:
+        collaborator.displayName || "",
+
+      role:
+        collaborator.role || ""
+    }
+  );
+
+  return true;
+}
+   
+/* =========================================================
    CONTRÔLE CENTRAL DES ACCÈS PRIVÉS
    ========================================================= */
 
