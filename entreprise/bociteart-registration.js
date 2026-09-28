@@ -2079,6 +2079,148 @@ function getOrganizationProfileFields(
    ÉCRAN D'IDENTIFICATION DE L'ORGANISATION
    ===================================================== */
 
+function getOrganizationProvidedInformation(
+  organization
+){
+
+  const current =
+    organization &&
+    typeof organization === "object"
+      ? organization
+      : getOrganization();
+
+
+  if(
+    !current ||
+    !current.organizationId
+  ){
+    return {};
+  }
+
+
+  const profile =
+    (
+      current.organizationProfile &&
+      typeof current.organizationProfile === "object"
+    )
+      ? current.organizationProfile
+      : {};
+
+
+  function provided(value){
+
+    return (
+      String(
+        value || ""
+      ).trim().length > 0
+    );
+  }
+
+
+  return {
+
+    organization_name:
+      provided(
+        profile.organizationName
+      ),
+
+    commune:
+      provided(
+        current.commune
+      ),
+
+    responsible_identity:
+      provided(
+        profile.responsibleIdentity
+      ),
+
+    responsible_authority:
+      provided(
+        profile.responsibleAuthority
+      ),
+
+    email:
+      provided(
+        profile.email
+      ),
+
+    phone:
+      provided(
+        profile.phone
+      ),
+
+    siret_or_siren:
+      provided(
+        profile.siretOrSiren
+      ),
+
+    establishment_address:
+      provided(
+        profile.establishmentAddress
+      ),
+
+    registered_address:
+      provided(
+        profile.registeredAddress
+      ),
+
+    business_activity:
+      provided(
+        profile.businessActivity
+      ),
+
+    association_identifier:
+      provided(
+        profile.associationIdentifier
+      ),
+
+    registered_office:
+      provided(
+        profile.registeredOffice
+      ),
+
+    club_identifier:
+      provided(
+        profile.clubIdentifier
+      ),
+
+    legal_structure:
+      provided(
+        profile.legalStructure
+      ),
+
+    president_or_legal_representative:
+      provided(
+        profile.presidentOrLegalRepresentative
+      ),
+
+    school_identifier:
+      provided(
+        profile.schoolIdentifier
+      ),
+
+    school_address:
+      provided(
+        profile.schoolAddress
+      ),
+
+    direction_or_authorized_representative:
+      provided(
+        profile.directionOrAuthorizedRepresentative
+      ),
+
+    municipality_identifier:
+      provided(
+        profile.municipalityIdentifier
+      ),
+
+    institutional_authority:
+      provided(
+        profile.institutionalAuthority
+      )
+  };
+}
+   
 function openOrganizationProfileForm(){
 
   const account =
@@ -2492,7 +2634,7 @@ function openOrganizationProfileForm(){
       }
 
 
-      const result =
+           const result =
         updateOrganizationProfile(
           data
         );
@@ -2508,6 +2650,57 @@ function openOrganizationProfileForm(){
 
         return;
       }
+
+
+      /*
+        La fiche obligatoire est complète.
+
+        Le dossier quitte l'état brouillon
+        et entre dans la file de contrôle
+        Bo’CitéArt.
+      */
+
+      const organization =
+        result.organization;
+
+
+      organization.validationStatus =
+        "pending_review";
+
+      organization.active =
+        false;
+
+      organization.validationRequestedAt =
+        new Date().toISOString();
+
+      organization.validationReviewedAt =
+        null;
+
+      organization.validationReviewedBy =
+        null;
+
+      organization.validationReason =
+        "";
+
+
+      saveOrganization(
+        organization
+      );
+
+
+      addSecurityLog(
+        "organization_validation_requested",
+        {
+          organizationId:
+            organization.organizationId,
+
+          category:
+            organization.category,
+
+          accountId:
+            account.accountId
+        }
+      );
 
 
       message.textContent =
