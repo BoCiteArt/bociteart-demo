@@ -8988,26 +8988,99 @@ async function runAutomaticOrganizationAgent(){
     );
 
 
+ if(
+  !validation ||
+  validation.ok !== true ||
+  validation.complete !== true
+){
+
+  const missingChecks =
+    validation &&
+    Array.isArray(
+      validation.missing
+    )
+      ? validation.missing
+      : [];
+
+
+  const checkLabels = {
+
+    organization_name:
+      "nom de l’organisation",
+
+    commune:
+      "commune",
+
+    responsible_identity:
+      "identité du responsable",
+
+    responsible_authority:
+      "qualité ou fonction du responsable",
+
+    email:
+      "adresse e-mail",
+
+    phone:
+      "téléphone",
+
+    siret_or_siren:
+      "SIREN ou SIRET",
+
+    establishment_address:
+      "adresse de l’établissement",
+
+    registered_address:
+      "adresse du siège",
+
+    business_activity:
+      "activité professionnelle"
+
+  };
+
+
+  const missingLabels =
+    missingChecks
+      .map(
+        function(key){
+
+          return (
+            checkLabels[key] ||
+            String(key)
+          );
+        }
+      )
+      .filter(Boolean);
+
+
+  let reason =
+    "Certaines informations professionnelles doivent être corrigées ou complétées.";
+
+
   if(
-    !validation ||
-    validation.ok !== true ||
-    validation.complete !== true
+    missingLabels.length
   ){
 
-    return runOrganizationValidationDecision(
-      "needs_information",
-      {
-        reviewedBy:
-          "agent-central-bociteart",
-
-        reason:
-          "Certaines informations professionnelles doivent être corrigées ou complétées.",
-
-        checks:
-          checks
-      }
-    );
+    reason =
+      "À vérifier ou compléter : " +
+      missingLabels.join(", ") +
+      ".";
   }
+
+
+  return runOrganizationValidationDecision(
+    "needs_information",
+    {
+      reviewedBy:
+        "agent-central-bociteart",
+
+      reason:
+        reason,
+
+      checks:
+        checks
+    }
+  );
+}
 
 
   /*
