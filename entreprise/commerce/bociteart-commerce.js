@@ -3411,7 +3411,369 @@ function openCommerceModule(){
       }
     };
 }
-      /* =====================================================
+/* =====================================================
+   ACCÈS PROFESSIONNEL ÉMIS PAR L'AGENT CENTRAL
+   ===================================================== */
+
+window.addEventListener(
+  "bociteart:professional-access-issued",
+  function(event){
+
+    const detail =
+      event &&
+      event.detail
+        ? event.detail
+        : {};
+
+
+    /*
+      Ce module ne traite ici
+      que les accès Commerce.
+    */
+
+    if(
+      detail.category !== "commerce" ||
+      !detail.professionalIdentifier ||
+      !detail.initialAccessCode
+    ){
+      return;
+    }
+
+
+    /*
+      Le code initial reste uniquement
+      dans cet affichage temporaire.
+
+      Il n'est enregistré ni dans
+      localStorage ni dans le journal.
+    */
+
+    const overlay =
+      document.createElement(
+        "div"
+      );
+
+
+    overlay.style.cssText =
+      [
+        "position:fixed",
+        "inset:0",
+        "z-index:2147483646",
+        "background:rgba(0,0,0,.52)",
+        "display:flex",
+        "align-items:center",
+        "justify-content:center",
+        "padding:20px",
+        "box-sizing:border-box"
+      ].join(";");
+
+
+    const card =
+      document.createElement(
+        "div"
+      );
+
+
+    card.style.cssText =
+      [
+        "width:min(520px,100%)",
+        "max-height:90vh",
+        "overflow:auto",
+        "background:#ffffff",
+        "border:2px solid #2f6b45",
+        "border-radius:16px",
+        "padding:22px",
+        "box-sizing:border-box",
+        "font-family:Arial,sans-serif",
+        "color:#222222"
+      ].join(";");
+
+
+    const title =
+      document.createElement(
+        "div"
+      );
+
+
+    title.textContent =
+      "Votre accès professionnel est validé";
+
+
+    title.style.cssText =
+      [
+        "font-size:17px",
+        "font-weight:700",
+        "color:#2f6b45",
+        "margin-bottom:14px"
+      ].join(";");
+
+
+    const intro =
+      document.createElement(
+        "div"
+      );
+
+
+    intro.textContent =
+      "Conservez votre identifiant professionnel. Il restera définitivement rattaché à votre commerce.";
+
+
+    intro.style.cssText =
+      [
+        "font-size:14px",
+        "line-height:1.5",
+        "margin-bottom:18px"
+      ].join(";");
+
+
+    const identifierLabel =
+      document.createElement(
+        "div"
+      );
+
+
+    identifierLabel.textContent =
+      "Identifiant professionnel permanent";
+
+
+    identifierLabel.style.cssText =
+      [
+        "font-size:14px",
+        "font-weight:700",
+        "margin-bottom:6px"
+      ].join(";");
+
+
+    const identifierBox =
+      document.createElement(
+        "div"
+      );
+
+
+    identifierBox.textContent =
+      String(
+        detail.professionalIdentifier
+      );
+
+
+    identifierBox.style.cssText =
+      [
+        "background:#f7f4ec",
+        "border:1px solid #2f6b45",
+        "border-radius:10px",
+        "padding:12px",
+        "font-size:16px",
+        "font-weight:700",
+        "word-break:break-word",
+        "margin-bottom:18px"
+      ].join(";");
+
+
+    const codeLabel =
+      document.createElement(
+        "div"
+      );
+
+
+    codeLabel.textContent =
+      "Code initial à usage unique";
+
+
+    codeLabel.style.cssText =
+      [
+        "font-size:14px",
+        "font-weight:700",
+        "margin-bottom:6px"
+      ].join(";");
+
+
+    const codeBox =
+      document.createElement(
+        "div"
+      );
+
+
+    codeBox.textContent =
+      String(
+        detail.initialAccessCode
+      );
+
+
+    codeBox.style.cssText =
+      [
+        "background:#f7f4ec",
+        "border:1px solid #2f6b45",
+        "border-radius:10px",
+        "padding:12px",
+        "font-size:22px",
+        "font-weight:700",
+        "letter-spacing:4px",
+        "text-align:center",
+        "margin-bottom:14px"
+      ].join(";");
+
+
+    const warning =
+      document.createElement(
+        "div"
+      );
+
+
+    warning.textContent =
+      "Ce code initial ne servira qu'une seule fois. Lors de votre première ouverture, vous choisirez votre code personnel de 4 à 6 chiffres.";
+
+
+    warning.style.cssText =
+      [
+        "font-size:14px",
+        "line-height:1.5",
+        "margin-bottom:20px"
+      ].join(";");
+
+
+    const button =
+      document.createElement(
+        "button"
+      );
+
+
+    button.type =
+      "button";
+
+
+    button.textContent =
+      "J’ai noté mes accès";
+
+
+    button.style.cssText =
+      [
+        "width:100%",
+        "background:#ffffff",
+        "color:#2f6b45",
+        "border:2px solid #2f6b45",
+        "border-radius:10px",
+        "padding:12px 16px",
+        "font-size:14px",
+        "font-weight:700",
+        "cursor:pointer"
+      ].join(";");
+
+
+    button.onclick =
+      function(){
+
+        /*
+          On préremplit uniquement
+          l'identifiant permanent.
+
+          Le code initial n'est volontairement
+          jamais recopié ni conservé.
+        */
+
+        if(merchantLoginId){
+
+          merchantLoginId.value =
+            String(
+              detail.professionalIdentifier
+            );
+        }
+
+
+        if(merchantLoginCode){
+
+          merchantLoginCode.value =
+            "";
+        }
+
+
+        overlay.remove();
+
+
+        if(
+          merchantLoginGate
+        ){
+
+          merchantLoginGate.style.display =
+            "block";
+        }
+
+
+        if(
+          merchantLoginOpenBtn
+        ){
+
+          merchantLoginOpenBtn.textContent =
+            "Fermer l’accès";
+        }
+
+
+        if(
+          merchantLoginStatus
+        ){
+
+          merchantLoginStatus.style.display =
+            "block";
+
+          merchantLoginStatus.dataset.state =
+            "ok";
+
+          merchantLoginStatus.textContent =
+            "Votre identifiant est renseigné. Saisissez maintenant votre code initial à usage unique.";
+        }
+
+
+        if(merchantLoginCode){
+
+          merchantLoginCode.focus();
+        }
+      };
+
+
+    card.appendChild(
+      title
+    );
+
+    card.appendChild(
+      intro
+    );
+
+    card.appendChild(
+      identifierLabel
+    );
+
+    card.appendChild(
+      identifierBox
+    );
+
+    card.appendChild(
+      codeLabel
+    );
+
+    card.appendChild(
+      codeBox
+    );
+
+    card.appendChild(
+      warning
+    );
+
+    card.appendChild(
+      button
+    );
+
+
+    overlay.appendChild(
+      card
+    );
+
+
+    document.body.appendChild(
+      overlay
+    );
+  }
+);
+       
+       /* =====================================================
          FICHE COMMERCE CENTRALE
          ===================================================== */
 
