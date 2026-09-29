@@ -3390,12 +3390,113 @@ function submitOrganizationForReview(){
     }
   );
 
+/*
+  Le dossier est complet et vient de passer
+  en pending_review.
 
-  return {
-    ok:true,
-    organization:
-      organization
-  };
+  Pour Commerce et Entreprise, l'Agent central
+  lance immédiatement le contrôle automatique.
+*/
+
+if(
+  organization.category === "commerce" ||
+  organization.category === "entreprise"
+){
+
+  Promise.resolve()
+    .then(function(){
+
+      return runAutomaticOrganizationAgent();
+
+    })
+    .then(function(agentResult){
+
+      if(
+        !agentResult ||
+        agentResult.ok !== true
+      ){
+
+        addSecurityLog(
+          "automatic_organization_agent_pending",
+          {
+            organizationId:
+              organization.organizationId,
+
+            category:
+              organization.category,
+
+            reason:
+              (
+                agentResult &&
+                agentResult.reason
+              ) ||
+              "automatic_check_not_completed"
+          }
+        );
+
+        return;
+      }
+
+
+      addSecurityLog(
+        "automatic_organization_agent_completed",
+        {
+          organizationId:
+            organization.organizationId,
+
+          category:
+            organization.category,
+
+          decision:
+            agentResult.decision ||
+            ""
+        }
+      );
+
+    })
+    .catch(function(error){
+
+      console.error(
+        "Bo'CitéArt — Agent central :",
+        error
+      );
+
+
+      addSecurityLog(
+        "automatic_organization_agent_error",
+        {
+          organizationId:
+            organization.organizationId,
+
+          category:
+            organization.category,
+
+          message:
+            String(
+              error &&
+              error.message
+                ? error.message
+                : error
+            )
+        }
+      );
+
+    });
+}
+
+
+return {
+  ok:true,
+
+  organization:
+    organization,
+
+  automaticValidation:
+    (
+      organization.category === "commerce" ||
+      organization.category === "entreprise"
+    )
+};
 }
 
 
@@ -5085,7 +5186,7 @@ function openOrganizationProfileForm(){
 
 
       message.textContent =
-        "Votre dossier est enregistré et transmis pour vérification.";
+        "Votre dossier est enregistré. Les informations professionnelles sont en cours de vérification.";
 
 
       saveButton.disabled =
