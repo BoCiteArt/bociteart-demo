@@ -7960,6 +7960,667 @@ function completeRegistration(){
    API PUBLIQUE
    ========================================================= */
 
+/* =========================================================
+   AGENT CENTRAL — VALIDATION AUTOMATIQUE ORGANISATION
+   Commerce / Entreprise
+   ========================================================= */
+
+function bociteNormalizeText(value){
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]/g, "");
+}
+
+
+function bociteDigits(value){
+  return String(value || "")
+    .replace(/\D/g, "");
+}
+
+
+function bociteOfficialCompanySearch(sirenSiret){
+
+  const digits =
+    bociteDigits(sirenSiret);
+
+  if(
+    digits.length !== 9 &&
+    digits.length !== 14
+  ){
+    return Promise.resolve({
+      ok:false,
+      reason:"invalid_siren_siret"
+    });
+  }
+
+
+  const url =
+    "https://recherche-entreprises.api.gouv.fr/search?q=" +
+    encodeURIComponent(digits) +
+    "&page=1&per_page=10";
+
+
+  return fetch(
+    url,
+    {
+      method:"GET",
+      headers:{
+        Accept:"application/json"
+      }
+    }
+  )
+  .then(function(response){
+
+    if(!response.ok){
+      throw new Error(
+        "API HTTP " +
+        response.status
+      );
+    }
+
+    return response.json();
+  })
+  .then(function(data){
+
+    const companies =
+      Array.isArray(data.results)
+        ? data.results
+        : [];
+
+
+    let foundCompany = null;
+    let foundEstablishment = null;
+
+
+    companies.some(function(company){
+
+      const companySiren =
+        bociteDigits(
+          company.siren
+        );
+
+
+      if(
+        digits.length === 9 &&
+        companySiren === digits
+      ){
+        foundCompany =
+          company;
+
+        foundEstablishment =
+          company.siege ||
+          null;
+
+        return true;
+      }
+
+
+      const establishments =
+        Array.isArray(
+          company.matching_etablissements
+        )
+          ? company.matching_etablissements
+          : [];
+
+
+      const establishment =
+        establishments.find(
+          function(item){
+
+            return (
+              bociteDigits(
+                item &&
+                item.siret
+              ) === digits
+            );
+          }
+        );
+
+
+      if(establishment){
+
+        foundCompany =
+          company;
+
+        foundEstablishment =
+          establishment;
+
+        return true;
+      }
+
+
+      if(
+        company.siege &&
+        bociteDigits(
+          company.siege.siret
+        ) === digits
+      ){
+
+        foundCompany =
+          company;
+
+        foundEstablishment =
+          company.siege;
+
+        return true;
+      }
+
+
+      return false;
+    });
+
+
+    if(!foundCompany){
+
+      return {
+        ok:false,
+        reason:"company_not_found"
+      };
+    }
+
+
+    const establishment =
+      foundEstablishment ||
+      foundCompany.siege ||
+      {};
+
+
+    return {
+
+      ok:true,
+
+      source:
+        "API Recherche d'Entreprises — État",
+
+      siren:
+        bociteDigits(
+          foundCompany.siren
+        ),
+
+      siret:
+        bociteDigits(
+          establishment.siret
+        ),
+
+      name:
+        String(
+          foundCompany.nom_complet ||
+          foundCompany.nom_raison_sociale ||
+          foundCompany.nom_commercial ||
+          ""
+        ).trim(),
+
+      address:
+        String(
+          establishment.adresse ||
+          [
+            establishment.numero_voie,
+            establishment.indice_repetition,
+            establishment.type_voie,
+            establishment.libelle_voie,
+            establishment.code_postal,
+            establishment.libelle_commune
+          ]
+          .filter(Boolean)
+          .join(" ")
+        ).trim(),
+
+      commune:
+        String(
+          establishment.libelle_commune ||
+          ""
+        ).trim(),
+
+      postalCode:
+        String(
+          establishment.code_postal ||
+          ""
+        ).trim(),
+
+      activity:
+        String(
+          establishment.libelle_activite_principale ||
+          foundCompany.libelle_activite_principale ||
+          ""
+        ).trim(),
+
+      administrativeStatus:
+        String(
+          establishment.etat_administratif ||
+          ""
+        ).trim(),
+
+      rawCompany:
+        foundCompany,
+
+      rawEstablishment:
+        establishment
+    };
+  })
+  .catch(function(error){
+
+    console.error(
+      "Bo'CitéArt — contrôle officiel impossible",
+      error
+    );
+
+    return {
+      ok:false,
+      reason:"official_service_unavailable"
+    };
+  });
+}
+
+
+/* =========================================================
+   COMPARAISON DOSSIER / DONNÉES OFFICIELLES
+   ========================================================= */
+
+function bociteCheckProfessionalOrganization(
+  organization,
+  official
+){
+
+  const profile =
+    (
+      organization &&
+      organization.organizationProfile &&
+      typeof organization.organizationProfile ===
+        "object"
+    )
+      ? organization.organizationProfile
+      : {};
+
+
+  const checks = {};
+
+
+  const declaredNumber =
+    bociteDigits(
+      profile.siretOrSiren
+    );
+
+
+  const officialSiren =
+    bociteDigits(
+      official.siren
+    );
+
+
+  const officialSiret =
+    bociteDigits(
+      official.siret
+    );
+
+
+  checks.siret_or_siren =
+    (
+      declaredNumber &&
+      (
+        declaredNumber ===
+          officialSiren ||
+        declaredNumber ===
+          officialSiret
+      )
+    );
+
+
+  const declaredName =
+    bociteNormalizeText(
+      profile.organizationName ||
+      organization.name
+    );
+
+
+  const officialName =
+    bociteNormalizeText(
+      official.name
+    );
+
+
+  checks.organization_name =
+    Boolean(
+      declaredName &&
+      officialName &&
+      (
+        declaredName === officialName ||
+        declaredName.includes(
+          officialName
+        ) ||
+        officialName.includes(
+          declaredName
+        )
+      )
+    );
+
+
+  const declaredCommune =
+    bociteNormalizeText(
+      organization.commune
+    );
+
+
+  const officialCommune =
+    bociteNormalizeText(
+      official.commune
+    );
+
+
+  checks.commune =
+    Boolean(
+      declaredCommune &&
+      officialCommune &&
+      declaredCommune ===
+        officialCommune
+    );
+
+
+  const professionalAddress =
+    (
+      organization.category ===
+        "commerce"
+    )
+      ? profile.establishmentAddress
+      : profile.registeredAddress;
+
+
+  checks.establishment_address =
+    Boolean(
+      organization.category !==
+        "commerce" ||
+      String(
+        professionalAddress ||
+        ""
+      ).trim()
+    );
+
+
+  checks.registered_address =
+    Boolean(
+      organization.category !==
+        "entreprise" ||
+      String(
+        professionalAddress ||
+        ""
+      ).trim()
+    );
+
+
+  checks.business_activity =
+    Boolean(
+      String(
+        profile.businessActivity ||
+        official.activity ||
+        ""
+      ).trim()
+    );
+
+
+  checks.responsible_identity =
+    Boolean(
+      String(
+        profile.responsibleIdentity ||
+        ""
+      ).trim()
+    );
+
+
+  checks.responsible_authority =
+    Boolean(
+      String(
+        profile.responsibleAuthority ||
+        ""
+      ).trim()
+    );
+
+
+  checks.email =
+    Boolean(
+      String(
+        profile.email ||
+        organization.ownerEmail ||
+        ""
+      ).trim()
+    );
+
+
+  checks.phone =
+    Boolean(
+      String(
+        profile.phone ||
+        organization.ownerPhone ||
+        ""
+      ).trim()
+    );
+
+
+  return checks;
+}
+
+
+/* =========================================================
+   AGENT CENTRAL
+   ========================================================= */
+
+async function runAutomaticOrganizationAgent(){
+
+  const organization =
+    getOrganization();
+
+
+  if(
+    !organization ||
+    !organization.organizationId
+  ){
+
+    return {
+      ok:false,
+      reason:"organization_not_found"
+    };
+  }
+
+
+  if(
+    organization.category !==
+      "commerce" &&
+    organization.category !==
+      "entreprise"
+  ){
+
+    return {
+      ok:false,
+      reason:
+        "automatic_check_not_available_for_category"
+    };
+  }
+
+
+  if(
+    organization.validationStatus !==
+      "pending_review" &&
+    organization.validationStatus !==
+      "needs_information"
+  ){
+
+    return {
+      ok:false,
+      reason:
+        "organization_not_under_review"
+    };
+  }
+
+
+  const profile =
+    organization.organizationProfile ||
+    {};
+
+
+  const sirenSiret =
+    bociteDigits(
+      profile.siretOrSiren
+    );
+
+
+  if(
+    sirenSiret.length !== 9 &&
+    sirenSiret.length !== 14
+  ){
+
+    return runOrganizationValidationDecision(
+      "needs_information",
+      {
+        reviewedBy:
+          "agent-central-bociteart",
+
+        reason:
+          "SIREN ou SIRET manquant ou incorrect."
+      }
+    );
+  }
+
+
+  const official =
+    await bociteOfficialCompanySearch(
+      sirenSiret
+    );
+
+
+  if(
+    !official ||
+    official.ok !== true
+  ){
+
+    /*
+      Une indisponibilité de la source officielle
+      ne doit jamais produire un refus définitif.
+    */
+
+    if(
+      official &&
+      official.reason ===
+        "official_service_unavailable"
+    ){
+
+      return {
+        ok:false,
+        reason:
+          "official_service_unavailable",
+        retry:true
+      };
+    }
+
+
+    return runOrganizationValidationDecision(
+      "needs_information",
+      {
+        reviewedBy:
+          "agent-central-bociteart",
+
+        reason:
+          "L'identité professionnelle n'a pas été retrouvée dans la source officielle."
+      }
+    );
+  }
+
+
+  const checks =
+    bociteCheckProfessionalOrganization(
+      organization,
+      official
+    );
+
+
+  const validation =
+    checkOrganizationValidation(
+      organization,
+      checks
+    );
+
+
+  if(
+    !validation ||
+    validation.ok !== true ||
+    validation.complete !== true
+  ){
+
+    return runOrganizationValidationDecision(
+      "needs_information",
+      {
+        reviewedBy:
+          "agent-central-bociteart",
+
+        reason:
+          "Certaines informations professionnelles doivent être corrigées ou complétées.",
+
+        checks:
+          checks
+      }
+    );
+  }
+
+
+  /*
+    Tous les contrôles obligatoires
+    sont concordants.
+
+    Le moteur central existant effectue
+    ensuite la validation et émet
+    l'identifiant professionnel permanent
+    ainsi que le code initial.
+  */
+
+  const result =
+    await runOrganizationValidationDecision(
+      "validated",
+      {
+        reviewedBy:
+          "agent-central-bociteart",
+
+        reason:
+          "Contrôles professionnels automatiques conformes.",
+
+        checks:
+          checks
+      }
+    );
+
+
+  if(
+    result &&
+    result.ok === true
+  ){
+
+    addSecurityLog(
+      "automatic_organization_validation",
+      {
+        organizationId:
+          organization.organizationId,
+
+        category:
+          organization.category,
+
+        source:
+          official.source,
+
+        siren:
+          official.siren,
+
+        siret:
+          official.siret,
+
+        checkedAt:
+          new Date().toISOString()
+      }
+    );
+  }
+
+
+  return result;
+}
+   
 window.BoCiteArtRegistration = {
 
   open:
@@ -8139,6 +8800,9 @@ getActiveCollaborators:
 
   runOrganizationValidationDecision:
   runOrganizationValidationDecision,
+
+   runAutomaticOrganizationAgent:
+  runAutomaticOrganizationAgent,
 
 openOrganizationProfile:
   openOrganizationProfileForm, 
