@@ -685,21 +685,56 @@
     }
 
 
-    if(
-      status ===
-        "paid"
-    ){
+  if(
+  status ===
+    "paid"
+){
 
-      payButton.textContent =
-        "Paiement confirmé";
+  payButton.textContent =
+    "Paiement confirmé";
 
-      financeUiSetStatus(
-        "Paiement confirmé. La publication a été automatiquement transmise.",
-        "success"
-      );
+  financeUiSetStatus(
+    "Paiement confirmé. La publication a été automatiquement transmise.",
+    "success"
+  );
 
-      return;
-    }
+
+  /*
+   * PUBLICITÉ COMMERÇANT
+   * Retour vers Publicités & visibilité
+   * après confirmation du paiement.
+   */
+  if(
+    window.bociteAdvertisingPaymentReturn ===
+      true
+  ){
+
+    window.bociteAdvertisingPaymentReturn =
+      false;
+
+    window.setTimeout(
+      function(){
+
+        financeUiRemove();
+
+        if(
+          typeof window.openTicker ===
+            "function"
+        ){
+
+          window.openTicker();
+        }
+
+      },
+      700
+    );
+
+    return;
+  }
+
+
+  return;
+}
 
 
     if(
