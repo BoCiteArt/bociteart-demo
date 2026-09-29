@@ -5302,25 +5302,16 @@ if(
     };
 
 /* =========================================================
-   RETOUR DÉDIÉ — PUBLICITÉS & VISIBILITÉ
+   RETOUR DÉDIÉ — PUBLICITÉ COMMERCE
    ========================================================= */
 
 window.returnToAdvertisingVisibility =
   function(){
 
     /*
-     * Nettoyage complet de toute ancienne
-     * navigation Commerce / Entreprise.
+     * On quitte complètement l'univers
+     * Publicités & visibilité.
      */
-
-    window.BOCITEART_MODAL_CONTEXT =
-      "advertising_visibility";
-
-    window.currentModule =
-      "advertising_visibility";
-
-    window.currentEntrepriseScreen =
-      null;
 
     window.bociteAdvertisingPaymentReturn =
       false;
@@ -5328,6 +5319,20 @@ window.returnToAdvertisingVisibility =
     window.bociteAdvertisingPaymentOrderId =
       "";
 
+    window.BOCITEART_MODAL_CONTEXT =
+      null;
+
+    window.currentModule =
+      null;
+
+    window.currentEntrepriseScreen =
+      null;
+
+
+    /*
+     * Aucun ancien historique Entreprise
+     * ne doit survivre.
+     */
 
     if(
       Array.isArray(
@@ -5342,16 +5347,16 @@ window.returnToAdvertisingVisibility =
 
 
     /*
-     * Reconstruction directe de la racine
-     * Publicités & visibilité.
+     * Retour exclusivement vers
+     * la porte Commerce.
      */
 
     if(
-      typeof window.openTicker ===
+      typeof window.openCommerceModule ===
         "function"
     ){
 
-      window.openTicker();
+      window.openCommerceModule();
 
       return;
 
@@ -5359,11 +5364,10 @@ window.returnToAdvertisingVisibility =
 
 
     alert(
-      "Le service Publicités & visibilité n'est pas disponible."
+      "Le module Commerce n'est pas disponible."
     );
 
   };
-
 /* =========================================================
    ÇA COMMENCE ICI — RETOUR MODALE CENTRALISÉ
    ========================================================= */ 
