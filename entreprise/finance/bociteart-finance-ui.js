@@ -685,7 +685,7 @@
     }
 
 
-  if(
+if(
   status ===
     "paid"
 ){
@@ -700,22 +700,75 @@
 
 
   /*
-   * PUBLICITÉ COMMERÇANT
-   * Retour vers Publicités & visibilité
-   * après confirmation du paiement.
+   * PUBLICITÉ & VISIBILITÉ
+   *
+   * Le paiement appartient à l'univers
+   * publicitaire et ne doit jamais
+   * retourner vers Entreprise.
    */
+
   if(
     window.bociteAdvertisingPaymentReturn ===
-      true
+      true ||
+    window.BOCITEART_MODAL_CONTEXT ===
+      "advertising_visibility"
   ){
 
     window.bociteAdvertisingPaymentReturn =
       false;
 
+    window.bociteAdvertisingPaymentOrderId =
+      "";
+
+    window.BOCITEART_MODAL_CONTEXT =
+      "advertising_visibility";
+
+    window.currentModule =
+      "advertising_visibility";
+
+    window.currentEntrepriseScreen =
+      null;
+
+
+    if(
+      Array.isArray(
+        window.modalHistory
+      )
+    ){
+
+      window.modalHistory.length =
+        0;
+
+    }
+
+
     window.setTimeout(
       function(){
 
         financeUiRemove();
+
+
+        window.BOCITEART_MODAL_CONTEXT =
+          "advertising_visibility";
+
+        window.currentModule =
+          "advertising_visibility";
+
+        window.currentEntrepriseScreen =
+          null;
+
+
+        if(
+          Array.isArray(
+            window.modalHistory
+          )
+        ){
+
+          window.modalHistory.length =
+            0;
+
+        }
+
 
         if(
           typeof window.openTicker ===
@@ -723,19 +776,22 @@
         ){
 
           window.openTicker();
+
         }
 
       },
       700
     );
 
+
     return;
+
   }
 
 
   return;
-}
 
+}
 
     if(
       status ===
