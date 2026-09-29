@@ -1553,6 +1553,10 @@ function passkeyAvailable(){
 
 function getSecurityCapabilities(){
 
+  const webAuthnAvailable =
+    passkeyAvailable();
+
+
   return {
 
     password:
@@ -1567,11 +1571,29 @@ function getSecurityCapabilities(){
     twoFactor:
       true,
 
+    /*
+      Le navigateur/appareil sait utiliser WebAuthn.
+      Cela ne signifie pas encore qu'une Passkey
+      Bo’CitéArt est enregistrée.
+    */
+
+    passkeyAvailable:
+      webAuthnAvailable,
+
+    biometricAvailable:
+      webAuthnAvailable,
+
+    /*
+      Ces deux fonctions resteront désactivées
+      tant que l'enregistrement et la vérification
+      WebAuthn côté serveur ne seront pas raccordés.
+    */
+
     passkey:
-      passkeyAvailable(),
+      false,
 
     biometric:
-      passkeyAvailable(),
+      false,
 
     collaboratorManagement:
       true
@@ -9166,7 +9188,13 @@ getProfessionalAccessState:
 verifyProfessionalInitialAccess:
   verifyProfessionalInitialAccess,
 
-  getProfessionalQuickCodeState:
+setProfessionalQuickCode:
+  setProfessionalQuickCode,
+
+verifyProfessionalQuickCode:
+  verifyProfessionalQuickCode,
+
+getProfessionalQuickCodeState:
   getProfessionalQuickCodeState, 
 
 getCollaborators:
