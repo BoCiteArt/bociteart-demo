@@ -857,43 +857,10 @@ function commerceOpenCentralRegistration(
    ========================================================= */
 
 /* =========================================================
-   ÇA COMMENCE ICI — PUBLICITÉ GRAND BANDEAU PROTÉGÉE
+   ÇA COMMENCE ICI — OUVERTURE PUBLICITÉS
    ========================================================= */
 
 function commerceOpenLargeAdvertising(){
-
-  /*
-   * SÉCURITÉ
-   *
-   * La fonction elle-même contrôle l'accès.
-   * Ainsi, même si elle est appelée depuis
-   * un autre bouton, elle ne peut jamais
-   * contourner la porte professionnelle.
-   */
-
-  const commerceState =
-    commerceCentralAccessState(
-      "commerce"
-    );
-
-  const enterpriseState =
-    commerceCentralAccessState(
-      "entreprise"
-    );
-
-
-  if(
-    !commerceState.ok &&
-    !enterpriseState.ok
-  ){
-
-    alert(
-      "Vous devez d’abord ouvrir votre accès professionnel."
-    );
-
-    return;
-  }
-
 
   if(
     typeof window.openTicker ===
@@ -909,11 +876,10 @@ function commerceOpenLargeAdvertising(){
   alert(
     "Le calendrier Publicités & visibilité n’est pas chargé."
   );
-
 }
 
 /* =========================================================
-   ÇA FINIT ICI — PUBLICITÉ GRAND BANDEAU PROTÉGÉE
+   ÇA FINIT ICI — OUVERTURE PUBLICITÉS
    ========================================================= */
 
 /* =========================================================
