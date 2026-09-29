@@ -2741,13 +2741,160 @@ if(
           on affiche l'état central réel.
         */
 
-        merchantLoginStatus.dataset.state =
-          "warn";
+      merchantLoginStatus.dataset.state =
+  "warn";
 
-        merchantLoginStatus.textContent =
-          commerceCentralAccessMessage(
-            state
-          );
+
+/*
+  =====================================================
+  DOSSIER À COMPLÉTER
+  =====================================================
+*/
+
+if(
+  state.reason ===
+    "needs_information"
+){
+
+  const api =
+    commerceAccountApi();
+
+  const organization =
+    api &&
+    typeof api.getOrganization ===
+      "function"
+      ? api.getOrganization()
+      : null;
+
+
+  const reason =
+    organization &&
+    organization.validationReason
+      ? String(
+          organization.validationReason
+        ).trim()
+      : "";
+
+
+  merchantLoginStatus.innerHTML = "";
+
+
+  const message =
+    document.createElement(
+      "div"
+    );
+
+
+  message.style.fontSize =
+    "14px";
+
+  message.style.lineHeight =
+    "1.5";
+
+
+  message.innerHTML =
+    "<strong>Votre dossier doit être complété.</strong>" +
+    (
+      reason
+        ? "<br><br>" + reason
+        : "<br><br>Certaines informations professionnelles doivent être corrigées ou complétées."
+    );
+
+
+  const completeBtn =
+    document.createElement(
+      "button"
+    );
+
+
+  completeBtn.type =
+    "button";
+
+  completeBtn.textContent =
+    "Compléter mon dossier";
+
+
+  completeBtn.style.width =
+    "100%";
+
+  completeBtn.style.marginTop =
+    "14px";
+
+  completeBtn.style.padding =
+    "12px";
+
+  completeBtn.style.border =
+    "2px solid #2f5d46";
+
+  completeBtn.style.borderRadius =
+    "10px";
+
+  completeBtn.style.background =
+    "#ffffff";
+
+  completeBtn.style.color =
+    "#2f5d46";
+
+  completeBtn.style.fontSize =
+    "14px";
+
+  completeBtn.style.fontWeight =
+    "700";
+
+  completeBtn.style.cursor =
+    "pointer";
+
+
+  completeBtn.onclick =
+    ()=>{
+
+      if(
+        api &&
+        typeof api.openOrganizationProfile ===
+          "function"
+      ){
+
+        api.openOrganizationProfile();
+
+        return;
+      }
+
+
+      merchantLoginStatus.innerHTML =
+        "";
+
+      merchantLoginStatus.dataset.state =
+        "warn";
+
+      merchantLoginStatus.textContent =
+        "La fiche de votre organisation ne peut pas être ouverte actuellement.";
+    };
+
+
+  merchantLoginStatus.appendChild(
+    message
+  );
+
+
+  merchantLoginStatus.appendChild(
+    completeBtn
+  );
+
+
+  return;
+}
+
+
+/*
+  =====================================================
+  AUTRES ÉTATS DU DOSSIER
+  =====================================================
+*/
+
+merchantLoginStatus.textContent =
+  commerceCentralAccessMessage(
+    state
+  );
       }
     };
 }
