@@ -2812,9 +2812,10 @@ function getOrganizationProvidedInformation(
 
   return {
 
-    organization_name:
+  organization_name:
       provided(
-        profile.organizationName
+        profile.organizationName ||
+        current.name
       ),
 
     commune:
