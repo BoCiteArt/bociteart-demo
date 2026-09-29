@@ -5251,129 +5251,119 @@ function ensureModalHelpers(){
     };
 
 
-  window.backModal =
-    function(){
+ /* =========================================================
+   ÇA COMMENCE ICI — RETOUR MODALE CENTRALISÉ
+   ========================================================= */
 
-      if(
-        !modal ||
-        !modalTitle ||
-        !modalBody
-      ){
+window.backModal =
+  function(){
 
-        return;
+    if(
+      !modal ||
+      !modalTitle ||
+      !modalBody
+    ){
 
-      }
+      return;
+    }
 
 
-      /*
-       * Le contexte Santé ne doit jamais
-       * repartir vers Commerce / Entreprise.
-       */
+    /*
+     * PUBLICITÉS & VISIBILITÉ
+     *
+     * On ne consulte JAMAIS modalHistory.
+     * Un ancien écran Commerce / Entreprise
+     * ne peut donc plus être restauré.
+     */
+    if(
+      window.BOCITEART_MODAL_CONTEXT ===
+        "advertising_visibility"
+    ){
 
-      if(
-        window.BOCITEART_MODAL_CONTEXT ===
-          "citizen_health_help"
-      ){
+      window.modalHistory = [];
 
-        window.modalHistory =
-          [];
+      window.currentModule =
+        "advertising_visibility";
 
-        return;
-
-      }
-
-/*
- * RETOUR PROTÉGÉ
- * PUBLICITÉS & VISIBILITÉ
- *
- * Une publicité commerçant ne doit jamais
- * restaurer un ancien écran Entreprise.
- */
-
-if(
-  window.BOCITEART_MODAL_CONTEXT ===
-    "advertising_visibility" ||
-  window.currentModule ===
-    "advertising_visibility" ||
-  window.bociteAdvertisingPaymentReturn ===
-    true
-){
-
-  window.modalHistory = [];
-
-  window.BOCITEART_MODAL_CONTEXT =
-    "advertising_visibility";
-
-  window.currentModule =
-    "advertising_visibility";
-
-  window.currentEntrepriseScreen =
-    null;
-
-  window.bociteAdvertisingPaymentReturn =
-    false;
-
-  window.bociteAdvertisingPaymentOrderId =
-    "";
-
-  if(
-    typeof window.openTicker ===
-      "function"
-  ){
-
-    window.openTicker();
-
-  }
-
-  return;
-
-}
-     
-      const previous =
-        window.modalHistory.pop();
+      window.currentEntrepriseScreen =
+        null;
 
 
       if(
-        !previous
+        typeof window.openTicker ===
+          "function"
       ){
 
-        window.closeModal();
-
-        return;
-
+        window.openTicker();
       }
 
-
-      modalTitle.textContent =
-        previous.title || "";
-
-
-      const backBtn =
-        window.modalHistory.length
-
-          ? `
-
-            <button
-              data-bociteart-auto-back="1"
-              class="choiceBtn"
-              style="margin-bottom:12px;"
-              onclick="window.backModal()"
-            >
-              Retour
-            </button>
-
-          `
-
-          : "";
+      return;
+    }
 
 
-      modalBody.innerHTML =
-        backBtn +
-        cleanAutoBackButton(
-          previous.html || ""
-        );
+    /*
+     * SANTÉ + AIDE
+     */
+    if(
+      window.BOCITEART_MODAL_CONTEXT ===
+        "citizen_health_help"
+    ){
 
-    };
+      window.modalHistory = [];
+
+      return;
+    }
+
+
+    /*
+     * RETOUR NORMAL DES AUTRES MODALES
+     */
+    const previous =
+      window.modalHistory.pop();
+
+
+    if(!previous){
+
+      window.closeModal();
+
+      return;
+    }
+
+
+    modalTitle.textContent =
+      previous.title || "";
+
+
+    const backBtn =
+      window.modalHistory.length
+
+        ? `
+
+          <button
+            data-bociteart-auto-back="1"
+            class="choiceBtn"
+            style="margin-bottom:12px;"
+            onclick="window.backModal()"
+          >
+            Retour
+          </button>
+
+        `
+
+        : "";
+
+
+    modalBody.innerHTML =
+      backBtn +
+      cleanAutoBackButton(
+        previous.html || ""
+      );
+
+  };
+
+/* =========================================================
+   ÇA FINIT ICI — RETOUR MODALE CENTRALISÉ
+   ========================================================= */
 
 
   window.closeModal =
