@@ -1210,8 +1210,74 @@ if(
     };
 
 
-    closeButton.onclick =
-      financeUiRemove;
+   closeButton.onclick =
+  function(){
+
+    /*
+     * RETOUR DEPUIS UNE PUBLICITÉ
+     *
+     * La Finance se ferme puis
+     * Publicités & visibilité est
+     * reconstruite directement.
+     */
+
+    if(
+      window.bociteAdvertisingPaymentReturn ===
+        true ||
+      window.BOCITEART_MODAL_CONTEXT ===
+        "advertising_visibility"
+    ){
+
+      window.bociteAdvertisingPaymentReturn =
+        false;
+
+      window.bociteAdvertisingPaymentOrderId =
+        "";
+
+
+      financeUiRemove();
+
+
+      window.BOCITEART_MODAL_CONTEXT =
+        "advertising_visibility";
+
+      window.currentModule =
+        "advertising_visibility";
+
+      window.currentEntrepriseScreen =
+        null;
+
+
+      if(
+        Array.isArray(
+          window.modalHistory
+        )
+      ){
+
+        window.modalHistory.length =
+          0;
+
+      }
+
+
+      if(
+        typeof window.openTicker ===
+          "function"
+      ){
+
+        window.openTicker();
+
+      }
+
+
+      return;
+
+    }
+
+
+    financeUiRemove();
+
+  };
 
 
     confirmBox.onchange =
