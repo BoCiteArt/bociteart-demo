@@ -737,22 +737,49 @@ if(
 /* =========================================================
    ÇA FINIT ICI — PAIEMENT ACCEPTÉ / RETOUR AUTOMATIQUE
    ========================================================= */
-    if(
-      status ===
-        "refused"
-    ){
+   if(
+  status ===
+    "refused"
+){
 
-      payButton.textContent =
-        "Paiement refusé";
+  payButton.textContent =
+    "Paiement refusé";
 
-      financeUiSetStatus(
-        "Paiement refusé. Aucune activation n’est déclenchée.",
-        "error"
-      );
+  financeUiSetStatus(
+    "Votre paiement est refusé. Aucune activation n’est déclenchée.",
+    "error"
+  );
 
-      return;
-    }
+  if(
+    window.BOCITEART_PAYMENT_RETURN ===
+      "advertising_visibility"
+  ){
 
+    window.BOCITEART_PAYMENT_RETURN =
+      "";
+
+    window.setTimeout(
+      function(){
+
+        financeUiRemove();
+
+        if(
+          typeof window.openTicker ===
+            "function"
+        ){
+
+          window.openTicker();
+
+        }
+
+      },
+      1500
+    );
+
+  }
+
+  return;
+}
 
     if(
       status ===
