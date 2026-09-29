@@ -5163,6 +5163,32 @@ if(
 
 }
 else if(
+  window.bociteAdvertisingPaymentReturn === true
+){
+
+  backBtn = `
+
+    <button
+      data-bociteart-auto-back="1"
+      class="choiceBtn"
+      style="margin-bottom:12px;"
+      onclick="
+        window.bociteAdvertisingPaymentReturn = false;
+
+        if(
+          typeof window.openTicker === 'function'
+        ){
+          window.openTicker();
+        }
+      "
+    >
+      Retour
+    </button>
+
+  `;
+
+}
+else if(
   window.currentModule ===
     "entreprise" &&
   window.currentEntrepriseScreen &&
@@ -24876,19 +24902,29 @@ const contacts =
               }
 
 
-              financialModule
-                .openCentralPaymentPage({
+            /*
+ * La commande qui suit provient de
+ * Publicités & visibilité.
+ *
+ * Après le paiement, le Retour doit donc
+ * revenir à cette page et ne jamais être
+ * repris par la navigation Entreprise.
+ */
+window.bociteAdvertisingPaymentReturn = true;
 
-                  order:
-                    order,
+financialModule
+  .openCentralPaymentPage({
 
-                  allowCard:
-                    true,
+    order:
+      order,
 
-                  allowBankTransfer:
-                    true
+    allowCard:
+      true,
 
-                });
+    allowBankTransfer:
+      true
+
+  });
 
             };
 
