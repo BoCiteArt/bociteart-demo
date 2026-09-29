@@ -8898,9 +8898,32 @@ async function runAutomaticOrganizationAgent(){
   }
 
 
-  const profile =
-    organization.organizationProfile ||
-    {};
+   const profile =
+    (
+      organization.organizationProfile &&
+      typeof organization.organizationProfile === "object"
+    )
+      ? organization.organizationProfile
+      : {};
+
+  const organizationName =
+    String(
+      profile.organizationName ||
+      organization.name ||
+      ""
+    ).trim();
+
+  if(organizationName){
+
+    profile.organizationName =
+      organizationName;
+
+    organization.name =
+      organizationName;
+
+    organization.organizationProfile =
+      profile;
+  }
 
 
   const sirenSiret =
