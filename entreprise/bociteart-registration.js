@@ -8716,34 +8716,30 @@ function bociteCheckProfessionalOrganization(
     );
 
 
-  const declaredName =
-    bociteNormalizeText(
-      profile.organizationName ||
-      organization.name
-    );
+ const declaredName =
+  String(
+    profile.organizationName ||
+    organization.name ||
+    ""
+  ).trim();
 
 
-  const officialName =
-    bociteNormalizeText(
-      official.name
-    );
+/*
+  Le nom déclaré correspond au nom utilisé
+  par le commerce dans Bo’CitéArt.
 
+  Il peut s'agir d'une enseigne différente
+  de la dénomination juridique retournée
+  par la source officielle.
 
-  checks.organization_name =
-    Boolean(
-      declaredName &&
-      officialName &&
-      (
-        declaredName === officialName ||
-        declaredName.includes(
-          officialName
-        ) ||
-        officialName.includes(
-          declaredName
-        )
-      )
-    );
+  L'identité juridique est contrôlée
+  séparément par le SIREN / SIRET.
+*/
 
+checks.organization_name =
+  Boolean(
+    declaredName
+  );
 
   const declaredCommune =
     bociteNormalizeText(
