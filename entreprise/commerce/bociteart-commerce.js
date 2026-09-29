@@ -2651,244 +2651,766 @@ function openCommerceModule(){
       }
 
 
-      if(
-        merchantInternalOpenBtn &&
-        merchantInternalSpace
-      ){
+     if(
+  merchantInternalOpenBtn &&
+  merchantInternalSpace
+){
 
-        merchantInternalOpenBtn.onclick =
-          async ()=>{
+  merchantInternalOpenBtn.onclick =
+    async ()=>{
 
-            const api =
-              commerceAccountApi();
+      const api =
+        commerceAccountApi();
 
-            let state =
-              commerceCentralAccessState(
-                "commerce"
+      let state =
+        commerceCentralAccessState(
+          "commerce"
+        );
+
+
+      /*
+        =====================================================
+        ACCÈS DÉJÀ ACTIF
+        =====================================================
+      */
+
+      if(state.ok){
+
+        const quickState =
+          (
+            api &&
+            typeof api.getProfessionalQuickCodeState ===
+              "function"
+          )
+            ? api.getProfessionalQuickCodeState()
+            : null;
+
+
+        /*
+          L'accès professionnel a déjà été activé
+          mais aucun code rapide personnel
+          n'a encore été créé.
+
+          Cela couvre notamment le cas où
+          l'utilisateur a quitté l'écran juste
+          après son premier code initial.
+        */
+
+        if(
+          !quickState ||
+          quickState.configured !== true
+        ){
+
+          if(
+            !api ||
+            typeof api.setProfessionalQuickCode !==
+              "function"
+          ){
+
+            merchantLoginStatus.style.display =
+              "block";
+
+            merchantLoginStatus.dataset.state =
+              "error";
+
+            merchantLoginStatus.textContent =
+              "Le service de création du code personnel n’est pas disponible.";
+
+            return;
+          }
+
+
+          const quickCode =
+            window.prompt(
+              "Choisissez votre code personnel de 4 à 6 chiffres."
+            );
+
+
+          if(quickCode === null){
+
+            merchantLoginStatus.style.display =
+              "block";
+
+            merchantLoginStatus.dataset.state =
+              "warn";
+
+            merchantLoginStatus.textContent =
+              "Choisissez votre code personnel pour terminer la sécurisation de votre accès.";
+
+            return;
+          }
+
+
+          const cleanQuickCode =
+            String(
+              quickCode
+            )
+            .replace(
+              /\D/g,
+              ""
+            );
+
+
+          if(
+            cleanQuickCode.length < 4 ||
+            cleanQuickCode.length > 6
+          ){
+
+            merchantLoginStatus.style.display =
+              "block";
+
+            merchantLoginStatus.dataset.state =
+              "warn";
+
+            merchantLoginStatus.textContent =
+              "Le code personnel doit comporter de 4 à 6 chiffres.";
+
+            return;
+          }
+
+
+          const confirmation =
+            window.prompt(
+              "Confirmez votre code personnel."
+            );
+
+
+          if(
+            confirmation === null ||
+            String(
+              confirmation
+            )
+            .replace(
+              /\D/g,
+              ""
+            ) !==
+            cleanQuickCode
+          ){
+
+            merchantLoginStatus.style.display =
+              "block";
+
+            merchantLoginStatus.dataset.state =
+              "warn";
+
+            merchantLoginStatus.textContent =
+              "Les deux codes personnels ne correspondent pas.";
+
+            return;
+          }
+
+
+          const quickCreation =
+            await api.setProfessionalQuickCode(
+              cleanQuickCode
+            );
+
+
+          if(
+            !quickCreation ||
+            quickCreation.ok !== true
+          ){
+
+            merchantLoginStatus.style.display =
+              "block";
+
+            merchantLoginStatus.dataset.state =
+              "error";
+
+            merchantLoginStatus.textContent =
+              "Le code personnel n’a pas été enregistré.";
+
+            return;
+          }
+
+
+          merchantLoginStatus.style.display =
+            "block";
+
+          merchantLoginStatus.dataset.state =
+            "ok";
+
+          merchantLoginStatus.textContent =
+            "Votre code personnel est enregistré.";
+
+
+          merchantInternalSpace.style.display =
+            "block";
+
+          merchantLoginGate.style.display =
+            "none";
+
+
+          fillMerchantIdentity();
+
+
+          merchantInternalSpace.scrollIntoView({
+            behavior:"smooth",
+            block:"start"
+          });
+
+
+          return;
+        }
+
+
+        /*
+          L'accès est déjà activé et
+          le code personnel existe.
+
+          On contrôle désormais le code rapide.
+        */
+
+        const identifier =
+          String(
+            merchantLoginId
+              ? merchantLoginId.value
+              : ""
+          ).trim();
+
+
+        const quickCode =
+          String(
+            merchantLoginCode
+              ? merchantLoginCode.value
+              : ""
+          )
+          .replace(
+            /\D/g,
+            ""
+          );
+
+
+        if(
+          !identifier ||
+          !quickCode
+        ){
+
+          merchantLoginStatus.style.display =
+            "block";
+
+          merchantLoginStatus.dataset.state =
+            "warn";
+
+          merchantLoginStatus.textContent =
+            "Renseignez votre identifiant professionnel et votre code personnel.";
+
+          return;
+        }
+
+
+        const organization =
+          (
+            api &&
+            typeof api.getOrganization ===
+              "function"
+          )
+            ? api.getOrganization()
+            : null;
+
+
+        if(
+          !organization ||
+          String(
+            organization.professionalIdentifier ||
+            ""
+          ).trim() !==
+          identifier
+        ){
+
+          merchantLoginStatus.style.display =
+            "block";
+
+          merchantLoginStatus.dataset.state =
+            "warn";
+
+          merchantLoginStatus.textContent =
+            "Identifiant professionnel incorrect.";
+
+          return;
+        }
+
+
+        if(
+          !api ||
+          typeof api.verifyProfessionalQuickCode !==
+            "function"
+        ){
+
+          merchantLoginStatus.style.display =
+            "block";
+
+          merchantLoginStatus.dataset.state =
+            "error";
+
+          merchantLoginStatus.textContent =
+            "Le service de contrôle du code personnel n’est pas disponible.";
+
+          return;
+        }
+
+
+        merchantInternalOpenBtn.disabled =
+          true;
+
+
+        try{
+
+          const quickResult =
+            await api.verifyProfessionalQuickCode(
+              quickCode
+            );
+
+
+          if(
+            !quickResult ||
+            quickResult.ok !== true
+          ){
+
+            const failures =
+              Number(
+                quickResult &&
+                quickResult.failures ||
+                0
               );
 
 
-            if(state.ok){
+            merchantLoginStatus.style.display =
+              "block";
 
-              merchantInternalSpace.style.display =
-                "block";
-
-              fillMerchantIdentity();
-
-              merchantLoginGate.style.display =
-                "none";
-
-              merchantInternalSpace.scrollIntoView({
-                behavior:"smooth",
-                block:"start"
-              });
-
-              return;
-            }
+            merchantLoginStatus.dataset.state =
+              "warn";
 
 
-            if(
-              state.reason !==
-                "initial_access_required"
-            ){
-
-              if(merchantLoginStatus){
-
-                merchantLoginStatus.style.display =
-                  "block";
-
-                merchantLoginStatus.dataset.state =
-                  "warn";
-
-                merchantLoginStatus.textContent =
-                  commerceCentralAccessMessage(
-                    state
-                  );
-              }
-
-              return;
-            }
-
-
-            const identifier =
-              String(
-                merchantLoginId
-                  ? merchantLoginId.value
-                  : ""
-              ).trim();
-
-
-            const code =
-              String(
-                merchantLoginCode
-                  ? merchantLoginCode.value
-                  : ""
-              ).trim();
-
-
-            if(
-              !identifier ||
-              !code
-            ){
-
-              merchantLoginStatus.style.display =
-                "block";
-
-              merchantLoginStatus.dataset.state =
-                "warn";
+            if(failures >= 3){
 
               merchantLoginStatus.textContent =
-                "Renseignez votre identifiant professionnel et votre code d’accès initial.";
+                "Code personnel incorrect. Utilisez votre code rapide personnel.";
 
-              return;
+            }else{
+
+              merchantLoginStatus.textContent =
+                "Code personnel incorrect.";
             }
 
 
-            if(
-              !api ||
-              typeof api.verifyProfessionalInitialAccess !==
-                "function"
-            ){
-
-              merchantLoginStatus.style.display =
-                "block";
-
-              merchantLoginStatus.dataset.state =
-                "error";
-
-              merchantLoginStatus.textContent =
-                "Le service central d’activation professionnelle n’est pas disponible.";
-
-              return;
-            }
+            return;
+          }
 
 
-            merchantInternalOpenBtn.disabled =
-              true;
+          if(merchantLoginCode){
+
+            merchantLoginCode.value =
+              "";
+          }
 
 
-            try{
+          merchantLoginStatus.style.display =
+            "block";
 
-              const result =
-                await api.verifyProfessionalInitialAccess(
-                  identifier,
-                  code
-                );
+          merchantLoginStatus.dataset.state =
+            "ok";
 
-
-              if(
-                !result ||
-                result.ok !== true
-              ){
-
-                const reasons = {
-
-                  invalid_professional_identifier:
-                    "Identifiant professionnel incorrect.",
-
-                  invalid_initial_access_code:
-                    "Code d’accès initial incorrect.",
-
-                  initial_access_already_used:
-                    "Ce code initial a déjà été utilisé.",
-
-                  initial_access_not_issued:
-                    "Aucun code initial n’a encore été émis.",
-
-                  organization_not_validated:
-                    "L’organisation n’est pas encore validée.",
-
-                  organization_not_found:
-                    "Aucune organisation professionnelle n’a été trouvée."
-
-                };
+          merchantLoginStatus.textContent =
+            "Accès professionnel validé.";
 
 
-                merchantLoginStatus.style.display =
-                  "block";
+          merchantInternalSpace.style.display =
+            "block";
 
-                merchantLoginStatus.dataset.state =
-                  "warn";
-
-                merchantLoginStatus.textContent =
-                  reasons[
-                    result &&
-                    result.reason
-                  ] ||
-                  "L’activation professionnelle a échoué.";
-
-                return;
-              }
+          merchantLoginGate.style.display =
+            "none";
 
 
-              state =
-                commerceCentralAccessState(
-                  "commerce"
-                );
+          fillMerchantIdentity();
 
 
-              if(!state.ok){
-
-                merchantLoginStatus.style.display =
-                  "block";
-
-                merchantLoginStatus.dataset.state =
-                  "warn";
-
-                merchantLoginStatus.textContent =
-                  commerceCentralAccessMessage(
-                    state
-                  );
-
-                return;
-              }
+          merchantInternalSpace.scrollIntoView({
+            behavior:"smooth",
+            block:"start"
+          });
 
 
-              merchantLoginStatus.style.display =
-                "block";
+          return;
 
-              merchantLoginStatus.dataset.state =
-                "ok";
+        }catch(error){
 
-              merchantLoginStatus.textContent =
-                "Accès professionnel activé.";
-
-
-              merchantInternalSpace.style.display =
-                "block";
-
-              merchantLoginGate.style.display =
-                "none";
+          console.error(
+            "Bo'CitéArt — accès Commerce :",
+            error
+          );
 
 
-              fillMerchantIdentity();
+          merchantLoginStatus.style.display =
+            "block";
+
+          merchantLoginStatus.dataset.state =
+            "error";
+
+          merchantLoginStatus.textContent =
+            "L’accès professionnel n’a pas abouti.";
 
 
-              merchantInternalSpace.scrollIntoView({
-                behavior:"smooth",
-                block:"start"
-              });
+          return;
 
-            }catch(error){
+        }finally{
 
-              merchantLoginStatus.style.display =
-                "block";
-
-              merchantLoginStatus.dataset.state =
-                "error";
-
-              merchantLoginStatus.textContent =
-                "L’activation professionnelle a échoué.";
-
-            }finally{
-
-              merchantInternalOpenBtn.disabled =
-                false;
-            }
-          };
+          merchantInternalOpenBtn.disabled =
+            false;
+        }
       }
 
 
+      /*
+        =====================================================
+        PREMIER ACCÈS PROFESSIONNEL
+        =====================================================
+      */
+
+      if(
+        state.reason !==
+          "initial_access_required"
+      ){
+
+        if(merchantLoginStatus){
+
+          merchantLoginStatus.style.display =
+            "block";
+
+          merchantLoginStatus.dataset.state =
+            "warn";
+
+          merchantLoginStatus.textContent =
+            commerceCentralAccessMessage(
+              state
+            );
+        }
+
+        return;
+      }
+
+
+      const identifier =
+        String(
+          merchantLoginId
+            ? merchantLoginId.value
+            : ""
+        ).trim();
+
+
+      const code =
+        String(
+          merchantLoginCode
+            ? merchantLoginCode.value
+            : ""
+        ).trim();
+
+
+      if(
+        !identifier ||
+        !code
+      ){
+
+        merchantLoginStatus.style.display =
+          "block";
+
+        merchantLoginStatus.dataset.state =
+          "warn";
+
+        merchantLoginStatus.textContent =
+          "Renseignez votre identifiant professionnel et votre code d’accès initial.";
+
+        return;
+      }
+
+
+      if(
+        !api ||
+        typeof api.verifyProfessionalInitialAccess !==
+          "function"
+      ){
+
+        merchantLoginStatus.style.display =
+          "block";
+
+        merchantLoginStatus.dataset.state =
+          "error";
+
+        merchantLoginStatus.textContent =
+          "Le service central d’activation professionnelle n’est pas disponible.";
+
+        return;
+      }
+
+
+      merchantInternalOpenBtn.disabled =
+        true;
+
+
+      try{
+
+        const result =
+          await api.verifyProfessionalInitialAccess(
+            identifier,
+            code
+          );
+
+
+        if(
+          !result ||
+          result.ok !== true
+        ){
+
+          const reasons = {
+
+            invalid_professional_identifier:
+              "Identifiant professionnel incorrect.",
+
+            invalid_initial_access_code:
+              "Code d’accès initial incorrect.",
+
+            initial_access_already_used:
+              "Ce code initial a déjà été utilisé.",
+
+            initial_access_not_issued:
+              "Aucun code initial n’a encore été émis.",
+
+            organization_not_validated:
+              "L’organisation n’est pas encore validée.",
+
+            organization_not_found:
+              "Aucune organisation professionnelle n’a été trouvée."
+
+          };
+
+
+          merchantLoginStatus.style.display =
+            "block";
+
+          merchantLoginStatus.dataset.state =
+            "warn";
+
+          merchantLoginStatus.textContent =
+            reasons[
+              result &&
+              result.reason
+            ] ||
+            "L’activation professionnelle a échoué.";
+
+
+          return;
+        }
+
+
+        /*
+          =====================================================
+          LE CODE INITIAL EST MAINTENANT DÉTRUIT.
+
+          Création immédiate du code personnel.
+          =====================================================
+        */
+
+        if(
+          typeof api.setProfessionalQuickCode !==
+            "function"
+        ){
+
+          merchantLoginStatus.style.display =
+            "block";
+
+          merchantLoginStatus.dataset.state =
+            "error";
+
+          merchantLoginStatus.textContent =
+            "L’accès est activé, mais le service de création du code personnel n’est pas disponible.";
+
+          return;
+        }
+
+
+        const newQuickCode =
+          window.prompt(
+            "Votre premier accès est validé.\n\nChoisissez maintenant votre code personnel de 4 à 6 chiffres."
+          );
+
+
+        if(newQuickCode === null){
+
+          merchantLoginStatus.style.display =
+            "block";
+
+          merchantLoginStatus.dataset.state =
+            "warn";
+
+          merchantLoginStatus.textContent =
+            "Votre accès est activé. Choisissez votre code personnel pour terminer la sécurisation.";
+
+          return;
+        }
+
+
+        const cleanNewQuickCode =
+          String(
+            newQuickCode
+          )
+          .replace(
+            /\D/g,
+            ""
+          );
+
+
+        if(
+          cleanNewQuickCode.length < 4 ||
+          cleanNewQuickCode.length > 6
+        ){
+
+          merchantLoginStatus.style.display =
+            "block";
+
+          merchantLoginStatus.dataset.state =
+            "warn";
+
+          merchantLoginStatus.textContent =
+            "Le code personnel doit comporter de 4 à 6 chiffres.";
+
+          return;
+        }
+
+
+        const confirmation =
+          window.prompt(
+            "Confirmez votre code personnel."
+          );
+
+
+        if(
+          confirmation === null ||
+          String(
+            confirmation
+          )
+          .replace(
+            /\D/g,
+            ""
+          ) !==
+          cleanNewQuickCode
+        ){
+
+          merchantLoginStatus.style.display =
+            "block";
+
+          merchantLoginStatus.dataset.state =
+            "warn";
+
+          merchantLoginStatus.textContent =
+            "Les deux codes personnels ne correspondent pas.";
+
+          return;
+        }
+
+
+        const quickResult =
+          await api.setProfessionalQuickCode(
+            cleanNewQuickCode
+          );
+
+
+        if(
+          !quickResult ||
+          quickResult.ok !== true
+        ){
+
+          merchantLoginStatus.style.display =
+            "block";
+
+          merchantLoginStatus.dataset.state =
+            "error";
+
+          merchantLoginStatus.textContent =
+            "Le code personnel n’a pas été enregistré.";
+
+          return;
+        }
+
+
+        state =
+          commerceCentralAccessState(
+            "commerce"
+          );
+
+
+        if(!state.ok){
+
+          merchantLoginStatus.style.display =
+            "block";
+
+          merchantLoginStatus.dataset.state =
+            "warn";
+
+          merchantLoginStatus.textContent =
+            commerceCentralAccessMessage(
+              state
+            );
+
+          return;
+        }
+
+
+        if(merchantLoginCode){
+
+          merchantLoginCode.value =
+            "";
+        }
+
+
+        merchantLoginStatus.style.display =
+          "block";
+
+        merchantLoginStatus.dataset.state =
+          "ok";
+
+        merchantLoginStatus.textContent =
+          "Accès professionnel activé. Votre code personnel est enregistré.";
+
+
+        merchantInternalSpace.style.display =
+          "block";
+
+        merchantLoginGate.style.display =
+          "none";
+
+
+        fillMerchantIdentity();
+
+
+        merchantInternalSpace.scrollIntoView({
+          behavior:"smooth",
+          block:"start"
+        });
+
+      }catch(error){
+
+        console.error(
+          "Bo'CitéArt — premier accès Commerce :",
+          error
+        );
+
+
+        merchantLoginStatus.style.display =
+          "block";
+
+        merchantLoginStatus.dataset.state =
+          "error";
+
+        merchantLoginStatus.textContent =
+          "L’activation professionnelle a échoué.";
+
+      }finally{
+
+        merchantInternalOpenBtn.disabled =
+          false;
+      }
+    };
+}
       /* =====================================================
          FICHE COMMERCE CENTRALE
          ===================================================== */
