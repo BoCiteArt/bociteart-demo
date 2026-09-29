@@ -1209,56 +1209,22 @@ if(
         payButton
     };
 
+ /* =========================================================
+   ÇA COMMENCE ICI — RETOUR DEPUIS LE PAIEMENT PUBLICITAIRE
+   ========================================================= */
 
-   closeButton.onclick =
+closeButton.onclick =
   function(){
 
-    /*
-     * RETOUR DEPUIS UNE PUBLICITÉ
-     *
-     * La Finance se ferme puis
-     * Publicités & visibilité est
-     * reconstruite directement.
-     */
-
     if(
-      window.bociteAdvertisingPaymentReturn ===
-        true ||
-      window.BOCITEART_MODAL_CONTEXT ===
+      window.BOCITEART_PAYMENT_RETURN ===
         "advertising_visibility"
     ){
 
-      window.bociteAdvertisingPaymentReturn =
-        false;
-
-      window.bociteAdvertisingPaymentOrderId =
+      window.BOCITEART_PAYMENT_RETURN =
         "";
 
-
       financeUiRemove();
-
-
-      window.BOCITEART_MODAL_CONTEXT =
-        "advertising_visibility";
-
-      window.currentModule =
-        "advertising_visibility";
-
-      window.currentEntrepriseScreen =
-        null;
-
-
-      if(
-        Array.isArray(
-          window.modalHistory
-        )
-      ){
-
-        window.modalHistory.length =
-          0;
-
-      }
-
 
       if(
         typeof window.openTicker ===
@@ -1269,16 +1235,16 @@ if(
 
       }
 
-
       return;
-
     }
-
 
     financeUiRemove();
 
   };
 
+/* =========================================================
+   ÇA FINIT ICI — RETOUR DEPUIS LE PAIEMENT PUBLICITAIRE
+   ========================================================= */
 
     confirmBox.onchange =
       function(){
