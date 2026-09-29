@@ -24912,6 +24912,39 @@ const contacts =
  */
 window.bociteAdvertisingPaymentReturn = true;
 
+/*
+ * La publicité conserve son univers
+ * pendant tout le parcours de paiement.
+ */
+
+window.BOCITEART_MODAL_CONTEXT =
+  "advertising_visibility";
+
+window.currentModule =
+  "advertising_visibility";
+
+window.currentEntrepriseScreen =
+  null;
+
+window.bociteAdvertisingPaymentReturn =
+  true;
+
+window.bociteAdvertisingPaymentOrderId =
+  order && order.id
+    ? String(order.id)
+    : "";
+
+if(
+  Array.isArray(
+    window.modalHistory
+  )
+){
+
+  window.modalHistory.length =
+    0;
+
+}
+
 financialModule
   .openCentralPaymentPage({
 
