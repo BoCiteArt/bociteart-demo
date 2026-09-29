@@ -685,6 +685,10 @@
     }
 
 
+/* =========================================================
+   ÇA COMMENCE ICI — PAIEMENT ACCEPTÉ / RETOUR AUTOMATIQUE
+   ========================================================= */
+
 if(
   status ===
     "paid"
@@ -694,81 +698,23 @@ if(
     "Paiement confirmé";
 
   financeUiSetStatus(
-    "Paiement confirmé. La publication a été automatiquement transmise.",
+    "Votre paiement est accepté. Votre publicité a été automatiquement transmise.",
     "success"
   );
 
 
-  /*
-   * PUBLICITÉ & VISIBILITÉ
-   *
-   * Le paiement appartient à l'univers
-   * publicitaire et ne doit jamais
-   * retourner vers Entreprise.
-   */
-
   if(
-    window.bociteAdvertisingPaymentReturn ===
-      true ||
-    window.BOCITEART_MODAL_CONTEXT ===
+    window.BOCITEART_PAYMENT_RETURN ===
       "advertising_visibility"
   ){
 
-    window.bociteAdvertisingPaymentReturn =
-      false;
-
-    window.bociteAdvertisingPaymentOrderId =
+    window.BOCITEART_PAYMENT_RETURN =
       "";
-
-    window.BOCITEART_MODAL_CONTEXT =
-      "advertising_visibility";
-
-    window.currentModule =
-      "advertising_visibility";
-
-    window.currentEntrepriseScreen =
-      null;
-
-
-    if(
-      Array.isArray(
-        window.modalHistory
-      )
-    ){
-
-      window.modalHistory.length =
-        0;
-
-    }
-
 
     window.setTimeout(
       function(){
 
         financeUiRemove();
-
-
-        window.BOCITEART_MODAL_CONTEXT =
-          "advertising_visibility";
-
-        window.currentModule =
-          "advertising_visibility";
-
-        window.currentEntrepriseScreen =
-          null;
-
-
-        if(
-          Array.isArray(
-            window.modalHistory
-          )
-        ){
-
-          window.modalHistory.length =
-            0;
-
-        }
-
 
         if(
           typeof window.openTicker ===
@@ -780,19 +726,17 @@ if(
         }
 
       },
-      700
+      1500
     );
-
-
-    return;
 
   }
 
-
   return;
-
 }
 
+/* =========================================================
+   ÇA FINIT ICI — PAIEMENT ACCEPTÉ / RETOUR AUTOMATIQUE
+   ========================================================= */
     if(
       status ===
         "refused"
