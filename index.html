@@ -5149,93 +5149,75 @@ function ensureModalHelpers(){
        * dans Annuaire santé + aide.
        */
 
-      if(
-        !citizenHealth
-      ){
-if(
-  String(
-    title || ""
-  ).trim() ===
-    "Publicités & visibilité"
+ if(
+  !citizenHealth
 ){
 
-  backBtn = "";
+  const advertisingVisibility =
+    window.BOCITEART_MODAL_CONTEXT ===
+      "advertising_visibility" ||
+    window.currentModule ===
+      "advertising_visibility" ||
+    window.bociteAdvertisingPaymentReturn ===
+      true ||
+    String(
+      title || ""
+    ).trim() ===
+      "Publicités & visibilité";
+
+
+  if(
+    advertisingVisibility
+  ){
+
+    backBtn = "";
+
+  }
+
+  else if(
+    window.currentModule ===
+      "entreprise" &&
+    window.currentEntrepriseScreen &&
+    window.currentEntrepriseScreen !==
+      "home"
+  ){
+
+    backBtn = `
+      <button
+        data-bociteart-auto-back="1"
+        class="choiceBtn"
+        style="margin-bottom:12px;"
+        onclick="openEntrepriseHome()"
+      >
+        Retour
+      </button>
+    `;
+
+  }
+
+  else if(
+    window.modalHistory.length &&
+    !String(
+      html || ""
+    ).includes(
+      "bociteEntrepriseProtectedBackBtn"
+    )
+  ){
+
+    backBtn = `
+      <button
+        data-bociteart-auto-back="1"
+        class="choiceBtn"
+        style="margin-bottom:12px;"
+        onclick="window.backModal()"
+      >
+        Retour
+      </button>
+    `;
+
+  }
 
 }
-else if(
-  window.bociteAdvertisingPaymentReturn === true
-){
-
-  backBtn = `
-
-    <button
-      data-bociteart-auto-back="1"
-      class="choiceBtn"
-      style="margin-bottom:12px;"
-      onclick="
-        window.bociteAdvertisingPaymentReturn = false;
-
-        if(
-          typeof window.openTicker === 'function'
-        ){
-          window.openTicker();
-        }
-      "
-    >
-      Retour
-    </button>
-
-  `;
-
-}
-else if(
-  window.currentModule ===
-    "entreprise" &&
-  window.currentEntrepriseScreen &&
-  window.currentEntrepriseScreen !==
-    "home"
-){
-
-  backBtn = `
-
-    <button
-      data-bociteart-auto-back="1"
-      class="choiceBtn"
-      style="margin-bottom:12px;"
-      onclick="openEntrepriseHome()"
-    >
-      Retour
-    </button>
-
-  `;
-
-}
-        else if(
-          window.modalHistory.length &&
-          !String(
-            html || ""
-          ).includes(
-            "bociteEntrepriseProtectedBackBtn"
-          )
-        ){
-
-          backBtn = `
-
-            <button
-              data-bociteart-auto-back="1"
-              class="choiceBtn"
-              style="margin-bottom:12px;"
-              onclick="window.backModal()"
-            >
-              Retour
-            </button>
-
-          `;
-
-        }
-
-      }
-
 
       modalBody.innerHTML =
         backBtn +
