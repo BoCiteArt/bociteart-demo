@@ -8137,6 +8137,11 @@ getActiveCollaborators:
   requireAccess:
     requireAccess,
 
+  runOrganizationValidationDecision:
+  runOrganizationValidationDecision,
+
+openOrganizationProfile:
+  openOrganizationProfileForm, 
 
   storageKeys:
     Object.assign(
@@ -8145,7 +8150,6 @@ getActiveCollaborators:
     )
 };
 
-
 /* =========================================================
    COMPATIBILITÉ
    ========================================================= */
@@ -8153,13 +8157,11 @@ getActiveCollaborators:
 window.BociteAccount =
   window.BoCiteArtRegistration;
 
-
 /* =========================================================
    INITIALISATION
    ========================================================= */
 
 getInstallationId();
-
 
 console.log(
   "✅ Étape création du compte Bo'CitéArt V7 prête"
