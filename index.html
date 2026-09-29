@@ -5152,29 +5152,38 @@ function ensureModalHelpers(){
       if(
         !citizenHealth
       ){
+if(
+  String(
+    title || ""
+  ).trim() ===
+    "Publicités & visibilité"
+){
 
-        if(
-          window.currentModule ===
-            "entreprise" &&
-          window.currentEntrepriseScreen &&
-          window.currentEntrepriseScreen !==
-            "home"
-        ){
+  backBtn = "";
 
-          backBtn = `
+}
+else if(
+  window.currentModule ===
+    "entreprise" &&
+  window.currentEntrepriseScreen &&
+  window.currentEntrepriseScreen !==
+    "home"
+){
 
-            <button
-              data-bociteart-auto-back="1"
-              class="choiceBtn"
-              style="margin-bottom:12px;"
-              onclick="openEntrepriseHome()"
-            >
-              Retour
-            </button>
+  backBtn = `
 
-          `;
+    <button
+      data-bociteart-auto-back="1"
+      class="choiceBtn"
+      style="margin-bottom:12px;"
+      onclick="openEntrepriseHome()"
+    >
+      Retour
+    </button>
 
-        }
+  `;
+
+}
         else if(
           window.modalHistory.length &&
           !String(
@@ -28010,19 +28019,78 @@ function openProfile(type){
   const selectedDates = [];
  
   zone.innerHTML = `
-    <div class="box" style="border-left:6px solid #2f5d46;">
-      <strong>espace ${label(type)}</strong><br>
-      fiche préremplie, accès sécurisé et publicité dans le grand bandeau.
-    </div>
- 
-    <div class="box" style="border-left:6px solid #b06b00;">
-      <strong>correction après diffusion :</strong><br>
-      vous disposez de <strong>1 heure</strong> pour corriger une erreur.
-      passé ce délai, la publicité est bloquée pour la journée.
-    </div>
- 
-    <div class="box">
-      <strong>1. fiche structure préremplie</strong>
+  
+     <div
+  class="box"
+  style="
+    border-left:6px solid #2f5d46;
+    background:#ffffff;
+    color:#111111;
+    font-size:14px;
+    font-weight:400;
+    line-height:1.5;
+  "
+>
+  <div
+    style="
+      color:#2f5d46;
+      font-size:17px;
+      font-weight:700;
+      margin-bottom:6px;
+    "
+  >
+    Espace ${label(type)}
+  </div>
+
+  Fiche préremplie, accès sécurisé et publicité dans le grand bandeau.
+</div>
+
+<div
+  class="box"
+  style="
+    border-left:6px solid #b06b00;
+    background:#ffffff;
+    color:#111111;
+    font-size:14px;
+    font-weight:400;
+    line-height:1.5;
+  "
+>
+  <div
+    style="
+      color:#2f5d46;
+      font-size:17px;
+      font-weight:700;
+      margin-bottom:6px;
+    "
+  >
+    Correction après diffusion
+  </div>
+
+  Vous disposez de 1 heure pour corriger une erreur.<br>
+  Passé ce délai, la publicité est bloquée pour la journée.
+</div>
+
+<div
+  class="box"
+  style="
+    background:#ffffff;
+    color:#111111;
+    font-size:14px;
+    font-weight:400;
+    line-height:1.5;
+  "
+>
+  <div
+    style="
+      color:#2f5d46;
+      font-size:17px;
+      font-weight:700;
+      margin-bottom:8px;
+    "
+  >
+    1. Fiche structure préremplie
+  </div>
  
       <input class="miniField" id="pNameV3" value="${esc(profile.name)}" placeholder="nom structure / commerce / mairie / association" style="margin-top:8px;">
       <input class="miniField" id="pManagerV3" value="${esc(profile.manager)}" placeholder="nom du responsable" style="margin-top:8px;">
