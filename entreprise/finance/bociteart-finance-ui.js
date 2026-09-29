@@ -737,49 +737,22 @@ if(
 /* =========================================================
    ÇA FINIT ICI — PAIEMENT ACCEPTÉ / RETOUR AUTOMATIQUE
    ========================================================= */
-   if(
-  status ===
-    "refused"
-){
+    if(
+      status ===
+        "refused"
+    ){
 
-  payButton.textContent =
-    "Paiement refusé";
+      payButton.textContent =
+        "Paiement refusé";
 
-  financeUiSetStatus(
-    "Votre paiement est refusé. Aucune activation n’est déclenchée.",
-    "error"
-  );
+      financeUiSetStatus(
+        "Paiement refusé. Aucune activation n’est déclenchée.",
+        "error"
+      );
 
-  if(
-    window.BOCITEART_PAYMENT_RETURN ===
-      "advertising_visibility"
-  ){
+      return;
+    }
 
-    window.BOCITEART_PAYMENT_RETURN =
-      "";
-
-    window.setTimeout(
-      function(){
-
-        financeUiRemove();
-
-        if(
-          typeof window.openTicker ===
-            "function"
-        ){
-
-          window.openTicker();
-
-        }
-
-      },
-      1500
-    );
-
-  }
-
-  return;
-}
 
     if(
       status ===
@@ -1137,33 +1110,6 @@ if(
     document.body.appendChild(
       root
     );
-
-    /* =========================================================
-   PUBLICITÉ COMMERCE — SUPPRESSION DU RETOUR FINANCE
-   ========================================================= */
-
-if(
-  window.BOCITEART_PAYMENT_RETURN ===
-    "advertising_visibility" ||
-  window.BOCITEART_MODAL_CONTEXT ===
-    "advertising_visibility" ||
-  window.bociteAdvertisingPaymentReturn ===
-    true
-){
-
-  root
-    .querySelectorAll(
-      ".bcf-back, [data-finance-back], [data-bocite-finance-back]"
-    )
-    .forEach(
-      function(button){
-
-        button.remove();
-
-      }
-    );
-
-} 
 
 
     document.body.classList.add(
