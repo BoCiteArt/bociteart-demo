@@ -5197,19 +5197,31 @@ if(
 
   }
 
- else if(
+else if(
     advertisingVisibility
   ){
 
     /*
-     * Les écrans Publicités / Paiement
-     * possèdent déjà leur propre bouton Retour.
-     * Aucun second Retour automatique ici.
+     * Écran enfant Publicités :
+     * retour direct et déterministe
+     * vers Publicités & visibilité.
      */
 
-    backBtn = "";
+    backBtn = `
+
+      <button
+        data-bociteart-auto-back="1"
+        class="choiceBtn"
+        style="margin-bottom:12px;"
+        onclick="window.returnToAdvertisingVisibility()"
+      >
+        Retour
+      </button>
+
+    `;
 
   }
+ 
   else if(
     window.currentModule ===
       "entreprise" &&
