@@ -2767,13 +2767,110 @@ if(
       : null;
 
 
-  const reason =
+const checkLabels = {
+
+  organization_name:
+    "nom de l’organisation",
+
+  commune:
+    "commune",
+
+  responsible_identity:
+    "identité du responsable",
+
+  responsible_authority:
+    "qualité ou fonction du responsable",
+
+  email:
+    "adresse e-mail",
+
+  phone:
+    "téléphone",
+
+  siret_or_siren:
+    "SIREN ou SIRET",
+
+  establishment_address:
+    "adresse de l’établissement",
+
+  registered_address:
+    "adresse du siège",
+
+  business_activity:
+    "activité professionnelle"
+
+};
+
+
+const failedChecks =
+  (
     organization &&
-    organization.validationReason
-      ? String(
-          organization.validationReason
-        ).trim()
-      : "";
+    organization.validationChecks &&
+    typeof organization.validationChecks ===
+      "object"
+  )
+    ? Object.keys(
+        organization.validationChecks
+      )
+        .filter(
+          function(key){
+
+            return (
+              organization.validationChecks[
+                key
+              ] !== true
+            );
+          }
+        )
+    : [];
+
+
+const failedLabels =
+  failedChecks
+    .map(
+      function(key){
+
+        return (
+          checkLabels[key] ||
+          String(key)
+        );
+      }
+    )
+    .filter(Boolean);
+
+
+let reason = "";
+
+
+if(
+  failedLabels.length
+){
+
+  reason =
+    "À vérifier ou compléter : " +
+    failedLabels.join(", ") +
+    ".";
+
+}else if(
+  organization &&
+  organization.reviewReason
+){
+
+  reason =
+    String(
+      organization.reviewReason
+    ).trim();
+
+}else if(
+  organization &&
+  organization.validationReason
+){
+
+  reason =
+    String(
+      organization.validationReason
+    ).trim();
+}
 
 
   merchantLoginStatus.innerHTML = "";
