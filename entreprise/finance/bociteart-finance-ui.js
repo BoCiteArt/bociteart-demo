@@ -1111,6 +1111,33 @@ if(
       root
     );
 
+    /* =========================================================
+   PUBLICITÉ COMMERCE — SUPPRESSION DU RETOUR FINANCE
+   ========================================================= */
+
+if(
+  window.BOCITEART_PAYMENT_RETURN ===
+    "advertising_visibility" ||
+  window.BOCITEART_MODAL_CONTEXT ===
+    "advertising_visibility" ||
+  window.bociteAdvertisingPaymentReturn ===
+    true
+){
+
+  root
+    .querySelectorAll(
+      ".bcf-back, [data-finance-back], [data-bocite-finance-back]"
+    )
+    .forEach(
+      function(button){
+
+        button.remove();
+
+      }
+    );
+
+} 
+
 
     document.body.classList.add(
       "bociteFinanceOpen"
