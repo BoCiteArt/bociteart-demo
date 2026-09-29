@@ -5282,7 +5282,53 @@ function ensureModalHelpers(){
 
       }
 
+/*
+ * RETOUR PROTÉGÉ
+ * PUBLICITÉS & VISIBILITÉ
+ *
+ * Une publicité commerçant ne doit jamais
+ * restaurer un ancien écran Entreprise.
+ */
 
+if(
+  window.BOCITEART_MODAL_CONTEXT ===
+    "advertising_visibility" ||
+  window.currentModule ===
+    "advertising_visibility" ||
+  window.bociteAdvertisingPaymentReturn ===
+    true
+){
+
+  window.modalHistory = [];
+
+  window.BOCITEART_MODAL_CONTEXT =
+    "advertising_visibility";
+
+  window.currentModule =
+    "advertising_visibility";
+
+  window.currentEntrepriseScreen =
+    null;
+
+  window.bociteAdvertisingPaymentReturn =
+    false;
+
+  window.bociteAdvertisingPaymentOrderId =
+    "";
+
+  if(
+    typeof window.openTicker ===
+      "function"
+  ){
+
+    window.openTicker();
+
+  }
+
+  return;
+
+}
+     
       const previous =
         window.modalHistory.pop();
 
