@@ -2583,73 +2583,174 @@ function openCommerceModule(){
           };
       }
 
+if(
+  merchantLoginOpenBtn &&
+  merchantLoginGate
+){
 
-      if(
-        merchantLoginOpenBtn &&
-        merchantLoginGate
-      ){
+  merchantLoginOpenBtn.onclick =
+    ()=>{
 
-        merchantLoginOpenBtn.onclick =
-          ()=>{
-
-            const state =
-              commerceCentralAccessState(
-                "commerce"
-              );
-
-
-            if(state.ok){
-
-              merchantInternalSpace.style.display =
-                "block";
-
-              fillMerchantIdentity();
-
-              merchantInternalSpace.scrollIntoView({
-                behavior:"smooth",
-                block:"start"
-              });
-
-              return;
-            }
+      const state =
+        commerceCentralAccessState(
+          "commerce"
+        );
 
 
-            const open =
-              merchantLoginGate.style.display !==
-                "block";
+      /*
+        La validation centrale ne suffit jamais
+        à ouvrir directement l'espace privé.
+
+        Même lorsque l'accès professionnel
+        est déjà activé, le responsable doit
+        s'authentifier.
+      */
+
+      const open =
+        merchantLoginGate.style.display !==
+          "block";
 
 
-            merchantLoginGate.style.display =
-              open
-                ? "block"
-                : "none";
+      merchantLoginGate.style.display =
+        open
+          ? "block"
+          : "none";
 
 
-            merchantLoginOpenBtn.textContent =
-              open
-                ? "Fermer l’accès"
-                : "J’ai déjà mes accès";
+      merchantLoginOpenBtn.textContent =
+        open
+          ? "Fermer l’accès"
+          : "J’ai déjà mes accès";
 
 
-            if(
-              open &&
-              merchantLoginStatus
-            ){
-
-              merchantLoginStatus.style.display =
-                "block";
-
-              merchantLoginStatus.dataset.state =
-                "warn";
-
-              merchantLoginStatus.textContent =
-                commerceCentralAccessMessage(
-                  state
-                );
-            }
-          };
+      if(!open){
+        return;
       }
 
+
+      /*
+        Préremplissage de l'identifiant permanent
+        lorsqu'il existe déjà dans le compte central.
+      */
+
+      const api =
+        commerceAccountApi();
+
+
+      if(
+        api &&
+        typeof api.getProfessionalAccessState ===
+          "function"
+      ){
+
+        const accessState =
+          api.getProfessionalAccessState();
+
+
+        if(
+          accessState &&
+          accessState.professionalIdentifier &&
+          merchantLoginId
+        ){
+
+          merchantLoginId.value =
+            String(
+              accessState.professionalIdentifier
+            );
+        }
+      }
+
+
+      /*
+        L'espace privé reste systématiquement fermé
+        tant que l'authentification de cette ouverture
+        n'est pas terminée.
+      */
+
+      if(merchantInternalSpace){
+
+        merchantInternalSpace.style.display =
+          "none";
+      }
+
+
+      if(
+        merchantLoginStatus
+      ){
+
+        merchantLoginStatus.style.display =
+          "block";
+
+
+        /*
+          Première activation :
+          identifiant permanent + code initial.
+        */
+
+        if(
+          state.reason ===
+            "initial_access_required"
+        ){
+
+          merchantLoginStatus.dataset.state =
+            "warn";
+
+          merchantLoginStatus.textContent =
+            "Saisissez votre identifiant professionnel et votre code initial à usage unique.";
+
+          if(merchantLoginCode){
+
+            merchantLoginCode.value =
+              "";
+
+            merchantLoginCode.focus();
+          }
+
+          return;
+        }
+
+
+        /*
+          Accès professionnel déjà activé :
+          le code saisi est désormais
+          le code rapide personnel.
+        */
+
+        if(state.ok){
+
+          merchantLoginStatus.dataset.state =
+            "ok";
+
+          merchantLoginStatus.textContent =
+            "Accès professionnel reconnu. Utilisez votre code rapide personnel.";
+
+          if(merchantLoginCode){
+
+            merchantLoginCode.value =
+              "";
+
+            merchantLoginCode.focus();
+          }
+
+          return;
+        }
+
+
+        /*
+          Compte non encore autorisé :
+          on affiche l'état central réel.
+        */
+
+        merchantLoginStatus.dataset.state =
+          "warn";
+
+        merchantLoginStatus.textContent =
+          commerceCentralAccessMessage(
+            state
+          );
+      }
+    };
+}
 
      if(
   merchantInternalOpenBtn &&
