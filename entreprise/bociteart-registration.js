@@ -9000,6 +9000,15 @@ async function runAutomaticOrganizationAgent(){
       official
     );
 
+  checks.organization_name =
+  Boolean(
+    String(
+      profile.organizationName ||
+      organization.name ||
+      ""
+    ).trim()
+  ); 
+
 
   const validation =
     checkOrganizationValidation(
