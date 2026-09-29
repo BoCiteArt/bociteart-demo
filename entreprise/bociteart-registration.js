@@ -3437,7 +3437,44 @@ if(
         return;
       }
 
+/*
+  Si l'Agent central vient de valider
+  l'organisation, l'identifiant professionnel
+  et le code initial sont transmis immédiatement
+  à l'interface.
 
+  Le code initial en clair n'est jamais
+  enregistré dans le localStorage ni dans les logs.
+*/
+
+if(
+  agentResult.decision === "validated" &&
+  agentResult.professionalIdentifier &&
+  agentResult.initialAccessCode
+){
+
+  window.dispatchEvent(
+    new CustomEvent(
+      "bociteart:professional-access-issued",
+      {
+        detail:{
+          organizationId:
+            organization.organizationId,
+
+          category:
+            organization.category,
+
+          professionalIdentifier:
+            agentResult.professionalIdentifier,
+
+          initialAccessCode:
+            agentResult.initialAccessCode
+        }
+      }
+    )
+  );
+}
+       
       addSecurityLog(
         "automatic_organization_agent_completed",
         {
