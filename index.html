@@ -5149,9 +5149,19 @@ function ensureModalHelpers(){
        * dans Annuaire santé + aide.
        */
 
- if(
+if(
   !citizenHealth
 ){
+
+  /*
+   * PUBLICITÉS & VISIBILITÉ
+   *
+   * Cet univers possède maintenant
+   * son propre retour.
+   *
+   * Il ne dépend plus de l'historique
+   * Entreprise.
+   */
 
   const advertisingVisibility =
     window.BOCITEART_MODAL_CONTEXT ===
@@ -5166,11 +5176,49 @@ function ensureModalHelpers(){
       "Publicités & visibilité";
 
 
+  const advertisingRoot =
+    String(
+      title || ""
+    ).trim() ===
+      "Publicités & visibilité";
+
+
   if(
+    advertisingVisibility &&
+    advertisingRoot
+  ){
+
+    /*
+     * Écran racine Publicités :
+     * aucun Retour automatique.
+     */
+
+    backBtn = "";
+
+  }
+
+  else if(
     advertisingVisibility
   ){
 
-    backBtn = "";
+    /*
+     * Écran enfant Publicités :
+     * retour direct et déterministe
+     * vers Publicités & visibilité.
+     */
+
+    backBtn = `
+
+      <button
+        data-bociteart-auto-back="1"
+        class="choiceBtn"
+        style="margin-bottom:12px;"
+        onclick="window.returnToAdvertisingVisibility()"
+      >
+        Retour
+      </button>
+
+    `;
 
   }
 
@@ -5183,6 +5231,7 @@ function ensureModalHelpers(){
   ){
 
     backBtn = `
+
       <button
         data-bociteart-auto-back="1"
         class="choiceBtn"
@@ -5191,6 +5240,7 @@ function ensureModalHelpers(){
       >
         Retour
       </button>
+
     `;
 
   }
@@ -5205,6 +5255,7 @@ function ensureModalHelpers(){
   ){
 
     backBtn = `
+
       <button
         data-bociteart-auto-back="1"
         class="choiceBtn"
@@ -5213,12 +5264,12 @@ function ensureModalHelpers(){
       >
         Retour
       </button>
+
     `;
 
   }
 
 }
-
       modalBody.innerHTML =
         backBtn +
         (
@@ -5251,9 +5302,72 @@ function ensureModalHelpers(){
     };
 
 /* =========================================================
-   ÇA COMMENCE ICI — RETOUR MODALE CENTRALISÉ
+   RETOUR DÉDIÉ — PUBLICITÉS & VISIBILITÉ
    ========================================================= */
 
+window.returnToAdvertisingVisibility =
+  function(){
+
+    /*
+     * Nettoyage complet de toute ancienne
+     * navigation Commerce / Entreprise.
+     */
+
+    window.BOCITEART_MODAL_CONTEXT =
+      "advertising_visibility";
+
+    window.currentModule =
+      "advertising_visibility";
+
+    window.currentEntrepriseScreen =
+      null;
+
+    window.bociteAdvertisingPaymentReturn =
+      false;
+
+    window.bociteAdvertisingPaymentOrderId =
+      "";
+
+
+    if(
+      Array.isArray(
+        window.modalHistory
+      )
+    ){
+
+      window.modalHistory.length =
+        0;
+
+    }
+
+
+    /*
+     * Reconstruction directe de la racine
+     * Publicités & visibilité.
+     */
+
+    if(
+      typeof window.openTicker ===
+        "function"
+    ){
+
+      window.openTicker();
+
+      return;
+
+    }
+
+
+    alert(
+      "Le service Publicités & visibilité n'est pas disponible."
+    );
+
+  };
+
+/* =========================================================
+   ÇA COMMENCE ICI — RETOUR MODALE CENTRALISÉ
+   ========================================================= */ 
+ 
 window.backModal =
   function(){
 
