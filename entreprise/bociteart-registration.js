@@ -4036,6 +4036,291 @@ function issueProfessionalInitialAccess(
    CONTRÔLE DU PREMIER ACCÈS PROFESSIONNEL
    ========================================================= */
 
+/* =========================================================
+   CODE RAPIDE PERSONNEL — ACCÈS PROFESSIONNEL
+   ========================================================= */
+
+function setProfessionalQuickCode(code){
+
+  const organization =
+    getOrganization();
+
+  const cleanCode =
+    String(code || "")
+      .replace(/\D/g, "");
+
+
+  if(
+    !organization ||
+    !organization.organizationId
+  ){
+    return Promise.resolve({
+      ok:false,
+      reason:"organization_not_found"
+    });
+  }
+
+
+  if(
+    organization.active !== true ||
+    organization.validationStatus !== "validated"
+  ){
+    return Promise.resolve({
+      ok:false,
+      reason:"organization_not_validated"
+    });
+  }
+
+
+  if(
+    organization.professionalAccessReady !== true
+  ){
+    return Promise.resolve({
+      ok:false,
+      reason:"professional_access_not_ready"
+    });
+  }
+
+
+  /*
+    Code volontairement court pour
+    l'accès quotidien sur l'appareil.
+
+    Il ne remplace jamais l'identifiant
+    professionnel permanent.
+  */
+
+  if(
+    cleanCode.length < 4 ||
+    cleanCode.length > 6
+  ){
+    return Promise.resolve({
+      ok:false,
+      reason:"invalid_quick_code_length"
+    });
+  }
+
+
+  return hashSecret(
+    cleanCode
+  )
+  .then(function(hash){
+
+    organization.professionalQuickCodeHash =
+      hash;
+
+    organization.professionalQuickCodeConfiguredAt =
+      new Date().toISOString();
+
+    organization.professionalQuickCodeUpdatedAt =
+      new Date().toISOString();
+
+    organization.professionalQuickCodeFailures =
+      0;
+
+    organization.updatedAt =
+      new Date().toISOString();
+
+
+    saveOrganization(
+      organization
+    );
+
+
+    addSecurityLog(
+      "professional_quick_code_configured",
+      {
+        organizationId:
+          organization.organizationId,
+
+        category:
+          organization.category
+      }
+    );
+
+
+    return {
+      ok:true,
+
+      professionalIdentifier:
+        organization.professionalIdentifier,
+
+      quickCodeConfigured:
+        true
+    };
+  });
+}
+
+
+function verifyProfessionalQuickCode(code){
+
+  const organization =
+    getOrganization();
+
+  const cleanCode =
+    String(code || "")
+      .replace(/\D/g, "");
+
+
+  if(
+    !organization ||
+    !organization.organizationId
+  ){
+    return Promise.resolve({
+      ok:false,
+      reason:"organization_not_found"
+    });
+  }
+
+
+  if(
+    organization.active !== true ||
+    organization.validationStatus !== "validated" ||
+    organization.professionalAccessReady !== true
+  ){
+    return Promise.resolve({
+      ok:false,
+      reason:"professional_access_not_available"
+    });
+  }
+
+
+  if(
+    !organization.professionalQuickCodeHash
+  ){
+    return Promise.resolve({
+      ok:false,
+      reason:"quick_code_not_configured"
+    });
+  }
+
+
+  return verifySecret(
+    cleanCode,
+    organization.professionalQuickCodeHash
+  )
+  .then(function(valid){
+
+    if(!valid){
+
+      organization.professionalQuickCodeFailures =
+        Number(
+          organization.professionalQuickCodeFailures ||
+          0
+        ) + 1;
+
+      organization.updatedAt =
+        new Date().toISOString();
+
+      saveOrganization(
+        organization
+      );
+
+
+      addSecurityLog(
+        "professional_quick_code_rejected",
+        {
+          organizationId:
+            organization.organizationId,
+
+          failures:
+            organization.professionalQuickCodeFailures
+        }
+      );
+
+
+      return {
+        ok:false,
+
+        reason:
+          "invalid_quick_code",
+
+        failures:
+          organization.professionalQuickCodeFailures
+      };
+    }
+
+
+    organization.professionalQuickCodeFailures =
+      0;
+
+    organization.professionalLastAccessAt =
+      new Date().toISOString();
+
+    organization.updatedAt =
+      new Date().toISOString();
+
+
+    saveOrganization(
+      organization
+    );
+
+
+    addSecurityLog(
+      "professional_quick_code_accepted",
+      {
+        organizationId:
+          organization.organizationId,
+
+        category:
+          organization.category
+      }
+    );
+
+
+    return {
+      ok:true,
+
+      professionalIdentifier:
+        organization.professionalIdentifier,
+
+      organizationId:
+        organization.organizationId
+    };
+  });
+}
+
+
+function getProfessionalQuickCodeState(){
+
+  const organization =
+    getOrganization();
+
+
+  if(
+    !organization ||
+    !organization.organizationId
+  ){
+    return {
+      configured:false,
+      failures:0
+    };
+  }
+
+
+  return {
+
+    configured:
+      Boolean(
+        organization.professionalQuickCodeHash
+      ),
+
+    configuredAt:
+      organization.professionalQuickCodeConfiguredAt ||
+      null,
+
+    updatedAt:
+      organization.professionalQuickCodeUpdatedAt ||
+      null,
+
+    failures:
+      Number(
+        organization.professionalQuickCodeFailures ||
+        0
+      )
+  };
+}
+   
 function verifyProfessionalInitialAccess(
   professionalIdentifier,
   enteredCode
@@ -4231,6 +4516,9 @@ function verifyProfessionalInitialAccess(
 
         professionalAccessReady:
           true,
+
+         quickCodeRequired:
+  true,
 
         organization:
           organization
@@ -8840,6 +9128,9 @@ getProfessionalAccessState:
 
 verifyProfessionalInitialAccess:
   verifyProfessionalInitialAccess,
+
+  getProfessionalQuickCodeState:
+  getProfessionalQuickCodeState, 
 
 getCollaborators:
   loadCollaborators,
