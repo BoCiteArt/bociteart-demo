@@ -45237,7 +45237,240 @@ document.addEventListener(
      3B. PAGE CENTRALE DE PAIEMENT
      CARTE BANCAIRE / VIREMENT
      ======================================================= */
- 
+ function renderFinancialPaymentPage(
+  order,
+  title,
+  html,
+  afterRender
+){
+
+  const citizenSubscription =
+    !!(
+      order &&
+      order.serviceType ===
+        "citizen_subscription"
+    );
+
+
+  /*
+   * ABONNEMENT CITOYEN :
+   * reste entièrement dans
+   * Annuaire santé + aide.
+   */
+
+  if(
+    citizenSubscription &&
+    typeof window.openModal ===
+      "function"
+  ){
+
+    window.BOCITEART_MODAL_CONTEXT =
+      "citizen_health_help";
+
+    window.currentModule =
+      "citizen_health_help";
+
+    window.currentEntrepriseScreen =
+      null;
+
+
+    if(
+      Array.isArray(
+        window.modalHistory
+      )
+    ){
+
+      window.modalHistory.length =
+        0;
+
+    }
+
+
+    window.openModal(
+      title,
+      html,
+      {
+        noHistory:true,
+        context:
+          "citizen_health_help",
+        suppressAutoBack:true
+      }
+    );
+
+
+    if(
+      typeof afterRender ===
+        "function"
+    ){
+
+      window.setTimeout(
+        afterRender,
+        0
+      );
+
+    }
+
+
+    return true;
+
+  }
+
+
+  const advertisingPayment =
+    !!(
+      order &&
+      order.serviceType ===
+        "advertising"
+    );
+
+
+  /*
+   * PUBLICITÉ :
+   * navigation indépendante du module Entreprise.
+   */
+
+  if(
+    advertisingPayment &&
+    typeof window.openModal ===
+      "function"
+  ){
+
+    window.BOCITEART_MODAL_CONTEXT =
+      "advertising_visibility";
+
+    window.currentModule =
+      "advertising_visibility";
+
+    window.currentEntrepriseScreen =
+      null;
+
+
+    const isPaymentChoice =
+      String(
+        title || ""
+      ).trim() ===
+        "Paiement";
+
+
+    if(
+      isPaymentChoice &&
+      Array.isArray(
+        window.modalHistory
+      )
+    ){
+
+      window.modalHistory.length =
+        0;
+
+    }
+
+
+    window.openModal(
+      title,
+      html,
+      {
+        noHistory:
+          !isPaymentChoice,
+        context:
+          "advertising_visibility"
+      }
+    );
+
+
+    if(
+      typeof afterRender ===
+        "function"
+    ){
+
+      window.setTimeout(
+        afterRender,
+        0
+      );
+
+    }
+
+
+    return true;
+
+  }
+
+
+  /*
+   * TOUS LES AUTRES PAIEMENTS :
+   * fonctionnement Entreprise actuel conservé.
+   */
+
+  if(
+    typeof module.renderModulePage ===
+      "function"
+  ){
+
+    module.renderModulePage(
+      title,
+      html,
+      {
+        showBack:false,
+        showFooter:false
+      }
+    );
+
+
+    if(
+      typeof afterRender ===
+        "function"
+    ){
+
+      window.setTimeout(
+        afterRender,
+        0
+      );
+
+    }
+
+
+    return true;
+
+  }
+
+
+  if(
+    typeof module.renderModal ===
+      "function"
+  ){
+
+    module.renderModal(
+      title,
+      html
+    );
+
+
+    if(
+      typeof afterRender ===
+        "function"
+    ){
+
+      window.setTimeout(
+        afterRender,
+        0
+      );
+
+    }
+
+
+    return true;
+
+  }
+
+
+  return false;
+
+}
+
+  /* =======================================================
+   ÇA FINIT ICI
+   AFFICHAGE PAIEMENT SELON L'UNIVERS D'ORIGINE
+   ======================================================= */
+   
   function openCentralPaymentPage(
     options
   ){
@@ -45523,174 +45756,325 @@ alert(
      3C. CARTE BANCAIRE — DÉMO PSP
      ======================================================= */
 
-  function openCardPaymentDemo(
-    order
+function openCardPaymentDemo(
+  order
+){
+
+  if(
+    typeof module.createCardPayment !==
+    "function"
   ){
 
-    if(
-      typeof module.createCardPayment !==
-      "function"
-    ){
+    alert(
+      "Le paiement par carte est momentanément indisponible."
+    );
 
-      alert(
-        "Le paiement par carte est momentanément indisponible."
-      );
-
-      return;
-    }
+    return;
+  }
 
 
-    const payment =
-      module.createCardPayment(
-        order
-      );
+  const payment =
+    module.createCardPayment(
+      order
+    );
 
 
-    if(!payment){
+  if(!payment){
 
-      alert(
-        "La demande de paiement n'a pas pu être créée."
-      );
+    alert(
+      "La demande de paiement n'a pas pu être créée."
+    );
 
-      return;
-    }
+    return;
+  }
 
 
-    const html = `
+  const html = `
+
+    <div
+      class="box"
+      style="
+        background:#ffffff;
+        color:#111111;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.5;
+        border-left:6px solid #2f5d46;
+      ">
 
       <div
-        class="box"
         style="
+          color:#2f5d46;
+          font-size:17px;
+          font-weight:700;
+          margin-bottom:8px;
+        ">
+        Paiement sécurisé par carte bancaire
+      </div>
+
+      Dans la version de production,
+      la saisie de la carte
+      sera effectuée directement
+      sur la page sécurisée
+      du prestataire de paiement.
+
+      <br><br>
+
+      Aucune donnée sensible de carte
+      ne sera enregistrée
+      dans Bo'CitéArt.
+
+      <br><br>
+
+      Total à régler :
+      ${Number(
+        order.amountTTC || 0
+      ).toFixed(2)}
+      €
+
+    </div>
+
+
+    <button
+      id="demoConfirmCardPaymentBtn"
+      class="choiceBtn"
+      type="button"
+      style="
+        width:100%;
+        background:#ffffff !important;
+        color:#111111 !important;
+        font-size:14px;
+        font-weight:400;
+      ">
+      Simuler le paiement accepté
+    </button>
+
+  `;
+
+
+  function showAdvertisingPaymentResult(
+    accepted
+  ){
+
+    const previous =
+      document.getElementById(
+        "bociteAdvertisingPaymentResult"
+      );
+
+
+    if(previous){
+      previous.remove();
+    }
+
+
+    const layer =
+      document.createElement(
+        "div"
+      );
+
+
+    const title =
+      accepted
+        ? "Paiement accepté"
+        : "Paiement refusé";
+
+
+    const message =
+      accepted
+        ? "Votre paiement est accepté. Votre publicité a été automatiquement transmise."
+        : "Votre paiement est refusé. Aucune activation n’est déclenchée.";
+
+
+    const accent =
+      accepted
+        ? "#2f5d46"
+        : "#a51e22";
+
+
+    layer.id =
+      "bociteAdvertisingPaymentResult";
+
+
+    layer.style.cssText =
+      "position:fixed;" +
+      "inset:0;" +
+      "z-index:2147483646;" +
+      "display:flex;" +
+      "align-items:center;" +
+      "justify-content:center;" +
+      "padding:20px;" +
+      "background:#f1e6d6;";
+
+
+    layer.innerHTML = `
+
+      <div
+        style="
+          width:min(520px,100%);
           background:#ffffff;
+          border-left:6px solid ${accent};
+          border-radius:18px;
+          padding:22px;
+          box-shadow:0 12px 34px rgba(0,0,0,.16);
           color:#111111;
           font-size:14px;
           font-weight:400;
           line-height:1.5;
-          border-left:6px solid #2f5d46;
-        ">
+        "
+      >
 
         <div
           style="
-            color:#2f5d46;
+            color:${accent};
             font-size:17px;
             font-weight:700;
             margin-bottom:8px;
-          ">
-          Paiement sécurisé par carte bancaire
+          "
+        >
+          ${title}
         </div>
 
-        Dans la version de production,
-        la saisie de la carte
-        sera effectuée directement
-        sur la page sécurisée
-        du prestataire de paiement.
-
-        <br><br>
-
-        Aucune donnée sensible de carte
-        ne sera enregistrée
-        dans Bo'CitéArt.
-
-        <br><br>
-
-        Total à régler :
-        ${Number(
-          order.amountTTC || 0
-        ).toFixed(2)}
-        €
+        ${message}
 
       </div>
-
-
-      <button
-        id="demoConfirmCardPaymentBtn"
-        class="choiceBtn"
-        type="button"
-        style="
-          width:100%;
-          background:#ffffff !important;
-          color:#111111 !important;
-          font-size:14px;
-          font-weight:400;
-        ">
-        Simuler le paiement accepté
-      </button>
 
     `;
 
 
-    function bindCardDemo(){
-
-      const button =
-        document.getElementById(
-          "demoConfirmCardPaymentBtn"
-        );
+    document.body.appendChild(
+      layer
+    );
 
 
-      if(!button){
-        return;
-      }
+    window.setTimeout(
+      function(){
 
-
-      button.onclick =
-        function(){
-
-          const providerFee =
-            0;
-
-
-          const result =
-            module.confirmCardPayment(
-              payment.id,
-              {
-                paid:true,
-
-                transactionId:
-                  "DEMO-PSP-" +
-                  Date.now(),
-
-                providerFee:
-                  providerFee,
-
-                netPayout:
-                  Number(
-                    order.amountTTC || 0
-                  ) -
-                  providerFee
-              }
-            );
-
-
-          if(
-            !result ||
-            result.ok !==
-            true
-          ){
-
-            alert(
-              "Le paiement n'a pas pu être confirmé."
-            );
-
-            return;
-          }
-
-
-          alert(
-            "Paiement confirmé.\n\n" +
-            "La facture et les contrôles financiers sont maintenant déclenchés."
+        const current =
+          document.getElementById(
+            "bociteAdvertisingPaymentResult"
           );
 
-        };
+
+        if(current){
+          current.remove();
+        }
+
+
+        if(
+          typeof window.closeModal ===
+            "function"
+        ){
+
+          window.closeModal();
+
+        }
+
+
+        if(
+          typeof window.openTicker ===
+            "function"
+        ){
+
+          window.openTicker();
+
+        }
+
+      },
+      1500
+    );
+  }
+
+
+  function bindCardDemo(){
+
+    const button =
+      document.getElementById(
+        "demoConfirmCardPaymentBtn"
+      );
+
+
+    if(!button){
+      return;
     }
 
 
-renderFinancialPaymentPage(
-  order,
-  "Paiement par carte bancaire",
-  html,
-  bindCardDemo
-);
-    }
+    button.onclick =
+      function(){
+
+        const providerFee =
+          0;
+
+
+        const result =
+          module.confirmCardPayment(
+            payment.id,
+            {
+              paid:true,
+
+              transactionId:
+                "DEMO-PSP-" +
+                Date.now(),
+
+              providerFee:
+                providerFee,
+
+              netPayout:
+                Number(
+                  order.amountTTC || 0
+                ) -
+                providerFee
+            }
+          );
+
+
+        if(
+          order &&
+          order.serviceType ===
+            "advertising"
+        ){
+
+          showAdvertisingPaymentResult(
+            !!(
+              result &&
+              result.ok ===
+                true
+            )
+          );
+
+          return;
+        }
+
+
+        if(
+          !result ||
+          result.ok !==
+          true
+        ){
+
+          alert(
+            "Le paiement n'a pas pu être confirmé."
+          );
+
+          return;
+        }
+
+
+        alert(
+          "Paiement confirmé.\n\n" +
+          "La facture et les contrôles financiers sont maintenant déclenchés."
+        );
+
+      };
+  }
+
+
+  renderFinancialPaymentPage(
+    order,
+    "Paiement par carte bancaire",
+    html,
+    bindCardDemo
+  );
+}
   
 /* =======================================================
    3D. VIREMENT BANCAIRE BO'CITÉART
