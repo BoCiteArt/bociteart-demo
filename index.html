@@ -28100,6 +28100,14 @@ async function renderTicker(){
   }
  
 function openProfile(type){
+
+  window.BOCITEART_ADVERTISING_ACTIVE_PROFILE =
+    String(
+      type || ""
+    )
+    .trim()
+    .toLowerCase();
+
   const zone = $("pubZoneV3");
   if(!zone) return;
  
@@ -31674,6 +31682,40 @@ openModal(
 
   },100);
 };
+
+window.openAdvertisingProfileAfterPayment =
+  function(){
+
+    const type =
+      String(
+        window.BOCITEART_ADVERTISING_ACTIVE_PROFILE ||
+        ""
+      )
+      .trim()
+      .toLowerCase();
+
+
+    window.openTicker();
+
+
+    if(!type){
+      return;
+    }
+
+
+    window.setTimeout(
+      function(){
+
+        openProfile(
+          type === "entreprise"
+            ? "commerce"
+            : type
+        );
+
+      },
+      0
+    );
+  }; 
  
   const ticker = $("ticker");
   if(ticker){
