@@ -30937,22 +30937,6 @@ const couponData = {
            jusqu'à confirmation réelle
            sur le compte Bo'CitéArt.
            =================================================== */
-
-window.bociteAdvertisingPaymentOrderId =
-  String(
-    order.id || ""
-  );
-
-if(
-  typeof window.prepareAdvertisingPaymentResultReturn ===
-    "function"
-){
-
-  window.prepareAdvertisingPaymentResultReturn(
-    order
-  );
-
-}
   
         financialModule
           .openCentralPaymentPage({
