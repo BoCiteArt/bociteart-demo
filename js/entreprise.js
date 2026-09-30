@@ -33884,18 +33884,23 @@ font-weight:400;
       if(advertisementButton){
         advertisementButton.onclick = function(){
 
-          if(
-            typeof window.openTicker ===
-            "function"
-          ){
-            window.openTicker();
-          }else{
-            alert(
-              "Le calendrier publicitaire est momentanément indisponible."
-            );
-          }
-        };
-      }
+       if(
+  typeof window.openAdvertisingProfileAfterPayment ===
+    "function"
+){
+
+  window.openAdvertisingProfileAfterPayment();
+
+}
+
+else if(
+  typeof window.openTicker ===
+    "function"
+){
+
+  window.openTicker();
+
+}
 
       if(saveButton){
         saveButton.onclick =
@@ -48663,14 +48668,23 @@ function openCollaboratorManagement(){
     "publicite",
     function(){
 
-      if(
-        typeof window.openTicker ===
-        "function"
-      ){
+    if(
+  typeof window.openAdvertisingProfileAfterPayment ===
+    "function"
+){
 
-        window.openTicker();
-        return;
-      }
+  window.openAdvertisingProfileAfterPayment();
+
+}
+
+else if(
+  typeof window.openTicker ===
+    "function"
+){
+
+  window.openTicker();
+
+}
 
       alert(
         "Le calendrier du grand bandeau publicitaire est momentanément indisponible."
