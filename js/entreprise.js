@@ -33881,25 +33881,20 @@ font-weight:400;
         };
       }
 
-      if(advertisementButton){
-        advertisementButton.onclick = function(){
+ if(advertisementButton){
+  advertisementButton.onclick = function(){
 
-       if(
-  typeof window.openAdvertisingProfileAfterPayment ===
-    "function"
-){
-
-  window.openAdvertisingProfileAfterPayment();
-
-}
-
-else if(
-  typeof window.openTicker ===
-    "function"
-){
-
-  window.openTicker();
-
+    if(
+      typeof window.openTicker ===
+      "function"
+    ){
+      window.openTicker();
+    }else{
+      alert(
+        "Le calendrier publicitaire est momentanément indisponible."
+      );
+    }
+  };
 }
 
       if(saveButton){
@@ -48623,6 +48618,19 @@ function openCollaboratorManagement(){
   function(){
 
     if(
+  typeof window.openTicker ===
+    "function"
+){
+
+  window.openTicker();
+  return;
+}
+
+alert(
+  "Le calendrier du grand bandeau publicitaire est momentanément indisponible."
+); 
+
+    if(
       typeof module.openCollaboratorManagement ===
       "function"
     ){
@@ -48648,7 +48656,7 @@ function openCollaboratorManagement(){
 
 })();
 
-  /* =========================================================
+/* =========================================================
    BO'CITÉART — RACCORDEMENT PUBLICITÉ
    TABLEAU DE DIRECTION → GRAND BANDEAU
    ========================================================= */
@@ -48668,23 +48676,14 @@ function openCollaboratorManagement(){
     "publicite",
     function(){
 
-    if(
-  typeof window.openAdvertisingProfileAfterPayment ===
-    "function"
-){
+      if(
+        typeof window.openTicker ===
+          "function"
+      ){
 
-  window.openAdvertisingProfileAfterPayment();
-
-}
-
-else if(
-  typeof window.openTicker ===
-    "function"
-){
-
-  window.openTicker();
-
-}
+        window.openTicker();
+        return;
+      }
 
       alert(
         "Le calendrier du grand bandeau publicitaire est momentanément indisponible."
