@@ -48605,30 +48605,16 @@ function openCollaboratorManagement(){
     );
   }
 
+/* =======================================================
+   EXPOSITION
+   ======================================================= */
 
-  /* =======================================================
-     EXPOSITION
-     ======================================================= */
+module.openCollaboratorManagement =
+  openCollaboratorManagement;
 
-  module.openCollaboratorManagement =
-    openCollaboratorManagement;
-
-   module.registerScreen(
+module.registerScreen(
   "collaborateurs",
   function(){
-
-    if(
-  typeof window.openTicker ===
-    "function"
-){
-
-  window.openTicker();
-  return;
-}
-
-alert(
-  "Le calendrier du grand bandeau publicitaire est momentanément indisponible."
-); 
 
     if(
       typeof module.openCollaboratorManagement ===
@@ -48646,13 +48632,13 @@ alert(
 );
 
 
-  console.log(
-    "✅ Gestion des 2 collaborateurs chargée"
-  );
+console.log(
+  "✅ Gestion des 2 collaborateurs chargée"
+);
 
-  console.log(
-    "✅ Accès 1 et Accès 2 réservés au responsable"
-  );
+console.log(
+  "✅ Accès 1 et Accès 2 réservés au responsable"
+);
 
 })();
 
