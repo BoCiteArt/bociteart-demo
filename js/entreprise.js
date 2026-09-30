@@ -45959,25 +45959,33 @@ function openCardPaymentDemo(
           current.remove();
         }
 
+if(
+  typeof window.closeModal ===
+    "function"
+){
 
-        if(
-          typeof window.closeModal ===
-            "function"
-        ){
+  window.closeModal();
 
-          window.closeModal();
-
-        }
+}
 
 
-        if(
-          typeof window.openTicker ===
-            "function"
-        ){
+if(
+  typeof window.openAdvertisingProfileAfterPayment ===
+    "function"
+){
 
-          window.openTicker();
+  window.openAdvertisingProfileAfterPayment();
 
-        }
+}
+
+else if(
+  typeof window.openTicker ===
+    "function"
+){
+
+  window.openTicker();
+
+}
 
       },
       1500
