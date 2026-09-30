@@ -1120,6 +1120,10 @@ function commerceSportError(
    OUVERTURE COMMERCE / ENTREPRISE
    ========================================================= */
 
+/* =========================================================
+   OUVERTURE COMMERCE / ENTREPRISE
+   ========================================================= */
+
 function openCommerceModule(){
 
   commerceEnsureStyles();
@@ -1176,7 +1180,8 @@ function openCommerceModule(){
 
       </div>
 
-            <!-- =========================================================
+
+      <!-- =========================================================
            ESPACE COMMERCE
            ========================================================= -->
 
@@ -1190,17 +1195,21 @@ function openCommerceModule(){
         >
 
           <div class="commerceTitle">
-            Les commerces partenaires
+            Les acteurs partenaires
             dans votre ville
           </div>
 
           <div class="commerceText">
 
-            Retrouvez les commerces partenaires
-            Bo’CitéArt de votre ville,
+            Retrouvez les commerces,
+            les entreprises,
+            les associations
+            et la mairie présents dans Bo’CitéArt,
             leurs activités,
-            leurs services
-            et les opérations proposées.
+            leurs services,
+            leurs informations
+            et les opérations proposées
+            dans votre ville.
 
           </div>
 
@@ -1210,15 +1219,20 @@ function openCommerceModule(){
         <div class="commerceCard">
 
           <div class="commerceTitle">
-            Commerces partenaires
+            Acteurs partenaires
           </div>
 
           <div
             id="commercePartnersList"
             class="commerceText"
           >
-            Les commerces partenaires
+
+            Les commerces,
+            les entreprises,
+            les associations
+            et la mairie partenaires
             de la ville apparaissent ici.
+
           </div>
 
         </div>
@@ -1232,12 +1246,20 @@ function openCommerceModule(){
 
           <div class="commerceText">
 
-            Le commerce partenaire
-            dispose de plusieurs espaces
-            pour présenter son activité,
-            ses produits,
-            ses services
-            et ses opérations.
+            Le grand bandeau publicitaire Bo’CitéArt
+            est accessible aux commerçants,
+            aux entreprises,
+            aux associations
+            et à la mairie
+            pour leurs communications locales.
+
+            <br><br>
+
+            Chaque profil accède ensuite
+            à son propre espace sécurisé,
+            avec ses droits,
+            ses informations
+            et sa facturation propres.
 
           </div>
 
@@ -1283,6 +1305,15 @@ function openCommerceModule(){
             Lors de votre première inscription,
             votre fiche d’identité professionnelle
             est rattachée à votre compte Bo’CitéArt.
+
+            <br><br>
+
+            Il est important de renseigner
+            correctement cette fiche dès la première fois.
+            Ces informations permettent ensuite
+            de préremplir vos différents accès
+            et d’éviter de ressaisir les mêmes données
+            lors de vos opérations.
 
             <br><br>
 
