@@ -5366,6 +5366,19 @@ window.backModal =
       return;
     }
 
+    if(
+      window.BOCITEART_MODAL_CONTEXT ===
+        "advertising_visibility" &&
+      typeof window.openAdvertisingProfileAfterPayment ===
+        "function"
+    ){
+
+      window.modalHistory = [];
+
+      window.openAdvertisingProfileAfterPayment();
+      return;
+    }
+
     const previous =
       window.modalHistory.pop();
 
@@ -5404,7 +5417,6 @@ window.backModal =
       );
 
   };
-
 /* =========================================================
    ÇA FINIT ICI — RETOUR MODALE CENTRALISÉ
    ========================================================= */
