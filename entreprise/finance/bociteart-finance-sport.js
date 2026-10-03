@@ -9093,111 +9093,41 @@ function sportFinanceRender(){
       ${sportFinanceClubBrandingHtml()}
 
 
-      <div class="sportCard">
+    <div class="sportCard">
 
-        <div class="sportSubTitle">
+  <div class="sportSubTitle">
 
-          Finance et documents
+    Validation et paiement
 
-        </div>
+  </div>
 
-        <div class="sportStatus">
+  <div
+    id="bcfSportStatus"
+    class="sportStatus"
+  >
 
-          Avant paiement,
-          le commerçant connaît le parrainage,
-          la destination,
-          l’éventuel soutien recherche,
-          la phrase finale
-          et les 48 heures de diffusion.
+    Vérifiez la fiche,
+    le montant,
+    la destination
+    et le créneau.
 
-          <br><br>
+  </div>
 
-          Le montant affiché en € HT
-          reste la base de parrainage.
+  <button
+    id="bcfSportOpenReview"
+    class="sportBtn"
+    type="button"
+    style="
+      width:100%;
+      margin-top:12px;
+    "
+  >
 
-          La TVA
-          et le total définitif réellement à payer
-          sont établis
-          selon le statut réel des parties
-          et confirmés côté serveur
-          avant l’encaissement de production.
+    Continuer vers le paiement
 
-          <br><br>
+  </button>
 
-          Les frais PSP
-          restent distincts
-          des frais Bo'CitéArt.
-
-          Taux Bo'CitéArt actuellement enregistré :
-
-          <strong>
-
-            ${sportFinanceEscape(
-              sportFinanceFormatMoney(
-                feePercent
-              )
-            )} % HT
-
-          </strong>
-
-          — version
-
-          <strong>
-
-            ${sportFinanceEscape(
-              tariff.version
-            )}
-
-          </strong>.
-
-          L’évolution du tarif
-          est contrôlée et versionnée
-          par Agent 2 côté serveur,
-
-          sans modification rétroactive
-          des opérations déjà engagées.
-
-          <br><br>
-
-          Agent 1 prépare
-          et rapproche le dossier complet ;
-
-          Agent 2 le contrôle
-          indépendamment
-
-          avant transmission
-          vers la plateforme comptable
-          choisie avec le comptable.
-
-        </div>
-
-        <button
-          id="bcfSportOpenReview"
-          class="sportBtn"
-          type="button"
-          style="
-            width:100%;
-            margin-top:12px;
-          "
-        >
-
-          Continuer vers le paiement
-
-        </button>
-
-        <div
-          id="bcfSportStatus"
-          class="sportStatus"
-        >
-
-          Vérifiez la fiche,
-          le montant,
-          la destination
-          et le créneau.
-
-        </div>
-
-      </div>
+</div>
 
 
       <div class="sportCard">
