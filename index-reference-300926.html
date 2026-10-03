@@ -33144,21 +33144,17 @@ window.openAdvertisingProfileAfterPayment =
       );
 
 
-    /*
-     * Paiement accepté :
-     * la réservation est maintenant enregistrée comme payée,
-     * donc le brouillon de saisie peut être vidé.
-     *
-     * Retour avant paiement ou paiement refusé :
-     * le brouillon est conservé intégralement.
-     */
-    if(
-      draft &&
-      draft.orderId &&
-      isAdvertisingOrderPaidV3(
-        draft.orderId
-      )
-    ){
+    const paymentAccepted =
+      Boolean(
+        draft &&
+        draft.orderId &&
+        isAdvertisingOrderPaidV3(
+          draft.orderId
+        )
+      );
+
+
+    if(paymentAccepted){
 
       clearAdvertisingDraftV3(
         type
@@ -33185,6 +33181,81 @@ window.openAdvertisingProfileAfterPayment =
         ? "commerce"
         : type
     );
+
+
+    if(paymentAccepted){
+
+      window.setTimeout(
+        function(){
+
+          const zone =
+            $("pubZoneV3");
+
+
+          if(!zone){
+            return;
+          }
+
+
+          const oldBanner =
+            $("bocitePaymentAcceptedV3");
+
+
+          if(oldBanner){
+            oldBanner.remove();
+          }
+
+
+          const banner =
+            document.createElement(
+              "div"
+            );
+
+
+          banner.id =
+            "bocitePaymentAcceptedV3";
+
+          banner.className =
+            "box";
+
+          banner.style.cssText =
+            "background:#ffffff;" +
+            "border:2px solid #2f5d46;" +
+            "color:#2f5d46;" +
+            "font-size:14px;" +
+            "font-weight:700;" +
+            "margin:0 0 12px 0;" +
+            "text-align:center;";
+
+          banner.textContent =
+            "Paiement accepté — votre publicité est enregistrée.";
+
+
+          zone.insertBefore(
+            banner,
+            zone.firstChild
+          );
+
+
+          window.setTimeout(
+            function(){
+
+              if(
+                banner &&
+                banner.parentNode
+              ){
+
+                banner.remove();
+              }
+
+            },
+            3000
+          );
+
+        },
+        0
+      );
+    }
   };
  
   const ticker = $("ticker");
