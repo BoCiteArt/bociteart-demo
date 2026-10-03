@@ -1,4 +1,4 @@
- <!DOCTYPE html>                       
+ <!DOCTYPE html>                        
 <html lang="fr">      
 <head>
   <meta charset="UTF-8" />
@@ -6926,90 +6926,6 @@ Jour suivant ▶
       openAdBookingForProfile(profile, calYear, calMonth, d, containerId);
     });
   });
-}
-
-function openTicker(){
-  ensureModalHelpers();
-
-  const warningMsg = checkMairiePaymentWarnings();
-
-  openModal("Publicités & visibilité", `
-    <div style="font-weight:900;margin-bottom:8px;">
-      Calendrier des communications locales
-    </div>
-
-    ${warningMsg ? `
-      <div class="box" style="border-left:6px solid #b06b00;background:#fff8e8;">
-        <strong>Information de la mairie :</strong>
-        <div class="muted" style="white-space:pre-line;margin-top:6px;">
-          ${escapeHtml(warningMsg)}
-        </div>
-      </div>
-    ` : ""}
-
-    <div class="box">
-      <strong>Principe :</strong><br>
-      Toutes les communications diffusées dans le grand bandeau sont planifiées depuis ce calendrier unique.
-      Chaque espace dispose ensuite de ses propres règles de réservation.
-    </div>
-
-    <div class="choiceGrid">
-      <button class="choiceBtn" id="tickerAccessCommerce" type="button">
-        Espace commerçants
-      </button>
-
-      <button class="choiceBtn" id="tickerAccessEntreprise" type="button">
-        Espace entreprises
-      </button>
-
-      <button class="choiceBtn" id="tickerAccessMairie" type="button">
-        Espace mairie
-      </button>
-
-      <button class="choiceBtn" id="tickerAccessAsso" type="button">
-        Espace associations
-      </button>
-    </div>
-
-    <div id="tickerAccessStatus" class="muted" style="margin-top:10px;">
-      Sélectionnez votre espace pour accéder au calendrier de réservation.
-    </div>
-
-    <div id="calHost" style="display:none;margin-top:12px;"></div>
-  `);
-
-  setTimeout(()=>{
-    function unlock(profile){
-      window.__tickerProfile = profile;
-
-      const status = $("tickerAccessStatus");
-      const calHost = $("calHost");
-
-      if(status){
-        status.textContent =
-          profile === "commerce" ? "Espace commerçants ouvert." :
-          profile === "entreprise" ? "Espace entreprises ouvert." :
-          profile === "mairie" ? "Espace mairie ouvert : devis validé, paiement à 30 jours." :
-          "Espace associations ouvert.";
-      }
-
-      if(calHost){
-        calHost.style.display = "block";
-      }
-
-      renderCalendarInto("calHost");
-    }
-
-    on($("tickerAccessCommerce"), "click", ()=> unlock("commerce"));
-    on($("tickerAccessEntreprise"), "click", ()=> unlock("entreprise"));
-    on($("tickerAccessMairie"), "click", ()=> unlock("mairie"));
-    on($("tickerAccessAsso"), "click", ()=> unlock("asso"));
-  }, 0);
-}
-
-const tickerBtn = $("ticker");
-if(tickerBtn){
-  on(tickerBtn, "click", openTicker);
 }
 
 window.tapeAds = [
@@ -33023,7 +32939,7 @@ openModal(
           font-size:14px;
           font-weight:400;
         ">
-        Accès commerçant
+        Pub commerçant – cliquez ici
       </button>
 
       <button
@@ -33036,7 +32952,7 @@ openModal(
           font-size:14px;
           font-weight:400;
         ">
-        Accès entreprise
+        Pub entreprise – cliquez ici
       </button>
 
       <button
@@ -33049,7 +32965,7 @@ openModal(
           font-size:14px;
           font-weight:400;
         ">
-        Accès mairie
+        Pub mairie – cliquez ici
       </button>
 
       <button
@@ -33062,7 +32978,7 @@ openModal(
           font-size:14px;
           font-weight:400;
         ">
-        Accès association
+        Pub association – cliquez ici
       </button>
 
     </div>
@@ -33350,7 +33266,7 @@ window.openAdvertisingProfileAfterPayment =
 
 <script src="./entreprise/js/bociteart-research-associations.js?v=20260914-16"></script>
 
-<script src="./entreprise/finance/bociteart-finance-sport.js?v=0110261101"></script>
+<script src="./entreprise/finance/bociteart-finance-sport.js?v=0310262020"></script>
 
 
 <!-- =========================
