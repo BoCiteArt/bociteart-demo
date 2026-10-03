@@ -2964,18 +2964,16 @@
     return d;
   }
 
+ function sportFinanceDefaultStart(){
 
-  function sportFinanceDefaultStart(){
-
-    return sportFinanceRoundDateToStep(
-      new Date(
-        Date.now() +
-        2 * 60 * 1000
-      ),
-      5
-    );
-  }
-
+  return sportFinanceRoundDateToStep(
+    new Date(
+      Date.now() +
+      2 * 60 * 1000
+    ),
+    LOCAL_NEXT_SLOT_STEP_MINUTES
+  );
+}
 
   function sportFinanceParseDateTime(value){
 
@@ -5977,7 +5975,405 @@ function sportFinanceCommitLocalHold(draft){
     }
   }
 
+function sportFinanceSameLocalDay(a,b){
 
+  const first =
+    a instanceof Date
+      ? a
+      : new Date(a);
+
+  const second =
+    b instanceof Date
+      ? b
+      : new Date(b);
+
+  if(
+    Number.isNaN(first.getTime()) ||
+    Number.isNaN(second.getTime())
+  ){
+    return false;
+  }
+
+  return (
+    first.getFullYear() === second.getFullYear() &&
+    first.getMonth() === second.getMonth() &&
+    first.getDate() === second.getDate()
+  );
+}
+
+
+function sportFinancePlanningDayLabel(value){
+
+  const date =
+    value instanceof Date
+      ? value
+      : new Date(value);
+
+  if(
+    Number.isNaN(
+      date.getTime()
+    )
+  ){
+    return "";
+  }
+
+  return date.toLocaleDateString(
+    "fr-FR",
+    {
+      weekday:"long",
+      day:"2-digit",
+      month:"2-digit"
+    }
+  );
+}
+
+
+async function sportFinanceFirstAvailabilityForDay(value){
+
+  const day =
+    value instanceof Date
+      ? new Date(value.getTime())
+      : new Date(value);
+
+  if(
+    Number.isNaN(
+      day.getTime()
+    )
+  ){
+    return {
+      available:false,
+      reason:"invalid_day"
+    };
+  }
+
+  const dayStart =
+    new Date(
+      day.getFullYear(),
+      day.getMonth(),
+      day.getDate(),
+      0,
+      0,
+      0,
+      0
+    );
+
+  const dayEnd =
+    new Date(
+      day.getFullYear(),
+      day.getMonth(),
+      day.getDate(),
+      23,
+      59,
+      59,
+      999
+    );
+
+  const now =
+    new Date();
+
+  let from =
+    dayStart;
+
+  if(
+    sportFinanceSameLocalDay(
+      dayStart,
+      now
+    )
+  ){
+    from =
+      sportFinanceRoundDateToStep(
+        now,
+        LOCAL_NEXT_SLOT_STEP_MINUTES
+      );
+  }
+
+  if(
+    from.getTime() >
+    dayEnd.getTime()
+  ){
+    return {
+      available:false,
+      reason:"day_finished"
+    };
+  }
+
+  const next =
+    await sportFinanceFindNextAvailability(
+      from
+    );
+
+  if(
+    !next ||
+    next.available !== true ||
+    !next.publicationStart
+  ){
+    return {
+      available:false,
+      reason:
+        next &&
+        next.reason
+          ? next.reason
+          : "no_slot"
+    };
+  }
+
+  const firstStart =
+    new Date(
+      next.publicationStart
+    );
+
+  if(
+    !sportFinanceSameLocalDay(
+      firstStart,
+      dayStart
+    )
+  ){
+    return {
+      available:false,
+      reason:"no_slot_this_day"
+    };
+  }
+
+  return {
+    available:true,
+    publicationStart:
+      next.publicationStart,
+    publicationEnd:
+      next.publicationEnd || "",
+    durationHours:
+      48
+  };
+}
+
+
+async function sportFinanceRenderTenDayPlanning(){
+
+  const target =
+    sportFinanceField(
+      "bcfSportTenDayPlanning"
+    );
+
+  if(
+    !target
+  ){
+    return;
+  }
+
+  target.innerHTML =
+    '<div class="sportStatus">Calcul des disponibilités sur 10 jours…</div>';
+
+  const firstDay =
+    new Date();
+
+  firstDay.setHours(
+    0,
+    0,
+    0,
+    0
+  );
+
+  const days =
+    [];
+
+  for(
+    let index = 0;
+    index < 10;
+    index += 1
+  ){
+
+    const day =
+      new Date(
+        firstDay.getFullYear(),
+        firstDay.getMonth(),
+        firstDay.getDate() + index,
+        0,
+        0,
+        0,
+        0
+      );
+
+    days.push(
+      day
+    );
+  }
+
+  const results =
+    await Promise.all(
+      days.map(
+        async function(day){
+
+          try{
+
+            const availability =
+              await sportFinanceFirstAvailabilityForDay(
+                day
+              );
+
+            return {
+              day:day,
+              availability:availability
+            };
+
+          }catch(error){
+
+            return {
+              day:day,
+              availability:{
+                available:false,
+                reason:"check_failed"
+              }
+            };
+          }
+        }
+      )
+    );
+
+  if(
+    sportFinanceField(
+      "bcfSportTenDayPlanning"
+    ) !== target
+  ){
+    return;
+  }
+
+  target.innerHTML =
+    results
+      .map(
+        function(item){
+
+          const label =
+            sportFinanceEscape(
+              sportFinancePlanningDayLabel(
+                item.day
+              )
+            );
+
+          const availability =
+            item.availability ||
+            {};
+
+          if(
+            availability.available === true &&
+            availability.publicationStart
+          ){
+
+            const start =
+              new Date(
+                availability.publicationStart
+              );
+
+            const hour =
+              start.toLocaleTimeString(
+                "fr-FR",
+                {
+                  hour:"2-digit",
+                  minute:"2-digit"
+                }
+              );
+
+            return `
+              <button
+                class="sportBtn"
+                type="button"
+                data-sport-planning-start="${sportFinanceEscape(
+                  availability.publicationStart
+                )}"
+                style="
+                  width:100%;
+                  margin:0;
+                  text-align:left;
+                "
+              >
+                <strong>${label}</strong><br>
+                Premier départ disponible :
+                <strong>${sportFinanceEscape(hour)}</strong>
+              </button>
+            `;
+          }
+
+          return `
+            <div
+              class="sportStatus"
+              style="margin:0;"
+            >
+              <strong>${label}</strong><br>
+              Aucun démarrage disponible ce jour.
+            </div>
+          `;
+        }
+      )
+      .join("");
+
+  target
+    .querySelectorAll(
+      "[data-sport-planning-start]"
+    )
+    .forEach(
+      function(button){
+
+        button.onclick =
+          async function(){
+
+            const start =
+              sportFinanceText(
+                button.getAttribute(
+                  "data-sport-planning-start"
+                )
+              );
+
+            if(
+              !start
+            ){
+              return;
+            }
+
+            if(
+              currentHold &&
+              currentHold.slotHoldId &&
+              currentHold.publicationStart !==
+                start
+            ){
+              await sportFinanceReleaseHold(
+                "planning_datetime_changed"
+              );
+            }
+
+            const field =
+              sportFinanceField(
+                "bcfSportPublicationStart"
+              );
+
+            if(
+              field
+            ){
+              field.value =
+                sportFinanceDateTimeLocalValue(
+                  new Date(start)
+                );
+            }
+
+            sportFinanceUpdateDatePreview();
+
+            const status =
+              sportFinanceField(
+                "bcfSportAvailabilityStatus"
+              );
+
+            if(
+              status
+            ){
+              status.textContent =
+                "Créneau sélectionné : " +
+                sportFinanceDateTimeFr(
+                  start
+                ) +
+                ".";
+            }
+          };
+      }
+    );
+}
+   
   function sportFinanceValidate(
     profile,
     club,
@@ -8582,7 +8978,7 @@ function sportFinanceRender(){
           id="bcfSportPublicationStart"
           class="sportField"
           type="datetime-local"
-          step="300"
+          step="900"
           value="${sportFinanceEscape(
             defaultStart
           )}"
@@ -8607,13 +9003,38 @@ function sportFinanceRender(){
 
         </button>
 
-        <div
-          id="bcfSportAvailabilityStatus"
-          class="sportStatus"
-        ></div>
+       <div
+  id="bcfSportAvailabilityStatus"
+  class="sportStatus"
+></div>
 
-        <div
-          id="bcfSportHoldStatus"
+<div
+  class="sportStatus"
+  style="margin-top:12px;"
+>
+  <strong>
+    Planning des 10 prochains jours
+  </strong>
+
+  <br>
+
+  Premier démarrage disponible
+  pour chaque journée.
+  Cliquez sur un créneau
+  pour le sélectionner.
+</div>
+
+<div
+  id="bcfSportTenDayPlanning"
+  style="
+    display:grid;
+    gap:8px;
+    margin-top:8px;
+  "
+></div>
+
+<div
+  id="bcfSportHoldStatus"
           class="sportStatus"
         >
 
@@ -9169,15 +9590,17 @@ function sportFinanceRender(){
     }
 
 
-    sportFinanceUpdateResearchBox();
+  sportFinanceUpdateResearchBox();
 
-    sportFinanceUpdateDatePreview();
+sportFinanceUpdateDatePreview();
 
-    sportFinanceRenderTemplates();
+sportFinanceRenderTenDayPlanning();
 
-    sportFinanceRenderHoldStatus();
+sportFinanceRenderTemplates();
 
-    sportFinanceRenderLatestOperation();
+sportFinanceRenderHoldStatus();
+
+sportFinanceRenderLatestOperation();
 
     if(
       identityCheckCache
