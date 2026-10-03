@@ -5430,6 +5430,7 @@ window.backModal =
       );
 
   };
+
 /* =========================================================
    ÇA FINIT ICI — RETOUR MODALE CENTRALISÉ
    ========================================================= */
@@ -21908,21 +21909,35 @@ openModal("Pilotage privé Bo'CitéArt",`
 
   <div class="choiceGrid">
 
-    <button class="choiceBtn" onclick="openTableauMatin()">Tableau de pilotage</button>
-    <button class="choiceBtn" type="button" onclick="window.showPilotageAccessLog()">Journal des accès</button>
-    <button class="choiceBtn" onclick="fermerPilotagePrive()">Déconnexion pilotage</button>
-    <button class="choiceBtn" onclick="openTableauBordCommune()">Tableau commune</button>
-   <button class="choiceBtn" type="button" onclick="window.__bociteartOpenByKey('ecole')">École — Direction</button>
-    <button class="choiceBtn" onclick="openBociteSportPrivate()">Sport — Présidence</button>
-    <button class="choiceBtn" onclick="openPresentationBoCiteArt()">Environnement</button>
-    <button class="choiceBtn" onclick="openConformiteBociteart()">Conformité</button>
-    <button class="choiceBtn" onclick="openTresorerieIA()">Trésorerie</button>
-    <button class="choiceBtn" onclick="openAnomaliesIA()">Anomalies IA</button>
-    <button class="choiceBtn" onclick="openCoffreFortDoc()">Coffre-fort</button>
-    <button class="choiceBtn" onclick="openContratsBoCiteArt()">Contrats</button>
-    <button class="choiceBtn" onclick="openEtatSysteme()">État système</button>
-    <button class="choiceBtn" onclick="openMaintenanceBociteart()">Maintenance</button>
-    <button class="choiceBtn" onclick="openParametresBociteart()">Paramètres</button>
+    <button class="choiceBtn" onclick="openTableauMatin()">Vue générale — activité du jour</button>
+
+    <button class="choiceBtn" type="button" onclick="window.showPilotageAccessLog()">Journal des connexions</button>
+
+    <button class="choiceBtn" onclick="fermerPilotagePrive()">Quitter l’administration</button>
+
+    <button class="choiceBtn" onclick="openTableauBordCommune()">Commune — tableau de bord</button>
+
+    <button class="choiceBtn" type="button" onclick="window.__bociteartOpenByKey('ecole')">École — direction</button>
+
+    <button class="choiceBtn" onclick="openBociteSportPrivate()">Sport — clubs / pubs / parrainages</button>
+
+    <button class="choiceBtn" onclick="openPresentationBoCiteArt()">Préparer une présentation</button>
+
+    <button class="choiceBtn" onclick="openConformiteBociteart()">RGPD et conformité</button>
+
+    <button class="choiceBtn" onclick="openTresorerieIA()">Trésorerie et prévisions</button>
+
+    <button class="choiceBtn" onclick="openAnomaliesIA()">Alertes et anomalies IA</button>
+
+    <button class="choiceBtn" onclick="openCoffreFortDoc()">Documents — coffre-fort</button>
+
+    <button class="choiceBtn" onclick="openContratsBoCiteArt()">Contrats et suivi</button>
+
+    <button class="choiceBtn" onclick="openEtatSysteme()">État technique</button>
+
+    <button class="choiceBtn" onclick="openMaintenanceBociteart()">Maintenance des espaces</button>
+
+    <button class="choiceBtn" onclick="openParametresBociteart()">Réglages généraux</button>
 
   </div>
 
@@ -25991,8 +26006,18 @@ document.addEventListener(
   console.log("✅ pub unique v3 chargée");
  
   const STORE = "bociteart_pub_v3_bookings";
-  const PROFILE = "bociteart_pub_v3_profiles";
-  const DRAFT_STORE = "bociteart_pub_v3_drafts_v1";
+const PROFILE = "bociteart_pub_v3_profiles";
+
+const DRAFT_STORE =
+  "bociteart_pub_v3_drafts_v1";
+
+const ACTIVE_PROFILE_SESSION =
+  "bociteart_pub_v3_active_profile_v1";
+
+const FINANCIAL_ORDERS_STORE =
+  "bociteart_financial_orders_v1";
+
+const DB_NAME = "bociteart_pub_v3_images"
   const ACTIVE_PROFILE_SESSION = "bociteart_pub_v3_active_profile_v1";
   const FINANCIAL_ORDERS_STORE = "bociteart_financial_orders_v1";
   const DB_NAME = "bociteart_pub_v3_images";
@@ -26190,6 +26215,846 @@ function makeAccessCode(type){
     return bookings[k.m][k.j];
   }
 
+ /* =========================================================
+   BROUILLON PUBLICITAIRE + RETOUR PAIEMENT SANS PERTE
+   ========================================================= */
+
+function isWaitingPaymentBookingV3(ad){
+
+  return Boolean(
+    ad &&
+    String(
+      ad.status || ""
+    ) === "waiting_payment" &&
+    String(
+      ad.paymentStatus || ""
+    ) === "waiting_payment"
+  );
+}
+
+
+function isCommittedBookingV3(ad){
+
+  if(!ad){
+    return false;
+  }
+
+  /*
+   * Une réservation professionnelle non payée
+   * reste un brouillon de paiement :
+   * elle ne consomme aucune place du calendrier.
+   *
+   * Les autres états conservent le comportement existant,
+   * notamment le circuit Mairie en paiement différé.
+   */
+  return !isWaitingPaymentBookingV3(
+    ad
+  );
+}
+
+
+function countCommittedBookingsV3(
+  date
+){
+
+  return dayList(
+    getBookings(),
+    date
+  )
+  .filter(
+    isCommittedBookingV3
+  )
+  .length;
+}
+
+
+function getAdvertisingDraftsV3(){
+
+  return load(
+    DRAFT_STORE,
+    {}
+  );
+}
+
+
+function saveAdvertisingDraftV3(
+  type,
+  draft
+){
+
+  const cleanType =
+    String(
+      type || ""
+    )
+    .trim()
+    .toLowerCase();
+
+  if(!cleanType){
+    return false;
+  }
+
+  const drafts =
+    getAdvertisingDraftsV3();
+
+  drafts[
+    cleanType
+  ] =
+    draft || {};
+
+  return save(
+    DRAFT_STORE,
+    drafts
+  );
+}
+
+
+function clearAdvertisingDraftV3(
+  type
+){
+
+  const cleanType =
+    String(
+      type || ""
+    )
+    .trim()
+    .toLowerCase();
+
+  if(!cleanType){
+    return;
+  }
+
+  const drafts =
+    getAdvertisingDraftsV3();
+
+  if(
+    Object.prototype
+      .hasOwnProperty
+      .call(
+        drafts,
+        cleanType
+      )
+  ){
+
+    delete drafts[
+      cleanType
+    ];
+
+    save(
+      DRAFT_STORE,
+      drafts
+    );
+  }
+}
+
+
+function recoverAdvertisingDraftFromPendingV3(
+  type
+){
+
+  const cleanType =
+    String(
+      type || ""
+    )
+    .trim()
+    .toLowerCase();
+
+  if(!cleanType){
+    return null;
+  }
+
+  const bookings =
+    getBookings();
+
+  const pending =
+    [];
+
+  Object.keys(
+    bookings || {}
+  )
+  .forEach(
+    function(monthKey){
+
+      const month =
+        bookings[
+          monthKey
+        ];
+
+      if(
+        !month ||
+        typeof month !==
+          "object"
+      ){
+        return;
+      }
+
+      Object.keys(
+        month
+      )
+      .forEach(
+        function(dayKey){
+
+          const list =
+            Array.isArray(
+              month[
+                dayKey
+              ]
+            )
+              ? month[
+                  dayKey
+                ]
+              : [];
+
+          list.forEach(
+            function(ad){
+
+              if(
+                !ad ||
+                String(
+                  ad.profileType || ""
+                )
+                .trim()
+                .toLowerCase() !==
+                  cleanType ||
+                !isWaitingPaymentBookingV3(
+                  ad
+                )
+              ){
+                return;
+              }
+
+              pending.push(
+                ad
+              );
+            }
+          );
+        }
+      );
+    }
+  );
+
+  if(!pending.length){
+    return null;
+  }
+
+  pending.sort(
+    function(a,b){
+
+      return Number(
+        b.createdTs || 0
+      ) -
+      Number(
+        a.createdTs || 0
+      );
+    }
+  );
+
+  const newest =
+    pending[0];
+
+  const orderId =
+    String(
+      newest.orderId || ""
+    );
+
+  const sameOrder =
+    pending.filter(
+      function(ad){
+
+        return String(
+          ad.orderId || ""
+        ) ===
+          orderId;
+      }
+    );
+
+  const messages =
+    {};
+
+  const selectedDates =
+    [];
+
+  sameOrder.forEach(
+    function(ad){
+
+      const date =
+        String(
+          ad.date || ""
+        );
+
+      if(
+        date &&
+        !selectedDates.includes(
+          date
+        )
+      ){
+        selectedDates.push(
+          date
+        );
+      }
+
+      if(date){
+
+        messages[
+          date
+        ] = {
+
+          title:
+            String(
+              ad.title || ""
+            ),
+
+          text:
+            String(
+              ad.text || ""
+            )
+
+        };
+      }
+    }
+  );
+
+  const draft = {
+
+    version:
+      1,
+
+    type:
+      cleanType,
+
+    orderId:
+      orderId,
+
+    selectedDates:
+      selectedDates,
+
+    pack:
+      Number(
+        newest.pack || 1
+      ),
+
+    goal:
+      String(
+        newest.campaignGoal ||
+        "visibility"
+      ),
+
+    showcase:
+      Boolean(
+        newest.interactiveShowcase
+      ),
+
+    photoPack:
+      Number(
+        newest.photoPack || 3
+      ),
+
+    tools:
+      newest.tools &&
+      typeof newest.tools ===
+        "object"
+        ? newest.tools
+        : {},
+
+    coupon:
+      newest.coupon &&
+      typeof newest.coupon ===
+        "object"
+        ? newest.coupon
+        : {},
+
+    messages:
+      messages,
+
+    amountHT:
+      Number(
+        newest.amountHT || 0
+      ),
+
+    savedAt:
+      Number(
+        newest.createdTs ||
+        Date.now()
+      )
+
+  };
+
+  saveAdvertisingDraftV3(
+    cleanType,
+    draft
+  );
+
+  return draft;
+}
+
+
+function getAdvertisingDraftV3(
+  type
+){
+
+  const cleanType =
+    String(
+      type || ""
+    )
+    .trim()
+    .toLowerCase();
+
+  if(!cleanType){
+    return null;
+  }
+
+  const drafts =
+    getAdvertisingDraftsV3();
+
+  const stored =
+    drafts[
+      cleanType
+    ];
+
+  if(
+    stored &&
+    typeof stored ===
+      "object"
+  ){
+    return stored;
+  }
+
+  return recoverAdvertisingDraftFromPendingV3(
+    cleanType
+  );
+}
+
+
+function setActiveAdvertisingProfileV3(
+  type
+){
+
+  const cleanType =
+    String(
+      type || ""
+    )
+    .trim()
+    .toLowerCase();
+
+  if(!cleanType){
+    return "";
+  }
+
+  window.BOCITEART_ADVERTISING_ACTIVE_PROFILE =
+    cleanType;
+
+  try{
+
+    sessionStorage.setItem(
+      ACTIVE_PROFILE_SESSION,
+      cleanType
+    );
+
+  }catch(error){}
+
+  return cleanType;
+}
+
+
+function getActiveAdvertisingProfileV3(){
+
+  let type =
+    String(
+      window.BOCITEART_ADVERTISING_ACTIVE_PROFILE ||
+      ""
+    )
+    .trim()
+    .toLowerCase();
+
+  if(type){
+    return type;
+  }
+
+  try{
+
+    type =
+      String(
+        sessionStorage.getItem(
+          ACTIVE_PROFILE_SESSION
+        ) ||
+        ""
+      )
+      .trim()
+      .toLowerCase();
+
+  }catch(error){}
+
+  if(type){
+    return type;
+  }
+
+  const drafts =
+    getAdvertisingDraftsV3();
+
+  const entries =
+    Object.keys(
+      drafts || {}
+    )
+    .map(
+      function(key){
+
+        return {
+          type:
+            key,
+
+          draft:
+            drafts[
+              key
+            ] || {}
+        };
+      }
+    )
+    .sort(
+      function(a,b){
+
+        return Number(
+          b.draft.savedAt || 0
+        ) -
+        Number(
+          a.draft.savedAt || 0
+        );
+      }
+    );
+
+  if(entries.length){
+
+    return String(
+      entries[0].type || ""
+    )
+    .trim()
+    .toLowerCase();
+  }
+
+  const candidates = [
+    "commerce",
+    "mairie",
+    "asso"
+  ];
+
+  for(
+    let i = 0;
+    i < candidates.length;
+    i++
+  ){
+
+    const recovered =
+      recoverAdvertisingDraftFromPendingV3(
+        candidates[i]
+      );
+
+    if(recovered){
+
+      return candidates[i];
+    }
+  }
+
+  return "";
+}
+
+
+function getFinancialOrderV3(
+  orderId
+){
+
+  const id =
+    String(
+      orderId || ""
+    );
+
+  if(!id){
+    return null;
+  }
+
+  const orders =
+    load(
+      FINANCIAL_ORDERS_STORE,
+      []
+    );
+
+  if(
+    !Array.isArray(
+      orders
+    )
+  ){
+    return null;
+  }
+
+  return (
+    orders.find(
+      function(order){
+
+        return (
+          order &&
+          String(
+            order.id || ""
+          ) ===
+            id
+        );
+      }
+    ) ||
+    null
+  );
+}
+
+
+function getReusableAdvertisingOrderV3(
+  orderId,
+  expected
+){
+
+  const order =
+    getFinancialOrderV3(
+      orderId
+    );
+
+  const rules =
+    expected || {};
+
+  if(
+    !order ||
+    order.serviceType !==
+      "advertising" ||
+    order.status !==
+      "waiting_payment"
+  ){
+    return null;
+  }
+
+  if(
+    rules.productCode &&
+    String(
+      order.productCode || ""
+    ) !==
+      String(
+        rules.productCode
+      )
+  ){
+    return null;
+  }
+
+  if(
+    Number.isFinite(
+      Number(
+        rules.amountHT
+      )
+    ) &&
+    Number(
+      order.amountHT || 0
+    ) !==
+      Number(
+        rules.amountHT
+      )
+  ){
+    return null;
+  }
+
+  if(
+    rules.customerId &&
+    String(
+      order.customerId || ""
+    ) !==
+      String(
+        rules.customerId
+      )
+  ){
+    return null;
+  }
+
+  return order;
+}
+
+
+function removeWaitingBookingsForOrderV3(
+  bookings,
+  orderId
+){
+
+  const id =
+    String(
+      orderId || ""
+    );
+
+  if(
+    !id ||
+    !bookings ||
+    typeof bookings !==
+      "object"
+  ){
+    return false;
+  }
+
+  let changed =
+    false;
+
+  Object.keys(
+    bookings
+  )
+  .forEach(
+    function(monthKey){
+
+      const month =
+        bookings[
+          monthKey
+        ];
+
+      if(
+        !month ||
+        typeof month !==
+          "object"
+      ){
+        return;
+      }
+
+      Object.keys(
+        month
+      )
+      .forEach(
+        function(dayKey){
+
+          const list =
+            Array.isArray(
+              month[
+                dayKey
+              ]
+            )
+              ? month[
+                  dayKey
+                ]
+              : [];
+
+          const next =
+            list.filter(
+              function(ad){
+
+                const remove =
+                  ad &&
+                  String(
+                    ad.orderId || ""
+                  ) ===
+                    id &&
+                  isWaitingPaymentBookingV3(
+                    ad
+                  );
+
+                if(remove){
+                  changed = true;
+                }
+
+                return !remove;
+              }
+            );
+
+          month[
+            dayKey
+          ] =
+            next;
+        }
+      );
+    }
+  );
+
+  return changed;
+}
+
+
+function isAdvertisingOrderPaidV3(
+  orderId
+){
+
+  const id =
+    String(
+      orderId || ""
+    );
+
+  if(!id){
+    return false;
+  }
+
+  const bookings =
+    getBookings();
+
+  let paid =
+    false;
+
+  Object.keys(
+    bookings || {}
+  )
+  .forEach(
+    function(monthKey){
+
+      const month =
+        bookings[
+          monthKey
+        ];
+
+      if(
+        paid ||
+        !month ||
+        typeof month !==
+          "object"
+      ){
+        return;
+      }
+
+      Object.keys(
+        month
+      )
+      .forEach(
+        function(dayKey){
+
+          if(paid){
+            return;
+          }
+
+          const list =
+            Array.isArray(
+              month[
+                dayKey
+              ]
+            )
+              ? month[
+                  dayKey
+                ]
+              : [];
+
+          paid =
+            list.some(
+              function(ad){
+
+                return (
+                  ad &&
+                  String(
+                    ad.orderId || ""
+                  ) ===
+                    id &&
+                  (
+                    String(
+                      ad.paymentStatus || ""
+                    ) ===
+                      "paid" ||
+                    String(
+                      ad.status || ""
+                    ) ===
+                      "waiting_owner_validation" ||
+                    String(
+                      ad.status || ""
+                    ) ===
+                      "paid"
+                  )
+                );
+              }
+            );
+        }
+      );
+    }
+  );
+
+  return paid;
+}
 
   /* =========================================================
      BROUILLON PUBLICITAIRE + RETOUR PAIEMENT SANS PERTE
@@ -28983,9 +29848,15 @@ function openProfile(type){
   );
 
   const zone = $("pubZoneV3");
-  if(!zone) return;
 
-  const profile = getProfile(type);
+  if(!zone){
+    return;
+  }
+
+  const profile =
+    getProfile(
+      type
+    );
 
   const restoredDraft =
     getAdvertisingDraftV3(
@@ -29013,6 +29884,7 @@ function openProfile(type){
           )
         )
       : [];
+
   zone.innerHTML = `
   
      <div
