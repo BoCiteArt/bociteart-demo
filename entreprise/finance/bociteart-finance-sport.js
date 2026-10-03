@@ -9,8 +9,8 @@
    Ce fichier prépare au maximum la couche application :
    - identité et numéro client permanent ;
    - publicité Sport indépendante du Cabas ;
-   - créneau de 72 heures exactes ;
-   - 6 publicités simultanées maximum ;
+   - créneau de 48 heures exactes ;
+   - 8 publicités simultanées maximum ;
    - réservation 15 minutes et prolongation +5 minutes ;
    - parrainage de 50 € HT minimum ;
    - soutien recherche supplémentaire de 10 € minimum ;
@@ -54,8 +54,8 @@
 
   const MINIMUM_HT = 50;
   const EXTRA_RESEARCH_MINIMUM = 10;
-  const PUBLICATION_DURATION_MS = 72 * 60 * 60 * 1000;
-  const CONCURRENT_CAPACITY = 6;
+  const PUBLICATION_DURATION_MS = 48 * 60 * 60 * 1000;
+  const CONCURRENT_CAPACITY = 8;
   const HOLD_MINUTES = 15;
   const MANUAL_EXTENSION_MINUTES = 5;
   const BOCITEART_BASE_FEE_RATE_HT = 0.10;
@@ -66,7 +66,7 @@
   const MAX_LOCAL_OPERATIONS = 500;
   const MAX_LOCAL_AUDIT = 1000;
   const MAX_LOCAL_SLOTS = 1500;
-  const LOCAL_NEXT_SLOT_SEARCH_DAYS = 45;
+  const LOCAL_NEXT_SLOT_SEARCH_DAYS = 10;
   const LOCAL_NEXT_SLOT_STEP_MINUTES = 15;
 
   const PUBLICITY_TEMPLATES = [
@@ -2881,7 +2881,7 @@
 
    /* =========================================================
      BLOC 3
-     SPORT — PUBLICITÉ INDÉPENDANTE — 72 HEURES — CAPACITÉ 6
+     SPORT — PUBLICITÉ INDÉPENDANTE — 48 HEURES — CAPACITÉ 8
      ========================================================= */
 
   function sportFinanceDateTimeLocalValue(date){
@@ -3037,7 +3037,7 @@
         ),
 
       durationHours:
-        72
+        48
     };
   }
 
@@ -3382,7 +3382,7 @@
         range.endIso,
 
       durationHours:
-        72
+        48
     };
   }
 
@@ -3422,7 +3422,7 @@
               range.endIso,
 
             durationHours:
-              72,
+              48,
 
             concurrentCapacity:
               CONCURRENT_CAPACITY,
@@ -3448,7 +3448,7 @@
             range.endIso,
 
           durationHours:
-            72
+            48
         },
         result ||
         {}
@@ -3486,7 +3486,7 @@
               requested.toISOString(),
 
             durationHours:
-              72,
+              48,
 
             concurrentCapacity:
               CONCURRENT_CAPACITY,
@@ -3624,7 +3624,7 @@
               range.endIso,
 
             durationHours:
-              72,
+              48,
 
             concurrentCapacity:
               CONCURRENT_CAPACITY,
@@ -3705,7 +3705,7 @@
       !availability.available
     ){
       throw new Error(
-        "Six publicités sont déjà programmées sur une partie de cette période de 72 heures."
+        "8 publicités sont déjà programmées sur une partie de cette période de 48 heures."
       );
     }
 
@@ -4766,7 +4766,7 @@ function sportFinanceCommitLocalHold(draft){
           true,
 
         durationHours:
-          72,
+          48,
 
         concurrentCapacity:
           CONCURRENT_CAPACITY,
@@ -5551,7 +5551,7 @@ function sportFinanceCommitLocalHold(draft){
     }
 
     target.textContent =
-      "Votre publicité sera diffusée pendant 72 heures, du " +
+      "Votre publicité sera diffusée pendant 48 heures, du " +
       sportFinanceDateTimeFr(
         range.startIso
       ) +
@@ -5766,7 +5766,7 @@ function sportFinanceCommitLocalHold(draft){
                 operation.publicationEnd
               )
             ) +
-            " (72 h)"
+            " (48 h)"
           : ""
       ) +
 
@@ -6483,7 +6483,7 @@ function sportFinanceCommitLocalHold(draft){
         }
 
         sportFinanceSetStatus(
-          "Aucun créneau de 72 heures n’est disponible dans cette période.",
+          "Aucun créneau de 48 heures n’est disponible dans cette période.",
           "error"
         );
 
@@ -6539,7 +6539,7 @@ const accountingDossier =
 
         data.publicityText,
 
-        "Diffusion pendant 72 heures : du " +
+        "Diffusion pendant 48 heures : du " +
         sportFinanceDateTimeFr(
           data.publicationStart
         ) +
@@ -6659,7 +6659,7 @@ const accountingDossier =
           data.associationSnapshot,
 
         publicationDurationHours:
-          72,
+          48,
 
         publicationStart:
           data.publicationStart,
@@ -6776,7 +6776,7 @@ const accountingDossier =
             : "",
 
         publicationDurationHours:
-          72,
+          48,
 
         publicationStart:
           data.publicationStart,
@@ -6929,7 +6929,7 @@ const accountingDossier =
 
       data.publicityText,
 
-      "Diffusion pendant 72 heures : du " +
+      "Diffusion pendant 48 heures : du " +
       sportFinanceDateTimeFr(
         data.publicationStart
       ) +
@@ -7020,7 +7020,7 @@ const accountingDossier =
         ].filter(Boolean),
 
         publicationDurationHours:
-          72,
+          48,
 
         publicationStart:
           data.publicationStart,
@@ -7250,7 +7250,7 @@ const accountingDossier =
           ),
 
         publicationDurationHours:
-          72,
+          48,
 
         publicationStart:
           sportFinanceText(
@@ -7448,7 +7448,7 @@ async function sportFinanceStartCheckout(request){
       Il devient "payment_pending"
       et continue donc à compter
       dans la capacité maximale
-      de 6 publicités simultanées.
+      de 8 publicités simultanées.
     */
 
     if(
@@ -7585,7 +7585,7 @@ async function sportFinanceStartCheckout(request){
         ),
 
       publicationDurationHours:
-        72,
+        48,
 
       publicationStart:
         sportFinanceText(
@@ -7990,7 +7990,7 @@ function sportFinanceRender(){
           pendant
 
           <strong>
-            72 heures exactes
+            48 heures exactes
           </strong>
 
           à partir de son heure réelle
@@ -8001,7 +8001,7 @@ function sportFinanceRender(){
           Au maximum
 
           <strong>
-            6 publicités sont diffusées simultanément
+            8 publicités sont diffusées simultanément
           </strong>.
 
           Si une place est disponible immédiatement,
@@ -8538,7 +8538,8 @@ function sportFinanceRender(){
 
         <div class="sportSubTitle">
 
-          Diffusion — 72 heures exactes
+          Diffusion — 48
+          heures exactes
 
         </div>
 
@@ -8550,7 +8551,7 @@ function sportFinanceRender(){
           Choisissez une date et une heure,
           ou demandez le premier créneau disponible.
 
-          Les 72 heures sont calculées
+          Les 48 heures sont calculées
           à partir de l’heure réelle de démarrage :
 
           la diffusion ne s’arrête pas à minuit.
@@ -8602,7 +8603,7 @@ function sportFinanceRender(){
           "
         >
 
-          Vérifier ce créneau de 72 heures
+          Vérifier ce créneau de 48 heures
 
         </button>
 
@@ -8686,7 +8687,7 @@ function sportFinanceRender(){
           la destination,
           l’éventuel soutien recherche,
           la phrase finale
-          et les 72 heures de diffusion.
+          et les 48 heures de diffusion.
 
           <br><br>
 
@@ -9767,7 +9768,7 @@ function sportFinanceRender(){
         ),
 
       publicationDurationHours:
-        72,
+        48,
 
       publicationStart:
         sportFinanceText(
@@ -10170,7 +10171,7 @@ function sportFinanceRender(){
         "Campagne payée non consommée : reprogrammation nécessaire.",
 
       actionRequired:
-        "Reprogrammer 72 heures complètes sans consommer la campagne initiale."
+        "Reprogrammer 48 heures complètes sans consommer la campagne initiale."
     });
 
     sportFinanceSetStatus(
@@ -10534,9 +10535,9 @@ function sportFinanceInstall(){
       }
   };
 
-  console.info(
-    "✅ Bo'CitéArt Finance — Sport prêt — publicité indépendante / 72 h / capacité 6 / Agent 1 + Agent 2"
-  );
+ console.info(
+    "✅ Bo'CitéArt Finance — Sport prêt — publicité indépendante / 48 h / capacité 8 / Agent 1 + Agent 2"
+);
 
 })();
 
