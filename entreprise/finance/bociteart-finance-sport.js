@@ -40,145 +40,279 @@
     return;
   }
 
-  const VERSION = "2026-09-09-01";
+  const VERSION = "2026-10-05-SPORT-FINAL-01";
   const CONNECTOR_NAME = "sport-parrainage";
   const MOUNT_ID = "bociteSportFinanceMount";
-  const PROFILE_KEY = "bociteart_finance_sport_merchant_v4";
-  const OPERATIONS_KEY = "bociteart_finance_sport_operations_v4";
-  const LOCAL_SLOTS_KEY = "bociteart_finance_sport_slots_v2";
-  const LOCAL_CLIENTS_KEY = "bociteart_finance_clients_v1";
-  const LOCAL_AUDIT_KEY = "bociteart_finance_audit_v1";
-  const LOCAL_BRANDING_KEY = "bociteart_finance_branding_v1";
-  const LOCAL_TARIFF_KEY = "bociteart_finance_tariff_v1";
-  const LOCAL_ACCOUNTING_SETTINGS_KEY = "bociteart_finance_accounting_settings_v1";
 
-const MINIMUM_HT = 50;
+  const PROFILE_KEY =
+    "bociteart_finance_sport_merchant_v4";
 
-/*
-  Règle spécifique au parcours Finance Sport :
-  participation Bo'CitéArt fixe de 5 € TTC par opération.
+  const OPERATIONS_KEY =
+    "bociteart_finance_sport_operations_v4";
 
-  Le calcul HT / TVA définitif reste côté serveur.
-  La règle commune des autres modules n'est pas modifiée ici.
-*/
-const SPORT_BOCITEART_PARTICIPATION_TTC =
-  5;
+  const LOCAL_SLOTS_KEY =
+    "bociteart_finance_sport_slots_v2";
 
-const SPORT_BOCITEART_PARTICIPATION_VERSION =
-  "SPORT-FIXED-5-TTC-1";
+  const LOCAL_CLIENTS_KEY =
+    "bociteart_finance_clients_v1";
 
-/* =========================================================
-   PETIT BANDEAU SPORT
-   RÈGLES VALIDÉES
-   ========================================================= */
+  const LOCAL_AUDIT_KEY =
+    "bociteart_finance_audit_v1";
 
-const PUBLICATION_DURATION_MS =
-  48 * 60 * 60 * 1000;
+  const LOCAL_BRANDING_KEY =
+    "bociteart_finance_branding_v1";
 
-const CONCURRENT_CAPACITY =
-  8;
+  const LOCAL_TARIFF_KEY =
+    "bociteart_finance_tariff_v1";
 
-const HOLD_MINUTES =
-  15;
+  const LOCAL_ACCOUNTING_SETTINGS_KEY =
+    "bociteart_finance_accounting_settings_v1";
 
-const MANUAL_EXTENSION_MINUTES =
-  5;
 
-/*
-  Règle commune Finance partagée avec les autres modules.
-  Elle reste inchangée ici pour éviter toute régression.
+  /* =========================================================
+     RÈGLES FINANCE SPORT VALIDÉES
+     ========================================================= */
 
-  Le flux Sport n'utilise plus ce taux :
-  il applique sa participation fixe de 5 € TTC par opération.
-*/
-const BOCITEART_BASE_FEE_RATE_HT =
-  0.10;
+  const MINIMUM_HT =
+    50;
 
-const PUBLIC_ENTITY_TARGET_DAYS =
-  30;
+  /*
+    Participation Bo'CitéArt spécifique au Sport :
+    5 € TTC fixes par opération.
 
-const PUBLIC_ENTITY_LATE_FIXED_COMPENSATION =
-  40;
+    La ventilation HT / TVA définitive
+    est calculée côté serveur selon
+    la situation fiscale réelle de Bo'CitéArt.
+  */
 
-const ACCOUNTING_RETENTION_YEARS =
-  10;
+  const SPORT_BOCITEART_PARTICIPATION_TTC =
+    5;
 
-const SECURITY_LOG_RETENTION_DAYS =
-  365;
+  const SPORT_BOCITEART_PARTICIPATION_VERSION =
+    "SPORT-FIXED-5-TTC-1";
 
-const MAX_LOCAL_OPERATIONS =
-  500;
 
-const MAX_LOCAL_AUDIT =
-  1000;
+  /* =========================================================
+     PETIT BANDEAU SPORT
+     ========================================================= */
 
-const MAX_LOCAL_SLOTS =
-  1500;
+  const PUBLICATION_DURATION_MS =
+    48 *
+    60 *
+    60 *
+    1000;
 
-/*
-  Planning visible et recherche :
-  10 jours glissants maximum.
-*/
-const LOCAL_NEXT_SLOT_SEARCH_DAYS =
-  10;
+  const CONCURRENT_CAPACITY =
+    8;
 
-/*
-  Recherche du prochain départ possible :
-  pas de 15 minutes.
-*/
-const LOCAL_NEXT_SLOT_STEP_MINUTES =
-  15;
+  const HOLD_MINUTES =
+    15;
+
+  const MANUAL_EXTENSION_MINUTES =
+    5;
+
+
+  /*
+    Ancienne règle Finance commune.
+
+    Elle reste disponible pour les autres
+    modules qui utilisent encore la fondation
+    Finance commune.
+
+    LE FLUX SPORT NE L'UTILISE PAS
+    pour calculer la participation Bo'CitéArt.
+  */
+
+  const BOCITEART_BASE_FEE_RATE_HT =
+    0.10;
+
+
+  const PUBLIC_ENTITY_TARGET_DAYS =
+    30;
+
+  const PUBLIC_ENTITY_LATE_FIXED_COMPENSATION =
+    40;
+
+  const ACCOUNTING_RETENTION_YEARS =
+    10;
+
+  const SECURITY_LOG_RETENTION_DAYS =
+    365;
+
+  const MAX_LOCAL_OPERATIONS =
+    500;
+
+  const MAX_LOCAL_AUDIT =
+    1000;
+
+  const MAX_LOCAL_SLOTS =
+    1500;
+
+
+  /*
+    Planning et réservation :
+    recherche limitée aux 10 prochains jours.
+  */
+
+  const LOCAL_NEXT_SLOT_SEARCH_DAYS =
+    10;
+
+  /*
+    Pas de recherche :
+    15 minutes.
+  */
+
+  const LOCAL_NEXT_SLOT_STEP_MINUTES =
+    15;
+
 
   const PUBLICITY_TEMPLATES = [
-    { code:"THANKS", label:"Formule 1" },
-    { code:"SUPPORTS", label:"Formule 2" },
-    { code:"LOCAL", label:"Formule 3" },
-    { code:"CLUB_THANKS", label:"Formule 4" }
+
+    {
+      code:"THANKS",
+      label:"Formule 1"
+    },
+
+    {
+      code:"SUPPORTS",
+      label:"Formule 2"
+    },
+
+    {
+      code:"LOCAL",
+      label:"Formule 3"
+    },
+
+    {
+      code:"CLUB_THANKS",
+      label:"Formule 4"
+    }
   ];
 
-  let activeCorrectionDraftId = "";
-  let financeEventsInstalled = false;
-  let currentHold = null;
-  let identityCheckCache = null;
 
-  function sportFinanceCore(){ return window.BociteFinance || null; }
-  function sportFinanceUI(){ return window.BociteFinanceUI || null; }
-  function sportFinanceText(value){ return String(value == null ? "" : value).trim(); }
+  let activeCorrectionDraftId =
+    "";
 
-  function sportFinanceEscape(value){
-    return sportFinanceText(value)
-      .replace(/&/g,"&amp;")
-      .replace(/</g,"&lt;")
-      .replace(/>/g,"&gt;")
-      .replace(/\"/g,"&quot;")
-      .replace(/'/g,"&#039;");
+  let financeEventsInstalled =
+    false;
+
+  let currentHold =
+    null;
+
+  let identityCheckCache =
+    null;
+
+
+  /* =========================================================
+     OUTILS COMMUNS
+     ========================================================= */
+
+  function sportFinanceCore(){
+
+    return (
+      window.BociteFinance ||
+      null
+    );
   }
 
-  function sportFinanceClone(value){
-    if(value == null){ return value; }
-    try{
-      return JSON.parse(
-        JSON.stringify(value)
+
+  function sportFinanceUI(){
+
+    return (
+      window.BociteFinanceUI ||
+      null
+    );
+  }
+
+
+  function sportFinanceText(value){
+
+    return String(
+      value == null
+        ? ""
+        : value
+    )
+      .trim();
+  }
+
+
+  function sportFinanceEscape(value){
+
+    return sportFinanceText(
+      value
+    )
+      .replace(
+        /&/g,
+        "&amp;"
+      )
+      .replace(
+        /</g,
+        "&lt;"
+      )
+      .replace(
+        />/g,
+        "&gt;"
+      )
+      .replace(
+        /"/g,
+        "&quot;"
+      )
+      .replace(
+        /'/g,
+        "&#039;"
       );
+  }
+
+
+  function sportFinanceClone(value){
+
+    if(
+      value == null
+    ){
+      return value;
+    }
+
+    try{
+
+      return JSON.parse(
+        JSON.stringify(
+          value
+        )
+      );
+
     }catch(error){
+
       return null;
     }
   }
 
+
   function sportFinanceNow(){
-    return new Date().toISOString();
+
+    return new Date()
+      .toISOString();
   }
 
+
   function sportFinanceId(prefix){
+
     const head =
-      sportFinanceText(prefix) ||
+      sportFinanceText(
+        prefix
+      ) ||
       "bocite-finance";
 
     if(
       window.crypto &&
-      typeof window.crypto.randomUUID === "function"
+      typeof window.crypto.randomUUID ===
+        "function"
     ){
-      return head + "-" + window.crypto.randomUUID();
+
+      return (
+        head +
+        "-" +
+        window.crypto.randomUUID()
+      );
     }
 
     return (
@@ -188,61 +322,102 @@ const LOCAL_NEXT_SLOT_STEP_MINUTES =
       "-" +
       Math.random()
         .toString(36)
-        .slice(2,12)
+        .slice(
+          2,
+          12
+        )
     );
   }
 
+
   function sportFinanceDigits(value){
-    return sportFinanceText(value)
-      .replace(/\D/g,"");
+
+    return sportFinanceText(
+      value
+    )
+      .replace(
+        /\D/g,
+        ""
+      );
   }
 
+
   function sportFinanceRound(value){
+
     const number =
-      Number(value || 0);
+      Number(
+        value ||
+        0
+      );
 
     if(
-      !Number.isFinite(number)
+      !Number.isFinite(
+        number
+      )
     ){
       return 0;
     }
 
     return (
       Math.round(
-        number * 100
-      ) / 100
+        number *
+        100
+      ) /
+      100
     );
   }
 
+
   function sportFinanceFormatMoney(value){
-    return sportFinanceRound(value)
+
+    return sportFinanceRound(
+      value
+    )
       .toLocaleString(
         "fr-FR",
         {
-          minimumFractionDigits:2,
-          maximumFractionDigits:2
+          minimumFractionDigits:
+            2,
+
+          maximumFractionDigits:
+            2
         }
       );
   }
 
+
   function sportFinanceEmailLooksValid(value){
+
     const email =
-      sportFinanceText(value);
+      sportFinanceText(
+        value
+      );
 
     return !!(
       email &&
       /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-        .test(email)
+        .test(
+          email
+        )
     );
   }
 
+
   function sportFinanceField(id){
-    return document.getElementById(id);
+
+    return document
+      .getElementById(
+        id
+      );
   }
 
+
   function sportFinanceValue(id){
+
     const field =
-      sportFinanceField(id);
+      sportFinanceField(
+        id
+      );
 
     return sportFinanceText(
       field
@@ -251,9 +426,13 @@ const LOCAL_NEXT_SLOT_STEP_MINUTES =
     );
   }
 
+
   function sportFinanceChecked(id){
+
     const field =
-      sportFinanceField(id);
+      sportFinanceField(
+        id
+      );
 
     return !!(
       field &&
@@ -261,42 +440,66 @@ const LOCAL_NEXT_SLOT_STEP_MINUTES =
     );
   }
 
+
   function sportFinanceConfig(){
+
     const core =
       sportFinanceCore();
 
     if(
       core &&
-      typeof core.getConfig === "function"
+      typeof core.getConfig ===
+        "function"
     ){
-      return core.getConfig() || {};
+
+      return (
+        core.getConfig() ||
+        {}
+      );
     }
 
     return {};
   }
 
+
   function sportFinanceIsProduction(){
+
     return (
       sportFinanceText(
-        sportFinanceConfig().mode
+        sportFinanceConfig()
+          .mode
       )
         .toLowerCase() ===
       "production"
     );
   }
 
+
   function sportFinanceApiBase(){
+
     return sportFinanceText(
-      sportFinanceConfig().apiBaseUrl
+      sportFinanceConfig()
+        .apiBaseUrl
     )
-      .replace(/\/$/,"");
+      .replace(
+        /\/$/,
+        ""
+      );
   }
 
-  async function sportFinanceServerPost(path,payload){
+
+  async function sportFinanceServerPost(
+    path,
+    payload
+  ){
+
     const base =
       sportFinanceApiBase();
 
-    if(!base){
+    if(
+      !base
+    ){
+
       throw new Error(
         "Le serveur sécurisé Finance n'est pas configuré."
       );
@@ -304,24 +507,41 @@ const LOCAL_NEXT_SLOT_STEP_MINUTES =
 
     const response =
       await fetch(
-        base + path,
+
+        base +
+        path,
+
         {
-          method:"POST",
-          credentials:"include",
+
+          method:
+            "POST",
+
+          credentials:
+            "include",
+
           headers:{
-            "Content-Type":"application/json"
+
+            "Content-Type":
+              "application/json"
           },
-          body:JSON.stringify(
-            payload || {}
-          )
+
+          body:
+            JSON.stringify(
+              payload ||
+              {}
+            )
         }
       );
 
-    if(!response.ok){
+    if(
+      !response.ok
+    ){
+
       let message =
         "Le service sécurisé est momentanément indisponible.";
 
       try{
+
         const body =
           await response.json();
 
@@ -329,161 +549,147 @@ const LOCAL_NEXT_SLOT_STEP_MINUTES =
           body &&
           body.message
         ){
+
           message =
             sportFinanceText(
               body.message
             ) ||
             message;
         }
+
       }catch(error){}
 
-      throw new Error(message);
+      throw new Error(
+        message
+      );
     }
 
     return response.json();
   }
 
-  function sportFinanceReadJson(storage,key,fallback){
+
+  function sportFinanceReadJson(
+    storage,
+    key,
+    fallback
+  ){
+
     try{
+
       const parsed =
         JSON.parse(
-          storage.getItem(key) ||
-          JSON.stringify(fallback)
+          storage.getItem(
+            key
+          ) ||
+          JSON.stringify(
+            fallback
+          )
         );
 
-      return parsed == null
-        ? fallback
-        : parsed;
+      return (
+        parsed == null
+          ? fallback
+          : parsed
+      );
 
     }catch(error){
+
       return fallback;
     }
   }
 
-  function sportFinanceWriteJson(storage,key,value){
+
+  function sportFinanceWriteJson(
+    storage,
+    key,
+    value
+  ){
+
     try{
+
       storage.setItem(
         key,
-        JSON.stringify(value)
+        JSON.stringify(
+          value
+        )
       );
+
       return true;
+
     }catch(error){
+
       return false;
     }
   }
 
+
+  /* =========================================================
+     NUMÉROS CLIENTS PERMANENTS
+     ========================================================= */
+
   function financeFoundationClientRegistry(){
+
     const value =
       sportFinanceReadJson(
+
         window.localStorage,
+
         LOCAL_CLIENTS_KEY,
+
         {
+
           years:{},
+
           entities:{}
         }
       );
 
     value.years =
       value.years &&
-      typeof value.years === "object"
+      typeof value.years ===
+        "object"
+
         ? value.years
+
         : {};
+
 
     value.entities =
       value.entities &&
-      typeof value.entities === "object"
+      typeof value.entities ===
+        "object"
+
         ? value.entities
+
         : {};
+
 
     return value;
   }
+
 
   function financeFoundationClientEntityKey(
     entityType,
     stableKey
   ){
+
     return (
-      sportFinanceText(entityType)
+
+      sportFinanceText(
+        entityType
+      )
         .toLowerCase() +
+
       "::" +
-      sportFinanceText(stableKey)
+
+      sportFinanceText(
+        stableKey
+      )
         .toUpperCase()
     );
   }
 
-  function financeFoundationFormatClientNumber(
-    year,
-    sequence
-  ){
-    const y =
-      String(
-        Number(year) ||
-        new Date().getFullYear()
-      )
-        .padStart(
-          4,
-          "0"
-        );
-
-    const seq =
-      Math.max(
-        100,
-        Number(sequence) || 100
-      );
-
-    return (
-      y +
-      "000" +
-      String(seq)
-    );
-  }
-
-  function financeFoundationEnsureLocalClientNumber(
-    entityType,
-    stableKey,
-    existingNumber
-  ){
-    const existing =
-      sportFinanceDigits(
-        existingNumber
-      );
-
-    if(existing){
-      return existing;
-    }
-
-    const key =
-      financeFoundationClientEntityKey(
-        entityType,
-        stableKey
-      );
-
-    if(
-      !key ||
-      key.endsWith("::")
-    ){
-      return "";
-    }
-
-    const registry =
-      financeFoundationClientRegistry();
-
-    if(
-      registry.entities[key] &&
-      registry.entities[key].clientNumber
-    ){
-      return String(
-        registry.entities[key].clientNumber
-      );
-    }
-
-    const year =
-      new Date().getFullYear();
-
-    const yearKey =
-      String(year);
-
-    const current =
+     const current =
       Math.max(
         99,
         Number(
@@ -966,6 +1172,7 @@ const LOCAL_NEXT_SLOT_STEP_MINUTES =
   }
 
   function financeFoundationBuildAccountingDossier(input){
+
     const source =
       input &&
       typeof input === "object"
@@ -1450,491 +1657,491 @@ const LOCAL_NEXT_SLOT_STEP_MINUTES =
         dueDateOrPaidAt:
           true,
 
-        pspReference:
-          "when_applicable",
+             const source =
+      input &&
+      typeof input === "object"
+        ? input
+        : {};
 
-        paymentTerms:
-          true,
+    const dossierRef =
+      sportFinanceText(
+        source.dossierRef
+      ) ||
+      sportFinanceId(
+        "accounting-dossier"
+      );
 
-        latePenaltyMention:
-          "when_legally_required",
+    return {
 
-        recoveryCompensationMention:
-          "when_legally_required"
+      dossierRef:
+        dossierRef,
+
+      operationRef:
+        sportFinanceText(
+          source.operationRef
+        ),
+
+      module:
+        sportFinanceText(
+          source.module
+        ),
+
+      flowType:
+        sportFinanceText(
+          source.flowType
+        ),
+
+      client:
+        sportFinanceClone(
+          source.client
+        ) ||
+        null,
+
+      beneficiaries:
+        sportFinanceClone(
+          source.beneficiaries
+        ) ||
+        [],
+
+      payment:
+        sportFinanceClone(
+          source.payment
+        ) ||
+        {},
+
+      taxation:
+        sportFinanceClone(
+          source.taxation
+        ) ||
+        {
+          finalQualification:
+            "server_only"
+        },
+
+      fees:{
+
+        bociteart:{
+
+          initialBaseRateHT:
+            BOCITEART_BASE_FEE_RATE_HT,
+
+          appliedRateHT:
+            source.bociteArtFeeRateHT == null
+              ? financeFoundationCurrentFeeRateHT()
+              : Number(
+                  source.bociteArtFeeRateHT
+                ),
+
+          vatTreatment:
+            "according_to_actual_bociteart_status",
+
+          invoiceMode:
+            "monthly_automatic"
+        },
+
+        psp:{
+
+          actualAmount:
+            source.pspFeeActualAmount == null
+              ? null
+              : Number(
+                  source.pspFeeActualAmount
+                ),
+
+          separateFromBociteArt:
+            true
+        }
       },
 
-      electronicInvoicing:{
+      documents:
+        financeFoundationDocumentManifest({
 
-        categoryOfOperation:
-          true,
+          dossierRef:
+            dossierRef,
 
-        customerSiren:
-          "when_required",
+          operationRef:
+            source.operationRef,
 
-        platformRouting:
-          "server_connector",
+          payerClientNumber:
+            source.client &&
+            source.client.clientNumber,
 
-        legalFormat:
-          "current_rule_monitored_by_agent2"
+          beneficiaryClientNumbers:
+            (
+              source.beneficiaries ||
+              []
+            )
+              .map(
+                function(item){
+                  return sportFinanceText(
+                    item &&
+                    item.clientNumber
+                  );
+                }
+              )
+              .filter(Boolean),
+
+          extraResearchAmount:
+            source.extraResearchAmount
+        }),
+
+      agent1:{
+        status:"pending",
+        blueprint:
+          financeFoundationAgent1Blueprint()
       },
 
-      correction:{
-
-        originalNeverSilentlyRewritten:
-          true,
-
-        rectificationDocumentWhenLegallyRequired:
-          true,
-
-        auditTrailRequired:
-          true
+      agent2:{
+        status:"pending",
+        blueprint:
+          financeFoundationAgent2Blueprint()
       },
 
-      retentionYears:
-        ACCOUNTING_RETENTION_YEARS
+      accountingPlatform:{
+        status:
+          "waiting_agent2",
+
+        platformId:
+          "",
+
+        batchRef:
+          "",
+
+        transmittedAt:
+          ""
+      },
+
+      archive:{
+        required:true,
+        years:ACCOUNTING_RETENTION_YEARS,
+        status:"pending"
+      },
+
+      createdAt:
+        sportFinanceNow(),
+
+      updatedAt:
+        sportFinanceNow()
     };
   }
 
-  function financeFoundationGetDailyAdminSummary(){
-    const operations =
-      sportFinanceReadOperations();
-
-    const audits =
+  function financeFoundationSaveAudit(entry){
+    const rows =
       sportFinanceReadJson(
         window.localStorage,
         LOCAL_AUDIT_KEY,
         []
       );
 
-    const problems =
-      (
-        Array.isArray(audits)
-          ? audits
-          : []
-      )
-        .filter(
-          function(item){
-            return !!(
-              item &&
-              (
-                item.level === "red" ||
-                item.level === "orange"
-              ) &&
-              item.resolved !== true
-            );
-          }
-        );
-
-    const totals =
-      operations.reduce(
-        function(acc,item){
-
-          const amount =
-            Number(
-              item.totalPaymentAmount ||
-              item.amountHT ||
-              0
-            );
-
-          if(
-            item.status === "paid"
-          ){
-            acc.paidCount += 1;
-            acc.paidAmount +=
-              Number.isFinite(amount)
-                ? amount
-                : 0;
-          }
-
-          if(
-            item.status === "payment_pending"
-          ){
-            acc.pendingCount += 1;
-          }
-
-          if(
-            item.status === "refused" ||
-            item.status === "cancelled" ||
-            item.status === "disputed"
-          ){
-            acc.problemCount += 1;
-          }
-
-          return acc;
-        },
-        {
-          paidCount:0,
-          paidAmount:0,
-          pendingCount:0,
-          problemCount:0
-        }
-      );
-
-    return {
-
-      generatedAt:
-        sportFinanceNow(),
-
-      state:
-        problems.some(
-          function(item){
-            return item.level === "red";
-          }
-        )
-          ? "red"
-          : (
-              problems.length
-                ? "orange"
-                : "green"
-            ),
-
-      problems:
-        sportFinanceClone(
-          problems
-        ) ||
-        [],
-
-      totals:
-        totals,
-
-      message:
-        problems.length
-          ? problems.length + " point(s) nécessitent une attention."
-          : "Tout est OK."
-    };
-  }
-
-  if(
-    !window.BociteFinanceFoundation ||
-    window.BociteFinanceFoundation.ready !== true
-  ){
-    window.BociteFinanceFoundation = {
-
-      ready:
-        true,
-
-      version:
-        VERSION,
-
-      policies:
-        financeFoundationAccountingPolicies,
-
-      agent1Blueprint:
-        financeFoundationAgent1Blueprint,
-
-      agent2Blueprint:
-        financeFoundationAgent2Blueprint,
-
-      ensureLocalClientNumber:
-        financeFoundationEnsureLocalClientNumber,
-
-      formatClientNumber:
-        financeFoundationFormatClientNumber,
-
-      buildAccountingDossier:
-        financeFoundationBuildAccountingDossier,
-
-      saveAudit:
-        financeFoundationSaveAudit,
-
-      getDailyAdminSummary:
-        financeFoundationGetDailyAdminSummary,
-
-      getCurrentTariff:
-        function(){
-          return sportFinanceClone(
-            financeFoundationCurrentTariff()
-          );
-        },
-
-      getCurrentFeeRateHT:
-        financeFoundationCurrentFeeRateHT,
-
-      getAccountingDestination:
-        function(){
-          return sportFinanceClone(
-            financeFoundationAccountingDestination()
-          );
-        },
-
-      configureAccountingDestination:
-        financeFoundationConfigureAccountingDestination,
-
-      invoiceBlueprint:
-        financeFoundationInvoiceBlueprint,
-
-      runGovernanceCheck:
-        async function(){
-
-          if(
-            sportFinanceIsProduction()
-          ){
-            return sportFinanceServerPost(
-              "/finance/governance/run",
-              {
-                requestedAt:
-                  sportFinanceNow(),
-
-                currentTariff:
-                  financeFoundationCurrentTariff(),
-
-                policies:
-                  financeFoundationAccountingPolicies()
-              }
-            );
-          }
-
-          return {
-
-            ok:
-              true,
-
-            mode:
-              "preproduction",
-
-            agent2:
-              "ready_for_server_monitoring",
-
-            tariff:
-              financeFoundationCurrentTariff(),
-
-            legalMonitoring:
-              "server_connection_required",
-
-            accountingPlatform:
-              "configuration_pending"
-          };
-        }
-    };
-  }
-
-  /* =========================================================
-     ÇA FINIT ICI — BLOC 1
-     ========================================================= */
-
-   /* =========================================================
-     BLOC 2
-     SPORT — IDENTITÉS — NUMÉROS CLIENTS — LOGO — PROFIL
-     ========================================================= */
-
-  function sportFinanceClub(){
-
-    if(
-      window.BociteSportModule &&
-      typeof window.BociteSportModule.getClub ===
-        "function"
-    ){
-
-      return (
-        window.BociteSportModule
-          .getClub() ||
-        {}
-      );
-    }
-
-    return {};
-  }
-
-
-  function sportFinanceSession(){
-
-    let source =
-      {};
-
-    if(
-      window.BociteSportModule &&
-      typeof window.BociteSportModule.getSession ===
-        "function"
-    ){
-
-      source =
-        window.BociteSportModule
-          .getSession() ||
-        {};
-
-    }else{
-
-      source =
-        window.bociteartSportSession ||
-        {};
-    }
-
-    return {
-
-      accountId:
-        sportFinanceText(
-          source.accountId ||
-          source.id
-        ),
-
-      name:
-        sportFinanceText(
-          source.name
-        ),
-
-      role:
-        sportFinanceText(
-          source.role
-        ),
-
-      team:
-        sportFinanceText(
-          source.team
-        )
-    };
-  }
-
-
-  function sportFinanceYouthOrientation(){
-
-    if(
-      window.BociteSportModule &&
-      typeof window.BociteSportModule.getYouthOrientation ===
-        "function"
-    ){
-
-      return (
-        window.BociteSportModule
-          .getYouthOrientation() ||
-        {}
-      );
-    }
-
-    return {};
-  }
-
-
-  function sportFinanceSportAssociations(){
-
-    if(
-      window.BociteSportModule &&
-      typeof window.BociteSportModule.getAssociations ===
-        "function"
-    ){
-
-      const rows =
-        window.BociteSportModule
-          .getAssociations();
-
-      return Array.isArray(rows)
+    const list =
+      Array.isArray(rows)
         ? rows
         : [];
-    }
 
-    return [];
+    const next =
+      Object.assign(
+        {
+          id:sportFinanceId("audit"),
+          createdAt:sportFinanceNow()
+        },
+        sportFinanceClone(entry) ||
+        {}
+      );
+
+    list.push(next);
+
+    sportFinanceWriteJson(
+      window.localStorage,
+      LOCAL_AUDIT_KEY,
+      list.slice(
+        -MAX_LOCAL_AUDIT
+      )
+    );
+
+    return next;
   }
 
-
-  function sportFinanceAssociations(){
-
-    const fromSport =
-      sportFinanceSportAssociations()
-        .filter(
-          function(item){
-
-            return !!(
-
-              item &&
-
-              item.active === true &&
-
-              item.verified === true &&
-
-              item.canIssueRequiredDocument === true &&
-
-              item.renewalEligible !== false &&
-
-              sportFinanceText(
-                item.id
-              )
-            );
-          }
-        )
-        .map(
-          function(item){
-
-            return {
-
-              id:
-                sportFinanceText(
-                  item.id
-                ),
-
-              name:
-                sportFinanceText(
-                  item.legalName ||
-                  item.label ||
-                  item.name
-                ),
-
-              legalName:
-                sportFinanceText(
-                  item.legalName
-                ),
-
-              sirenSiret:
-                sportFinanceText(
-                  item.sirenSiret ||
-                  item.siret ||
-                  item.siren
-                ),
-
-              rnaNumber:
-                sportFinanceText(
-                  item.rnaNumber
-                ),
-
-              address:
-                sportFinanceText(
-                  item.address
-                ),
-
-              accountingEmail:
-                sportFinanceText(
-                  item.accountingEmail
-                ),
-
-              taxReceiptEligible:
-                item.taxReceiptEligible === true,
-
-              clientNumber:
-                sportFinanceText(
-                  item.clientNumber
-                ),
-
-              validated:
-                true
-            };
-          }
-        );
+  function financeFoundationCurrentTariff(){
+    const saved =
+      sportFinanceReadJson(
+        window.localStorage,
+        LOCAL_TARIFF_KEY,
+        null
+      );
 
     if(
-      fromSport.length
+      saved &&
+      typeof saved === "object"
     ){
-      return fromSport;
+      return saved;
     }
 
-    const shared =
-      window
-        .BOCITEART_FINANCE_ASSOCIATIONS;
+    const initial = {
+
+      version:
+        "BCA-FEE-1",
+
+      effectiveFrom:
+        "2026-09-09T00:00:00.000Z",
+
+      bociteArtRateHT:
+        BOCITEART_BASE_FEE_RATE_HT,
+
+      pspIndexReference:
+        100,
+
+      source:
+        "initial_policy",
+
+      serverAuthorityRequiredInProduction:
+        true,
+
+      createdAt:
+        sportFinanceNow()
+    };
+
+    sportFinanceWriteJson(
+      window.localStorage,
+      LOCAL_TARIFF_KEY,
+      initial
+    );
+
+    return initial;
+  }
+
+  function financeFoundationCurrentFeeRateHT(){
+    const tariff =
+      financeFoundationCurrentTariff();
+
+    const rate =
+      Number(
+        tariff &&
+        tariff.bociteArtRateHT
+      );
+
+    return (
+      Number.isFinite(rate) &&
+      rate > 0
+    )
+      ? rate
+      : BOCITEART_BASE_FEE_RATE_HT;
+  }
+
+  function financeFoundationAccountingDestination(){
+    const saved =
+      sportFinanceReadJson(
+        window.localStorage,
+        LOCAL_ACCOUNTING_SETTINGS_KEY,
+        null
+      );
 
     if(
-      !Array.isArray(
-        shared
-      )
+      saved &&
+      typeof saved === "object"
     ){
-      return [];
+      return saved;
     }
 
-    return shared
-      .filter(
-        function(item){
+    return {
 
-          return !!(
+      status:
+        "configuration_pending",
 
-            item &&
+      accountantClientRef:
+        "",
 
-            item.validated === true &&
+      accountantName:
+        "",
+
+      accountingFirmName:
+        "",
+
+      platformId:
+        "",
+
+      platformName:
+        "",
+
+      platformEndpointConfiguredServerSide:
+        false,
+
+      transmissionMode:
+        "dedicated_accounting_platform",
+
+      updatedAt:
+        sportFinanceNow()
+    };
+  }
+
+  function financeFoundationConfigureAccountingDestination(nextSettings){
+    const source =
+      nextSettings &&
+      typeof nextSettings === "object"
+        ? nextSettings
+        : {};
+
+    const previous =
+      financeFoundationAccountingDestination();
+
+    const next =
+      Object.assign(
+        {},
+        previous,
+        {
+          accountantClientRef:
+            sportFinanceText(
+              source.accountantClientRef ||
+              previous.accountantClientRef
+            ),
+
+          accountantName:
+            sportFinanceText(
+              source.accountantName ||
+              previous.accountantName
+            ),
+
+          accountingFirmName:
+            sportFinanceText(
+              source.accountingFirmName ||
+              previous.accountingFirmName
+            ),
+
+          platformId:
+            sportFinanceText(
+              source.platformId ||
+              previous.platformId
+            ),
+
+          platformName:
+            sportFinanceText(
+              source.platformName ||
+              previous.platformName
+            ),
+
+          status:
+            sportFinanceText(
+              source.status ||
+              previous.status ||
+              "configuration_pending"
+            ),
+
+          platformEndpointConfiguredServerSide:
+            source.platformEndpointConfiguredServerSide === true,
+
+          transmissionMode:
+            "dedicated_accounting_platform",
+
+          updatedAt:
+            sportFinanceNow()
+        }
+      );
+
+    sportFinanceWriteJson(
+      window.localStorage,
+      LOCAL_ACCOUNTING_SETTINGS_KEY,
+      next
+    );
+
+    return sportFinanceClone(next);
+  }
+
+  function financeFoundationInvoiceBlueprint(kind){
+    return {
+
+      documentKind:
+        sportFinanceText(kind) ||
+        "generic_invoice",
+
+      finalGeneration:
+        "server_only",
+
+      finalInvoiceNumber:
+        "server_chronological_continuous_sequence",
+
+      invoiceDate:
+        "server_issue_date",
+
+      serviceDateOrPeriod:
+        "operation_or_period_date",
+
+      currency:
+        "EUR",
+
+      issuer:{
+
+        permanentClientNumber:
+          true,
+
+        legalName:
+          true,
+
+        legalForm:
+          true,
+
+        sirenSiret:
+          true,
+
+        address:
+          true,
+
+        vatNumber:
+          "when_applicable"
+      },
+
+      customer:{
+
+        permanentClientNumber:
+          true,
+
+        legalName:
+          true,
+
+        sirenSiret:
+          "when_required",
+
+        billingAddress:
+          true,
+
+        vatNumber:
+          "when_applicable"
+      },
+
+      operation:{
+
+        reference:
+          true,
+
+        description:
+          true,
+
+        quantity:
+          true,
+
+        unitPriceHT:
+          true,
+
+        totalHT:
+          true,
+
+        vatRate:
+          "according_to_actual_status",
+
+        vatAmount:
+          "server_calculated",
+
+        totalTTC:
+          "server_calculated"
+      },
+
+      payment:{
+
+        method:
+          true,
+
+        dueDateOrPaidAt:
+          true,
+
+                     item.validated === true &&
 
             sportFinanceText(
               item.id
@@ -2418,7 +2625,7 @@ const LOCAL_NEXT_SLOT_STEP_MINUTES =
 
     return {
 
-      clientNumber:
+            clientNumber:
         sportFinanceEnsureAssociationClientNumber(
           association
         ),
@@ -2776,7 +2983,7 @@ const LOCAL_NEXT_SLOT_STEP_MINUTES =
       );
     }
 
-        if(
+    if(
       ![
         "image/png",
         "image/jpeg",
@@ -3386,7 +3593,496 @@ const LOCAL_NEXT_SLOT_STEP_MINUTES =
         if(
           a.time === b.time
         ){
-          return (
+
+             const store =
+      sportFinanceBrandingStore();
+
+    store[
+      club.clubRef
+    ] = {
+
+      logoDataUrl:
+        dataUrl,
+
+      fileName:
+        sportFinanceText(
+          file.name
+        ),
+
+      updatedAt:
+        sportFinanceNow()
+    };
+
+    sportFinanceWriteJson(
+      window.localStorage,
+      LOCAL_BRANDING_KEY,
+      store
+    );
+
+    return {
+      ok:true,
+      mode:"preproduction",
+      clubRef:club.clubRef
+    };
+  }
+
+  /* =========================================================
+     ÇA FINIT ICI — BLOC 2
+     ========================================================= */
+
+   /* =========================================================
+     BLOC 3
+     SPORT — PUBLICITÉ INDÉPENDANTE — 48 HEURES — CAPACITÉ 8
+     ========================================================= */
+
+  function sportFinanceDateTimeLocalValue(date){
+
+    const d =
+      date instanceof Date
+        ? date
+        : new Date(date);
+
+    if(
+      Number.isNaN(
+        d.getTime()
+      )
+    ){
+      return "";
+    }
+
+    const pad =
+      function(value){
+        return String(value)
+          .padStart(
+            2,
+            "0"
+          );
+      };
+
+    return (
+      d.getFullYear() +
+      "-" +
+      pad(
+        d.getMonth() + 1
+      ) +
+      "-" +
+      pad(
+        d.getDate()
+      ) +
+      "T" +
+      pad(
+        d.getHours()
+      ) +
+      ":" +
+      pad(
+        d.getMinutes()
+      )
+    );
+  }
+
+
+  function sportFinanceRoundDateToStep(date,minutes){
+
+    const d =
+      new Date(
+        date instanceof Date
+          ? date.getTime()
+          : date
+      );
+
+    const step =
+      Math.max(
+        1,
+        Number(minutes) || 1
+      );
+
+    const ms =
+      step *
+      60 *
+      1000;
+
+    d.setTime(
+      Math.ceil(
+        d.getTime() / ms
+      ) * ms
+    );
+
+    d.setSeconds(
+      0,
+      0
+    );
+
+    return d;
+  }
+
+
+  function sportFinanceDefaultStart(){
+
+    return sportFinanceRoundDateToStep(
+      new Date(
+        Date.now() +
+        2 * 60 * 1000
+      ),
+      LOCAL_NEXT_SLOT_STEP_MINUTES
+    );
+  }
+
+
+  function sportFinanceParseDateTime(value){
+
+    const text =
+      sportFinanceText(value);
+
+    if(
+      !text
+    ){
+      return null;
+    }
+
+    const date =
+      new Date(text);
+
+    return Number.isNaN(
+      date.getTime()
+    )
+      ? null
+      : date;
+  }
+
+
+  function sportFinanceLatestAllowedStartMs(){
+
+    return (
+      Date.now() +
+      LOCAL_NEXT_SLOT_SEARCH_DAYS *
+      24 *
+      60 *
+      60 *
+      1000
+    );
+  }
+
+
+  function sportFinanceStartWithinPlanningWindow(value){
+
+    const date =
+      sportFinanceParseDateTime(
+        value
+      );
+
+    if(
+      !date
+    ){
+      return false;
+    }
+
+    return (
+      date.getTime() <=
+      sportFinanceLatestAllowedStartMs()
+    );
+  }
+
+
+  function sportFinancePublicationRange(startValue){
+
+    const startDate =
+      sportFinanceParseDateTime(
+        startValue
+      );
+
+    if(
+      !startDate
+    ){
+      return null;
+    }
+
+    const endDate =
+      new Date(
+        startDate.getTime() +
+        PUBLICATION_DURATION_MS
+      );
+
+    return {
+
+      startIso:
+        startDate.toISOString(),
+
+      endIso:
+        endDate.toISOString(),
+
+      startLocal:
+        sportFinanceDateTimeLocalValue(
+          startDate
+        ),
+
+      endLocal:
+        sportFinanceDateTimeLocalValue(
+          endDate
+        ),
+
+      durationHours:
+        48
+    };
+  }
+
+
+  function sportFinanceDateTimeFr(value){
+
+    const date =
+      new Date(value);
+
+    if(
+      Number.isNaN(
+        date.getTime()
+      )
+    ){
+      return sportFinanceText(value);
+    }
+
+    return date
+      .toLocaleString(
+        "fr-FR",
+        {
+          day:"2-digit",
+          month:"2-digit",
+          year:"numeric",
+          hour:"2-digit",
+          minute:"2-digit"
+        }
+      );
+  }
+
+
+  function sportFinanceIntervalsOverlap(
+    startA,
+    endA,
+    startB,
+    endB
+  ){
+
+    const a1 =
+      new Date(startA)
+        .getTime();
+
+    const a2 =
+      new Date(endA)
+        .getTime();
+
+    const b1 =
+      new Date(startB)
+        .getTime();
+
+    const b2 =
+      new Date(endB)
+        .getTime();
+
+    if(
+      [
+        a1,
+        a2,
+        b1,
+        b2
+      ]
+        .some(
+          function(value){
+            return Number.isNaN(
+              value
+            );
+          }
+        )
+    ){
+      return false;
+    }
+
+    return (
+      a1 < b2 &&
+      b1 < a2
+    );
+  }
+
+
+  function sportFinanceReadLocalSlots(){
+
+    const value =
+      sportFinanceReadJson(
+        window.localStorage,
+        LOCAL_SLOTS_KEY,
+        []
+      );
+
+    return Array.isArray(value)
+      ? value
+      : [];
+  }
+
+
+  function sportFinanceWriteLocalSlots(rows){
+
+    return sportFinanceWriteJson(
+      window.localStorage,
+      LOCAL_SLOTS_KEY,
+      Array.isArray(rows)
+        ? rows.slice(
+            -MAX_LOCAL_SLOTS
+          )
+        : []
+    );
+  }
+
+
+  function sportFinanceCleanLocalSlots(){
+
+    const now =
+      Date.now();
+
+    const rows =
+      sportFinanceReadLocalSlots();
+
+    let changed =
+      false;
+
+    rows.forEach(
+      function(item){
+
+        if(
+          item &&
+          item.status === "held" &&
+          Number(
+            item.expiresAt ||
+            0
+          ) <= now
+        ){
+
+          item.status =
+            "expired";
+
+          item.expiredAt =
+            now;
+
+          changed =
+            true;
+        }
+      }
+    );
+
+    if(
+      changed
+    ){
+      sportFinanceWriteLocalSlots(
+        rows
+      );
+    }
+
+    return rows;
+  }
+
+
+  function sportFinanceRelevantSlotStatus(status){
+
+    return [
+      "held",
+      "payment_pending",
+      "paid",
+      "scheduled",
+      "active",
+      "reschedule_required"
+    ]
+      .includes(
+        sportFinanceText(
+          status
+        )
+      );
+  }
+
+
+  function sportFinanceLocalMaxConcurrency(
+    startIso,
+    endIso,
+    ignoreHoldId
+  ){
+
+    const rows =
+      sportFinanceCleanLocalSlots()
+        .filter(
+          function(item){
+
+            return !!(
+
+              item &&
+
+              sportFinanceRelevantSlotStatus(
+                item.status
+              ) &&
+
+              sportFinanceText(
+                item.id
+              ) !==
+              sportFinanceText(
+                ignoreHoldId
+              ) &&
+
+              sportFinanceIntervalsOverlap(
+                item.publicationStart,
+                item.publicationEnd,
+                startIso,
+                endIso
+              )
+            );
+          }
+        );
+
+    const events =
+      [];
+
+    rows.forEach(
+      function(item){
+
+        const start =
+          Math.max(
+            new Date(
+              item.publicationStart
+            )
+              .getTime(),
+
+            new Date(
+              startIso
+            )
+              .getTime()
+          );
+
+        const end =
+          Math.min(
+            new Date(
+              item.publicationEnd
+            )
+              .getTime(),
+
+            new Date(
+              endIso
+            )
+              .getTime()
+          );
+
+        events.push({
+          time:start,
+          delta:1
+        });
+
+        events.push({
+          time:end,
+          delta:-1
+        });
+      }
+    );
+
+    events.sort(
+      function(a,b){
+
+        if(
+          a.time === b.time
+        ){
+
+                     return (
             a.delta -
             b.delta
           );
@@ -3443,7 +4139,7 @@ const LOCAL_NEXT_SLOT_STEP_MINUTES =
       };
     }
 
-         if(
+    if(
       !sportFinanceStartWithinPlanningWindow(
         range.startIso
       )
@@ -3508,6 +4204,20 @@ const LOCAL_NEXT_SLOT_STEP_MINUTES =
     }
 
     if(
+      !sportFinanceStartWithinPlanningWindow(
+        range.startIso
+      )
+    ){
+      return {
+        ok:true,
+        available:false,
+        reason:"outside_10_day_window",
+        maxSearchDays:
+          LOCAL_NEXT_SLOT_SEARCH_DAYS
+      };
+    }
+
+    if(
       sportFinanceIsProduction()
     ){
 
@@ -3523,6 +4233,14 @@ const LOCAL_NEXT_SLOT_STEP_MINUTES =
 
             publicationEnd:
               range.endIso,
+
+            latestPublicationStart:
+              new Date(
+                sportFinanceLatestAllowedStartMs()
+              ).toISOString(),
+
+            maxSearchDays:
+              LOCAL_NEXT_SLOT_SEARCH_DAYS,
 
             durationHours:
               48,
@@ -3738,7 +4456,7 @@ const LOCAL_NEXT_SLOT_STEP_MINUTES =
       );
     }
 
-         if(
+    if(
       !sportFinanceStartWithinPlanningWindow(
         range.startIso
       )
@@ -3846,491 +4564,8 @@ const LOCAL_NEXT_SLOT_STEP_MINUTES =
 
         expiresAt:
           Number(
-            result.expiresAt ||
-            (
-              Date.now() +
-              HOLD_MINUTES *
-              60000
-            )
-          ),
 
-        mode:
-          "server"
-      };
-
-      return sportFinanceClone(
-        currentHold
-      );
-    }
-
-    const availability =
-      sportFinanceLocalAvailability(
-        range.startIso
-      );
-
-    if(
-      !availability.available
-    ){
-      throw new Error(
-        "8 publicités sont déjà programmées sur une partie de cette période de 48 heures."
-      );
-    }
-
-    const hold = {
-
-      id:
-        sportFinanceId(
-          "sport-slot"
-        ),
-
-      status:
-        "held",
-
-      publicationStart:
-        range.startIso,
-
-      publicationEnd:
-        range.endIso,
-
-      createdAt:
-        Date.now(),
-
-      expiresAt:
-        Date.now() +
-        HOLD_MINUTES *
-        60000,
-
-      merchantRef:
-        sportFinanceText(
-          context &&
-          context.merchantRef
-        )
-    };
-
-    const rows =
-      sportFinanceReadLocalSlots();
-
-    rows.push(
-      hold
-    );
-
-    sportFinanceWriteLocalSlots(
-      rows
-    );
-
-    currentHold = {
-
-      slotHoldId:
-        hold.id,
-
-      publicationStart:
-        hold.publicationStart,
-
-      publicationEnd:
-        hold.publicationEnd,
-
-      expiresAt:
-        hold.expiresAt,
-
-      mode:
-        "local"
-    };
-
-    return sportFinanceClone(
-      currentHold
-    );
-  }
-
-
-  async function sportFinanceExtendHold(){
-
-    if(
-      !currentHold ||
-      !currentHold.slotHoldId
-    ){
-      throw new Error(
-        "Aucun créneau temporaire n'est réservé."
-      );
-    }
-
-    if(
-      sportFinanceIsProduction()
-    ){
-
-      const result =
-        await sportFinanceServerPost(
-
-          "/sport/publicity/hold/extend",
-
-          {
-
-            slotHoldId:
-              currentHold.slotHoldId,
-
-            additionalMinutes:
-              MANUAL_EXTENSION_MINUTES,
-
-            manualPreparationInProgress:
-              true
-          }
-        );
-
-      if(
-        !result ||
-        result.ok !== true
-      ){
-        throw new Error(
-          "La réservation temporaire n'a pas pu être prolongée."
-        );
-      }
-
-      currentHold.expiresAt =
-        Number(
-          result.expiresAt ||
-          (
-            Date.now() +
-            MANUAL_EXTENSION_MINUTES *
-            60000
-          )
-        );
-
-      sportFinanceRenderHoldStatus();
-
-      return sportFinanceClone(
-        currentHold
-      );
-    }
-
-    const rows =
-      sportFinanceCleanLocalSlots();
-
-    const index =
-      rows.findIndex(
-        function(item){
-
-          return (
-            sportFinanceText(
-              item.id
-            ) ===
-            currentHold.slotHoldId
-          );
-        }
-      );
-
-    if(
-      index < 0 ||
-      rows[index].status !==
-        "held"
-    ){
-      throw new Error(
-        "La réservation temporaire a expiré."
-      );
-    }
-
-    rows[index].expiresAt =
-      Math.max(
-        Date.now(),
-        Number(
-          rows[index].expiresAt ||
-          0
-        )
-      ) +
-      MANUAL_EXTENSION_MINUTES *
-      60000;
-
-    rows[index].extendedAt =
-      Date.now();
-
-    sportFinanceWriteLocalSlots(
-      rows
-    );
-
-    currentHold.expiresAt =
-      rows[index].expiresAt;
-
-    sportFinanceRenderHoldStatus();
-
-    return sportFinanceClone(
-      currentHold
-    );
-  }
-
-/* =========================================================
-   ÇA COMMENCE ICI — LIBÉRATION CRÉNEAU
-   ========================================================= */
-
-async function sportFinanceReleaseHold(reason){
-
-  if(
-    !currentHold ||
-    !currentHold.slotHoldId
-  ){
-    return true;
-  }
-
-  const holdId =
-    currentHold.slotHoldId;
-
-  if(
-    sportFinanceIsProduction()
-  ){
-
-    try{
-
-      await sportFinanceServerPost(
-
-        "/sport/publicity/hold/release",
-
-        {
-
-          slotHoldId:
-            holdId,
-
-          reason:
-            sportFinanceText(
-              reason ||
-              "released"
-            )
-        }
-      );
-
-    }catch(error){
-
-      financeFoundationSaveAudit({
-
-        level:
-          "orange",
-
-        code:
-          "slot_release_server_pending",
-
-        message:
-          error.message,
-
-        slotHoldId:
-          holdId,
-
-        resolved:
-          false
-      });
-    }
-
-  }else{
-
-    const rows =
-      sportFinanceReadLocalSlots();
-
-    const index =
-      rows.findIndex(
-        function(item){
-
-          return (
-            sportFinanceText(
-              item &&
-              item.id
-            ) ===
-            holdId
-          );
-        }
-      );
-
-    if(
-      index >= 0 &&
-      [
-        "held",
-        "payment_pending"
-      ]
-        .includes(
-          sportFinanceText(
-            rows[index].status
-          )
-        )
-    ){
-
-      rows[index].status =
-        "released";
-
-      rows[index].releasedAt =
-        Date.now();
-
-      rows[index].releaseReason =
-        sportFinanceText(
-          reason
-        );
-
-      sportFinanceWriteLocalSlots(
-        rows
-      );
-    }
-  }
-
-  currentHold =
-    null;
-
-  sportFinanceRenderHoldStatus();
-
-  return true;
-}
-
-/* =========================================================
-   ÇA FINIT ICI — LIBÉRATION CRÉNEAU
-   ========================================================= */
-
-/* =========================================================
-   ÇA COMMENCE ICI — CONFIRMATION CRÉNEAU PAYÉ
-   ========================================================= */
-
-function sportFinanceCommitLocalHold(draft){
-
-  if(
-    sportFinanceIsProduction()
-  ){
-    return true;
-  }
-
-  const holdId =
-    sportFinanceText(
-      draft &&
-      draft.slotHoldId
-    );
-
-  if(
-    !holdId
-  ){
-    return false;
-  }
-
-  const rows =
-    sportFinanceReadLocalSlots();
-
-  const index =
-    rows.findIndex(
-      function(item){
-
-        return (
-          sportFinanceText(
-            item &&
-            item.id
-          ) ===
-          holdId
-        );
-      }
-    );
-
-  if(
-    index < 0
-  ){
-
-    financeFoundationSaveAudit({
-
-      level:
-        "red",
-
-      code:
-        "paid_slot_missing",
-
-      operationRef:
-        sportFinanceText(
-          draft &&
-          draft.operationRef
-        ),
-
-      slotHoldId:
-        holdId,
-
-      message:
-        "Paiement confirmé mais réservation locale introuvable.",
-
-      resolved:
-        false
-    });
-
-    return false;
-  }
-
-  /*
-    Un même retour de paiement
-    peut arriver plusieurs fois.
-
-    Si le créneau est déjà programmé
-    avec la même référence,
-    on ne fait rien une seconde fois.
-  */
-
-  if(
-    sportFinanceText(
-      rows[index].status
-    ) ===
-    "scheduled" &&
-    (
-      !sportFinanceText(
-        draft &&
-        draft.paymentReference
-      ) ||
-      !sportFinanceText(
-        rows[index].paymentReference
-      ) ||
-      sportFinanceText(
-        rows[index].paymentReference
-      ) ===
-      sportFinanceText(
-        draft &&
-        draft.paymentReference
-      )
-    )
-  ){
-    return true;
-  }
-
-  if(
-    ![
-      "payment_pending",
-      "held"
-    ]
-      .includes(
-        sportFinanceText(
-          rows[index].status
-        )
-      )
-  ){
-
-    financeFoundationSaveAudit({
-
-      level:
-        "red",
-
-      code:
-        "paid_slot_invalid_state",
-
-      operationRef:
-        sportFinanceText(
-          draft &&
-          draft.operationRef
-        ),
-
-      slotHoldId:
-        holdId,
-
-      message:
-        "Paiement confirmé mais état du créneau incompatible : " +
-        sportFinanceText(
-          rows[index].status
-        ) +
-        ".",
-
-      resolved:
-        false
-    });
-
-    return false;
-  }
-
-  rows[index].status =
-    "scheduled";
-
-  rows[index].paidAt =
-    Date.now();
-
+             
   rows[index].paymentReference =
     sportFinanceText(
       draft &&
@@ -4350,6 +4585,7 @@ function sportFinanceCommitLocalHold(draft){
 /* =========================================================
    ÇA FINIT ICI — CONFIRMATION CRÉNEAU PAYÉ
    ========================================================= */
+
    /* =========================================================
      BLOC 4
      SPORT — DOSSIERS — MONTANTS — DOCUMENTS — AGENT 1 / 2
@@ -4586,6 +4822,7 @@ function sportFinanceCommitLocalHold(draft){
     );
   }
 
+
   function sportFinanceExtraResearchAmount(){
 
     /*
@@ -4598,7 +4835,7 @@ function sportFinanceCommitLocalHold(draft){
   }
 
 
-   function sportFinanceNormalizeChoice(value){
+  function sportFinanceNormalizeChoice(value){
 
     const choice =
       sportFinanceText(
@@ -4671,6 +4908,7 @@ function sportFinanceCommitLocalHold(draft){
         )
     };
   }
+
 
   function sportFinanceTemplateCode(){
 
@@ -4816,7 +5054,7 @@ function sportFinanceCommitLocalHold(draft){
       bociteArtParticipationVersion:
         SPORT_BOCITEART_PARTICIPATION_VERSION,
 
-      allocationBasis:
+             allocationBasis:
         "server_after_sport_fixed_participation_and_tax_qualification",
 
       clubShareRatio:
@@ -4873,7 +5111,8 @@ function sportFinanceCommitLocalHold(draft){
 
     return SPORT_BOCITEART_PARTICIPATION_TTC;
   }
-   
+
+
   function sportFinancePolicies(){
 
     return {
@@ -4989,11 +5228,20 @@ function sportFinanceCommitLocalHold(draft){
           true,
 
         beneficiarySettlementDeductsAuthorizedFees:
-          true
+          true,
+
+        advertisingCounterpartExists:
+          true,
+
+        fiscalNature:
+          "sponsorship_advertising_not_donation",
+
+        taxReceiptAllowedForThisFlow:
+          false
       },
 
 
-          allocation:{
+      allocation:{
 
         youthChoiceMustBeRespectedWhenLocked:
           true,
@@ -5016,13 +5264,17 @@ function sportFinanceCommitLocalHold(draft){
         associationTaxReceiptNeverAutomaticForAdvertisingShare:
           true,
 
-        independentResearchReceiptOnlyIfActuallyEligible:
+        taxReceiptForbiddenForSportAdvertisingFlow:
+          true,
+
+        researchShareIsSponsorshipAllocationNotDonation:
           true,
 
         noPublicInternalSettlementFormula:
           true
       },
-       
+
+
       documents:{
 
         clubGrossParrainageDocumentRequired:
@@ -5040,7 +5292,10 @@ function sportFinanceCommitLocalHold(draft){
         associationDocumentAccordingToActualQualification:
           true,
 
-        independentResearchReceiptAccordingToEligibility:
+        researchAdvertisingShareDocumentRequired:
+          true,
+
+        researchTaxReceiptForbiddenForThisFlow:
           true,
 
         bociteArtMonthlyServiceInvoiceToClub:
@@ -5075,7 +5330,7 @@ function sportFinanceCommitLocalHold(draft){
   }
 
 
-   function sportFinanceBuildAccountingDossier(
+  function sportFinanceBuildAccountingDossier(
     data,
     operationRef,
     paymentReference
@@ -5195,8 +5450,14 @@ function sportFinanceCommitLocalHold(draft){
             taxReceipt:
               false,
 
+            taxReceiptForbiddenForThisAdvertisingFlow:
+              true,
+
+            fiscalNature:
+              "sponsorship_advertising_not_donation",
+
             document:
-              "accounting_document_not_automatic_tax_receipt",
+              "sponsorship_accounting_document_no_tax_receipt",
 
             invoiceBlueprint:
               financeFoundationInvoiceBlueprint(
@@ -5261,13 +5522,19 @@ function sportFinanceCommitLocalHold(draft){
         taxation:{
 
           sponsorship:
-            "actual_beneficiary_status",
+            "advertising_sponsorship",
 
           researchShare:
-            "server_validate_actual_qualification",
+            "advertising_sponsorship_allocation_not_donation",
+
+          taxReceipt:
+            "forbidden_for_this_advertising_flow",
 
           bociteArtSportParticipation:
             "fixed_5_ttc_server_ht_vat_breakdown",
+
+          vat:
+            "server_apply_according_to_actual_taxable_status_and_place_of_supply",
 
           finalQualification:
             "server_only"
@@ -5284,8 +5551,7 @@ function sportFinanceCommitLocalHold(draft){
           null
       });
 
-
-    dossier.fees =
+         dossier.fees =
       dossier.fees ||
       {};
 
@@ -5313,7 +5579,16 @@ function sportFinanceCommitLocalHold(draft){
         "server_calculated",
 
       invoiceMode:
-        "monthly_grouped_when_compatible"
+        "monthly_grouped_when_compatible",
+
+      electronicInvoiceReceptionRequiredFrom:
+        "2026-09-01",
+
+      electronicInvoiceEmissionTargetForSMEFrom:
+        "2027-09-01",
+
+      routing:
+        "approved_platform_or_applicable_public_channel"
     };
 
 
@@ -5757,8 +6032,7 @@ function sportFinanceCommitLocalHold(draft){
     }
   }
 
-
-  function sportFinanceUpdateDatePreview(){
+       function sportFinanceUpdateDatePreview(){
 
     const target =
       sportFinanceField(
@@ -5811,6 +6085,7 @@ function sportFinanceCommitLocalHold(draft){
     return true;
   }
 
+
   function sportFinanceRenderTemplates(){
 
     const target =
@@ -5832,14 +6107,6 @@ function sportFinanceCommitLocalHold(draft){
 
     const choice =
       sportFinanceChoice();
-
-                 sportFinancePublicityText(
-                template.code,
-                profile,
-                club,
-                choice,
-                extra
-              );
 
     const selectedCode =
       sportFinanceTemplateCode();
@@ -5951,15 +6218,6 @@ function sportFinanceCommitLocalHold(draft){
       ) +
 
       (
-              data.extraResearchAmount > 0
-          ? "Soutien recherche supplémentaire : " +
-            sportFinanceFormatMoney(
-              data.extraResearchAmount
-            ) +
-            " €"
-          : "",
-
-      (
         operation.publicationStart &&
         operation.publicationEnd
           ? "<br>Diffusion : " +
@@ -6044,6 +6302,16 @@ function sportFinanceCommitLocalHold(draft){
       }
 
       if(
+        result.reason ===
+          "outside_10_day_window"
+      ){
+        target.textContent =
+          "Le démarrage doit rester dans les 10 prochains jours.";
+
+        return;
+      }
+
+      if(
         result.available === true
       ){
 
@@ -6080,10 +6348,21 @@ function sportFinanceCommitLocalHold(draft){
           ) +
           "</strong>.";
 
+      }else if(
+        next &&
+        (
+          next.reason === "outside_10_day_window" ||
+          next.reason === "server_slot_outside_10_day_window"
+        )
+      ){
+
+        target.textContent =
+          "Le démarrage doit rester dans les 10 prochains jours.";
+
       }else{
 
         target.textContent =
-          "Aucun créneau proche n’a été trouvé. Choisissez une autre période.";
+          "Aucun créneau n’a été trouvé dans les 10 prochains jours.";
       }
 
     }catch(error){
@@ -6185,6 +6464,7 @@ function sportFinanceCommitLocalHold(draft){
     }
   }
 
+
 function sportFinanceSameLocalDay(a,b){
 
   const first =
@@ -6236,8 +6516,7 @@ function sportFinancePlanningDayLabel(value){
     }
   );
 }
-
-
+             
 async function sportFinanceFirstAvailabilityForDay(value){
 
   const day =
@@ -6583,142 +6862,142 @@ async function sportFinanceRenderTenDayPlanning(){
       }
     );
 }
-   
-   function sportFinanceValidate(
-    profile,
-    club,
-    identityCheck,
-    amountHT,
-    choice,
-    publicationStart,
-    templateCode
+
+
+function sportFinanceValidate(
+  profile,
+  club,
+  identityCheck,
+  amountHT,
+  choice,
+  publicationStart,
+  templateCode
+){
+
+  const errors =
+    [];
+
+  const youth =
+    sportFinanceYouthLockedChoice();
+
+  const researchAssociations =
+    sportFinanceAssociations();
+
+
+  if(
+    !sportFinanceText(
+      club.clubRef
+    )
+  ){
+    errors.push(
+      "La fiche d’identité du club doit disposer d’une référence."
+    );
+  }
+
+
+  if(
+    !sportFinanceIdentityAccepted(
+      identityCheck
+    )
   ){
 
-    const errors =
-      [];
-
-    const youth =
-      sportFinanceYouthLockedChoice();
-
-    const researchAssociations =
-      sportFinanceAssociations();
-
-
-    if(
-      !sportFinanceText(
-        club.clubRef
-      )
-    ){
-      errors.push(
-        "La fiche d’identité du club doit disposer d’une référence."
-      );
-    }
-
-
-    if(
-      !sportFinanceIdentityAccepted(
-        identityCheck
-      )
-    ){
-
-      errors.push(
-        (
-          identityCheck &&
-          Array.isArray(
-            identityCheck.errors
-          ) &&
-          identityCheck.errors[0]
-        ) ||
-        "La fiche du commerçant doit être vérifiée avant le paiement."
-      );
-    }
-
-
-    if(
-      !profile.name
-    ){
-      errors.push(
-        "Le nom ou l’enseigne du commerçant est obligatoire."
-      );
-    }
-
-
-    if(
-      !Number.isFinite(
-        amountHT
+    errors.push(
+      (
+        identityCheck &&
+        Array.isArray(
+          identityCheck.errors
+        ) &&
+        identityCheck.errors[0]
       ) ||
-      amountHT <
-        MINIMUM_HT
-    ){
-      errors.push(
-        "Le soutien minimum est de 50 € HT."
-      );
-    }
+      "La fiche du commerçant doit être vérifiée avant le paiement."
+    );
+  }
 
 
-    if(
-      ![
-        "ALL_CLUB",
-        "CLUB_RESEARCH"
-      ]
-        .includes(
-          choice
-        )
-    ){
-      errors.push(
-        "Choisissez la destination du soutien."
-      );
-    }
+  if(
+    !profile.name
+  ){
+    errors.push(
+      "Le nom ou l’enseigne du commerçant est obligatoire."
+    );
+  }
 
 
-    if(
-      youth.locked &&
-      youth.choice !==
+  if(
+    !Number.isFinite(
+      amountHT
+    ) ||
+    amountHT <
+      MINIMUM_HT
+  ){
+    errors.push(
+      "Le soutien minimum est de 50 € HT."
+    );
+  }
+
+
+  if(
+    ![
+      "ALL_CLUB",
+      "CLUB_RESEARCH"
+    ]
+      .includes(
         choice
-    ){
-      errors.push(
-        "La destination doit respecter le choix collectif déjà enregistré pour ce groupe."
-      );
-    }
+      )
+  ){
+    errors.push(
+      "Choisissez la destination du soutien."
+    );
+  }
 
 
-    if(
-      choice === "CLUB_RESEARCH" &&
-      researchAssociations.length !== 4
-    ){
-      errors.push(
-        "Les 4 associations annuelles de recherche doivent être validées avant de poursuivre."
-      );
-    }
+  if(
+    youth.locked &&
+    youth.choice !==
+      choice
+  ){
+    errors.push(
+      "La destination doit respecter le choix collectif déjà enregistré pour ce groupe."
+    );
+  }
 
 
-    if(
-      choice === "CLUB_RESEARCH" &&
-      sportFinanceIsProduction() &&
-      researchAssociations.length === 4 &&
-      researchAssociations
-        .some(
-          function(item){
-
-            return !sportFinanceText(
-              item.clientNumber
-            );
-          }
-        )
-    ){
-      errors.push(
-        "Les 4 associations de recherche doivent disposer de leur numéro client permanent avant le paiement."
-      );
-    }
+  if(
+    choice === "CLUB_RESEARCH" &&
+    researchAssociations.length !== 4
+  ){
+    errors.push(
+      "Les 4 associations annuelles de recherche doivent être validées avant de poursuivre."
+    );
+  }
 
 
-    const range =
-      sportFinancePublicationRange(
-        publicationStart
-      );
+  if(
+    choice === "CLUB_RESEARCH" &&
+    sportFinanceIsProduction() &&
+    researchAssociations.length === 4 &&
+    researchAssociations
+      .some(
+        function(item){
+
+          return !sportFinanceText(
+            item.clientNumber
+          );
+        }
+      )
+  ){
+    errors.push(
+      "Les 4 associations de recherche doivent disposer de leur numéro client permanent avant le paiement."
+    );
+  }
 
 
-    if(
+  const range =
+    sportFinancePublicationRange(
+      publicationStart
+    );
+
+        if(
       !range
     ){
 
@@ -6726,7 +7005,7 @@ async function sportFinanceRenderTenDayPlanning(){
         "Choisissez la date et l’heure de démarrage."
       );
 
-       }else if(
+    }else if(
       new Date(
         range.startIso
       )
@@ -6772,7 +7051,8 @@ async function sportFinanceRenderTenDayPlanning(){
 
     return errors;
   }
-   
+
+
   async function sportFinanceBuildDraftData(){
 
     const profile =
@@ -7007,6 +7287,7 @@ async function sportFinanceRenderTenDayPlanning(){
     };
   }
 
+
   async function sportFinanceOpenReview(){
 
     const core =
@@ -7053,7 +7334,7 @@ async function sportFinanceRenderTenDayPlanning(){
         return;
       }
 
-      let availability =
+      const availability =
         await sportFinanceCheckAvailability(
           data.publicationStart
         );
@@ -7062,15 +7343,17 @@ async function sportFinanceRenderTenDayPlanning(){
         availability.available !== true
       ){
 
-      if(
-        result.reason ===
-          "outside_10_day_window"
-      ){
-        target.textContent =
-          "Le démarrage doit rester dans les 10 prochains jours.";
-        return;
-      }
-         
+        if(
+          availability.reason ===
+            "outside_10_day_window"
+        ){
+          sportFinanceSetStatus(
+            "Le démarrage doit rester dans les 10 prochains jours.",
+            "error"
+          );
+          return;
+        }
+
         const next =
           await sportFinanceFindNextAvailability(
             data.publicationStart
@@ -7108,7 +7391,7 @@ async function sportFinanceRenderTenDayPlanning(){
         }
 
         sportFinanceSetStatus(
-          "Aucun créneau de 48 heures n’est disponible dans cette période.",
+          "Aucun créneau de 48 heures n’est disponible dans les 10 prochains jours.",
           "error"
         );
 
@@ -7117,11 +7400,8 @@ async function sportFinanceRenderTenDayPlanning(){
 
       const hold =
         await sportFinanceReserveSlot(
-
           data.publicationStart,
-
           {
-
             merchantRef:
               data.merchantSnapshot.clientNumber ||
               data.merchantSnapshot.sirenSiret,
@@ -7142,24 +7422,16 @@ async function sportFinanceRenderTenDayPlanning(){
           .slice(2,7)
           .toUpperCase();
 
-    /* =========================================================
-   ÇA COMMENCE ICI — PRÉPARATION AGENT 1
-   ========================================================= */
+      const accountingDossier =
+        sportFinancePrepareAgent1(
+          {
+            operationRef:
+              operationRef
+          },
+          data,
+          ""
+        );
 
-const accountingDossier =
-  sportFinancePrepareAgent1(
-    {
-      operationRef:
-        operationRef
-    },
-    data,
-    ""
-  );
-
-/* =========================================================
-   ÇA FINIT ICI — PRÉPARATION AGENT 1
-   ========================================================= */
-       
       const previewLines = [
 
         data.publicityText,
@@ -7174,19 +7446,13 @@ const accountingDossier =
         ) +
         ".",
 
-        "Parrainage : " +
+        "Soutien : " +
         sportFinanceFormatMoney(
           data.amountHT
         ) +
         " € HT",
 
-        data.extraResearchAmount > 0
-          ? "Soutien recherche supplémentaire : " +
-            sportFinanceFormatMoney(
-              data.extraResearchAmount
-            ) +
-            " €"
-          : "",
+        "Participation Bo'CitéArt : 5,00 € TTC",
 
         "N° client commerçant : " +
         data.merchantSnapshot.clientNumber
@@ -7217,7 +7483,7 @@ const accountingDossier =
         payerSnapshot:
           data.merchantSnapshot,
 
-        merchantSnapshot:
+                 merchantSnapshot:
           data.merchantSnapshot,
 
         representativeRef:
@@ -7244,26 +7510,22 @@ const accountingDossier =
         clubSnapshot:
           data.clubSnapshot,
 
-               beneficiaryRefs:[
-
+        beneficiaryRefs:[
           data.clubSnapshot.clubRef,
-
           ...data.researchAssociationsSnapshot
             .map(
               function(item){
-
                 return sportFinanceText(
                   item.id
                 );
               }
             )
-
         ].filter(Boolean),
 
         amountHT:
           data.amountHT,
 
-                extraResearchAmount:
+        extraResearchAmount:
           0,
 
         paymentBaseBeforeFinalTax:
@@ -7278,16 +7540,16 @@ const accountingDossier =
         allocationCode:
           data.choice,
 
-                bociteArtParticipationTTC:
+        grossAllocation:
+          data.grossAllocation,
+
+        bociteArtParticipationTTC:
           data.bociteArtParticipationTTC,
 
-                grossAllocation:
-          data.grossAllocation,
-         
-         bociteArtParticipationVersion:
+        bociteArtParticipationVersion:
           data.bociteArtParticipationVersion,
 
-            associationId:
+        associationId:
           "",
 
         associationSnapshot:
@@ -7327,12 +7589,10 @@ const accountingDossier =
           "card_psp",
 
         paymentPresentation:{
-
           cardNetworks:[
             "visa",
             "mastercard"
           ],
-
           dynamicQr:
             true
         },
@@ -7369,7 +7629,7 @@ const accountingDossier =
         amountHT:
           data.amountHT,
 
-               extraResearchAmount:
+        extraResearchAmount:
           0,
 
         paymentBaseBeforeFinalTax:
@@ -7387,11 +7647,11 @@ const accountingDossier =
         grossAllocation:
           data.grossAllocation,
 
-                bociteArtParticipationTTC:
+        bociteArtParticipationTTC:
           data.bociteArtParticipationTTC,
 
         bociteArtParticipationVersion:
-          data.bociteArtParticipationVersion, 
+          data.bociteArtParticipationVersion,
 
         clubRef:
           data.clubSnapshot.clubRef,
@@ -7409,7 +7669,7 @@ const accountingDossier =
         representativeName:
           data.representative.name,
 
-              associationId:
+        associationId:
           "",
 
         associationName:
@@ -7417,6 +7677,18 @@ const accountingDossier =
 
         researchAssociationsSnapshot:
           data.researchAssociationsSnapshot,
+
+        beneficiaryRefs:[
+          data.clubSnapshot.clubRef,
+          ...data.researchAssociationsSnapshot
+            .map(
+              function(item){
+                return sportFinanceText(
+                  item.id
+                );
+              }
+            )
+        ].filter(Boolean),
 
         publicationDurationHours:
           48,
@@ -7429,6 +7701,9 @@ const accountingDossier =
 
         slotHoldId:
           hold.slotHoldId,
+
+        slotHoldExpiresAt:
+          hold.expiresAt,
 
         publicityText:
           data.publicityText,
@@ -7684,19 +7959,16 @@ const accountingDossier =
           data.researchAssociationsSnapshot,
 
         beneficiaryRefs:[
-
           data.clubSnapshot.clubRef,
-
           ...data.researchAssociationsSnapshot
-            .map(
-              function(item){
 
+                       .map(
+              function(item){
                 return sportFinanceText(
                   item.id
                 );
               }
             )
-
         ].filter(Boolean),
 
         publicationDurationHours:
@@ -7769,7 +8041,8 @@ const accountingDossier =
     activeCorrectionDraftId =
       "";
   }
-   
+
+
   function sportFinanceCheckoutPayload(request){
 
     const core =
@@ -7813,18 +8086,35 @@ const accountingDossier =
       );
     }
 
+    if(
+      !sportFinanceStartWithinPlanningWindow(
+        draft.publicationStart
+      )
+    ){
+      throw new Error(
+        "Le démarrage doit rester dans les 10 prochains jours."
+      );
+    }
+
     const tariff =
       financeFoundationCurrentTariff();
 
+    const researchAssociationsSnapshot =
+      Array.isArray(
+        draft.researchAssociationsSnapshot
+      )
+        ? sportFinanceClone(
+            draft.researchAssociationsSnapshot
+          ) ||
+          []
+        : [];
+
     return Object.assign(
-
       {},
-
       sportFinanceClone(
         base
       ) ||
       {},
-
       {
 
         connectorName:
@@ -7881,28 +8171,19 @@ const accountingDossier =
           ) ||
           null,
 
-              beneficiaryRefs:[
+        beneficiaryRefs:[
           sportFinanceText(
             draft.clubRef
           ),
-
-          ...(
-            Array.isArray(
-              draft.researchAssociationsSnapshot
-            )
-              ? draft.researchAssociationsSnapshot
-              : []
-          )
+          ...researchAssociationsSnapshot
             .map(
               function(item){
-
                 return sportFinanceText(
                   item &&
                   item.id
                 );
               }
             )
-
         ].filter(Boolean),
 
         associationId:
@@ -7912,14 +8193,7 @@ const accountingDossier =
           null,
 
         researchAssociationsSnapshot:
-          Array.isArray(
-            draft.researchAssociationsSnapshot
-          )
-            ? sportFinanceClone(
-                draft.researchAssociationsSnapshot
-              ) ||
-              []
-            : [],
+          researchAssociationsSnapshot,
 
         amountHT:
           Number(
@@ -7927,7 +8201,7 @@ const accountingDossier =
             0
           ),
 
-               extraResearchAmount:
+        extraResearchAmount:
           0,
 
         paymentBaseBeforeFinalTax:
@@ -7946,26 +8220,24 @@ const accountingDossier =
         totalPaymentAmountProvisional:
           true,
 
-             grossAllocation:
-        sportFinanceClone(
-          draft.grossAllocation
-        ),
+        grossAllocation:
+          sportFinanceClone(
+            draft.grossAllocation
+          ),
 
-      bociteArtParticipationTTC:
-        Number(
-          draft.bociteArtParticipationTTC ||
-          SPORT_BOCITEART_PARTICIPATION_TTC
-        ),
+        bociteArtParticipationTTC:
+          Number(
+            draft.bociteArtParticipationTTC ||
+            SPORT_BOCITEART_PARTICIPATION_TTC
+          ),
 
-      bociteArtParticipationVersion:
-        sportFinanceText(
-          draft.bociteArtParticipationVersion ||
-          SPORT_BOCITEART_PARTICIPATION_VERSION
-        ),
+        bociteArtParticipationVersion:
+          sportFinanceText(
+            draft.bociteArtParticipationVersion ||
+            SPORT_BOCITEART_PARTICIPATION_VERSION
+          ),
 
-      clubRef:
-
-               allocationCode:
+        allocationCode:
           sportFinanceNormalizeChoice(
             draft.allocationCode
           ),
@@ -8052,12 +8324,6 @@ const accountingDossier =
         finalPaymentQuoteServerSide:
           true,
 
-                bociteArtParticipationTTC:
-          sportFinanceBociteArtParticipationTTC(),
-
-        bociteArtParticipationVersion:
-          SPORT_BOCITEART_PARTICIPATION_VERSION,
-
         bociteArtTariffVersion:
           sportFinanceText(
             tariff.version
@@ -8072,9 +8338,6 @@ const accountingDossier =
     );
   }
 
-/* =========================================================
-   ÇA COMMENCE ICI — DÉMARRAGE PAIEMENT SPORT
-   ========================================================= */
 
 async function sportFinanceStartCheckout(request){
 
@@ -8115,10 +8378,6 @@ async function sportFinanceStartCheckout(request){
 
     let responseData;
 
-    /* =====================================================
-       PRODUCTION
-       ===================================================== */
-
     if(
       sportFinanceIsProduction()
     ){
@@ -8128,10 +8387,6 @@ async function sportFinanceStartCheckout(request){
           "/payments/checkout",
           payload
         );
-
-    /* =====================================================
-       PRÉPRODUCTION
-       ===================================================== */
 
     }else{
 
@@ -8163,17 +8418,6 @@ async function sportFinanceStartCheckout(request){
         "Le paiement sécurisé n'a pas pu être préparé."
       );
     }
-
-    /*
-      En préproduction,
-      le créneau quitte immédiatement
-      l'état "held".
-
-      Il devient "payment_pending"
-      et continue donc à compter
-      dans la capacité maximale
-      de 8 publicités simultanées.
-    */
 
     if(
       !sportFinanceIsProduction()
@@ -8232,7 +8476,7 @@ async function sportFinanceStartCheckout(request){
 
     sportFinanceUpsertOperation({
 
-      draftId:
+                               draftId:
         sportFinanceText(
           payload.draftId
         ),
@@ -8256,7 +8500,7 @@ async function sportFinanceStartCheckout(request){
           0
         ),
 
-          extraResearchAmount:
+      extraResearchAmount:
         0,
 
       paymentBaseBeforeFinalTax:
@@ -8300,7 +8544,7 @@ async function sportFinanceStartCheckout(request){
           payload.clubRef
         ),
 
-           associationId:
+      associationId:
         "",
 
       researchAssociationsSnapshot:
@@ -8343,7 +8587,7 @@ async function sportFinanceStartCheckout(request){
           payload.bociteArtTariffVersion
         ),
 
-           bociteArtParticipationTTC:
+      bociteArtParticipationTTC:
         Number(
           payload.bociteArtParticipationTTC ||
           SPORT_BOCITEART_PARTICIPATION_TTC
@@ -8356,15 +8600,6 @@ async function sportFinanceStartCheckout(request){
         )
     });
 
-    /*
-      Dès que le paiement est lancé,
-      la prolongation manuelle
-      de la réservation n'est plus utile.
-
-      Le dossier de paiement prend
-      le relais du suivi.
-    */
-
     currentHold =
       null;
 
@@ -8375,17 +8610,6 @@ async function sportFinanceStartCheckout(request){
     return responseData;
 
   }catch(error){
-
-    /*
-      En production,
-      une erreur réseau ne prouve pas
-      que le PSP n'a pas reçu
-      la demande de paiement.
-
-      Le créneau ne doit donc jamais
-      être libéré automatiquement
-      dans ce cas.
-    */
 
     if(
       sportFinanceIsProduction()
@@ -8433,19 +8657,12 @@ async function sportFinanceStartCheckout(request){
 /* =========================================================
    ÇA FINIT ICI — DÉMARRAGE PAIEMENT SPORT
    ========================================================= */
- 
-  /* =========================================================
-     ÇA FINIT ICI — BLOC 5
-     ========================================================= */
 
-   /* =========================================================
-     BLOC 6
-     SPORT — INTERFACE FINANCE COMPLÈTE
-     ========================================================= */
 
- /* =========================================================
-   ÇA COMMENCE ICI — LOGO DU CLUB
+/* =========================================================
+   SPORT — INTERFACE FINANCE COMPLÈTE
    ========================================================= */
+
 
 function sportFinanceClubBrandingHtml(){
 
@@ -8553,13 +8770,6 @@ function sportFinanceClubBrandingHtml(){
   `;
 }
 
-/* =========================================================
-   ÇA FINIT ICI — LOGO DU CLUB
-   ========================================================= */
-
-/* =========================================================
-   ÇA COMMENCE ICI — PROTECTION RENDU FINANCE SPORT
-   ========================================================= */
 
 function sportFinanceRender(){
 
@@ -8577,1360 +8787,1529 @@ function sportFinanceRender(){
   mount.dataset.financeReady =
     "1";
 
-  /* =========================================================
-   ÇA FINIT ICI — PROTECTION RENDU FINANCE SPORT
-   ========================================================= */ 
-
   const profile =
-      sportFinanceInitialProfile();
+    sportFinanceInitialProfile();
 
-    const associations =
-      sportFinanceAssociations();
+  const associations =
+    sportFinanceAssociations();
 
-    const representative =
-      sportFinanceSession();
+  const representative =
+    sportFinanceSession();
 
-    const club =
-      sportFinanceClubSnapshot(
-        sportFinanceClub()
-      );
+  const club =
+    sportFinanceClubSnapshot(
+      sportFinanceClub()
+    );
 
-    const youth =
-      sportFinanceYouthLockedChoice();
+  const youth =
+    sportFinanceYouthLockedChoice();
 
-    const lockedChoice =
-      youth.locked
-        ? youth.choice
-        : "";
+  const lockedChoice =
+    youth.locked
+      ? youth.choice
+      : "";
 
-    const defaultStart =
-      sportFinanceDateTimeLocalValue(
-        sportFinanceDefaultStart()
-      );
+  const defaultStart =
+    sportFinanceDateTimeLocalValue(
+      sportFinanceDefaultStart()
+    );
 
-    const merchantClientNumber =
-      sportFinanceText(
-        profile.clientNumber
-      );
+  const latestStartLocal =
+    sportFinanceDateTimeLocalValue(
+      new Date(
+        sportFinanceLatestAllowedStartMs()
+      )
+    );
 
-    mount.innerHTML = `
+  const merchantClientNumber =
+    sportFinanceText(
+      profile.clientNumber
+    );
 
-      <div class="sportCard">
+  mount.innerHTML = `
 
-        <div class="sportSubTitle">
+    <div class="sportCard">
 
-          Parrainage et publicité locale avec
+      <div class="sportSubTitle">
 
-          <span class="bociteSportLogo">
+        Parrainage et publicité locale avec
 
-            Bo'Cité
+        <span class="bociteSportLogo">
 
-            <span class="bociteSportArt">
-              Art
-            </span>
+          Bo'Cité
 
+          <span class="bociteSportArt">
+            Art
           </span>
 
-        </div>
-
-        <div
-          class="sportText"
-          style="margin-top:10px;"
-        >
-
-          La publicité est
-          <strong>indépendante du Cabas</strong>.
-
-          Le commerçant peut choisir
-          cette visibilité
-          sans échange de bocitecoins.
-
-          <br><br>
-
-          Le parrainage commence à
-
-          <strong>
-            50 € HT
-          </strong>.
-
-          La publicité est diffusée
-          pendant
-
-          <strong>
-            48 heures exactes
-          </strong>
-
-          à partir de son heure réelle
-          de démarrage.
-
-          <br><br>
-
-          Au maximum
-
-          <strong>
-            8 publicités sont diffusées simultanément
-          </strong>.
-
-          Si une place est disponible immédiatement,
-          le départ peut être proposé tout de suite ;
-
-          sinon le prochain créneau disponible
-          est proposé avec sa date et son heure.
-
-        </div>
-
-        <div class="sportStatus">
-
-          Présenté par
-
-          <strong>
-
-            ${sportFinanceEscape(
-              representative.name ||
-              "Utilisateur Sport autorisé"
-            )}
-
-          </strong>
-
-          ${
-            representative.team
-
-              ? " — Équipe : " +
-                sportFinanceEscape(
-                  representative.team
-                )
-
-              : ""
-          }
-
-        </div>
-
-        <div class="sportStatus">
-
-          Club :
-
-          <strong>
-
-            ${sportFinanceEscape(
-              club.name ||
-              club.officialName ||
-              "Club partenaire"
-            )}
-
-          </strong>
-
-          ${
-            club.clientNumber
-
-              ? "<br>N° client club : <strong>" +
-                sportFinanceEscape(
-                  club.clientNumber
-                ) +
-                "</strong>"
-
-              : ""
-          }
-
-        </div>
+        </span>
 
       </div>
 
+      <div
+        class="sportText"
+        style="margin-top:10px;"
+      >
 
-      <div class="sportCard">
+        La publicité est
+        <strong>indépendante du Cabas</strong>.
 
-        <div class="sportSubTitle">
+        Le commerçant peut choisir
+        cette visibilité
+        sans échange de bocitecoins.
 
-          Informations du commerçant
+        <br><br>
 
-        </div>
+        Le parrainage commence à
 
-        <div
-          class="sportText"
-          style="margin-top:8px;"
-        >
+        <strong>
+          50 € HT
+        </strong>.
 
-          Les données essentielles
-          doivent concorder
-          avec les références officielles disponibles.
+        La publicité est diffusée
+        pendant
 
-          En cas d’écart,
-          la fiche reste bloquée
-          et le commerçant corrige lui-même
-          ses informations avant de poursuivre.
+                <strong>
+          48 heures exactes
+        </strong>
 
-        </div>
+        à partir de son heure réelle
+        de démarrage.
 
-        <div class="sportStatus">
+        <br><br>
 
-          N° client Bo'CitéArt :
+        Au maximum
 
-          <strong id="bcfSportMerchantClientNumber">
+        <strong>
+          8 publicités sont diffusées simultanément
+        </strong>.
 
-            ${sportFinanceEscape(
-              merchantClientNumber ||
-              "attribué après validation"
-            )}
+        Si une place est disponible immédiatement,
+        le départ peut être proposé tout de suite ;
 
-          </strong>
-
-        </div>
-
-        <div
-          id="bcfSportCorrectionNotice"
-          class="sportStatus"
-          style="display:none;"
-        >
-
-          Corrigez les informations nécessaires,
-          puis revenez au récapitulatif.
-
-        </div>
-
-        <label class="sportLabel">
-          Nom ou enseigne
-        </label>
-
-        <input
-          id="bcfSportMerchantName"
-          class="sportField"
-          value="${sportFinanceEscape(
-            profile.name ||
-            profile.shopName ||
-            profile.companyName
-          )}"
-        >
-
-        <label class="sportLabel">
-          SIREN / SIRET
-        </label>
-
-        <input
-          id="bcfSportMerchantSiret"
-          class="sportField"
-          inputmode="numeric"
-          value="${sportFinanceEscape(
-            profile.sirenSiret ||
-            profile.siret ||
-            profile.siren
-          )}"
-        >
-
-        <label class="sportLabel">
-
-          N° TVA intracommunautaire
-
-          <span style="font-weight:400;">
-            (si applicable)
-          </span>
-
-        </label>
-
-        <input
-          id="bcfSportMerchantVat"
-          class="sportField"
-          value="${sportFinanceEscape(
-            profile.vatNumber ||
-            profile.vat ||
-            ""
-          )}"
-        >
-
-        <label class="sportLabel">
-          Adresse professionnelle
-        </label>
-
-        <input
-          id="bcfSportMerchantAddress"
-          class="sportField"
-          value="${sportFinanceEscape(
-            profile.address
-          )}"
-        >
-
-        <label class="sportLabel">
-          Téléphone
-        </label>
-
-        <input
-          id="bcfSportMerchantPhone"
-          class="sportField"
-          type="tel"
-          value="${sportFinanceEscape(
-            profile.phone
-          )}"
-        >
-
-        <label class="sportLabel">
-          Site
-        </label>
-
-        <input
-          id="bcfSportMerchantWebsite"
-          class="sportField"
-          value="${sportFinanceEscape(
-            profile.website ||
-            profile.site
-          )}"
-        >
-
-        <label class="sportLabel">
-          Email
-        </label>
-
-        <input
-          id="bcfSportMerchantEmail"
-          class="sportField"
-          type="email"
-          value="${sportFinanceEscape(
-            profile.email
-          )}"
-        >
-
-        <label class="sportLabel">
-          Email comptable
-        </label>
-
-        <input
-          id="bcfSportMerchantAccountingEmail"
-          class="sportField"
-          type="email"
-          value="${sportFinanceEscape(
-            profile.accountingEmail ||
-            profile.email
-          )}"
-        >
-
-        <button
-          id="bcfSportVerifyIdentity"
-          class="sportBtn"
-          type="button"
-          style="
-            width:100%;
-            margin-top:12px;
-          "
-        >
-
-          Vérifier ma fiche
-
-        </button>
-
-        <div
-          id="bcfSportIdentityStatus"
-          class="sportStatus"
-        >
-
-          La fiche doit être vérifiée
-          avant le paiement.
-
-        </div>
-
-        <button
-          id="bcfSportReturnToReview"
-          class="sportBtn"
-          type="button"
-          style="
-            display:none;
-            width:100%;
-            margin-top:12px;
-          "
-        >
-
-          Enregistrer les corrections
-          et revenir au récapitulatif
-
-        </button>
+        sinon le prochain créneau disponible
+        est proposé avec sa date et son heure.
 
       </div>
 
+      <div class="sportStatus">
 
-                   <div class="sportCard">
+        Présenté par
 
-        <div class="sportSubTitle">
+        <strong>
 
-          Montant et destination
+          ${sportFinanceEscape(
+            representative.name ||
+            "Utilisateur Sport autorisé"
+          )}
 
-        </div>
-
-        <label class="sportLabel">
-
-          Soutien en € HT
-
-        </label>
-
-        <input
-          id="bcfSportAmountHT"
-          class="sportField"
-          type="number"
-          min="50"
-          step="0.01"
-          value="50"
-        >
-
-        <div class="sportStatus">
-
-          Minimum : 50 € HT.
-          Choisissez uniquement la destination du soutien.
-
-        </div>
-
-        <label class="sportCheck">
-
-          <input
-            type="radio"
-            name="bcfSportAllocation"
-            value="ALL_CLUB"
-            ${
-              lockedChoice === "ALL_CLUB"
-                ? "checked"
-                : ""
-            }
-            ${
-              youth.locked
-                ? "disabled"
-                : ""
-            }
-          >
-
-          <span>
-
-            <strong>
-              Club uniquement
-            </strong>
-
-          </span>
-
-        </label>
-
-
-        <label class="sportCheck">
-
-          <input
-            type="radio"
-            name="bcfSportAllocation"
-            value="CLUB_RESEARCH"
-            ${
-              lockedChoice === "CLUB_RESEARCH"
-                ? "checked"
-                : ""
-            }
-            ${
-              youth.locked
-                ? "disabled"
-                : ""
-            }
-            ${
-              associations.length === 4
-                ? ""
-                : "disabled"
-            }
-          >
-
-          <span>
-
-            <strong>
-              Club + Recherche
-            </strong>
-
-          </span>
-
-        </label>
-
+        </strong>
 
         ${
-          youth.locked
+          representative.team
 
-            ? `
-
-                <div class="sportStatus">
-
-                  Choix collectif enregistré pour
-
-                  <strong>
-                    ${sportFinanceEscape(
-                      youth.groupName ||
-                      "le groupe"
-                    )}
-                  </strong>
-
-                  :
-
-                  <strong>
-
-                    ${
-                      youth.choice ===
-                        "CLUB_RESEARCH"
-
-                        ? "Club + Recherche"
-
-                        : "Club uniquement"
-                    }
-
-                  </strong>.
-
-                  Ce choix est repris automatiquement.
-
-                </div>
-
-              `
+            ? " — Équipe : " +
+              sportFinanceEscape(
+                representative.team
+              )
 
             : ""
         }
 
+      </div>
+
+      <div class="sportStatus">
+
+        Club :
+
+        <strong>
+
+          ${sportFinanceEscape(
+            club.name ||
+            club.officialName ||
+            "Club partenaire"
+          )}
+
+        </strong>
 
         ${
-          associations.length === 4
+          club.clientNumber
 
-            ? `
+            ? "<br>N° client club : <strong>" +
+              sportFinanceEscape(
+                club.clientNumber
+              ) +
+              "</strong>"
 
-                <div class="sportStatus">
-
-                  Les associations de recherche
-                  sont gérées automatiquement
-                  par la configuration annuelle
-                  Bo'CitéArt.
-
-                </div>
-
-              `
-
-            : `
-
-                <div class="sportStatus">
-
-                  L’option Club + Recherche
-                  sera disponible lorsque
-                  les 4 associations annuelles
-                  auront été validées.
-
-                </div>
-
-              `
+            : ""
         }
 
       </div>
-      
-      <div class="sportCard">
 
-        <div class="sportSubTitle">
-
-          Diffusion — 48
-          heures exactes
-
-        </div>
-
-        <div
-          class="sportText"
-          style="margin-top:8px;"
-        >
-
-          Choisissez une date et une heure,
-          ou demandez le premier créneau disponible.
-
-          Les 48 heures sont calculées
-          à partir de l’heure réelle de démarrage :
-
-          la diffusion ne s’arrête pas à minuit.
-
-        </div>
-
-        <button
-          id="bcfSportStartNow"
-          class="sportBtn"
-          type="button"
-          style="
-            width:100%;
-            margin-top:10px;
-          "
-        >
-
-          Démarrer dès que possible
-
-        </button>
-
-        <label class="sportLabel">
-
-          Date et heure de démarrage
-
-        </label>
-
-        <input
-          id="bcfSportPublicationStart"
-          class="sportField"
-          type="datetime-local"
-          step="900"
-          value="${sportFinanceEscape(
-            defaultStart
-          )}"
-        >
-
-        <div
-          id="bcfSportDatePreview"
-          class="sportStatus"
-        ></div>
-
-        <button
-          id="bcfSportCheckAvailability"
-          class="sportBtn"
-          type="button"
-          style="
-            width:100%;
-            margin-top:10px;
-          "
-        >
-
-          Vérifier ce créneau de 48 heures
-
-        </button>
-
-       <div
-  id="bcfSportAvailabilityStatus"
-  class="sportStatus"
-></div>
-
-<div
-  class="sportStatus"
-  style="margin-top:12px;"
->
-  <strong>
-    Planning des 10 prochains jours
-  </strong>
-
-  <br>
-
-  Premier démarrage disponible
-  pour chaque journée.
-  Cliquez sur un créneau
-  pour le sélectionner.
-</div>
-
-<div
-  id="bcfSportTenDayPlanning"
-  style="
-    display:grid;
-    gap:8px;
-    margin-top:8px;
-  "
-></div>
-
-<div
-  id="bcfSportHoldStatus"
-          class="sportStatus"
-        >
-
-          Aucun créneau
-          n’est actuellement réservé.
-
-        </div>
-
-        <button
-          id="bcfSportExtendHold"
-          class="sportBtn"
-          type="button"
-          style="
-            display:none;
-            width:100%;
-            margin-top:10px;
-          "
-        >
-
-          Prolonger la réservation
-          de 5 minutes
-
-        </button>
-
-      </div>
-
-
-      <div class="sportCard">
-
-        <div class="sportSubTitle">
-
-          Choisissez l’une
-          des 4 bandes privées
-
-        </div>
-
-        <div
-          class="sportText"
-          style="margin-top:8px;"
-        >
-
-          Ces quatre formulations
-          restent privées pendant la préparation.
-
-          Une seule phrase finale
-          est publiée
-          après confirmation du paiement.
-
-        </div>
-
-        <div id="bcfSportTemplateList"></div>
-
-      </div>
-
-
-      ${sportFinanceClubBrandingHtml()}
+    </div>
 
 
     <div class="sportCard">
 
-  <div class="sportSubTitle">
+      <div class="sportSubTitle">
 
-    Validation et paiement
-
-  </div>
-
-  <div
-    id="bcfSportStatus"
-    class="sportStatus"
-  >
-
-    Vérifiez la fiche,
-    le montant,
-    la destination
-    et le créneau.
-
-  </div>
-
-  <button
-    id="bcfSportOpenReview"
-    class="sportBtn"
-    type="button"
-    style="
-      width:100%;
-      margin-top:12px;
-    "
-  >
-
-    Continuer vers le paiement
-
-  </button>
-
-</div>
-
-
-      <div class="sportCard">
-
-        <div class="sportSubTitle">
-
-          Suivi de la dernière opération
-
-        </div>
-
-        <div
-          id="bcfSportLastOperation"
-          class="sportStatus"
-        >
-
-          Aucune opération de parrainage
-          enregistrée sur cet appareil.
-
-        </div>
+        Informations du commerçant
 
       </div>
 
-    `;
+      <div
+        class="sportText"
+        style="margin-top:8px;"
+      >
+
+        Les données essentielles
+        doivent concorder
+        avec les références officielles disponibles.
+
+        En cas d’écart,
+        la fiche reste bloquée
+        et le commerçant corrige lui-même
+        ses informations avant de poursuivre.
+
+      </div>
+
+      <div class="sportStatus">
+
+        N° client Bo'CitéArt :
+
+        <strong id="bcfSportMerchantClientNumber">
+
+          ${sportFinanceEscape(
+            merchantClientNumber ||
+            "attribué après validation"
+          )}
+
+        </strong>
+
+      </div>
+
+      <div
+        id="bcfSportCorrectionNotice"
+        class="sportStatus"
+        style="display:none;"
+      >
+
+        Corrigez les informations nécessaires,
+        puis revenez au récapitulatif.
+
+      </div>
+
+      <label class="sportLabel">
+        Nom ou enseigne
+      </label>
+
+      <input
+        id="bcfSportMerchantName"
+        class="sportField"
+        value="${sportFinanceEscape(
+          profile.name ||
+          profile.shopName ||
+          profile.companyName
+        )}"
+      >
+
+      <label class="sportLabel">
+        SIREN / SIRET
+      </label>
+
+      <input
+        id="bcfSportMerchantSiret"
+        class="sportField"
+        inputmode="numeric"
+        value="${sportFinanceEscape(
+          profile.sirenSiret ||
+          profile.siret ||
+          profile.siren
+        )}"
+      >
+
+      <label class="sportLabel">
+
+        N° TVA intracommunautaire
+
+        <span style="font-weight:400;">
+          (si applicable)
+        </span>
+
+      </label>
+
+      <input
+        id="bcfSportMerchantVat"
+        class="sportField"
+        value="${sportFinanceEscape(
+          profile.vatNumber ||
+          profile.vat ||
+          ""
+        )}"
+      >
+
+      <label class="sportLabel">
+        Adresse professionnelle
+      </label>
+
+      <input
+        id="bcfSportMerchantAddress"
+        class="sportField"
+        value="${sportFinanceEscape(
+          profile.address
+        )}"
+      >
+
+      <label class="sportLabel">
+        Téléphone
+      </label>
+
+      <input
+        id="bcfSportMerchantPhone"
+        class="sportField"
+        type="tel"
+        value="${sportFinanceEscape(
+          profile.phone
+        )}"
+      >
+
+      <label class="sportLabel">
+        Site
+      </label>
+
+      <input
+        id="bcfSportMerchantWebsite"
+        class="sportField"
+        value="${sportFinanceEscape(
+          profile.website ||
+          profile.site
+        )}"
+      >
+
+      <label class="sportLabel">
+        Email
+      </label>
+
+      <input
+        id="bcfSportMerchantEmail"
+        class="sportField"
+        type="email"
+        value="${sportFinanceEscape(
+          profile.email
+        )}"
+      >
+
+      <label class="sportLabel">
+        Email comptable
+      </label>
+
+      <input
+        id="bcfSportMerchantAccountingEmail"
+        class="sportField"
+        type="email"
+        value="${sportFinanceEscape(
+          profile.accountingEmail ||
+          profile.email
+        )}"
+      >
+
+      <button
+        id="bcfSportVerifyIdentity"
+        class="sportBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-top:12px;
+        "
+      >
+
+        Vérifier ma fiche
+
+      </button>
+
+      <div
+        id="bcfSportIdentityStatus"
+        class="sportStatus"
+      >
+
+        La fiche doit être vérifiée
+        avant le paiement.
+
+      </div>
+
+      <button
+        id="bcfSportReturnToReview"
+        class="sportBtn"
+        type="button"
+        style="
+          display:none;
+          width:100%;
+          margin-top:12px;
+        "
+      >
+
+        Enregistrer les corrections
+        et revenir au récapitulatif
+
+      </button>
+
+    </div>
 
 
-    mount
-      .querySelectorAll(
-        'input[name="bcfSportAllocation"]'
-      )
-      .forEach(
-        function(radio){
+    <div class="sportCard">
 
-          radio.addEventListener(
-            "change",
-            function(){
+      <div class="sportSubTitle">
 
-              sportFinanceUpdateResearchBox();
+        Montant et destination
 
-              sportFinanceRenderTemplates();
-            }
-          );
-        }
-      );
+      </div>
 
-    [
-      "bcfSportMerchantName",
-      "bcfSportMerchantAddress",
-      "bcfSportMerchantPhone",
-      "bcfSportMerchantEmail",
-      "bcfSportMerchantWebsite"
-    ]
-      .forEach(
-        function(id){
+      <label class="sportLabel">
 
-          const field =
-            sportFinanceField(
-              id
-            );
+        Soutien en € HT
 
-          if(
-            field
-          ){
-            field.oninput =
-              sportFinanceRenderTemplates;
+      </label>
+
+      <input
+        id="bcfSportAmountHT"
+        class="sportField"
+        type="number"
+        min="50"
+        step="0.01"
+        value="50"
+      >
+
+      <div class="sportStatus">
+
+        Minimum : 50 € HT.
+        Choisissez uniquement la destination du soutien.
+
+      </div>
+
+      <label class="sportCheck">
+
+        <input
+          type="radio"
+          name="bcfSportAllocation"
+          value="ALL_CLUB"
+          ${
+            lockedChoice === "ALL_CLUB"
+              ? "checked"
+              : ""
           }
+          ${
+            youth.locked
+              ? "disabled"
+              : ""
+          }
+        >
+
+        <span>
+
+          <strong>
+            Club uniquement
+          </strong>
+
+        </span>
+
+      </label>
+
+
+      <label class="sportCheck">
+
+        <input
+          type="radio"
+          name="bcfSportAllocation"
+          value="CLUB_RESEARCH"
+          ${
+            lockedChoice === "CLUB_RESEARCH"
+              ? "checked"
+              : ""
+          }
+          ${
+            youth.locked
+              ? "disabled"
+              : ""
+          }
+          ${
+            associations.length === 4
+              ? ""
+              : "disabled"
+          }
+        >
+
+        <span>
+
+          <strong>
+            Club + Recherche
+          </strong>
+
+        </span>
+
+      </label>
+
+
+      ${
+        youth.locked
+
+          ? `
+
+              <div class="sportStatus">
+
+                Choix collectif enregistré pour
+
+                <strong>
+                  ${sportFinanceEscape(
+                    youth.groupName ||
+                    "le groupe"
+                  )}
+                </strong>
+
+                :
+
+                <strong>
+
+                  ${
+                    youth.choice ===
+                      "CLUB_RESEARCH"
+
+                      ? "Club + Recherche"
+
+                      : "Club uniquement"
+                  }
+
+                </strong>.
+
+                Ce choix est repris automatiquement.
+
+              </div>
+
+            `
+
+          : ""
+      }
+
+
+      ${
+        associations.length === 4
+
+          ? `
+
+              <div class="sportStatus">
+
+                Les associations de recherche
+                sont gérées automatiquement
+                par la configuration annuelle
+                Bo'CitéArt.
+
+              </div>
+
+            `
+
+          : `
+
+              <div class="sportStatus">
+
+                L’option Club + Recherche
+                sera disponible lorsque
+                les 4 associations annuelles
+                auront été validées.
+
+              </div>
+
+            `
+      }
+
+    </div>
+
+    <div class="sportCard">
+
+      <div class="sportSubTitle">
+
+        Diffusion — 48
+        heures exactes
+
+      </div>
+
+      <div
+        class="sportText"
+        style="margin-top:8px;"
+      >
+
+        Choisissez une date et une heure,
+        ou demandez le premier créneau disponible.
+
+        Les 48 heures sont calculées
+        à partir de l’heure réelle de démarrage :
+
+        la diffusion ne s’arrête pas à minuit.
+
+      </div>
+
+      <button
+        id="bcfSportStartNow"
+        class="sportBtn"
+        type="button"
+
+                style="
+          width:100%;
+          margin-top:10px;
+        "
+      >
+
+        Démarrer dès que possible
+
+      </button>
+
+      <label class="sportLabel">
+
+        Date et heure de démarrage
+
+      </label>
+
+      <input
+        id="bcfSportPublicationStart"
+        class="sportField"
+        type="datetime-local"
+        step="900"
+        min="${sportFinanceEscape(
+          defaultStart
+        )}"
+        max="${sportFinanceEscape(
+          latestStartLocal
+        )}"
+        value="${sportFinanceEscape(
+          defaultStart
+        )}"
+      >
+
+      <div
+        id="bcfSportDatePreview"
+        class="sportStatus"
+      ></div>
+
+      <button
+        id="bcfSportCheckAvailability"
+        class="sportBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-top:10px;
+        "
+      >
+
+        Vérifier ce créneau de 48 heures
+
+      </button>
+
+      <div
+        id="bcfSportAvailabilityStatus"
+        class="sportStatus"
+      ></div>
+
+      <div
+        class="sportStatus"
+        style="margin-top:12px;"
+      >
+        <strong>
+          Planning des 10 prochains jours
+        </strong>
+
+        <br>
+
+        Premier démarrage disponible
+        pour chaque journée.
+        Cliquez sur un créneau
+        pour le sélectionner.
+      </div>
+
+      <div
+        id="bcfSportTenDayPlanning"
+        style="
+          display:grid;
+          gap:8px;
+          margin-top:8px;
+        "
+      ></div>
+
+      <div
+        id="bcfSportHoldStatus"
+        class="sportStatus"
+      >
+
+        Aucun créneau
+        n’est actuellement réservé.
+
+      </div>
+
+      <button
+        id="bcfSportExtendHold"
+        class="sportBtn"
+        type="button"
+        style="
+          display:none;
+          width:100%;
+          margin-top:10px;
+        "
+      >
+
+        Prolonger la réservation
+        de 5 minutes
+
+      </button>
+
+    </div>
+
+
+    <div class="sportCard">
+
+      <div class="sportSubTitle">
+
+        Choisissez l’une
+        des 4 bandes privées
+
+      </div>
+
+      <div
+        class="sportText"
+        style="margin-top:8px;"
+      >
+
+        Ces quatre formulations
+        restent privées pendant la préparation.
+
+        Une seule phrase finale
+        est publiée
+        après confirmation du paiement.
+
+      </div>
+
+      <div id="bcfSportTemplateList"></div>
+
+    </div>
+
+
+    ${sportFinanceClubBrandingHtml()}
+
+
+    <div class="sportCard">
+
+      <div class="sportSubTitle">
+
+        Validation et paiement
+
+      </div>
+
+      <div
+        id="bcfSportStatus"
+        class="sportStatus"
+      >
+
+        Vérifiez la fiche,
+        le montant,
+        la destination
+        et le créneau.
+
+      </div>
+
+      <button
+        id="bcfSportOpenReview"
+        class="sportBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-top:12px;
+        "
+      >
+
+        Continuer vers le paiement
+
+      </button>
+
+    </div>
+
+
+    <div class="sportCard">
+
+      <div class="sportSubTitle">
+
+        Suivi de la dernière opération
+
+      </div>
+
+      <div
+        id="bcfSportLastOperation"
+        class="sportStatus"
+      >
+
+        Aucune opération de parrainage
+        enregistrée sur cet appareil.
+
+      </div>
+
+    </div>
+
+  `;
+
+
+  mount
+    .querySelectorAll(
+      'input[name="bcfSportAllocation"]'
+    )
+    .forEach(
+      function(radio){
+
+        radio.addEventListener(
+          "change",
+          function(){
+
+            sportFinanceUpdateResearchBox();
+
+            sportFinanceRenderTemplates();
+          }
+        );
+      }
+    );
+
+  [
+    "bcfSportMerchantName",
+    "bcfSportMerchantAddress",
+    "bcfSportMerchantPhone",
+    "bcfSportMerchantEmail",
+    "bcfSportMerchantWebsite"
+  ]
+    .forEach(
+      function(id){
+
+        const field =
+          sportFinanceField(
+            id
+          );
+
+        if(
+          field
+        ){
+          field.oninput =
+            sportFinanceRenderTemplates;
         }
-      );
+      }
+    );
 
 
-    const verifyIdentity =
-      sportFinanceField(
-        "bcfSportVerifyIdentity"
-      );
+  const verifyIdentity =
+    sportFinanceField(
+      "bcfSportVerifyIdentity"
+    );
 
-    if(
-      verifyIdentity
-    ){
+  if(
+    verifyIdentity
+  ){
 
-      verifyIdentity.onclick =
-        async function(){
+    verifyIdentity.onclick =
+      async function(){
 
-          const profileToCheck =
-            sportFinanceSaveProfile(
-              sportFinanceReadProfile()
+        const profileToCheck =
+          sportFinanceSaveProfile(
+            sportFinanceReadProfile()
+          );
+
+        sportFinanceRenderIdentityStatus(
+          null
+        );
+
+        sportFinanceSetStatus(
+          "Vérification de la fiche…",
+          "success"
+        );
+
+        try{
+
+          const result =
+            await sportFinanceVerifyIdentity(
+              profileToCheck
             );
 
           sportFinanceRenderIdentityStatus(
-            null
+            result
           );
 
-          sportFinanceSetStatus(
-            "Vérification de la fiche…",
-            "success"
-          );
+          if(
+            sportFinanceIdentityAccepted(
+              result
+            )
+          ){
 
-          try{
+            const saved =
+              sportFinanceReadSavedProfile();
 
-            const result =
-              await sportFinanceVerifyIdentity(
-                profileToCheck
+            const number =
+              sportFinanceText(
+                result.clientNumber
+              ) ||
+              sportFinanceEnsureMerchantClientNumber(
+                saved
               );
 
-            sportFinanceRenderIdentityStatus(
-              result
-            );
-
             if(
-              sportFinanceIdentityAccepted(
-                result
-              )
+              number
             ){
 
-              const saved =
-                sportFinanceReadSavedProfile();
+              saved.clientNumber =
+                number;
 
-              const number =
-                sportFinanceText(
-                  result.clientNumber
-                ) ||
-                sportFinanceEnsureMerchantClientNumber(
-                  saved
+              sportFinanceSaveProfile(
+                saved
+              );
+
+              const out =
+                sportFinanceField(
+                  "bcfSportMerchantClientNumber"
                 );
 
               if(
-                number
+                out
               ){
-
-                saved.clientNumber =
+                out.textContent =
                   number;
-
-                sportFinanceSaveProfile(
-                  saved
-                );
-
-                const out =
-                  sportFinanceField(
-                    "bcfSportMerchantClientNumber"
-                  );
-
-                if(
-                  out
-                ){
-                  out.textContent =
-                    number;
-                }
               }
-
-              sportFinanceSetStatus(
-                "Fiche contrôlée. Vous pouvez poursuivre.",
-                "success"
-              );
-
-            }else{
-
-              sportFinanceSetStatus(
-                "Veuillez rectifier l’erreur indiquée avant de poursuivre.",
-                "error"
-              );
             }
 
-          }catch(error){
-
             sportFinanceSetStatus(
-              error.message ||
-              "La fiche n’a pas pu être vérifiée.",
-              "error"
-            );
-          }
-        };
-    }
-
-
-    const dateField =
-      sportFinanceField(
-        "bcfSportPublicationStart"
-      );
-
-    if(
-      dateField
-    ){
-
-      dateField.onchange =
-        async function(){
-
-          if(
-            currentHold &&
-            currentHold.slotHoldId
-          ){
-
-            await sportFinanceReleaseHold(
-              "publication_datetime_changed"
-            );
-          }
-
-          sportFinanceUpdateDatePreview();
-        };
-    }
-
-
-    const startNow =
-      sportFinanceField(
-        "bcfSportStartNow"
-      );
-
-    if(
-      startNow
-    ){
-      startNow.onclick =
-        sportFinanceStartAsSoonAsPossible;
-    }
-
-
-    const checkAvailability =
-      sportFinanceField(
-        "bcfSportCheckAvailability"
-      );
-
-    if(
-      checkAvailability
-    ){
-      checkAvailability.onclick =
-        sportFinanceShowAvailability;
-    }
-
-
-    const extendHold =
-      sportFinanceField(
-        "bcfSportExtendHold"
-      );
-
-    if(
-      extendHold
-    ){
-
-      extendHold.onclick =
-        async function(){
-
-          try{
-
-            await sportFinanceExtendHold();
-
-            sportFinanceSetStatus(
-              "La réservation a été prolongée de 5 minutes.",
+              "Fiche contrôlée. Vous pouvez poursuivre.",
               "success"
             );
 
-          }catch(error){
+          }else{
 
             sportFinanceSetStatus(
-              error.message ||
-              "La réservation n’a pas pu être prolongée.",
+              "Veuillez rectifier l’erreur indiquée avant de poursuivre.",
               "error"
             );
           }
-        };
-    }
+
+        }catch(error){
+
+          sportFinanceSetStatus(
+            error.message ||
+            "La fiche n’a pas pu être vérifiée.",
+            "error"
+          );
+        }
+      };
+  }
 
 
-    const openReview =
-      sportFinanceField(
-        "bcfSportOpenReview"
-      );
+  const dateField =
+    sportFinanceField(
+      "bcfSportPublicationStart"
+    );
 
-    if(
-      openReview
-    ){
-      openReview.onclick =
-        sportFinanceOpenReview;
-    }
+  if(
+    dateField
+  ){
+
+    dateField.onchange =
+      async function(){
+
+        if(
+          currentHold &&
+          currentHold.slotHoldId
+        ){
+
+          await sportFinanceReleaseHold(
+            "publication_datetime_changed"
+          );
+        }
+
+        sportFinanceUpdateDatePreview();
+      };
+  }
 
 
-    const returnToReview =
-      sportFinanceField(
-        "bcfSportReturnToReview"
-      );
+  const startNow =
+    sportFinanceField(
+      "bcfSportStartNow"
+    );
 
-    if(
-      returnToReview
-    ){
-      returnToReview.onclick =
-        sportFinanceReturnToReview;
-    }
+  if(
+    startNow
+  ){
+    startNow.onclick =
+      sportFinanceStartAsSoonAsPossible;
+  }
 
 
-    const logoSave =
-      sportFinanceField(
-        "bcfSportClubLogoSave"
-      );
+  const checkAvailability =
+    sportFinanceField(
+      "bcfSportCheckAvailability"
+    );
 
-    if(
-      logoSave
-    ){
+  if(
+    checkAvailability
+  ){
+    checkAvailability.onclick =
+      sportFinanceShowAvailability;
+  }
 
-      logoSave.onclick =
-        async function(){
 
-          const field =
-            sportFinanceField(
-              "bcfSportClubLogo"
-            );
+  const extendHold =
+    sportFinanceField(
+      "bcfSportExtendHold"
+    );
 
-          const status =
-            sportFinanceField(
-              "bcfSportClubLogoStatus"
-            );
+  if(
+    extendHold
+  ){
 
-          const file =
-            field &&
-            field.files &&
-            field.files[0];
+    extendHold.onclick =
+      async function(){
 
-          try{
+        try{
 
-            await sportFinanceUploadClubLogo(
-              file
-            );
+          await sportFinanceExtendHold();
 
-            if(
-              status
-            ){
-              status.textContent =
-                "Logo enregistré pour les futurs documents.";
-            }
+          sportFinanceSetStatus(
+            "La réservation a été prolongée de 5 minutes.",
+            "success"
+          );
 
-          }catch(error){
+        }catch(error){
 
-            if(
-              status
-            ){
-              status.textContent =
-                error.message ||
-                "Le logo n’a pas pu être enregistré.";
-            }
+          sportFinanceSetStatus(
+            error.message ||
+            "La réservation n’a pas pu être prolongée.",
+            "error"
+          );
+        }
+      };
+  }
+
+
+  const openReview =
+    sportFinanceField(
+      "bcfSportOpenReview"
+    );
+
+  if(
+    openReview
+  ){
+    openReview.onclick =
+      sportFinanceOpenReview;
+  }
+
+
+  const returnToReview =
+    sportFinanceField(
+      "bcfSportReturnToReview"
+    );
+
+  if(
+    returnToReview
+  ){
+    returnToReview.onclick =
+      sportFinanceReturnToReview;
+  }
+
+
+  const logoSave =
+    sportFinanceField(
+      "bcfSportClubLogoSave"
+    );
+
+  if(
+    logoSave
+  ){
+
+    logoSave.onclick =
+      async function(){
+
+        const field =
+          sportFinanceField(
+            "bcfSportClubLogo"
+          );
+
+        const status =
+          sportFinanceField(
+            "bcfSportClubLogoStatus"
+          );
+
+               const file =
+          field &&
+          field.files &&
+          field.files[0];
+
+        try{
+
+          await sportFinanceUploadClubLogo(
+            file
+          );
+
+          if(
+            status
+          ){
+            status.textContent =
+              "Logo enregistré pour les futurs documents.";
           }
-        };
-    }
 
+        }catch(error){
+
+          if(
+            status
+          ){
+            status.textContent =
+              error.message ||
+              "Le logo n’a pas pu être enregistré.";
+          }
+        }
+      };
+  }
+
+
+  if(
+    youth.locked &&
+    lockedChoice
+  ){
+
+    const lockedRadio =
+      mount.querySelector(
+        'input[name="bcfSportAllocation"][value="' +
+        lockedChoice +
+        '"]'
+      );
 
     if(
-      youth.locked &&
-      lockedChoice
+      lockedRadio
     ){
-
-      const lockedRadio =
-        mount.querySelector(
-          'input[name="bcfSportAllocation"][value="' +
-          lockedChoice +
-          '"]'
-        );
-
-      if(
-        lockedRadio
-      ){
-        lockedRadio.checked =
-          true;
-      }
+      lockedRadio.checked =
+        true;
     }
+  }
 
 
   sportFinanceUpdateResearchBox();
 
-sportFinanceUpdateDatePreview();
+  sportFinanceUpdateDatePreview();
 
-sportFinanceRenderTenDayPlanning();
+  sportFinanceRenderTenDayPlanning();
 
-sportFinanceRenderTemplates();
+  sportFinanceRenderTemplates();
 
-sportFinanceRenderHoldStatus();
+  sportFinanceRenderHoldStatus();
 
-sportFinanceRenderLatestOperation();
+  sportFinanceRenderLatestOperation();
 
-    if(
+  if(
+    identityCheckCache
+  ){
+    sportFinanceRenderIdentityStatus(
       identityCheckCache
-    ){
-      sportFinanceRenderIdentityStatus(
-        identityCheckCache
-      );
-    }
+    );
   }
+}
 
-  /* =========================================================
-     ÇA FINIT ICI — BLOC 6
-     ========================================================= */
 
-   /* =========================================================
-     BLOC 7
-     GOUVERNANCE — MAIRIES — COMPTABLE — ÉTATS — EXPORT
-     ========================================================= */
+/* =========================================================
+   GOUVERNANCE — MAIRIES — COMPTABLE — ÉTATS — EXPORT
+   ========================================================= */
 
-  function financeFoundationPublicEntityLateCase(invoice){
+function financeFoundationPublicEntityLateCase(invoice){
 
-    const source =
-      invoice &&
-      typeof invoice === "object"
-        ? invoice
-        : {};
+  const source =
+    invoice &&
+    typeof invoice === "object"
+      ? invoice
+      : {};
 
-    const due =
-      new Date(
-        source.dueAt ||
-        source.dueDate ||
-        ""
-      );
+  const due =
+    new Date(
+      source.dueAt ||
+      source.dueDate ||
+      ""
+    );
 
-    const now =
-      new Date(
-        source.asOf ||
-        Date.now()
-      );
+  const now =
+    new Date(
+      source.asOf ||
+      Date.now()
+    );
 
-    const validDue =
-      !Number.isNaN(
-        due.getTime()
-      );
+  const validDue =
+    !Number.isNaN(
+      due.getTime()
+    );
 
-    const overdue =
-      validDue &&
-      now.getTime() >
-        due.getTime() &&
-      source.paid !== true;
+  const overdue =
+    validDue &&
+    now.getTime() >
+      due.getTime() &&
+    source.paid !== true;
 
-    const daysLate =
-      overdue
-        ? Math.max(
-            1,
-            Math.floor(
-              (
-                now.getTime() -
-                due.getTime()
-              ) /
-              (
-                24 *
-                60 *
-                60 *
-                1000
-              )
+  const daysLate =
+    overdue
+      ? Math.max(
+          1,
+          Math.floor(
+            (
+              now.getTime() -
+              due.getTime()
+            ) /
+            (
+              24 *
+              60 *
+              60 *
+              1000
             )
           )
-        : 0;
+        )
+      : 0;
 
+  return {
+
+    invoiceRef:
+      sportFinanceText(
+        source.invoiceRef
+      ),
+
+    clientNumber:
+      sportFinanceText(
+        source.clientNumber
+      ),
+
+    publicEntity:
+      sportFinanceText(
+        source.publicEntity
+      ),
+
+    dueAt:
+      validDue
+        ? due.toISOString()
+        : "",
+
+    overdue:
+      overdue,
+
+    daysLate:
+      daysLate,
+
+    principal:
+      Number(
+        source.principal ||
+        source.amount ||
+        0
+      ),
+
+    fixedRecoveryCompensation:
+      overdue
+        ? PUBLIC_ENTITY_LATE_FIXED_COMPENSATION
+        : 0,
+
+    fixedRecoveryCompensationTreatment:
+      "separate_late_payment_claim_not_silent_invoice_rewrite",
+
+    lateInterest:
+      overdue
+        ? "server_calculate_according_to_current_rule"
+        : 0,
+
+    automaticReminders:
+      true,
+
+    blockNewPaidServices:
+      overdue,
+
+    existingContractAction:
+      "respect_contract_and_public_procurement_rules",
+
+    chorusOrPublicPlatform:
+      "future_server_connector",
+
+    adminDailyAlert:
+      overdue,
+
+    generatedAt:
+      sportFinanceNow()
+  };
+}
+
+
+function financeFoundationRegisterAdminAlert(input){
+
+  const source =
+    input &&
+    typeof input === "object"
+      ? input
+      : {};
+
+  return financeFoundationSaveAudit({
+
+    level:
+      [
+        "red",
+        "orange",
+        "green"
+      ]
+        .includes(
+          source.level
+        )
+        ? source.level
+        : "orange",
+
+    code:
+      sportFinanceText(
+        source.code ||
+        "finance_attention"
+      ),
+
+    clientNumber:
+      sportFinanceText(
+        source.clientNumber
+      ),
+
+    operationRef:
+      sportFinanceText(
+        source.operationRef
+      ),
+
+    invoiceRef:
+      sportFinanceText(
+        source.invoiceRef
+      ),
+
+    message:
+      sportFinanceText(
+        source.message
+      ),
+
+    actionRequired:
+      sportFinanceText(
+        source.actionRequired
+      ),
+
+    responsible:
+      sportFinanceText(
+        source.responsible ||
+        "system"
+      ),
+
+    resolved:
+      source.resolved === true
+  });
+}
+
+
+async function financeFoundationTransmitAccountingDossier(dossier){
+
+  const source =
+    dossier &&
+    typeof dossier === "object"
+      ? dossier
+      : {};
+
+  if(
+    !source.agent2 ||
+    source.agent2.status !==
+      "approved"
+  ){
     return {
-
-      invoiceRef:
-        sportFinanceText(
-          source.invoiceRef
-        ),
-
-      clientNumber:
-        sportFinanceText(
-          source.clientNumber
-        ),
-
-      publicEntity:
-        sportFinanceText(
-          source.publicEntity
-        ),
-
-      dueAt:
-        validDue
-          ? due.toISOString()
-          : "",
-
-      overdue:
-        overdue,
-
-      daysLate:
-        daysLate,
-
-      principal:
-        Number(
-          source.principal ||
-          source.amount ||
-          0
-        ),
-
-      fixedRecoveryCompensation:
-        overdue
-          ? PUBLIC_ENTITY_LATE_FIXED_COMPENSATION
-          : 0,
-
-      fixedRecoveryCompensationTreatment:
-        "separate_late_payment_claim_not_silent_invoice_rewrite",
-
-      lateInterest:
-        overdue
-          ? "server_calculate_according_to_current_rule"
-          : 0,
-
-      automaticReminders:
-        true,
-
-      blockNewPaidServices:
-        overdue,
-
-      existingContractAction:
-        "respect_contract_and_public_procurement_rules",
-
-      chorusOrPublicPlatform:
-        "future_server_connector",
-
-      adminDailyAlert:
-        overdue,
-
-      generatedAt:
-        sportFinanceNow()
+      ok:false,
+      reason:"agent2_approval_required"
     };
   }
 
+  const destination =
+    financeFoundationAccountingDestination();
 
-  function financeFoundationRegisterAdminAlert(input){
+  if(
+    sportFinanceIsProduction()
+  ){
 
-    const source =
-      input &&
-      typeof input === "object"
-        ? input
-        : {};
+    return sportFinanceServerPost(
 
-    return financeFoundationSaveAudit({
+      "/finance/accounting/transmit",
 
-      level:
-        [
-          "red",
-          "orange",
-          "green"
-        ]
-          .includes(
-            source.level
-          )
-          ? source.level
-          : "orange",
+      {
 
-      code:
-        sportFinanceText(
-          source.code ||
-          "finance_attention"
-        ),
+        dossier:
+          source,
 
-      clientNumber:
-        sportFinanceText(
-          source.clientNumber
-        ),
+        destination:
+          destination,
 
-      operationRef:
-        sportFinanceText(
-          source.operationRef
-        ),
+        deliveryMode:
+          "accounting_platform",
 
-      invoiceRef:
-        sportFinanceText(
-          source.invoiceRef
-        ),
+        requireBatchTrace:
+          true,
 
-      message:
-        sportFinanceText(
-          source.message
-        ),
-
-      actionRequired:
-        sportFinanceText(
-          source.actionRequired
-        ),
-
-      responsible:
-        sportFinanceText(
-          source.responsible ||
-          "system"
-        ),
-
-      resolved:
-        source.resolved === true
-    });
+        requireTransmissionTimestamp:
+          true
+      }
+    );
   }
 
+  return {
 
-  async function financeFoundationTransmitAccountingDossier(dossier){
+    ok:true,
 
-    const source =
-      dossier &&
-      typeof dossier === "object"
-        ? dossier
-        : {};
+    mode:
+      "preproduction",
 
-    if(
-      !source.agent2 ||
-      source.agent2.status !==
-        "approved"
-    ){
-      return {
-        ok:false,
-        reason:"agent2_approval_required"
-      };
-    }
+    status:
+      "ready_for_accounting_platform_connection",
 
-    const destination =
-      financeFoundationAccountingDestination();
+    dossierRef:
+      sportFinanceText(
+        source.dossierRef
+      ),
 
-    if(
-      sportFinanceIsProduction()
-    ){
+    destination:
+      destination
+  };
+}
 
-      return sportFinanceServerPost(
 
-        "/finance/accounting/transmit",
+function financeFoundationApplyGovernanceSnapshot(snapshot){
 
-        {
+  const source =
+    snapshot &&
+    typeof snapshot === "object"
+      ? snapshot
+      : {};
 
-          dossier:
-            source,
+  if(
+    source.approved !== true
+  ){
+    return {
+      ok:false,
+      reason:
+        "unapproved_governance_snapshot"
+    };
+  }
 
-          destination:
-            destination,
+  if(
+    sportFinanceIsProduction() &&
+    (
+      source.serverValidated !== true ||
+      !sportFinanceText(
+        source.serverReference
+      )
+    )
+  ){
+    return {
+      ok:false,
+      reason:
+        "server_validated_governance_required"
+    };
+  }
 
-          deliveryMode:
-            "accounting_platform",
+  const current =
+    financeFoundationCurrentTariff();
 
-          requireBatchTrace:
-            true,
+  const nextRate =
+    Number(
+      source.bociteArtRateHT == null
+        ? current.bociteArtRateHT
+        : source.bociteArtRateHT
+    );
 
-          requireTransmissionTimestamp:
-            true
-        }
-      );
-    }
+  if(
+    !Number.isFinite(
+      nextRate
+    ) ||
+    nextRate <= 0
+  ){
+    return {
+      ok:false,
+      reason:
+        "invalid_bociteart_rate"
+    };
+  }
 
+  const next = {
+
+    version:
+      sportFinanceText(
+        source.version
+      ) ||
+      current.version,
+
+    effectiveFrom:
+      sportFinanceText(
+        source.effectiveFrom
+      ) ||
+      sportFinanceNow(),
+
+    bociteArtRateHT:
+      nextRate,
+
+    pspIndexReference:
+      Number(
+        source.pspIndexReference == null
+          ? current.pspIndexReference
+          : source.pspIndexReference
+      ),
+
+    source:
+      sportFinanceText(
+        source.source
+      ) ||
+      "agent2_server_governance",
+
+    serverReference:
+      sportFinanceText(
+        source.serverReference
+      ),
+
+    serverAuthorityRequiredInProduction:
+      true,
+
+    previousVersion:
+      current.version,
+
+    noRetroactiveChange:
+      true,
+
+    createdAt:
+      sportFinanceNow()
+  };
+
+  sportFinanceWriteJson(
+    window.localStorage,
+    LOCAL_TARIFF_KEY,
+    next
+  );
+
+  financeFoundationSaveAudit({
+
+    level:
+      "green",
+
+    code:
+      "tariff_version_updated",
+
+    message:
+      "Nouvelle version tarifaire validée par la gouvernance Agent 2.",
+
+    tariffVersion:
+      next.version,
+
+    resolved:
+      true
+  });
+
+  return {
+    ok:true,
+    tariff:sportFinanceClone(
+      next
+    )
+  };
+}
+
+         async function financeFoundationRefreshGovernance(){
+
+  if(
+    !sportFinanceIsProduction()
+  ){
     return {
 
       ok:true,
@@ -9938,727 +10317,342 @@ sportFinanceRenderLatestOperation();
       mode:
         "preproduction",
 
-      status:
-        "ready_for_accounting_platform_connection",
+      tariff:
+        financeFoundationCurrentTariff(),
 
-      dossierRef:
-        sportFinanceText(
-          source.dossierRef
-        ),
-
-      destination:
-        destination
+      legalMonitoring:
+        "server_connection_required"
     };
   }
 
+  const result =
+    await sportFinanceServerPost(
 
-  function financeFoundationApplyGovernanceSnapshot(snapshot){
+      "/finance/governance/current",
 
-    const source =
-      snapshot &&
-      typeof snapshot === "object"
-        ? snapshot
-        : {};
+      {
 
-    if(
-      source.approved !== true
-    ){
-      return {
-        ok:false,
-        reason:
-          "unapproved_governance_snapshot"
-      };
-    }
+        currentTariffVersion:
+          financeFoundationCurrentTariff()
+            .version,
 
-    if(
-      sportFinanceIsProduction() &&
-      (
-        source.serverValidated !== true ||
-        !sportFinanceText(
-          source.serverReference
-        )
-      )
-    ){
-      return {
-        ok:false,
-        reason:
-          "server_validated_governance_required"
-      };
-    }
+        requestedAt:
+          sportFinanceNow(),
 
-    const current =
-      financeFoundationCurrentTariff();
+        requireAgent2:
+          true,
 
-    const nextRate =
-      Number(
-        source.bociteArtRateHT == null
-          ? current.bociteArtRateHT
-          : source.bociteArtRateHT
-      );
+        includePspTariffState:
+          true,
 
-    if(
-      !Number.isFinite(
-        nextRate
-      ) ||
-      nextRate <= 0
-    ){
-      return {
-        ok:false,
-        reason:
-          "invalid_bociteart_rate"
-      };
-    }
-
-    const next = {
-
-      version:
-        sportFinanceText(
-          source.version
-        ) ||
-        current.version,
-
-      effectiveFrom:
-        sportFinanceText(
-          source.effectiveFrom
-        ) ||
-        sportFinanceNow(),
-
-      bociteArtRateHT:
-        nextRate,
-
-      pspIndexReference:
-        Number(
-          source.pspIndexReference == null
-            ? current.pspIndexReference
-            : source.pspIndexReference
-        ),
-
-      source:
-        sportFinanceText(
-          source.source
-        ) ||
-        "agent2_server_governance",
-
-      serverReference:
-        sportFinanceText(
-          source.serverReference
-        ),
-
-      serverAuthorityRequiredInProduction:
-        true,
-
-      previousVersion:
-        current.version,
-
-      noRetroactiveChange:
-        true,
-
-      createdAt:
-        sportFinanceNow()
-    };
-
-    sportFinanceWriteJson(
-      window.localStorage,
-      LOCAL_TARIFF_KEY,
-      next
+        includeLegalAndInvoiceRules:
+          true
+      }
     );
 
-    financeFoundationSaveAudit({
-
-      level:
-        "green",
-
-      code:
-        "tariff_version_updated",
-
-      message:
-        "Nouvelle version tarifaire validée par la gouvernance Agent 2.",
-
-      tariffVersion:
-        next.version,
-
-      resolved:
-        true
-    });
-
-    return {
-      ok:true,
-      tariff:sportFinanceClone(
-        next
-      )
-    };
-  }
-
-
-  async function financeFoundationRefreshGovernance(){
-
-    if(
-      !sportFinanceIsProduction()
-    ){
-
-      return {
-
-        ok:true,
-
-        mode:
-          "preproduction",
-
-        tariff:
-          financeFoundationCurrentTariff(),
-
-        legalMonitoring:
-          "server_connection_required"
-      };
-    }
-
-    const result =
-      await sportFinanceServerPost(
-
-        "/finance/governance/current",
-
-        {
-
-          currentTariffVersion:
-            financeFoundationCurrentTariff()
-              .version,
-
-          requestedAt:
-            sportFinanceNow(),
-
-          requireAgent2:
-            true,
-
-          includePspTariffState:
-            true,
-
-          includeLegalAndInvoiceRules:
-            true
-        }
-      );
-
-    if(
-      result &&
+  if(
+    result &&
+    result.tariffSnapshot
+  ){
+    financeFoundationApplyGovernanceSnapshot(
       result.tariffSnapshot
-    ){
-      financeFoundationApplyGovernanceSnapshot(
-        result.tariffSnapshot
-      );
-    }
+    );
+  }
 
-    return result;
+  return result;
+}
+
+
+window
+  .BociteFinanceFoundation
+  .publicEntityLateCase =
+    financeFoundationPublicEntityLateCase;
+
+
+window
+  .BociteFinanceFoundation
+  .registerAdminAlert =
+    financeFoundationRegisterAdminAlert;
+
+
+window
+  .BociteFinanceFoundation
+  .transmitAccountingDossier =
+    financeFoundationTransmitAccountingDossier;
+
+
+window
+  .BociteFinanceFoundation
+  .applyGovernanceSnapshot =
+    financeFoundationApplyGovernanceSnapshot;
+
+
+window
+  .BociteFinanceFoundation
+  .refreshGovernance =
+    financeFoundationRefreshGovernance;
+
+
+async function sportFinanceHandleStatus(
+  status,
+  draft
+){
+
+  if(
+    !draft ||
+    draft.connectorName !==
+      CONNECTOR_NAME
+  ){
+    return;
+  }
+
+  sportFinanceUpsertOperation({
+
+    draftId:
+      sportFinanceText(
+        draft.draftId
+      ),
+
+    operationRef:
+      sportFinanceText(
+        draft.operationRef
+      ),
+
+    paymentReference:
+      sportFinanceText(
+        draft.paymentReference
+      ),
+
+    serverReference:
+      sportFinanceText(
+        draft.serverReference
+      ),
+
+    status:
+      status,
+
+    amountHT:
+      Number(
+        draft.amountHT ||
+        0
+      ),
+
+    extraResearchAmount:
+      0,
+
+    paymentBaseBeforeFinalTax:
+      Number(
+        draft.paymentBaseBeforeFinalTax ||
+        0
+      ),
+
+    totalPaymentAmount:
+      Number(
+        draft.totalPaymentAmount ||
+        0
+      ),
+
+    allocationCode:
+      sportFinanceNormalizeChoice(
+        draft.allocationCode
+      ),
+
+    grossAllocation:
+      sportFinanceClone(
+        draft.grossAllocation
+      ),
+
+    bociteArtParticipationTTC:
+      Number(
+        draft.bociteArtParticipationTTC ||
+        SPORT_BOCITEART_PARTICIPATION_TTC
+      ),
+
+    bociteArtParticipationVersion:
+      sportFinanceText(
+        draft.bociteArtParticipationVersion ||
+        SPORT_BOCITEART_PARTICIPATION_VERSION
+      ),
+
+    clubRef:
+      sportFinanceText(
+        draft.clubRef
+      ),
+
+    representativeRef:
+      sportFinanceText(
+        draft.representativeRef
+      ),
+
+    associationId:
+      "",
+
+    researchAssociationsSnapshot:
+      sportFinanceClone(
+        draft.researchAssociationsSnapshot
+      ) ||
+      [],
+
+    beneficiaryRefs:
+      sportFinanceClone(
+        draft.beneficiaryRefs
+      ) ||
+      [],
+
+    publicationDurationHours:
+      48,
+
+    publicationStart:
+      sportFinanceText(
+        draft.publicationStart
+      ),
+
+    publicationEnd:
+      sportFinanceText(
+        draft.publicationEnd
+      ),
+
+    slotHoldId:
+      sportFinanceText(
+        draft.slotHoldId
+      ),
+
+    publicityText:
+      sportFinanceText(
+        draft.publicityText
+      ),
+
+    paidAt:
+      sportFinanceText(
+        draft.paidAt
+      )
+  });
+
+
+  if(
+    status === "paid"
+  ){
+
+    sportFinanceCommitLocalHold(
+      draft
+    );
+
+    sportFinanceSetStatus(
+
+      "Paiement confirmé. Diffusion programmée du " +
+      sportFinanceDateTimeFr(
+        draft.publicationStart
+      ) +
+      " au " +
+      sportFinanceDateTimeFr(
+        draft.publicationEnd
+      ) +
+      ". Le dossier passe par Agent 1 puis Agent 2 avant transmission comptable.",
+
+      "success"
+    );
+
+    currentHold =
+      null;
+
+    await sportFinanceQueueAuditAfterPaid(
+      draft
+    );
   }
 
 
-  window
-    .BociteFinanceFoundation
-    .publicEntityLateCase =
-      financeFoundationPublicEntityLateCase;
-
-
-  window
-    .BociteFinanceFoundation
-    .registerAdminAlert =
-      financeFoundationRegisterAdminAlert;
-
-
-  window
-    .BociteFinanceFoundation
-    .transmitAccountingDossier =
-      financeFoundationTransmitAccountingDossier;
-
-
-  window
-    .BociteFinanceFoundation
-    .applyGovernanceSnapshot =
-      financeFoundationApplyGovernanceSnapshot;
-
-
-  window
-    .BociteFinanceFoundation
-    .refreshGovernance =
-      financeFoundationRefreshGovernance;
-
-
-  async function sportFinanceHandleStatus(
-    status,
-    draft
+  if(
+    status === "refused" ||
+    status === "cancelled"
   ){
 
     if(
-      !draft ||
-      draft.connectorName !==
-        CONNECTOR_NAME
+      draft.slotHoldId
     ){
-      return;
+
+      currentHold = {
+
+        slotHoldId:
+          sportFinanceText(
+            draft.slotHoldId
+          ),
+
+        publicationStart:
+          sportFinanceText(
+            draft.publicationStart
+          ),
+
+        publicationEnd:
+          sportFinanceText(
+            draft.publicationEnd
+          ),
+
+        expiresAt:
+          Number(
+            draft.slotHoldExpiresAt ||
+            0
+          ),
+
+        mode:
+          sportFinanceIsProduction()
+            ? "server"
+            : "local"
+      };
     }
 
-    sportFinanceUpsertOperation({
+    await sportFinanceReleaseHold(
+      status === "refused"
+        ? "payment_refused"
+        : "payment_cancelled"
+    );
 
-      draftId:
-        sportFinanceText(
-          draft.draftId
-        ),
+    sportFinanceSetStatus(
+
+      status === "refused"
+
+        ? "Paiement refusé. Aucune diffusion n’est activée et le créneau est libéré."
+
+        : "Paiement annulé. Aucune diffusion n’est activée et le créneau est libéré.",
+
+      "error"
+    );
+  }
+
+
+  if(
+    status === "refunded"
+  ){
+
+    financeFoundationRegisterAdminAlert({
+
+      level:
+        "orange",
+
+      code:
+        "refund_to_reconcile",
 
       operationRef:
         sportFinanceText(
           draft.operationRef
         ),
 
-      paymentReference:
-        sportFinanceText(
-          draft.paymentReference
-        ),
+      message:
+        "Remboursement à rapprocher par Agent 1 et à contrôler par Agent 2.",
 
-      serverReference:
-        sportFinanceText(
-          draft.serverReference
-        ),
-
-      status:
-        status,
-
-      amountHT:
-        Number(
-          draft.amountHT ||
-          0
-        ),
-
-           extraResearchAmount:
-        0,
-
-      paymentBaseBeforeFinalTax:
-        Number(
-          draft.paymentBaseBeforeFinalTax ||
-          0
-        ),
-
-      totalPaymentAmount:
-        Number(
-          draft.totalPaymentAmount ||
-          0
-        ),
-
-      allocationCode:
-        sportFinanceText(
-          draft.allocationCode
-        ),
-
-      grossAllocation:
-        sportFinanceClone(
-          draft.grossAllocation
-        ),
-
-      clubRef:
-        sportFinanceText(
-          draft.clubRef
-        ),
-
-      representativeRef:
-        sportFinanceText(
-          draft.representativeRef
-        ),
-
-           associationId:
-        "",
-
-      researchAssociationsSnapshot:
-        sportFinanceClone(
-          draft.researchAssociationsSnapshot
-        ) ||
-        [],
-
-      beneficiaryRefs:
-        sportFinanceClone(
-          draft.beneficiaryRefs
-        ) ||
-        [],
-
-      publicationDurationHours:
-        48,
-
-      publicationStart:
-        sportFinanceText(
-          draft.publicationStart
-        ),
-
-      publicationEnd:
-        sportFinanceText(
-          draft.publicationEnd
-        ),
-
-      slotHoldId:
-        sportFinanceText(
-          draft.slotHoldId
-        ),
-
-      publicityText:
-        sportFinanceText(
-          draft.publicityText
-        ),
-
-      paidAt:
-        sportFinanceText(
-          draft.paidAt
-        )
+      actionRequired:
+        "Vérifier la pièce de remboursement et le reversement éventuel."
     });
 
-
-    if(
-      status === "paid"
-    ){
-
-      sportFinanceCommitLocalHold(
-        draft
-      );
-
-      sportFinanceSetStatus(
-
-        "Paiement confirmé. Diffusion programmée du " +
-        sportFinanceDateTimeFr(
-          draft.publicationStart
-        ) +
-        " au " +
-        sportFinanceDateTimeFr(
-          draft.publicationEnd
-        ) +
-        ". Le dossier passe par Agent 1 puis Agent 2 avant transmission comptable.",
-
-        "success"
-      );
-
-      currentHold =
-        null;
-
-      await sportFinanceQueueAuditAfterPaid(
-        draft
-      );
-    }
-
-
-    if(
-      status === "refused" ||
-      status === "cancelled"
-    ){
-
-      if(
-        draft.slotHoldId
-      ){
-
-        currentHold = {
-
-          slotHoldId:
-            sportFinanceText(
-              draft.slotHoldId
-            ),
-
-          publicationStart:
-            sportFinanceText(
-              draft.publicationStart
-            ),
-
-          publicationEnd:
-            sportFinanceText(
-              draft.publicationEnd
-            ),
-
-          expiresAt:
-            Number(
-              draft.slotHoldExpiresAt ||
-              0
-            ),
-
-          mode:
-            sportFinanceIsProduction()
-              ? "server"
-              : "local"
-        };
-      }
-
-      await sportFinanceReleaseHold(
-        status === "refused"
-          ? "payment_refused"
-          : "payment_cancelled"
-      );
-
-      sportFinanceSetStatus(
-
-        status === "refused"
-
-          ? "Paiement refusé. Aucune diffusion n’est activée et le créneau est libéré."
-
-          : "Paiement annulé. Aucune diffusion n’est activée et le créneau est libéré.",
-
-        "error"
-      );
-    }
-
-
-    if(
-      status === "refunded"
-    ){
-
-      financeFoundationRegisterAdminAlert({
-
-        level:
-          "orange",
-
-        code:
-          "refund_to_reconcile",
-
-        operationRef:
-          sportFinanceText(
-            draft.operationRef
-          ),
-
-        message:
-          "Remboursement à rapprocher par Agent 1 et à contrôler par Agent 2.",
-
-        actionRequired:
-          "Vérifier la pièce de remboursement et le reversement éventuel."
-      });
-
-      sportFinanceSetStatus(
-        "Paiement remboursé. Le dossier reste tracé et passe au rapprochement comptable.",
-        "success"
-      );
-    }
-
-
-    if(
-      status === "disputed"
-    ){
-
-      financeFoundationRegisterAdminAlert({
-
-        level:
-          "red",
-
-        code:
-          "payment_disputed",
-
-        operationRef:
-          sportFinanceText(
-            draft.operationRef
-          ),
-
-        message:
-          "Paiement contesté : contrôle Agent 1 / Agent 2 requis.",
-
-        actionRequired:
-          "Suspendre les suites financières jusqu’au contrôle."
-      });
-
-      sportFinanceSetStatus(
-        "Paiement contesté. Le dossier est placé sous contrôle avant toute suite.",
-        "error"
-      );
-    }
-
-
-    if(
-      status === "payment_pending"
-    ){
-
-      sportFinanceSetStatus(
-        "Paiement en cours. La publicité ne sera diffusée qu’après confirmation effective du PSP côté serveur.",
-        "success"
-      );
-    }
-
-    sportFinanceRenderHoldStatus();
-
-    sportFinanceRenderLatestOperation();
-  }
-
-
-  function sportFinanceInstallEvents(){
-
-    if(
-      financeEventsInstalled
-    ){
-      return;
-    }
-
-    const core =
-      sportFinanceCore();
-
-    if(
-      !core ||
-      core.ready !== true ||
-      typeof core.on !==
-        "function"
-    ){
-      return;
-    }
-
-    financeEventsInstalled =
-      true;
-
-    [
-      "payment-pending",
-      "payment-payment_pending",
-      "payment-paid",
-      "payment-refused",
-      "payment-cancelled",
-      "payment-refunded",
-      "payment-disputed"
-    ]
-      .forEach(
-        function(eventName){
-
-          core.on(
-            eventName,
-            function(draft){
-
-              const normalizedStatus =
-
-                eventName === "payment-pending" ||
-                eventName === "payment-payment_pending"
-
-                  ? "payment_pending"
-
-                  : eventName.replace(
-                      "payment-",
-                      ""
-                    );
-
-              sportFinanceHandleStatus(
-                normalizedStatus,
-                draft
-              );
-            }
-          );
-        }
-      );
-
-
-    core.on(
-      "draft-deleted",
-      function(detail){
-
-        const draftId =
-          sportFinanceText(
-            detail &&
-            detail.draftId
-          );
-
-        const operation =
-          sportFinanceReadOperations()
-            .find(
-              function(item){
-
-                return (
-                  sportFinanceText(
-                    item.draftId
-                  ) ===
-                  draftId
-                );
-              }
-            );
-
-        if(
-          operation &&
-          operation.slotHoldId
-        ){
-
-          currentHold = {
-
-            slotHoldId:
-              sportFinanceText(
-                operation.slotHoldId
-              ),
-
-            publicationStart:
-              sportFinanceText(
-                operation.publicationStart
-              ),
-
-            publicationEnd:
-              sportFinanceText(
-                operation.publicationEnd
-              ),
-
-            expiresAt:
-              0,
-
-            mode:
-              sportFinanceIsProduction()
-                ? "server"
-                : "local"
-          };
-
-          sportFinanceReleaseHold(
-            "draft_abandoned"
-          );
-        }
-      }
-    );
-
-
-    window.addEventListener(
-      "bociteart:sport-publication-failed",
-      function(event){
-
-        sportFinanceMarkPublicationFailure(
-          event &&
-          event.detail
-        );
-      }
+    sportFinanceSetStatus(
+      "Paiement remboursé. Le dossier reste tracé et passe au rapprochement comptable.",
+      "success"
     );
   }
 
 
-  function sportFinanceMarkPublicationFailure(detail){
-
-    const source =
-      detail &&
-      typeof detail === "object"
-        ? detail
-        : {};
-
-    const operation =
-      sportFinanceUpsertOperation({
-
-        operationRef:
-          sportFinanceText(
-            source.operationRef
-          ),
-
-        paymentReference:
-          sportFinanceText(
-            source.paymentReference
-          ),
-
-        slotHoldId:
-          sportFinanceText(
-            source.slotHoldId
-          ),
-
-        publicationStart:
-          sportFinanceText(
-            source.publicationStart
-          ),
-
-        publicationEnd:
-          sportFinanceText(
-            source.publicationEnd
-          ),
-
-        publicationStatus:
-          "reschedule_required",
-
-        campaignConsumed:
-          false,
-
-        status:
-          sportFinanceText(
-            source.status ||
-            "paid"
-          ),
-
-        accountingStatus:
-          "publication_incident_to_reconcile"
-      });
+  if(
+    status === "disputed"
+  ){
 
     financeFoundationRegisterAdminAlert({
 
@@ -10666,160 +10660,380 @@ sportFinanceRenderLatestOperation();
         "red",
 
       code:
-        "publication_failure_after_payment",
+        "payment_disputed",
+
+      operationRef:
+        sportFinanceText(
+          draft.operationRef
+        ),
+
+      message:
+        "Paiement contesté : contrôle Agent 1 / Agent 2 requis.",
+
+      actionRequired:
+        "Suspendre les suites financières jusqu’au contrôle."
+    });
+
+    sportFinanceSetStatus(
+      "Paiement contesté. Le dossier est placé sous contrôle avant toute suite.",
+      "error"
+    );
+  }
+
+
+  if(
+    status === "payment_pending"
+  ){
+
+    sportFinanceSetStatus(
+      "Paiement en cours. La publicité ne sera diffusée qu’après confirmation effective du PSP côté serveur.",
+      "success"
+    );
+  }
+
+  sportFinanceRenderHoldStatus();
+
+  sportFinanceRenderLatestOperation();
+}
+
+
+function sportFinanceInstallEvents(){
+
+  if(
+    financeEventsInstalled
+  ){
+    return;
+  }
+
+  const core =
+    sportFinanceCore();
+
+  if(
+    !core ||
+    core.ready !== true ||
+    typeof core.on !==
+      "function"
+  ){
+    return;
+  }
+
+  financeEventsInstalled =
+    true;
+
+  [
+    "payment-pending",
+    "payment-payment_pending",
+    "payment-paid",
+    "payment-refused",
+    "payment-cancelled",
+    "payment-refunded",
+    "payment-disputed"
+  ]
+    .forEach(
+      function(eventName){
+
+        core.on(
+          eventName,
+          function(draft){
+
+            const normalizedStatus =
+
+              eventName === "payment-pending" ||
+              eventName === "payment-payment_pending"
+
+                ? "payment_pending"
+
+                : eventName.replace(
+                    "payment-",
+                    ""
+                  );
+
+            sportFinanceHandleStatus(
+              normalizedStatus,
+              draft
+            );
+          }
+        );
+      }
+    );
+
+
+  core.on(
+    "draft-deleted",
+    function(detail){
+
+      const draftId =
+        sportFinanceText(
+          detail &&
+          detail.draftId
+        );
+
+      const operation =
+        sportFinanceReadOperations()
+          .find(
+            function(item){
+
+              return (
+                sportFinanceText(
+                  item.draftId
+                ) ===
+                draftId
+              );
+            }
+          );
+
+      if(
+        operation &&
+        operation.slotHoldId
+      ){
+
+        currentHold = {
+
+          slotHoldId:
+            sportFinanceText(
+
+                         operation.slotHoldId
+            ),
+
+          publicationStart:
+            sportFinanceText(
+              operation.publicationStart
+            ),
+
+          publicationEnd:
+            sportFinanceText(
+              operation.publicationEnd
+            ),
+
+          expiresAt:
+            0,
+
+          mode:
+            sportFinanceIsProduction()
+              ? "server"
+              : "local"
+        };
+
+        sportFinanceReleaseHold(
+          "draft_abandoned"
+        );
+      }
+    }
+  );
+
+
+  window.addEventListener(
+    "bociteart:sport-publication-failed",
+    function(event){
+
+      sportFinanceMarkPublicationFailure(
+        event &&
+        event.detail
+      );
+    }
+  );
+}
+
+
+function sportFinanceMarkPublicationFailure(detail){
+
+  const source =
+    detail &&
+    typeof detail === "object"
+      ? detail
+      : {};
+
+  const operation =
+    sportFinanceUpsertOperation({
 
       operationRef:
         sportFinanceText(
           source.operationRef
         ),
 
-      message:
-        "Campagne payée non consommée : reprogrammation nécessaire.",
+      paymentReference:
+        sportFinanceText(
+          source.paymentReference
+        ),
 
-      actionRequired:
-        "Reprogrammer 48 heures complètes sans consommer la campagne initiale."
+      slotHoldId:
+        sportFinanceText(
+          source.slotHoldId
+        ),
+
+      publicationStart:
+        sportFinanceText(
+          source.publicationStart
+        ),
+
+      publicationEnd:
+        sportFinanceText(
+          source.publicationEnd
+        ),
+
+      publicationStatus:
+        "reschedule_required",
+
+      campaignConsumed:
+        false,
+
+      status:
+        sportFinanceText(
+          source.status ||
+          "paid"
+        ),
+
+      accountingStatus:
+        "publication_incident_to_reconcile"
     });
 
-    sportFinanceSetStatus(
-      "Le paiement reste enregistré, mais la diffusion n’a pas pu être réalisée. La campagne n’est pas consommée et doit être reprogrammée.",
-      "error"
-    );
+  financeFoundationRegisterAdminAlert({
 
-    sportFinanceRenderLatestOperation();
+    level:
+      "red",
 
-    return operation;
-  }
+    code:
+      "publication_failure_after_payment",
 
-
-  function sportFinancePrefillMerchant(context){
-
-    const source =
-      context &&
-      typeof context === "object"
-        ? context
-        : {};
-
-    const merchant =
-      source.merchant &&
-      typeof source.merchant === "object"
-        ? source.merchant
-        : source;
-
-    const saved =
-      sportFinanceReadSavedProfile();
-
-    const next =
-      Object.assign(
-        {},
-        saved,
-        merchant,
-        {
-          updatedAt:
-            sportFinanceNow()
-        }
-      );
-
-    next.clientNumber =
+    operationRef:
       sportFinanceText(
-        saved.clientNumber ||
-        merchant.clientNumber
-      );
+        source.operationRef
+      ),
 
-    sportFinanceSaveProfile(
-      next
+    message:
+      "Campagne payée non consommée : reprogrammation nécessaire.",
+
+    actionRequired:
+      "Reprogrammer 48 heures complètes sans consommer la campagne initiale."
+  });
+
+  sportFinanceSetStatus(
+    "Le paiement reste enregistré, mais la diffusion n’a pas pu être réalisée. La campagne n’est pas consommée et doit être reprogrammée.",
+    "error"
+  );
+
+  sportFinanceRenderLatestOperation();
+
+  return operation;
+}
+
+
+function sportFinancePrefillMerchant(context){
+
+  const source =
+    context &&
+    typeof context === "object"
+      ? context
+      : {};
+
+  const merchant =
+    source.merchant &&
+    typeof source.merchant === "object"
+      ? source.merchant
+      : source;
+
+  const saved =
+    sportFinanceReadSavedProfile();
+
+  const next =
+    Object.assign(
+      {},
+      saved,
+      merchant,
+      {
+        updatedAt:
+          sportFinanceNow()
+      }
     );
 
-    identityCheckCache =
-      null;
-
-    return next;
-  }
-
-
-  function sportFinanceOpenForMerchant(context){
-
-    if(
-      context &&
-      typeof context === "object"
-    ){
-      sportFinancePrefillMerchant(
-        context
-      );
-    }
-
-    sportFinanceRender();
-
-    window.setTimeout(
-      function(){
-
-        const target =
-          sportFinanceField(
-            MOUNT_ID
-          );
-
-        if(
-          target
-        ){
-          target.scrollIntoView({
-            behavior:"smooth",
-            block:"start"
-          });
-        }
-      },
-      60
+  next.clientNumber =
+    sportFinanceText(
+      saved.clientNumber ||
+      merchant.clientNumber
     );
 
-    return {
-      ok:true,
-      independentFromCabas:true
-    };
+  sportFinanceSaveProfile(
+    next
+  );
+
+  identityCheckCache =
+    null;
+
+  return next;
+}
+
+
+function sportFinanceOpenForMerchant(context){
+
+  if(
+    context &&
+    typeof context === "object"
+  ){
+    sportFinancePrefillMerchant(
+      context
+    );
   }
 
+  sportFinanceRender();
 
-  function sportFinanceAfterCabasExchange(context){
+  window.setTimeout(
+    function(){
 
-    /*
-      Compatibilité avec l’appel historique du module Sport.
+      const target =
+        sportFinanceField(
+          MOUNT_ID
+        );
 
-      La publicité ne dépend pas du Cabas.
+      if(
+        target
+      ){
+        target.scrollIntoView({
+          behavior:"smooth",
+          block:"start"
+        });
+      }
+    },
+    60
+  );
 
-      Si le Cabas fournit déjà le profil du commerçant,
-      il sert uniquement au préremplissage.
-    */
+  return {
+    ok:true,
+    independentFromCabas:true
+  };
+}
 
-    const source =
-      context &&
-      typeof context === "object"
-        ? context
-        : {};
 
-    const merchant =
-      source.merchant &&
-      typeof source.merchant === "object"
-        ? source.merchant
-        : null;
+function sportFinanceAfterCabasExchange(context){
 
-    if(
-      merchant
-    ){
-      sportFinancePrefillMerchant({
-        merchant:merchant
-      });
-    }
+  const source =
+    context &&
+    typeof context === "object"
+      ? context
+      : {};
 
-    sportFinanceRender();
+  const merchant =
+    source.merchant &&
+    typeof source.merchant === "object"
+      ? source.merchant
+      : null;
 
-    return {
-      ok:true,
-      independentFromCabas:true,
-      cabasRequired:false
-    };
+  if(
+    merchant
+  ){
+    sportFinancePrefillMerchant({
+      merchant:merchant
+    });
   }
 
+  sportFinanceRender();
 
-  /* =========================================================
-   ÇA COMMENCE ICI — INSTALLATION FINANCE SPORT SANS BOUCLE
-   ========================================================= */
+  return {
+    ok:true,
+    independentFromCabas:true,
+    cabasRequired:false
+  };
+}
+
 
 function sportFinanceInstall(){
 
@@ -10873,176 +11087,176 @@ function sportFinanceInstall(){
   }
 }
 
-/* =========================================================
-   ÇA FINIT ICI — INSTALLATION FINANCE SPORT SANS BOUCLE
-   ========================================================= */
 
-  if(
-    document.readyState ===
-      "loading"
-  ){
+if(
+  document.readyState ===
+    "loading"
+){
 
-    document.addEventListener(
+  document.addEventListener(
 
-      "DOMContentLoaded",
+    "DOMContentLoaded",
 
-      sportFinanceInstall,
-
-      {
-        once:true
-      }
-    );
-
-  }else{
-
-    sportFinanceInstall();
-  }
-
-  const observer =
-    new MutationObserver(
-      function(){
-
-        sportFinanceInstall();
-      }
-    );
-
-  observer.observe(
-
-    document.documentElement,
+    sportFinanceInstall,
 
     {
-
-      childList:
-        true,
-
-      subtree:
-        true
+      once:true
     }
   );
 
-  window.BociteFinanceSport = {
+}else{
 
-    version:
-      VERSION,
+  sportFinanceInstall();
+}
 
-    ready:
+
+const observer =
+  new MutationObserver(
+    function(){
+
+      sportFinanceInstall();
+    }
+  );
+
+observer.observe(
+
+  document.documentElement,
+
+  {
+
+    childList:
       true,
 
-    install:
-      sportFinanceInstall,
+    subtree:
+      true
+  }
+);
 
-    open:
-      sportFinanceOpenForMerchant,
 
-    openForMerchant:
-      sportFinanceOpenForMerchant,
+window.BociteFinanceSport = {
 
-    prefillMerchant:
-      sportFinancePrefillMerchant,
+  version:
+    VERSION,
 
-    afterCabasExchange:
-      sportFinanceAfterCabasExchange,
+  ready:
+    true,
 
-    openReview:
-      sportFinanceOpenReview,
+  install:
+    sportFinanceInstall,
 
-    verifyIdentity:
-      sportFinanceVerifyIdentity,
+  open:
+    sportFinanceOpenForMerchant,
 
-    checkAvailability:
-      sportFinanceCheckAvailability,
+  openForMerchant:
+    sportFinanceOpenForMerchant,
 
-    findNextAvailability:
-      sportFinanceFindNextAvailability,
+  prefillMerchant:
+    sportFinancePrefillMerchant,
 
-    extendCurrentHold:
-      sportFinanceExtendHold,
+  afterCabasExchange:
+    sportFinanceAfterCabasExchange,
 
-    releaseCurrentHold:
-      sportFinanceReleaseHold,
+  openReview:
+    sportFinanceOpenReview,
 
-    markPublicationFailure:
-      sportFinanceMarkPublicationFailure,
+  verifyIdentity:
+    sportFinanceVerifyIdentity,
 
-    uploadClubLogo:
-      sportFinanceUploadClubLogo,
+  checkAvailability:
+    sportFinanceCheckAvailability,
 
-    getOperations:
-      function(){
+  findNextAvailability:
+    sportFinanceFindNextAvailability,
 
-        return (
-          sportFinanceClone(
-            sportFinanceReadOperations()
-          ) ||
-          []
-        );
-      },
+  extendCurrentHold:
+    sportFinanceExtendHold,
 
-    getLatestOperation:
-      function(){
+  releaseCurrentHold:
+    sportFinanceReleaseHold,
 
-        return sportFinanceClone(
-          sportFinanceLatestOperation()
-        );
-      },
+  markPublicationFailure:
+    sportFinanceMarkPublicationFailure,
 
-    getPolicies:
-      function(){
+  uploadClubLogo:
+    sportFinanceUploadClubLogo,
 
-        return sportFinanceClone(
-          sportFinancePolicies()
-        );
-      },
+  getOperations:
+    function(){
 
-    getDailyAdminSummary:
-      financeFoundationGetDailyAdminSummary,
+      return (
+        sportFinanceClone(
+          sportFinanceReadOperations()
+        ) ||
+        []
+      );
+    },
 
-    getCurrentTariff:
-      function(){
+  getLatestOperation:
+    function(){
 
-        return sportFinanceClone(
-          financeFoundationCurrentTariff()
-        );
-      },
+      return sportFinanceClone(
+        sportFinanceLatestOperation()
+      );
+    },
 
-    refreshGovernance:
-      financeFoundationRefreshGovernance,
+  getPolicies:
+    function(){
 
-    getAccountingDestination:
-      function(){
+      return sportFinanceClone(
+        sportFinancePolicies()
+      );
+    },
 
-        return sportFinanceClone(
-          financeFoundationAccountingDestination()
-        );
-      },
+  getDailyAdminSummary:
+    financeFoundationGetDailyAdminSummary,
 
-    configureAccountingDestination:
-      financeFoundationConfigureAccountingDestination,
+  getCurrentTariff:
+    function(){
 
-    getAccountingFoundation:
-      function(){
+      return sportFinanceClone(
+        financeFoundationCurrentTariff()
+      );
+    },
 
-        return {
+  refreshGovernance:
+    financeFoundationRefreshGovernance,
 
-          policies:
-            financeFoundationAccountingPolicies(),
+  getAccountingDestination:
+    function(){
 
-          agent1:
-            financeFoundationAgent1Blueprint(),
+      return sportFinanceClone(
+        financeFoundationAccountingDestination()
+      );
+    },
 
-          agent2:
-            financeFoundationAgent2Blueprint(),
+  configureAccountingDestination:
+    financeFoundationConfigureAccountingDestination,
 
-          invoiceBlueprint:
-            financeFoundationInvoiceBlueprint(
-              "generic_invoice"
-            )
-        };
-      }
-  };
+  getAccountingFoundation:
+    function(){
 
- console.info(
-    "✅ Bo'CitéArt Finance — Sport prêt — publicité indépendante / 48 h / capacité 8 / Agent 1 + Agent 2"
+      return {
+
+        policies:
+          financeFoundationAccountingPolicies(),
+
+        agent1:
+          financeFoundationAgent1Blueprint(),
+
+        agent2:
+          financeFoundationAgent2Blueprint(),
+
+        invoiceBlueprint:
+          financeFoundationInvoiceBlueprint(
+            "generic_invoice"
+          )
+      };
+    }
+};
+
+
+console.info(
+  "✅ Bo'CitéArt Finance — Sport prêt — publicité indépendante / 48 h / capacité 8 / Agent 1 + Agent 2"
 );
 
 })();
@@ -11050,4 +11264,3 @@ function sportFinanceInstall(){
 /* =========================================================
    ÇA FINIT ICI — BO'CITÉART — FINANCE — RACCORD SPORT
    ========================================================= */
-
