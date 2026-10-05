@@ -689,6 +689,83 @@
     );
   }
 
+     function financeFoundationFormatClientNumber(
+    year,
+    sequence
+  ){
+
+    const y =
+      String(
+        Number(year) ||
+        new Date().getFullYear()
+      )
+        .padStart(
+          4,
+          "0"
+        );
+
+    const seq =
+      Math.max(
+        100,
+        Number(sequence) || 100
+      );
+
+    return (
+      y +
+      "000" +
+      String(seq)
+    );
+  }
+
+
+  function financeFoundationEnsureLocalClientNumber(
+    entityType,
+    stableKey,
+    existingNumber
+  ){
+
+    const existing =
+      sportFinanceDigits(
+        existingNumber
+      );
+
+    if(
+      existing
+    ){
+      return existing;
+    }
+
+    const key =
+      financeFoundationClientEntityKey(
+        entityType,
+        stableKey
+      );
+
+    if(
+      !key ||
+      key.endsWith("::")
+    ){
+      return "";
+    }
+
+    const registry =
+      financeFoundationClientRegistry();
+
+    if(
+      registry.entities[key] &&
+      registry.entities[key].clientNumber
+    ){
+      return String(
+        registry.entities[key].clientNumber
+      );
+    }
+
+    const year =
+      new Date().getFullYear();
+
+    const yearKey =
+      String(year);
+
      const current =
       Math.max(
         99,
