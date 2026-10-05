@@ -1,7 +1,7 @@
 /* =========================================================
    BLOC 1
    ÇA COMMENCE ICI — BO'CITÉART — FINANCE — FONDATION COMMUNE
-   + RACCORD SPORT
+   + RACCORD SPORT 
 
    Fichier :
    entreprise/finance/bociteart-finance-sport.js
