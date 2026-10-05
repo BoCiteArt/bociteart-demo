@@ -3730,7 +3730,7 @@
      ÇA FINIT ICI — BLOC 2
      ========================================================= */
 
-   /* =========================================================
+     /* =========================================================
      BLOC 3
      SPORT — PUBLICITÉ INDÉPENDANTE — 48 HEURES — CAPACITÉ 8
      ========================================================= */
@@ -4181,8 +4181,7 @@
         if(
           a.time === b.time
         ){
-
-                     return (
+          return (
             a.delta -
             b.delta
           );
@@ -4538,6 +4537,7 @@
     };
   }
 
+
   async function sportFinanceReserveSlot(
     startValue,
     context
@@ -4664,8 +4664,494 @@
 
         expiresAt:
           Number(
+            result.expiresAt ||
+            (
+              Date.now() +
+              HOLD_MINUTES *
+              60000
+            )
+          ),
 
-             
+        mode:
+          "server"
+      };
+
+      return sportFinanceClone(
+        currentHold
+      );
+    }
+
+    const availability =
+      sportFinanceLocalAvailability(
+        range.startIso
+      );
+
+    if(
+      !availability.available
+    ){
+      throw new Error(
+        "8 publicités sont déjà programmées sur une partie de cette période de 48 heures."
+      );
+    }
+
+    const hold = {
+
+      id:
+        sportFinanceId(
+          "sport-slot"
+        ),
+
+      status:
+        "held",
+
+      publicationStart:
+        range.startIso,
+
+      publicationEnd:
+        range.endIso,
+
+      createdAt:
+        Date.now(),
+
+      expiresAt:
+        Date.now() +
+        HOLD_MINUTES *
+        60000,
+
+      merchantRef:
+        sportFinanceText(
+          context &&
+          context.merchantRef
+        )
+    };
+
+    const rows =
+      sportFinanceReadLocalSlots();
+
+    rows.push(
+      hold
+    );
+
+    sportFinanceWriteLocalSlots(
+      rows
+    );
+
+    currentHold = {
+
+      slotHoldId:
+        hold.id,
+
+      publicationStart:
+        hold.publicationStart,
+
+      publicationEnd:
+        hold.publicationEnd,
+
+      expiresAt:
+        hold.expiresAt,
+
+      mode:
+        "local"
+    };
+
+    return sportFinanceClone(
+      currentHold
+    );
+  }
+
+
+  async function sportFinanceExtendHold(){
+
+    if(
+      !currentHold ||
+      !currentHold.slotHoldId
+    ){
+      throw new Error(
+        "Aucun créneau temporaire n'est réservé."
+      );
+    }
+
+    if(
+      sportFinanceIsProduction()
+    ){
+
+      const result =
+        await sportFinanceServerPost(
+
+          "/sport/publicity/hold/extend",
+
+          {
+
+            slotHoldId:
+              currentHold.slotHoldId,
+
+            additionalMinutes:
+              MANUAL_EXTENSION_MINUTES,
+
+            manualPreparationInProgress:
+              true
+          }
+        );
+
+      if(
+        !result ||
+        result.ok !== true
+      ){
+        throw new Error(
+          "La réservation temporaire n'a pas pu être prolongée."
+        );
+      }
+
+      currentHold.expiresAt =
+        Number(
+          result.expiresAt ||
+          (
+            Date.now() +
+            MANUAL_EXTENSION_MINUTES *
+            60000
+          )
+        );
+
+      sportFinanceRenderHoldStatus();
+
+      return sportFinanceClone(
+        currentHold
+      );
+    }
+
+    const rows =
+      sportFinanceCleanLocalSlots();
+
+    const index =
+      rows.findIndex(
+        function(item){
+
+          return (
+            sportFinanceText(
+              item.id
+            ) ===
+            currentHold.slotHoldId
+          );
+        }
+      );
+
+    if(
+      index < 0 ||
+      rows[index].status !==
+        "held"
+    ){
+      throw new Error(
+        "La réservation temporaire a expiré."
+      );
+    }
+
+    rows[index].expiresAt =
+      Math.max(
+        Date.now(),
+        Number(
+          rows[index].expiresAt ||
+          0
+        )
+      ) +
+      MANUAL_EXTENSION_MINUTES *
+      60000;
+
+    rows[index].extendedAt =
+      Date.now();
+
+    sportFinanceWriteLocalSlots(
+      rows
+    );
+
+    currentHold.expiresAt =
+      rows[index].expiresAt;
+
+    sportFinanceRenderHoldStatus();
+
+    return sportFinanceClone(
+      currentHold
+    );
+  }
+
+
+/* =========================================================
+   ÇA COMMENCE ICI — LIBÉRATION CRÉNEAU
+   ========================================================= */
+
+async function sportFinanceReleaseHold(reason){
+
+  if(
+    !currentHold ||
+    !currentHold.slotHoldId
+  ){
+    return true;
+  }
+
+  const holdId =
+    currentHold.slotHoldId;
+
+  if(
+    sportFinanceIsProduction()
+  ){
+
+    try{
+
+      await sportFinanceServerPost(
+
+        "/sport/publicity/hold/release",
+
+        {
+
+          slotHoldId:
+            holdId,
+
+          reason:
+            sportFinanceText(
+              reason ||
+              "released"
+            )
+        }
+      );
+
+    }catch(error){
+
+      financeFoundationSaveAudit({
+
+        level:
+          "orange",
+
+        code:
+          "slot_release_server_pending",
+
+        message:
+          error.message,
+
+        slotHoldId:
+          holdId,
+
+        resolved:
+          false
+      });
+    }
+
+  }else{
+
+    const rows =
+      sportFinanceReadLocalSlots();
+
+    const index =
+      rows.findIndex(
+        function(item){
+
+          return (
+            sportFinanceText(
+              item &&
+              item.id
+            ) ===
+            holdId
+          );
+        }
+      );
+
+    if(
+      index >= 0 &&
+      [
+        "held",
+        "payment_pending"
+      ]
+        .includes(
+          sportFinanceText(
+            rows[index].status
+          )
+        )
+    ){
+
+      rows[index].status =
+        "released";
+
+      rows[index].releasedAt =
+        Date.now();
+
+      rows[index].releaseReason =
+        sportFinanceText(
+          reason
+        );
+
+      sportFinanceWriteLocalSlots(
+        rows
+      );
+    }
+  }
+
+  currentHold =
+    null;
+
+  sportFinanceRenderHoldStatus();
+
+  return true;
+}
+
+
+/* =========================================================
+   ÇA FINIT ICI — LIBÉRATION CRÉNEAU
+   ========================================================= */
+
+
+/* =========================================================
+   ÇA COMMENCE ICI — CONFIRMATION CRÉNEAU PAYÉ
+   ========================================================= */
+
+function sportFinanceCommitLocalHold(draft){
+
+  if(
+    sportFinanceIsProduction()
+  ){
+    return true;
+  }
+
+  const holdId =
+    sportFinanceText(
+      draft &&
+      draft.slotHoldId
+    );
+
+  if(
+    !holdId
+  ){
+    return false;
+  }
+
+  const rows =
+    sportFinanceReadLocalSlots();
+
+  const index =
+    rows.findIndex(
+      function(item){
+
+        return (
+          sportFinanceText(
+            item &&
+            item.id
+          ) ===
+          holdId
+        );
+      }
+    );
+
+  if(
+    index < 0
+  ){
+
+    financeFoundationSaveAudit({
+
+      level:
+        "red",
+
+      code:
+        "paid_slot_missing",
+
+      operationRef:
+        sportFinanceText(
+          draft &&
+          draft.operationRef
+        ),
+
+      slotHoldId:
+        holdId,
+
+      message:
+        "Paiement confirmé mais réservation locale introuvable.",
+
+      resolved:
+        false
+    });
+
+    return false;
+  }
+
+  /*
+    Un même retour de paiement
+    peut arriver plusieurs fois.
+
+    Si le créneau est déjà programmé
+    avec la même référence,
+    on ne fait rien une seconde fois.
+  */
+
+  if(
+    sportFinanceText(
+      rows[index].status
+    ) ===
+    "scheduled" &&
+    (
+      !sportFinanceText(
+        draft &&
+        draft.paymentReference
+      ) ||
+      !sportFinanceText(
+        rows[index].paymentReference
+      ) ||
+      sportFinanceText(
+        rows[index].paymentReference
+      ) ===
+      sportFinanceText(
+        draft &&
+        draft.paymentReference
+      )
+    )
+  ){
+    return true;
+  }
+
+  if(
+    ![
+      "payment_pending",
+      "held"
+    ]
+      .includes(
+        sportFinanceText(
+          rows[index].status
+        )
+      )
+  ){
+
+    financeFoundationSaveAudit({
+
+      level:
+        "red",
+
+      code:
+        "paid_slot_invalid_state",
+
+      operationRef:
+        sportFinanceText(
+          draft &&
+          draft.operationRef
+        ),
+
+      slotHoldId:
+        holdId,
+
+      message:
+        "Paiement confirmé mais état du créneau incompatible : " +
+        sportFinanceText(
+          rows[index].status
+        ) +
+        ".",
+
+      resolved:
+        false
+    });
+
+    return false;
+  }
+
+  rows[index].status =
+    "scheduled";
+
+  rows[index].paidAt =
+    Date.now();
+
   rows[index].paymentReference =
     sportFinanceText(
       draft &&
@@ -4681,6 +5167,7 @@
 
   return true;
 }
+
 
 /* =========================================================
    ÇA FINIT ICI — CONFIRMATION CRÉNEAU PAYÉ
