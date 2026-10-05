@@ -13,7 +13,7 @@
    - 8 publicités simultanées maximum ;
    - réservation 15 minutes et prolongation +5 minutes ;
    - parrainage de 50 € HT minimum ;
-   - soutien recherche supplémentaire de 10 € minimum ;
+   - choix de destination : Club uniquement ou Club + Recherche ;
    - préparation des documents et du dossier comptable ;
    - règles Agent 1 / Agent 2 ;
    - transmission future vers serveur / PSP / plateforme comptable ;
@@ -52,22 +52,82 @@
   const LOCAL_TARIFF_KEY = "bociteart_finance_tariff_v1";
   const LOCAL_ACCOUNTING_SETTINGS_KEY = "bociteart_finance_accounting_settings_v1";
 
-  const MINIMUM_HT = 50;
-  const EXTRA_RESEARCH_MINIMUM = 10;
-  const PUBLICATION_DURATION_MS = 48 * 60 * 60 * 1000;
-  const CONCURRENT_CAPACITY = 8;
-  const HOLD_MINUTES = 15;
-  const MANUAL_EXTENSION_MINUTES = 5;
-  const BOCITEART_BASE_FEE_RATE_HT = 0.10;
-  const PUBLIC_ENTITY_TARGET_DAYS = 30;
-  const PUBLIC_ENTITY_LATE_FIXED_COMPENSATION = 40;
-  const ACCOUNTING_RETENTION_YEARS = 10;
-  const SECURITY_LOG_RETENTION_DAYS = 365;
-  const MAX_LOCAL_OPERATIONS = 500;
-  const MAX_LOCAL_AUDIT = 1000;
-  const MAX_LOCAL_SLOTS = 1500;
-  const LOCAL_NEXT_SLOT_SEARCH_DAYS = 10;
-  const LOCAL_NEXT_SLOT_STEP_MINUTES = 15;
+const MINIMUM_HT = 50;
+
+/*
+  Règle spécifique au parcours Finance Sport :
+  participation Bo'CitéArt fixe de 5 € TTC par opération.
+
+  Le calcul HT / TVA définitif reste côté serveur.
+  La règle commune des autres modules n'est pas modifiée ici.
+*/
+const SPORT_BOCITEART_PARTICIPATION_TTC =
+  5;
+
+const SPORT_BOCITEART_PARTICIPATION_VERSION =
+  "SPORT-FIXED-5-TTC-1";
+
+/* =========================================================
+   PETIT BANDEAU SPORT
+   RÈGLES VALIDÉES
+   ========================================================= */
+
+const PUBLICATION_DURATION_MS =
+  48 * 60 * 60 * 1000;
+
+const CONCURRENT_CAPACITY =
+  8;
+
+const HOLD_MINUTES =
+  15;
+
+const MANUAL_EXTENSION_MINUTES =
+  5;
+
+/*
+  Règle commune Finance partagée avec les autres modules.
+  Elle reste inchangée ici pour éviter toute régression.
+
+  Le flux Sport n'utilise plus ce taux :
+  il applique sa participation fixe de 5 € TTC par opération.
+*/
+const BOCITEART_BASE_FEE_RATE_HT =
+  0.10;
+
+const PUBLIC_ENTITY_TARGET_DAYS =
+  30;
+
+const PUBLIC_ENTITY_LATE_FIXED_COMPENSATION =
+  40;
+
+const ACCOUNTING_RETENTION_YEARS =
+  10;
+
+const SECURITY_LOG_RETENTION_DAYS =
+  365;
+
+const MAX_LOCAL_OPERATIONS =
+  500;
+
+const MAX_LOCAL_AUDIT =
+  1000;
+
+const MAX_LOCAL_SLOTS =
+  1500;
+
+/*
+  Planning visible et recherche :
+  10 jours glissants maximum.
+*/
+const LOCAL_NEXT_SLOT_SEARCH_DAYS =
+  10;
+
+/*
+  Recherche du prochain départ possible :
+  pas de 15 minutes.
+*/
+const LOCAL_NEXT_SLOT_STEP_MINUTES =
+  15;
 
   const PUBLICITY_TEMPLATES = [
     { code:"THANKS", label:"Formule 1" },
@@ -2996,6 +3056,37 @@
       : date;
   }
 
+     function sportFinanceLatestAllowedStartMs(){
+
+    return (
+      Date.now() +
+      LOCAL_NEXT_SLOT_SEARCH_DAYS *
+      24 *
+      60 *
+      60 *
+      1000
+    );
+  }
+
+
+  function sportFinanceStartWithinPlanningWindow(value){
+
+    const date =
+      sportFinanceParseDateTime(
+        value
+      );
+
+    if(
+      !date
+    ){
+      return false;
+    }
+
+    return (
+      date.getTime() <=
+      sportFinanceLatestAllowedStartMs()
+    );
+  }
 
   function sportFinancePublicationRange(startValue){
 
@@ -3352,6 +3443,20 @@
       };
     }
 
+         if(
+      !sportFinanceStartWithinPlanningWindow(
+        range.startIso
+      )
+    ){
+      return {
+        ok:true,
+        available:false,
+        reason:"outside_10_day_window",
+        maxSearchDays:
+          LOCAL_NEXT_SLOT_SEARCH_DAYS
+      };
+    }
+
     const existingMax =
       sportFinanceLocalMaxConcurrency(
         range.startIso,
@@ -3469,6 +3574,22 @@
       ) ||
       new Date();
 
+    const latestAllowedMs =
+      sportFinanceLatestAllowedStartMs();
+
+    if(
+      requested.getTime() >
+      latestAllowedMs
+    ){
+      return {
+        ok:false,
+        available:false,
+        reason:"outside_10_day_window",
+        maxSearchDays:
+          LOCAL_NEXT_SLOT_SEARCH_DAYS
+      };
+    }
+
     if(
       sportFinanceIsProduction()
     ){
@@ -3482,6 +3603,17 @@
 
             from:
               requested.toISOString(),
+
+            latestPublicationStart:
+              new Date(
+                latestAllowedMs
+              ).toISOString(),
+
+            maxSearchDays:
+              LOCAL_NEXT_SLOT_SEARCH_DAYS,
+
+            searchStepMinutes:
+              LOCAL_NEXT_SLOT_STEP_MINUTES,
 
             durationHours:
               48,
@@ -3497,19 +3629,44 @@
           }
         );
 
+      if(
+        result &&
+        result.available === true &&
+        result.publicationStart
+      ){
+
+        const returnedStart =
+          sportFinanceParseDateTime(
+            result.publicationStart
+          );
+
+        if(
+          !returnedStart ||
+          returnedStart.getTime() <
+            requested.getTime() -
+            60 * 1000 ||
+          returnedStart.getTime() >
+            latestAllowedMs
+        ){
+          return {
+            ok:false,
+            available:false,
+            reason:"server_slot_outside_10_day_window",
+            maxSearchDays:
+              LOCAL_NEXT_SLOT_SEARCH_DAYS
+          };
+        }
+      }
+
       return result ||
         {
-          ok:false
+          ok:false,
+          available:false
         };
     }
 
     const limit =
-      requested.getTime() +
-      LOCAL_NEXT_SLOT_SEARCH_DAYS *
-      24 *
-      60 *
-      60 *
-      1000;
+      latestAllowedMs;
 
     let candidate =
       sportFinanceRoundDateToStep(
@@ -3556,10 +3713,12 @@
       available:false,
 
       reason:
-        "no_slot_in_local_search_window"
+        "no_slot_in_local_search_window",
+
+      maxSearchDays:
+        LOCAL_NEXT_SLOT_SEARCH_DAYS
     };
   }
-
 
   async function sportFinanceReserveSlot(
     startValue,
@@ -3576,6 +3735,16 @@
     ){
       throw new Error(
         "Choisissez une date et une heure de diffusion valides."
+      );
+    }
+
+         if(
+      !sportFinanceStartWithinPlanningWindow(
+        range.startIso
+      )
+    ){
+      throw new Error(
+        "Le démarrage doit rester dans les 10 prochains jours."
       );
     }
 
@@ -4417,22 +4586,33 @@ function sportFinanceCommitLocalHold(draft){
     );
   }
 
-
   function sportFinanceExtraResearchAmount(){
 
+    /*
+      Ancien supplément Recherche supprimé.
+      La fonction reste provisoirement présente pour compatibilité
+      avec les objets Finance existants pendant la transition.
+    */
+
+    return 0;
+  }
+
+
+   function sportFinanceNormalizeChoice(value){
+
+    const choice =
+      sportFinanceText(
+        value
+      );
+
     if(
-      !sportFinanceChecked(
-        "bcfSportExtraResearchEnabled"
-      )
+      choice === "HALF_HALF" ||
+      choice === "club_research"
     ){
-      return 0;
+      return "CLUB_RESEARCH";
     }
 
-    return sportFinanceRound(
-      sportFinanceValue(
-        "bcfSportExtraResearchAmount"
-      )
-    );
+    return choice;
   }
 
 
@@ -4443,7 +4623,7 @@ function sportFinanceCommitLocalHold(draft){
         'input[name="bcfSportAllocation"]:checked'
       );
 
-    return sportFinanceText(
+    return sportFinanceNormalizeChoice(
       selected
         ? selected.value
         : ""
@@ -4461,38 +4641,29 @@ function sportFinanceCommitLocalHold(draft){
       youth.locked !== true
     ){
       return {
-
         locked:false,
-
         choice:"",
-
         associationId:"",
-
         associationName:"",
-
         groupName:""
       };
     }
 
-    return {
+    const rawChoice =
+      sportFinanceNormalizeChoice(
+        youth.choice
+      );
 
+    return {
       locked:true,
 
       choice:
-        youth.choice ===
-          "club_research"
-          ? "HALF_HALF"
+        rawChoice === "CLUB_RESEARCH"
+          ? "CLUB_RESEARCH"
           : "ALL_CLUB",
 
-      associationId:
-        sportFinanceText(
-          youth.associationId
-        ),
-
-      associationName:
-        sportFinanceText(
-          youth.associationName
-        ),
+      associationId:"",
+      associationName:"",
 
       groupName:
         sportFinanceText(
@@ -4500,30 +4671,6 @@ function sportFinanceCommitLocalHold(draft){
         )
     };
   }
-
-
-  function sportFinanceSelectedAssociation(){
-
-    const id =
-      sportFinanceValue(
-        "bcfSportAssociation"
-      );
-
-    return sportFinanceAssociations()
-      .find(
-        function(item){
-
-          return (
-            String(
-              item.id
-            ) ===
-            String(id)
-          );
-        }
-      ) ||
-      null;
-  }
-
 
   function sportFinanceTemplateCode(){
 
@@ -4540,17 +4687,10 @@ function sportFinanceCommitLocalHold(draft){
   }
 
 
-  function sportFinanceHasResearch(
-    choice,
-    extraResearchAmount
-  ){
+  function sportFinanceHasResearch(choice){
 
     return (
-      choice === "HALF_HALF" ||
-      Number(
-        extraResearchAmount ||
-        0
-      ) > 0
+      choice === "CLUB_RESEARCH"
     );
   }
 
@@ -4559,8 +4699,7 @@ function sportFinanceCommitLocalHold(draft){
     templateCode,
     profile,
     club,
-    choice,
-    extraResearchAmount
+    choice
   ){
 
     const merchantName =
@@ -4578,8 +4717,7 @@ function sportFinanceCommitLocalHold(draft){
 
     const research =
       sportFinanceHasResearch(
-        choice,
-        extraResearchAmount
+        choice
       );
 
     switch(
@@ -4594,7 +4732,7 @@ function sportFinanceCommitLocalHold(draft){
           clubName +
           (
             research
-              ? " et apporte également son soutien à la recherche médicale"
+              ? " et la recherche médicale"
               : ""
           ) +
           " avec Bo'CitéArt."
@@ -4611,7 +4749,7 @@ function sportFinanceCommitLocalHold(draft){
           " bénéficie d’un soutien local" +
           (
             research
-              ? ", avec un soutien distinct également apporté à la recherche médicale"
+              ? " qui contribue également à la recherche médicale"
               : ""
           ) +
           "."
@@ -4625,11 +4763,11 @@ function sportFinanceCommitLocalHold(draft){
           clubName +
           " remercie " +
           merchantName +
-          " pour son soutien au club" +
+          " pour son soutien" +
           (
             research
-              ? " et pour son soutien à la recherche médicale"
-              : ""
+              ? " au club et à la recherche médicale"
+              : " au club"
           ) +
           "."
         );
@@ -4645,7 +4783,7 @@ function sportFinanceCommitLocalHold(draft){
           clubName +
           (
             research
-              ? " et pour son soutien à la recherche médicale"
+              ? " et à la recherche médicale"
               : ""
           ) +
           "."
@@ -4656,8 +4794,7 @@ function sportFinanceCommitLocalHold(draft){
 
   function sportFinanceGrossAllocation(
     amountHT,
-    choice,
-    extraResearchAmount
+    choice
   ){
 
     const sponsorship =
@@ -4665,47 +4802,60 @@ function sportFinanceCommitLocalHold(draft){
         amountHT
       );
 
-    const extra =
-      sportFinanceRound(
-        extraResearchAmount
-      );
-
-    const clubGross =
-      choice ===
-        "HALF_HALF"
-        ? sportFinanceRound(
-            sponsorship / 2
-          )
-        : sponsorship;
-
-    const associationParrainageGross =
-      choice ===
-        "HALF_HALF"
-        ? sportFinanceRound(
-            sponsorship -
-            clubGross
-          )
-        : 0;
+    const hasResearch =
+      choice === "CLUB_RESEARCH";
 
     return {
 
       sponsorshipGrossHT:
         sponsorship,
 
+      bociteArtParticipationTTC:
+        SPORT_BOCITEART_PARTICIPATION_TTC,
+
+      bociteArtParticipationVersion:
+        SPORT_BOCITEART_PARTICIPATION_VERSION,
+
+      allocationBasis:
+        "server_after_sport_fixed_participation_and_tax_qualification",
+
+      clubShareRatio:
+        hasResearch
+          ? 2 / 3
+          : 1,
+
+      researchShareRatio:
+        hasResearch
+          ? 1 / 3
+          : 0,
+
+      researchAssociationCount:
+        hasResearch
+          ? 4
+          : 0,
+
       clubGrossHT:
-        clubGross,
+        null,
 
       associationParrainageGrossHT:
-        associationParrainageGross,
+        null,
+
+      researchGrossHT:
+        null,
 
       independentResearchGross:
-        extra,
+        0,
+
+      allocationMode:
+        hasResearch
+          ? "CLUB_RESEARCH"
+          : "ALL_CLUB",
+
+      finalBeneficiaryAmountsServerSide:
+        true,
 
       paymentBaseBeforeFinalTax:
-        sportFinanceRound(
-          sponsorship +
-          extra
-        ),
+        sponsorship,
 
       finalPaymentTotal:
         "server_quote_after_actual_tax_qualification"
@@ -4719,6 +4869,11 @@ function sportFinanceCommitLocalHold(draft){
   }
 
 
+  function sportFinanceBociteArtParticipationTTC(){
+
+    return SPORT_BOCITEART_PARTICIPATION_TTC;
+  }
+   
   function sportFinancePolicies(){
 
     return {
@@ -4757,6 +4912,7 @@ function sportFinanceCommitLocalHold(draft){
         finalPaymentQuoteServerSide:
           true
       },
+
 
       publication:{
 
@@ -4812,19 +4968,22 @@ function sportFinanceCommitLocalHold(draft){
           true
       },
 
+
       amounts:{
 
         sponsorshipMinimumHT:
           MINIMUM_HT,
 
-        extraResearchMinimum:
-          EXTRA_RESEARCH_MINIMUM,
+        researchChoiceModes:[
+          "ALL_CLUB",
+          "CLUB_RESEARCH"
+        ],
 
         extraResearchAmountKeptSeparate:
-          true,
+          false,
 
         extraResearchTaxQualificationServerSide:
-          true,
+          false,
 
         merchantDoesNotDirectlyPayBociteArtFeeAsExtraLine:
           true,
@@ -4833,18 +4992,22 @@ function sportFinanceCommitLocalHold(draft){
           true
       },
 
-      allocation:{
+
+          allocation:{
 
         youthChoiceMustBeRespectedWhenLocked:
           true,
 
-        beneficiaryGrossAmountsRecordedBeforeFees:
+        finalBeneficiaryAmountsServerCalculated:
           true,
 
-        currentBociteArtFeeRateHT:
-          sportFinanceCurrentFeeRateHT(),
+        bociteArtRateBasedFee:
+          false,
 
-        bociteArtFeeChargedToEachBeneficiaryOnItsGrossShare:
+        bociteArtFixedParticipationTTC:
+          sportFinanceBociteArtParticipationTTC(),
+
+        fixedParticipationAppliedBeforeFinalAllocation:
           true,
 
         pspFeeSeparateAndAllocatedByServer:
@@ -4859,7 +5022,7 @@ function sportFinanceCommitLocalHold(draft){
         noPublicInternalSettlementFormula:
           true
       },
-
+       
       documents:{
 
         clubGrossParrainageDocumentRequired:
@@ -4899,6 +5062,7 @@ function sportFinanceCommitLocalHold(draft){
           ACCOUNTING_RETENTION_YEARS
       },
 
+
       audit:{
 
         agent1:
@@ -4911,7 +5075,7 @@ function sportFinanceCommitLocalHold(draft){
   }
 
 
-  function sportFinanceBuildAccountingDossier(
+   function sportFinanceBuildAccountingDossier(
     data,
     operationRef,
     paymentReference
@@ -4920,12 +5084,8 @@ function sportFinanceCommitLocalHold(draft){
     const allocation =
       sportFinanceGrossAllocation(
         data.amountHT,
-        data.choice,
-        data.extraResearchAmount
+        data.choice
       );
-
-    const feeRate =
-      sportFinanceCurrentFeeRateHT();
 
     const beneficiaries = [
 
@@ -4944,11 +5104,14 @@ function sportFinanceCommitLocalHold(draft){
           data.clubSnapshot.name ||
           data.clubSnapshot.officialName,
 
-        grossAmountHT:
-          allocation.clubGrossHT,
+        allocationRatio:
+          allocation.clubShareRatio,
 
-        bociteArtFeeRateHT:
-          feeRate,
+        grossAmountHT:
+          null,
+
+        amountStatus:
+          "server_calculated_after_sport_fixed_participation_and_tax_qualification",
 
         pspFee:
           "server_actual",
@@ -4966,90 +5129,84 @@ function sportFinanceCommitLocalHold(draft){
       }
     ];
 
-    if(
-      data.associationSnapshot &&
-      allocation.associationParrainageGrossHT > 0
-    ){
 
-      beneficiaries.push({
+    const researchAssociations =
+      data.choice === "CLUB_RESEARCH"
 
-        type:
-          "research_association_parrainage_share",
+        ? sportFinanceAssociations()
+            .slice(
+              0,
+              4
+            )
+            .map(
+              function(item){
 
-        ref:
-          data.associationSnapshot.id,
+                return sportFinanceAssociationSnapshot(
+                  item
+                );
+              }
+            )
+            .filter(Boolean)
 
-        clientNumber:
-          data.associationSnapshot.clientNumber,
+        : [];
 
-        name:
-          data.associationSnapshot.name,
-
-        grossAmountHT:
-          allocation.associationParrainageGrossHT,
-
-        bociteArtFeeRateHT:
-          feeRate,
-
-        pspFee:
-          "server_actual",
-
-        netSettlement:
-          "server_calculated",
-
-        taxReceipt:
-          false,
-
-        document:
-          "accounting_document_not_automatic_tax_receipt",
-
-        invoiceBlueprint:
-          financeFoundationInvoiceBlueprint(
-            "association_parrainage_share"
-          )
-      });
-    }
 
     if(
-      data.associationSnapshot &&
-      allocation.independentResearchGross > 0
+      allocation.researchShareRatio > 0 &&
+      researchAssociations.length === 4
     ){
 
-      beneficiaries.push({
+      const associationRatio =
+        allocation.researchShareRatio /
+        researchAssociations.length;
 
-        type:
-          "research_association_independent_support",
+      researchAssociations.forEach(
+        function(association){
 
-        ref:
-          data.associationSnapshot.id,
+          beneficiaries.push({
 
-        clientNumber:
-          data.associationSnapshot.clientNumber,
+            type:
+              "research_association_parrainage_share",
 
-        name:
-          data.associationSnapshot.name,
+            ref:
+              association.id,
 
-        grossAmount:
-          allocation.independentResearchGross,
+            clientNumber:
+              association.clientNumber,
 
-        bociteArtFeeRateHT:
-          feeRate,
+            name:
+              association.name,
 
-        pspFee:
-          "server_actual",
+            allocationRatio:
+              associationRatio,
 
-        netSettlement:
-          "server_calculated",
+            grossAmountHT:
+              null,
 
-        taxReceipt:
-          data.associationSnapshot.taxReceiptEligible === true
-            ? "server_confirm_eligibility"
-            : false,
+            amountStatus:
+              "server_calculated_after_sport_fixed_participation_and_tax_qualification",
 
-        document:
-          "receipt_or_tax_receipt_according_to_actual_eligibility"
-      });
+            pspFee:
+              "server_actual",
+
+            netSettlement:
+              "server_calculated",
+
+            taxReceipt:
+              false,
+
+            document:
+              "accounting_document_not_automatic_tax_receipt",
+
+            invoiceBlueprint:
+              financeFoundationInvoiceBlueprint(
+                "association_parrainage_share"
+              )
+          });
+        }
+      );
     }
+
 
     const dossier =
       financeFoundationBuildAccountingDossier({
@@ -5070,7 +5227,7 @@ function sportFinanceCommitLocalHold(draft){
           beneficiaries,
 
         extraResearchAmount:
-          data.extraResearchAmount,
+          0,
 
         payment:{
 
@@ -5083,7 +5240,7 @@ function sportFinanceCommitLocalHold(draft){
             data.amountHT,
 
           extraResearchAmount:
-            data.extraResearchAmount,
+            0,
 
           paymentBaseBeforeFinalTax:
             data.paymentBaseBeforeFinalTax,
@@ -5106,22 +5263,88 @@ function sportFinanceCommitLocalHold(draft){
           sponsorship:
             "actual_beneficiary_status",
 
-          independentResearch:
-            "server_validate_actual_eligibility",
+          researchShare:
+            "server_validate_actual_qualification",
 
-          bociteArtServiceFee:
-            "current_rate_ht_plus_applicable_vat",
+          bociteArtSportParticipation:
+            "fixed_5_ttc_server_ht_vat_breakdown",
 
           finalQualification:
             "server_only"
         },
 
+        /*
+          Neutralisation du taux commun pour ce flux Sport.
+          La participation Sport fixe est appliquée ci-dessous.
+        */
         bociteArtFeeRateHT:
-          feeRate,
+          0,
 
         pspFeeActualAmount:
           null
       });
+
+
+    dossier.fees =
+      dossier.fees ||
+      {};
+
+    dossier.fees.bociteart = {
+
+      sportSpecific:
+        true,
+
+      rateBasedFee:
+        false,
+
+      fixedParticipationTTC:
+        sportFinanceBociteArtParticipationTTC(),
+
+      version:
+        SPORT_BOCITEART_PARTICIPATION_VERSION,
+
+      htAmount:
+        null,
+
+      vatAmount:
+        null,
+
+      taxBreakdown:
+        "server_calculated",
+
+      invoiceMode:
+        "monthly_grouped_when_compatible"
+    };
+
+
+    dossier.allocationRule = {
+
+      mode:
+        allocation.allocationMode,
+
+      basis:
+        allocation.allocationBasis,
+
+      clubShareRatio:
+        allocation.clubShareRatio,
+
+      researchShareRatio:
+        allocation.researchShareRatio,
+
+      fixedBociteArtParticipationTTC:
+        allocation.bociteArtParticipationTTC,
+
+      finalBeneficiaryAmountsServerSide:
+        true
+    };
+
+
+    dossier.researchAssociationsSnapshot =
+      sportFinanceClone(
+        researchAssociations
+      ) ||
+      [];
+
 
     dossier.invoiceBlueprints = {
 
@@ -5146,6 +5369,7 @@ function sportFinanceCommitLocalHold(draft){
         )
     };
 
+
     dossier.accountingPlatform =
       Object.assign(
 
@@ -5155,13 +5379,29 @@ function sportFinanceCommitLocalHold(draft){
         {},
 
         {
+
           destination:
             financeFoundationAccountingDestination()
         }
       );
 
+
     dossier.tariff =
-      financeFoundationCurrentTariff();
+      Object.assign(
+        {},
+        financeFoundationCurrentTariff(),
+        {
+          sportFixedParticipationTTC:
+            sportFinanceBociteArtParticipationTTC(),
+
+          sportParticipationVersion:
+            SPORT_BOCITEART_PARTICIPATION_VERSION,
+
+          sportRateBasedFee:
+            false
+        }
+      );
+
 
     return dossier;
   }
@@ -5224,7 +5464,6 @@ function sportFinanceCommitLocalHold(draft){
 
     return dossier;
   }
-
 
   async function sportFinanceQueueAuditAfterPaid(draft){
 
@@ -5563,44 +5802,14 @@ function sportFinanceCommitLocalHold(draft){
 
   function sportFinanceUpdateResearchBox(){
 
-    const choice =
-      sportFinanceChoice();
+    /*
+      Plus de supplément Recherche.
+      Plus de sélection manuelle d’association
+      dans le parcours professionnel.
+    */
 
-    const extra =
-      sportFinanceChecked(
-        "bcfSportExtraResearchEnabled"
-      );
-
-    const associationBox =
-      sportFinanceField(
-        "bcfSportAssociationBox"
-      );
-
-    const extraBox =
-      sportFinanceField(
-        "bcfSportExtraResearchBox"
-      );
-
-    if(
-      associationBox
-    ){
-      associationBox.style.display =
-        choice === "HALF_HALF" ||
-        extra
-          ? "block"
-          : "none";
-    }
-
-    if(
-      extraBox
-    ){
-      extraBox.style.display =
-        extra
-          ? "block"
-          : "none";
-    }
+    return true;
   }
-
 
   function sportFinanceRenderTemplates(){
 
@@ -5624,8 +5833,13 @@ function sportFinanceCommitLocalHold(draft){
     const choice =
       sportFinanceChoice();
 
-    const extra =
-      sportFinanceExtraResearchAmount();
+                 sportFinancePublicityText(
+                template.code,
+                profile,
+                club,
+                choice,
+                extra
+              );
 
     const selectedCode =
       sportFinanceTemplateCode();
@@ -5640,8 +5854,7 @@ function sportFinanceCommitLocalHold(draft){
                 template.code,
                 profile,
                 club,
-                choice,
-                extra
+                choice
               );
 
             return `
@@ -5738,16 +5951,13 @@ function sportFinanceCommitLocalHold(draft){
       ) +
 
       (
-        operation.extraResearchAmount
-          ? "<br>Soutien recherche supplémentaire : " +
-            sportFinanceEscape(
-              sportFinanceFormatMoney(
-                operation.extraResearchAmount
-              )
+              data.extraResearchAmount > 0
+          ? "Soutien recherche supplémentaire : " +
+            sportFinanceFormatMoney(
+              data.extraResearchAmount
             ) +
             " €"
-          : ""
-      ) +
+          : "",
 
       (
         operation.publicationStart &&
@@ -6374,14 +6584,12 @@ async function sportFinanceRenderTenDayPlanning(){
     );
 }
    
-  function sportFinanceValidate(
+   function sportFinanceValidate(
     profile,
     club,
     identityCheck,
     amountHT,
-    extraResearchAmount,
     choice,
-    association,
     publicationStart,
     templateCode
   ){
@@ -6391,6 +6599,10 @@ async function sportFinanceRenderTenDayPlanning(){
 
     const youth =
       sportFinanceYouthLockedChoice();
+
+    const researchAssociations =
+      sportFinanceAssociations();
+
 
     if(
       !sportFinanceText(
@@ -6402,11 +6614,13 @@ async function sportFinanceRenderTenDayPlanning(){
       );
     }
 
+
     if(
       !sportFinanceIdentityAccepted(
         identityCheck
       )
     ){
+
       errors.push(
         (
           identityCheck &&
@@ -6419,6 +6633,7 @@ async function sportFinanceRenderTenDayPlanning(){
       );
     }
 
+
     if(
       !profile.name
     ){
@@ -6426,6 +6641,7 @@ async function sportFinanceRenderTenDayPlanning(){
         "Le nom ou l’enseigne du commerçant est obligatoire."
       );
     }
+
 
     if(
       !Number.isFinite(
@@ -6435,33 +6651,25 @@ async function sportFinanceRenderTenDayPlanning(){
         MINIMUM_HT
     ){
       errors.push(
-        "Le parrainage minimum est de 50 € HT."
+        "Le soutien minimum est de 50 € HT."
       );
     }
 
-    if(
-      extraResearchAmount > 0 &&
-      extraResearchAmount <
-        EXTRA_RESEARCH_MINIMUM
-    ){
-      errors.push(
-        "Le soutien recherche supplémentaire est de 10 € minimum."
-      );
-    }
 
     if(
       ![
         "ALL_CLUB",
-        "HALF_HALF"
+        "CLUB_RESEARCH"
       ]
         .includes(
           choice
         )
     ){
       errors.push(
-        "Choisissez la destination du parrainage."
+        "Choisissez la destination du soutien."
       );
     }
+
 
     if(
       youth.locked &&
@@ -6473,59 +6681,52 @@ async function sportFinanceRenderTenDayPlanning(){
       );
     }
 
+
     if(
-      (
-        choice === "HALF_HALF" ||
-        extraResearchAmount > 0
-      ) &&
-      !association
+      choice === "CLUB_RESEARCH" &&
+      researchAssociations.length !== 4
     ){
       errors.push(
-        "Choisissez une association de recherche médicale validée."
+        "Les 4 associations annuelles de recherche doivent être validées avant de poursuivre."
       );
     }
 
-    if(
-      association &&
-      association.validated !== true
-    ){
-      errors.push(
-        "L’association choisie doit être préalablement validée."
-      );
-    }
 
     if(
-      youth.locked &&
-      youth.associationId &&
-      choice === "HALF_HALF" &&
-      (
-        !association ||
-        String(
-          association.id
-        ) !==
-        String(
-          youth.associationId
+      choice === "CLUB_RESEARCH" &&
+      sportFinanceIsProduction() &&
+      researchAssociations.length === 4 &&
+      researchAssociations
+        .some(
+          function(item){
+
+            return !sportFinanceText(
+              item.clientNumber
+            );
+          }
         )
-      )
     ){
       errors.push(
-        "L’association doit correspondre au choix collectif déjà enregistré."
+        "Les 4 associations de recherche doivent disposer de leur numéro client permanent avant le paiement."
       );
     }
+
 
     const range =
       sportFinancePublicationRange(
         publicationStart
       );
 
+
     if(
       !range
     ){
+
       errors.push(
         "Choisissez la date et l’heure de démarrage."
       );
 
-    }else if(
+       }else if(
       new Date(
         range.startIso
       )
@@ -6533,15 +6734,28 @@ async function sportFinanceRenderTenDayPlanning(){
       Date.now() -
       60 * 1000
     ){
+
       errors.push(
         "L’heure de démarrage ne peut pas être antérieure à maintenant."
       );
+
+    }else if(
+      !sportFinanceStartWithinPlanningWindow(
+        range.startIso
+      )
+    ){
+
+      errors.push(
+        "Le démarrage doit rester dans les 10 prochains jours."
+      );
     }
+
 
     if(
       !PUBLICITY_TEMPLATES
         .some(
           function(item){
+
             return (
               item.code ===
               templateCode
@@ -6549,15 +6763,16 @@ async function sportFinanceRenderTenDayPlanning(){
           }
         )
     ){
+
       errors.push(
         "Choisissez l’une des quatre formulations proposées."
       );
     }
 
+
     return errors;
   }
-
-
+   
   async function sportFinanceBuildDraftData(){
 
     const profile =
@@ -6600,6 +6815,7 @@ async function sportFinanceRenderTenDayPlanning(){
       );
     }
 
+
     const club =
       sportFinanceClub();
 
@@ -6609,14 +6825,8 @@ async function sportFinanceRenderTenDayPlanning(){
     const amountHT =
       sportFinanceAmountHT();
 
-    const extraResearchAmount =
-      sportFinanceExtraResearchAmount();
-
     const choice =
       sportFinanceChoice();
-
-    const association =
-      sportFinanceSelectedAssociation();
 
     const publicationStart =
       sportFinanceValue(
@@ -6633,33 +6843,24 @@ async function sportFinanceRenderTenDayPlanning(){
 
     const errors =
       sportFinanceValidate(
-
         profile,
-
         club,
-
         verified,
-
         amountHT,
-
-        extraResearchAmount,
-
         choice,
-
-        association,
-
         publicationStart,
-
         templateCode
       );
+
 
     if(
       !representative.accountId
     ){
       errors.unshift(
-        "L’utilisateur Sport doit être identifié avant de présenter ce parrainage."
+        "L’utilisateur Sport doit être identifié avant de présenter ce soutien."
       );
     }
+
 
     const clubSnapshot =
       sportFinanceClubSnapshot(
@@ -6671,34 +6872,43 @@ async function sportFinanceRenderTenDayPlanning(){
         profile
       );
 
-    const associationSnapshot =
-      sportFinanceAssociationSnapshot(
-        association
-      );
+
+    const researchAssociationsSnapshot =
+      choice === "CLUB_RESEARCH"
+
+        ? sportFinanceAssociations()
+            .slice(
+              0,
+              4
+            )
+            .map(
+              function(item){
+
+                return sportFinanceAssociationSnapshot(
+                  item
+                );
+              }
+            )
+            .filter(Boolean)
+
+        : [];
+
 
     const publicityText =
       sportFinancePublicityText(
-
         templateCode,
-
         profile,
-
         club,
-
-        choice,
-
-        extraResearchAmount
+        choice
       );
+
 
     const allocation =
       sportFinanceGrossAllocation(
-
         amountHT,
-
-        choice,
-
-        extraResearchAmount
+        choice
       );
+
 
     if(
       sportFinanceIsProduction() &&
@@ -6709,6 +6919,7 @@ async function sportFinanceRenderTenDayPlanning(){
       );
     }
 
+
     if(
       sportFinanceIsProduction() &&
       !clubSnapshot.clientNumber
@@ -6717,6 +6928,7 @@ async function sportFinanceRenderTenDayPlanning(){
         "Le numéro client permanent du club doit être attribué par le serveur avant le paiement."
       );
     }
+
 
     return {
 
@@ -6739,7 +6951,7 @@ async function sportFinanceRenderTenDayPlanning(){
         amountHT,
 
       extraResearchAmount:
-        extraResearchAmount,
+        0,
 
       paymentBaseBeforeFinalTax:
         allocation.paymentBaseBeforeFinalTax,
@@ -6754,7 +6966,13 @@ async function sportFinanceRenderTenDayPlanning(){
         choice,
 
       association:
-        association,
+        null,
+
+      associationSnapshot:
+        null,
+
+      researchAssociationsSnapshot:
+        researchAssociationsSnapshot,
 
       publicationStart:
         range
@@ -6778,14 +6996,16 @@ async function sportFinanceRenderTenDayPlanning(){
       merchantSnapshot:
         merchantSnapshot,
 
-      associationSnapshot:
-        associationSnapshot,
+      bociteArtParticipationTTC:
+        sportFinanceBociteArtParticipationTTC(),
+
+      bociteArtParticipationVersion:
+        SPORT_BOCITEART_PARTICIPATION_VERSION,
 
       grossAllocation:
         allocation
     };
   }
-
 
   async function sportFinanceOpenReview(){
 
@@ -6842,6 +7062,15 @@ async function sportFinanceRenderTenDayPlanning(){
         availability.available !== true
       ){
 
+      if(
+        result.reason ===
+          "outside_10_day_window"
+      ){
+        target.textContent =
+          "Le démarrage doit rester dans les 10 prochains jours.";
+        return;
+      }
+         
         const next =
           await sportFinanceFindNextAvailability(
             data.publicationStart
@@ -7015,21 +7244,27 @@ const accountingDossier =
         clubSnapshot:
           data.clubSnapshot,
 
-        beneficiaryRefs:[
+               beneficiaryRefs:[
 
           data.clubSnapshot.clubRef,
 
-          data.associationSnapshot
-            ? data.associationSnapshot.id
-            : ""
+          ...data.researchAssociationsSnapshot
+            .map(
+              function(item){
+
+                return sportFinanceText(
+                  item.id
+                );
+              }
+            )
 
         ].filter(Boolean),
 
         amountHT:
           data.amountHT,
 
-        extraResearchAmount:
-          data.extraResearchAmount,
+                extraResearchAmount:
+          0,
 
         paymentBaseBeforeFinalTax:
           data.paymentBaseBeforeFinalTax,
@@ -7043,16 +7278,23 @@ const accountingDossier =
         allocationCode:
           data.choice,
 
-        grossAllocation:
-          data.grossAllocation,
+                bociteArtParticipationTTC:
+          data.bociteArtParticipationTTC,
 
-        associationId:
-          data.associationSnapshot
-            ? data.associationSnapshot.id
-            : "",
+                grossAllocation:
+          data.grossAllocation,
+         
+         bociteArtParticipationVersion:
+          data.bociteArtParticipationVersion,
+
+            associationId:
+          "",
 
         associationSnapshot:
-          data.associationSnapshot,
+          null,
+
+        researchAssociationsSnapshot:
+          data.researchAssociationsSnapshot,
 
         publicationDurationHours:
           48,
@@ -7127,8 +7369,8 @@ const accountingDossier =
         amountHT:
           data.amountHT,
 
-        extraResearchAmount:
-          data.extraResearchAmount,
+               extraResearchAmount:
+          0,
 
         paymentBaseBeforeFinalTax:
           data.paymentBaseBeforeFinalTax,
@@ -7144,6 +7386,12 @@ const accountingDossier =
 
         grossAllocation:
           data.grossAllocation,
+
+                bociteArtParticipationTTC:
+          data.bociteArtParticipationTTC,
+
+        bociteArtParticipationVersion:
+          data.bociteArtParticipationVersion, 
 
         clubRef:
           data.clubSnapshot.clubRef,
@@ -7161,15 +7409,14 @@ const accountingDossier =
         representativeName:
           data.representative.name,
 
-        associationId:
-          data.associationSnapshot
-            ? data.associationSnapshot.id
-            : "",
+              associationId:
+          "",
 
         associationName:
-          data.associationSnapshot
-            ? data.associationSnapshot.name
-            : "",
+          "",
+
+        researchAssociationsSnapshot:
+          data.researchAssociationsSnapshot,
 
         publicationDurationHours:
           48,
@@ -7192,9 +7439,6 @@ const accountingDossier =
         tariffVersion:
           financeFoundationCurrentTariff()
             .version,
-
-        feeRateHT:
-          sportFinanceCurrentFeeRateHT(),
 
         accountingDossier:
           accountingDossier
@@ -7321,6 +7565,33 @@ const accountingDossier =
       return;
     }
 
+    const core =
+      sportFinanceCore();
+
+    const existingDraft =
+      core &&
+      typeof core.getDraft === "function"
+        ? core.getDraft(
+            draftId
+          )
+        : null;
+
+    const accountingDossier =
+      sportFinancePrepareAgent1(
+        {
+          operationRef:
+            sportFinanceText(
+              existingDraft &&
+              existingDraft.operationRef
+            )
+        },
+        data,
+        sportFinanceText(
+          existingDraft &&
+          existingDraft.paymentReference
+        )
+      );
+
     const previewLines = [
 
       data.publicityText,
@@ -7371,7 +7642,7 @@ const accountingDossier =
           data.amountHT,
 
         extraResearchAmount:
-          data.extraResearchAmount,
+          0,
 
         paymentBaseBeforeFinalTax:
           data.paymentBaseBeforeFinalTax,
@@ -7388,6 +7659,12 @@ const accountingDossier =
         grossAllocation:
           data.grossAllocation,
 
+        bociteArtParticipationTTC:
+          data.bociteArtParticipationTTC,
+
+        bociteArtParticipationVersion:
+          data.bociteArtParticipationVersion,
+
         clubRef:
           data.clubSnapshot.clubRef,
 
@@ -7398,20 +7675,27 @@ const accountingDossier =
           data.clubSnapshot,
 
         associationId:
-          data.associationSnapshot
-            ? data.associationSnapshot.id
-            : "",
+          "",
 
         associationSnapshot:
-          data.associationSnapshot,
+          null,
+
+        researchAssociationsSnapshot:
+          data.researchAssociationsSnapshot,
 
         beneficiaryRefs:[
 
           data.clubSnapshot.clubRef,
 
-          data.associationSnapshot
-            ? data.associationSnapshot.id
-            : ""
+          ...data.researchAssociationsSnapshot
+            .map(
+              function(item){
+
+                return sportFinanceText(
+                  item.id
+                );
+              }
+            )
 
         ].filter(Boolean),
 
@@ -7444,6 +7728,9 @@ const accountingDossier =
 
         financePolicies:
           sportFinancePolicies(),
+
+        accountingDossier:
+          accountingDossier,
 
         previewLines:
           previewLines,
@@ -7482,8 +7769,7 @@ const accountingDossier =
     activeCorrectionDraftId =
       "";
   }
-
-
+   
   function sportFinanceCheckoutPayload(request){
 
     const core =
@@ -7595,16 +7881,45 @@ const accountingDossier =
           ) ||
           null,
 
-        associationId:
+              beneficiaryRefs:[
           sportFinanceText(
-            draft.associationId
+            draft.clubRef
           ),
 
+          ...(
+            Array.isArray(
+              draft.researchAssociationsSnapshot
+            )
+              ? draft.researchAssociationsSnapshot
+              : []
+          )
+            .map(
+              function(item){
+
+                return sportFinanceText(
+                  item &&
+                  item.id
+                );
+              }
+            )
+
+        ].filter(Boolean),
+
+        associationId:
+          "",
+
         associationSnapshot:
-          sportFinanceClone(
-            draft.associationSnapshot
-          ) ||
           null,
+
+        researchAssociationsSnapshot:
+          Array.isArray(
+            draft.researchAssociationsSnapshot
+          )
+            ? sportFinanceClone(
+                draft.researchAssociationsSnapshot
+              ) ||
+              []
+            : [],
 
         amountHT:
           Number(
@@ -7612,11 +7927,8 @@ const accountingDossier =
             0
           ),
 
-        extraResearchAmount:
-          Number(
-            draft.extraResearchAmount ||
-            0
-          ),
+               extraResearchAmount:
+          0,
 
         paymentBaseBeforeFinalTax:
           Number(
@@ -7634,14 +7946,27 @@ const accountingDossier =
         totalPaymentAmountProvisional:
           true,
 
-        grossAllocation:
-          sportFinanceClone(
-            draft.grossAllocation
-          ) ||
-          null,
+             grossAllocation:
+        sportFinanceClone(
+          draft.grossAllocation
+        ),
 
-        allocationCode:
-          sportFinanceText(
+      bociteArtParticipationTTC:
+        Number(
+          draft.bociteArtParticipationTTC ||
+          SPORT_BOCITEART_PARTICIPATION_TTC
+        ),
+
+      bociteArtParticipationVersion:
+        sportFinanceText(
+          draft.bociteArtParticipationVersion ||
+          SPORT_BOCITEART_PARTICIPATION_VERSION
+        ),
+
+      clubRef:
+
+               allocationCode:
+          sportFinanceNormalizeChoice(
             draft.allocationCode
           ),
 
@@ -7727,8 +8052,11 @@ const accountingDossier =
         finalPaymentQuoteServerSide:
           true,
 
-        bociteArtFeeRateHT:
-          sportFinanceCurrentFeeRateHT(),
+                bociteArtParticipationTTC:
+          sportFinanceBociteArtParticipationTTC(),
+
+        bociteArtParticipationVersion:
+          SPORT_BOCITEART_PARTICIPATION_VERSION,
 
         bociteArtTariffVersion:
           sportFinanceText(
@@ -7928,11 +8256,8 @@ async function sportFinanceStartCheckout(request){
           0
         ),
 
-      extraResearchAmount:
-        Number(
-          payload.extraResearchAmount ||
-          0
-        ),
+          extraResearchAmount:
+        0,
 
       paymentBaseBeforeFinalTax:
         Number(
@@ -7975,10 +8300,20 @@ async function sportFinanceStartCheckout(request){
           payload.clubRef
         ),
 
-      associationId:
-        sportFinanceText(
-          payload.associationId
-        ),
+           associationId:
+        "",
+
+      researchAssociationsSnapshot:
+        sportFinanceClone(
+          payload.researchAssociationsSnapshot
+        ) ||
+        [],
+
+      beneficiaryRefs:
+        sportFinanceClone(
+          payload.beneficiaryRefs
+        ) ||
+        [],
 
       publicationDurationHours:
         48,
@@ -8008,10 +8343,16 @@ async function sportFinanceStartCheckout(request){
           payload.bociteArtTariffVersion
         ),
 
-      feeRateHT:
+           bociteArtParticipationTTC:
         Number(
-          payload.bociteArtFeeRateHT ||
-          0
+          payload.bociteArtParticipationTTC ||
+          SPORT_BOCITEART_PARTICIPATION_TTC
+        ),
+
+      bociteArtParticipationVersion:
+        sportFinanceText(
+          payload.bociteArtParticipationVersion ||
+          SPORT_BOCITEART_PARTICIPATION_VERSION
         )
     });
 
@@ -8101,62 +8442,6 @@ async function sportFinanceStartCheckout(request){
      BLOC 6
      SPORT — INTERFACE FINANCE COMPLÈTE
      ========================================================= */
-
-  function sportFinanceAssociationOptions(selectedId){
-
-    const associations =
-      sportFinanceAssociations();
-
-    if(
-      !associations.length
-    ){
-      return (
-        '<option value="">' +
-        "En attente du choix défini par la mairie et Bo'CitéArt" +
-        "</option>"
-      );
-    }
-
-    return (
-      '<option value="">Choisir l’association</option>' +
-
-      associations
-        .map(
-          function(item){
-
-            return (
-              '<option value="' +
-              sportFinanceEscape(
-                item.id
-              ) +
-              '" ' +
-
-              (
-                String(
-                  item.id
-                ) ===
-                String(
-                  selectedId ||
-                  ""
-                )
-                  ? "selected"
-                  : ""
-              ) +
-
-              ">" +
-
-              sportFinanceEscape(
-                item.name
-              ) +
-
-              "</option>"
-            );
-          }
-        )
-        .join("")
-    );
-  }
-
 
  /* =========================================================
    ÇA COMMENCE ICI — LOGO DU CLUB
@@ -8318,23 +8603,9 @@ function sportFinanceRender(){
         ? youth.choice
         : "";
 
-    const selectedAssociationId =
-      youth.locked
-        ? youth.associationId
-        : "";
-
     const defaultStart =
       sportFinanceDateTimeLocalValue(
         sportFinanceDefaultStart()
-      );
-
-    const tariff =
-      financeFoundationCurrentTariff();
-
-    const feePercent =
-      sportFinanceRound(
-        sportFinanceCurrentFeeRateHT() *
-        100
       );
 
     const merchantClientNumber =
@@ -8672,7 +8943,7 @@ function sportFinanceRender(){
       </div>
 
 
-      <div class="sportCard">
+                   <div class="sportCard">
 
         <div class="sportSubTitle">
 
@@ -8682,7 +8953,7 @@ function sportFinanceRender(){
 
         <label class="sportLabel">
 
-          Parrainage en € HT
+          Soutien en € HT
 
         </label>
 
@@ -8695,6 +8966,76 @@ function sportFinanceRender(){
           value="50"
         >
 
+        <div class="sportStatus">
+
+          Minimum : 50 € HT.
+          Choisissez uniquement la destination du soutien.
+
+        </div>
+
+        <label class="sportCheck">
+
+          <input
+            type="radio"
+            name="bcfSportAllocation"
+            value="ALL_CLUB"
+            ${
+              lockedChoice === "ALL_CLUB"
+                ? "checked"
+                : ""
+            }
+            ${
+              youth.locked
+                ? "disabled"
+                : ""
+            }
+          >
+
+          <span>
+
+            <strong>
+              Club uniquement
+            </strong>
+
+          </span>
+
+        </label>
+
+
+        <label class="sportCheck">
+
+          <input
+            type="radio"
+            name="bcfSportAllocation"
+            value="CLUB_RESEARCH"
+            ${
+              lockedChoice === "CLUB_RESEARCH"
+                ? "checked"
+                : ""
+            }
+            ${
+              youth.locked
+                ? "disabled"
+                : ""
+            }
+            ${
+              associations.length === 4
+                ? ""
+                : "disabled"
+            }
+          >
+
+          <span>
+
+            <strong>
+              Club + Recherche
+            </strong>
+
+          </span>
+
+        </label>
+
+
         ${
           youth.locked
 
@@ -8705,12 +9046,10 @@ function sportFinanceRender(){
                   Choix collectif enregistré pour
 
                   <strong>
-
                     ${sportFinanceEscape(
                       youth.groupName ||
                       "le groupe"
                     )}
-
                   </strong>
 
                   :
@@ -8719,11 +9058,11 @@ function sportFinanceRender(){
 
                     ${
                       youth.choice ===
-                        "HALF_HALF"
+                        "CLUB_RESEARCH"
 
-                        ? "50 % pour le club / 50 % pour la recherche médicale"
+                        ? "Club + Recherche"
 
-                        : "100 % pour le club"
+                        : "Club uniquement"
                     }
 
                   </strong>.
@@ -8734,193 +9073,34 @@ function sportFinanceRender(){
 
               `
 
-            : `
+            : ""
+        }
+
+
+        ${
+          associations.length === 4
+
+            ? `
 
                 <div class="sportStatus">
 
-                  Sélectionnez la destination
-                  du parrainage
-                  pour ce dossier.
+                  Les associations de recherche
+                  sont gérées automatiquement
+                  par la configuration annuelle
+                  Bo'CitéArt.
 
                 </div>
 
               `
-        }
 
-        <label class="sportCheck">
-
-          <input
-            type="radio"
-            name="bcfSportAllocation"
-            value="ALL_CLUB"
-            ${
-              lockedChoice ===
-                "ALL_CLUB"
-                ? "checked"
-                : ""
-            }
-            ${
-              youth.locked
-                ? "disabled"
-                : ""
-            }
-          >
-
-          <span>
-
-            <strong>
-              100 % pour le club
-            </strong>
-
-          </span>
-
-        </label>
-
-        <label class="sportCheck">
-
-          <input
-            type="radio"
-            name="bcfSportAllocation"
-            value="HALF_HALF"
-            ${
-              lockedChoice ===
-                "HALF_HALF"
-                ? "checked"
-                : ""
-            }
-            ${
-              youth.locked
-                ? "disabled"
-                : ""
-            }
-            ${
-              associations.length
-                ? ""
-                : "disabled"
-            }
-          >
-
-          <span>
-
-            <strong>
-              50 % pour le club /
-              50 % pour la recherche médicale
-            </strong>
-
-          </span>
-
-        </label>
-
-        <label
-          class="sportCheck"
-          style="margin-top:14px;"
-        >
-
-          <input
-            id="bcfSportExtraResearchEnabled"
-            type="checkbox"
-          >
-
-          <span>
-
-            Ajouter un soutien supplémentaire
-            à la recherche médicale
-
-          </span>
-
-        </label>
-
-        <div
-          id="bcfSportExtraResearchBox"
-          style="
-            display:none;
-            margin-top:8px;
-          "
-        >
-
-          <label class="sportLabel">
-
-            Montant supplémentaire en €
-
-          </label>
-
-          <input
-            id="bcfSportExtraResearchAmount"
-            class="sportField"
-            type="number"
-            min="10"
-            step="0.01"
-            value="10"
-          >
-
-          <div class="sportStatus">
-
-            Minimum : 10 €.
-
-            Ce soutien reste distinct
-            du parrainage.
-
-            Sa qualification fiscale réelle
-            est contrôlée
-            avant émission du document.
-
-          </div>
-
-        </div>
-
-        <div
-          id="bcfSportAssociationBox"
-          style="
-            display:${
-              lockedChoice ===
-                "HALF_HALF"
-                ? "block"
-                : "none"
-            };
-            margin-top:12px;
-          "
-        >
-
-          <label class="sportLabel">
-
-            Association de recherche médicale
-
-          </label>
-
-          <select
-            id="bcfSportAssociation"
-            class="sportField"
-            ${
-              associations.length
-                ? ""
-                : "disabled"
-            }
-            ${
-              youth.locked &&
-              youth.associationId
-                ? "disabled"
-                : ""
-            }
-          >
-
-            ${sportFinanceAssociationOptions(
-              selectedAssociationId
-            )}
-
-          </select>
-
-        </div>
-
-        ${
-          associations.length
-            ? ""
             : `
 
                 <div class="sportStatus">
 
-                  Associations de recherche :
-                  en attente du choix défini
-                  par la mairie et Bo'CitéArt.
+                  L’option Club + Recherche
+                  sera disponible lorsque
+                  les 4 associations annuelles
+                  auront été validées.
 
                 </div>
 
@@ -8928,8 +9108,7 @@ function sportFinanceRender(){
         }
 
       </div>
-
-
+      
       <div class="sportCard">
 
         <div class="sportSubTitle">
@@ -9171,39 +9350,6 @@ function sportFinanceRender(){
           );
         }
       );
-
-
-    const extraEnabled =
-      sportFinanceField(
-        "bcfSportExtraResearchEnabled"
-      );
-
-    if(
-      extraEnabled
-    ){
-
-      extraEnabled.onchange =
-        function(){
-
-          sportFinanceUpdateResearchBox();
-
-          sportFinanceRenderTemplates();
-        };
-    }
-
-
-    const extraAmount =
-      sportFinanceField(
-        "bcfSportExtraResearchAmount"
-      );
-
-    if(
-      extraAmount
-    ){
-      extraAmount.oninput =
-        sportFinanceRenderTemplates;
-    }
-
 
     [
       "bcfSportMerchantName",
@@ -10077,11 +10223,8 @@ sportFinanceRenderLatestOperation();
           0
         ),
 
-      extraResearchAmount:
-        Number(
-          draft.extraResearchAmount ||
-          0
-        ),
+           extraResearchAmount:
+        0,
 
       paymentBaseBeforeFinalTax:
         Number(
@@ -10115,10 +10258,20 @@ sportFinanceRenderLatestOperation();
           draft.representativeRef
         ),
 
-      associationId:
-        sportFinanceText(
-          draft.associationId
-        ),
+           associationId:
+        "",
+
+      researchAssociationsSnapshot:
+        sportFinanceClone(
+          draft.researchAssociationsSnapshot
+        ) ||
+        [],
+
+      beneficiaryRefs:
+        sportFinanceClone(
+          draft.beneficiaryRefs
+        ) ||
+        [],
 
       publicationDurationHours:
         48,
