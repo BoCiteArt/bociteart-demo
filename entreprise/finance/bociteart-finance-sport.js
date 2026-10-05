@@ -1639,6 +1639,7 @@
   }
 
   function financeFoundationInvoiceBlueprint(kind){
+
     return {
 
       documentKind:
@@ -1734,491 +1735,513 @@
         dueDateOrPaidAt:
           true,
 
-             const source =
-      input &&
-      typeof input === "object"
-        ? input
-        : {};
+        pspReference:
+          "when_applicable",
 
-    const dossierRef =
-      sportFinanceText(
-        source.dossierRef
-      ) ||
-      sportFinanceId(
-        "accounting-dossier"
-      );
+        paymentTerms:
+          true,
 
-    return {
+        latePenaltyMention:
+          "when_legally_required",
 
-      dossierRef:
-        dossierRef,
-
-      operationRef:
-        sportFinanceText(
-          source.operationRef
-        ),
-
-      module:
-        sportFinanceText(
-          source.module
-        ),
-
-      flowType:
-        sportFinanceText(
-          source.flowType
-        ),
-
-      client:
-        sportFinanceClone(
-          source.client
-        ) ||
-        null,
-
-      beneficiaries:
-        sportFinanceClone(
-          source.beneficiaries
-        ) ||
-        [],
-
-      payment:
-        sportFinanceClone(
-          source.payment
-        ) ||
-        {},
-
-      taxation:
-        sportFinanceClone(
-          source.taxation
-        ) ||
-        {
-          finalQualification:
-            "server_only"
-        },
-
-      fees:{
-
-        bociteart:{
-
-          initialBaseRateHT:
-            BOCITEART_BASE_FEE_RATE_HT,
-
-          appliedRateHT:
-            source.bociteArtFeeRateHT == null
-              ? financeFoundationCurrentFeeRateHT()
-              : Number(
-                  source.bociteArtFeeRateHT
-                ),
-
-          vatTreatment:
-            "according_to_actual_bociteart_status",
-
-          invoiceMode:
-            "monthly_automatic"
-        },
-
-        psp:{
-
-          actualAmount:
-            source.pspFeeActualAmount == null
-              ? null
-              : Number(
-                  source.pspFeeActualAmount
-                ),
-
-          separateFromBociteArt:
-            true
-        }
+        recoveryCompensationMention:
+          "when_legally_required"
       },
 
-      documents:
-        financeFoundationDocumentManifest({
+      electronicInvoicing:{
 
-          dossierRef:
-            dossierRef,
+        categoryOfOperation:
+          true,
 
-          operationRef:
-            source.operationRef,
+        customerSiren:
+          "when_required",
 
-          payerClientNumber:
-            source.client &&
-            source.client.clientNumber,
+        platformRouting:
+          "server_connector",
 
-          beneficiaryClientNumbers:
-            (
-              source.beneficiaries ||
-              []
-            )
-              .map(
-                function(item){
-                  return sportFinanceText(
-                    item &&
-                    item.clientNumber
-                  );
-                }
-              )
-              .filter(Boolean),
-
-          extraResearchAmount:
-            source.extraResearchAmount
-        }),
-
-      agent1:{
-        status:"pending",
-        blueprint:
-          financeFoundationAgent1Blueprint()
+        legalFormat:
+          "current_rule_monitored_by_agent2"
       },
 
-      agent2:{
-        status:"pending",
-        blueprint:
-          financeFoundationAgent2Blueprint()
+      correction:{
+
+        originalNeverSilentlyRewritten:
+          true,
+
+        rectificationDocumentWhenLegallyRequired:
+          true,
+
+        auditTrailRequired:
+          true
       },
 
-      accountingPlatform:{
-        status:
-          "waiting_agent2",
-
-        platformId:
-          "",
-
-        batchRef:
-          "",
-
-        transmittedAt:
-          ""
-      },
-
-      archive:{
-        required:true,
-        years:ACCOUNTING_RETENTION_YEARS,
-        status:"pending"
-      },
-
-      createdAt:
-        sportFinanceNow(),
-
-      updatedAt:
-        sportFinanceNow()
+      retentionYears:
+        ACCOUNTING_RETENTION_YEARS
     };
   }
 
-  function financeFoundationSaveAudit(entry){
-    const rows =
+
+  function financeFoundationGetDailyAdminSummary(){
+
+    const operations =
+      sportFinanceReadOperations();
+
+    const audits =
       sportFinanceReadJson(
         window.localStorage,
         LOCAL_AUDIT_KEY,
         []
       );
 
-    const list =
-      Array.isArray(rows)
-        ? rows
-        : [];
-
-    const next =
-      Object.assign(
-        {
-          id:sportFinanceId("audit"),
-          createdAt:sportFinanceNow()
-        },
-        sportFinanceClone(entry) ||
-        {}
-      );
-
-    list.push(next);
-
-    sportFinanceWriteJson(
-      window.localStorage,
-      LOCAL_AUDIT_KEY,
-      list.slice(
-        -MAX_LOCAL_AUDIT
+    const problems =
+      (
+        Array.isArray(audits)
+          ? audits
+          : []
       )
-    );
+        .filter(
+          function(item){
 
-    return next;
-  }
+            return !!(
+              item &&
+              (
+                item.level === "red" ||
+                item.level === "orange"
+              ) &&
+              item.resolved !== true
+            );
+          }
+        );
 
-  function financeFoundationCurrentTariff(){
-    const saved =
-      sportFinanceReadJson(
-        window.localStorage,
-        LOCAL_TARIFF_KEY,
-        null
-      );
+    const totals =
+      operations.reduce(
+        function(acc,item){
 
-    if(
-      saved &&
-      typeof saved === "object"
-    ){
-      return saved;
-    }
+          const amount =
+            Number(
+              item.totalPaymentAmount ||
+              item.amountHT ||
+              0
+            );
 
-    const initial = {
+          if(
+            item.status === "paid"
+          ){
 
-      version:
-        "BCA-FEE-1",
+            acc.paidCount +=
+              1;
 
-      effectiveFrom:
-        "2026-09-09T00:00:00.000Z",
+            acc.paidAmount +=
+              Number.isFinite(amount)
+                ? amount
+                : 0;
+          }
 
-      bociteArtRateHT:
-        BOCITEART_BASE_FEE_RATE_HT,
+          if(
+            item.status === "payment_pending"
+          ){
+            acc.pendingCount +=
+              1;
+          }
 
-      pspIndexReference:
-        100,
+          if(
+            item.status === "refused" ||
+            item.status === "cancelled" ||
+            item.status === "disputed"
+          ){
+            acc.problemCount +=
+              1;
+          }
 
-      source:
-        "initial_policy",
-
-      serverAuthorityRequiredInProduction:
-        true,
-
-      createdAt:
-        sportFinanceNow()
-    };
-
-    sportFinanceWriteJson(
-      window.localStorage,
-      LOCAL_TARIFF_KEY,
-      initial
-    );
-
-    return initial;
-  }
-
-  function financeFoundationCurrentFeeRateHT(){
-    const tariff =
-      financeFoundationCurrentTariff();
-
-    const rate =
-      Number(
-        tariff &&
-        tariff.bociteArtRateHT
-      );
-
-    return (
-      Number.isFinite(rate) &&
-      rate > 0
-    )
-      ? rate
-      : BOCITEART_BASE_FEE_RATE_HT;
-  }
-
-  function financeFoundationAccountingDestination(){
-    const saved =
-      sportFinanceReadJson(
-        window.localStorage,
-        LOCAL_ACCOUNTING_SETTINGS_KEY,
-        null
-      );
-
-    if(
-      saved &&
-      typeof saved === "object"
-    ){
-      return saved;
-    }
-
-    return {
-
-      status:
-        "configuration_pending",
-
-      accountantClientRef:
-        "",
-
-      accountantName:
-        "",
-
-      accountingFirmName:
-        "",
-
-      platformId:
-        "",
-
-      platformName:
-        "",
-
-      platformEndpointConfiguredServerSide:
-        false,
-
-      transmissionMode:
-        "dedicated_accounting_platform",
-
-      updatedAt:
-        sportFinanceNow()
-    };
-  }
-
-  function financeFoundationConfigureAccountingDestination(nextSettings){
-    const source =
-      nextSettings &&
-      typeof nextSettings === "object"
-        ? nextSettings
-        : {};
-
-    const previous =
-      financeFoundationAccountingDestination();
-
-    const next =
-      Object.assign(
-        {},
-        previous,
+          return acc;
+        },
         {
-          accountantClientRef:
-            sportFinanceText(
-              source.accountantClientRef ||
-              previous.accountantClientRef
-            ),
-
-          accountantName:
-            sportFinanceText(
-              source.accountantName ||
-              previous.accountantName
-            ),
-
-          accountingFirmName:
-            sportFinanceText(
-              source.accountingFirmName ||
-              previous.accountingFirmName
-            ),
-
-          platformId:
-            sportFinanceText(
-              source.platformId ||
-              previous.platformId
-            ),
-
-          platformName:
-            sportFinanceText(
-              source.platformName ||
-              previous.platformName
-            ),
-
-          status:
-            sportFinanceText(
-              source.status ||
-              previous.status ||
-              "configuration_pending"
-            ),
-
-          platformEndpointConfiguredServerSide:
-            source.platformEndpointConfiguredServerSide === true,
-
-          transmissionMode:
-            "dedicated_accounting_platform",
-
-          updatedAt:
-            sportFinanceNow()
+          paidCount:0,
+          paidAmount:0,
+          pendingCount:0,
+          problemCount:0
         }
       );
 
-    sportFinanceWriteJson(
-      window.localStorage,
-      LOCAL_ACCOUNTING_SETTINGS_KEY,
-      next
-    );
-
-    return sportFinanceClone(next);
-  }
-
-  function financeFoundationInvoiceBlueprint(kind){
     return {
 
-      documentKind:
-        sportFinanceText(kind) ||
-        "generic_invoice",
+      generatedAt:
+        sportFinanceNow(),
 
-      finalGeneration:
-        "server_only",
+      state:
+        problems.some(
+          function(item){
 
-      finalInvoiceNumber:
-        "server_chronological_continuous_sequence",
+            return (
+              item.level === "red"
+            );
+          }
+        )
+          ? "red"
+          : (
+              problems.length
+                ? "orange"
+                : "green"
+            ),
 
-      invoiceDate:
-        "server_issue_date",
+      problems:
+        sportFinanceClone(
+          problems
+        ) ||
+        [],
 
-      serviceDateOrPeriod:
-        "operation_or_period_date",
+      totals:
+        totals,
 
-      currency:
-        "EUR",
+      message:
+        problems.length
+          ? problems.length +
+            " point(s) nécessitent une attention."
+          : "Tout est OK."
+    };
+  }
 
-      issuer:{
 
-        permanentClientNumber:
-          true,
+  if(
+    !window.BociteFinanceFoundation ||
+    window.BociteFinanceFoundation.ready !== true
+  ){
 
-        legalName:
-          true,
+    window.BociteFinanceFoundation = {
 
-        legalForm:
-          true,
+      ready:
+        true,
 
-        sirenSiret:
-          true,
+      version:
+        VERSION,
 
-        address:
-          true,
+      policies:
+        financeFoundationAccountingPolicies,
 
-        vatNumber:
-          "when_applicable"
-      },
+      agent1Blueprint:
+        financeFoundationAgent1Blueprint,
 
-      customer:{
+      agent2Blueprint:
+        financeFoundationAgent2Blueprint,
 
-        permanentClientNumber:
-          true,
+      ensureLocalClientNumber:
+        financeFoundationEnsureLocalClientNumber,
 
-        legalName:
-          true,
+      formatClientNumber:
+        financeFoundationFormatClientNumber,
 
-        sirenSiret:
-          "when_required",
+      buildAccountingDossier:
+        financeFoundationBuildAccountingDossier,
 
-        billingAddress:
-          true,
+      saveAudit:
+        financeFoundationSaveAudit,
 
-        vatNumber:
-          "when_applicable"
-      },
+      getDailyAdminSummary:
+        financeFoundationGetDailyAdminSummary,
 
-      operation:{
+      getCurrentTariff:
+        function(){
 
-        reference:
-          true,
+          return sportFinanceClone(
+            financeFoundationCurrentTariff()
+          );
+        },
 
-        description:
-          true,
+      getCurrentFeeRateHT:
+        financeFoundationCurrentFeeRateHT,
 
-        quantity:
-          true,
+      getAccountingDestination:
+        function(){
 
-        unitPriceHT:
-          true,
+          return sportFinanceClone(
+            financeFoundationAccountingDestination()
+          );
+        },
 
-        totalHT:
-          true,
+      configureAccountingDestination:
+        financeFoundationConfigureAccountingDestination,
 
-        vatRate:
-          "according_to_actual_status",
+      invoiceBlueprint:
+        financeFoundationInvoiceBlueprint,
 
-        vatAmount:
-          "server_calculated",
+      runGovernanceCheck:
+        async function(){
 
-        totalTTC:
-          "server_calculated"
-      },
+          if(
+            sportFinanceIsProduction()
+          ){
 
-      payment:{
+            return sportFinanceServerPost(
 
-        method:
-          true,
+              "/finance/governance/run",
 
-        dueDateOrPaidAt:
-          true,
+              {
 
-                     item.validated === true &&
+                requestedAt:
+                  sportFinanceNow(),
+
+                currentTariff:
+                  financeFoundationCurrentTariff(),
+
+                policies:
+                  financeFoundationAccountingPolicies()
+              }
+            );
+          }
+
+          return {
+
+            ok:
+              true,
+
+            mode:
+              "preproduction",
+
+            agent2:
+              "ready_for_server_monitoring",
+
+            tariff:
+              financeFoundationCurrentTariff(),
+
+            legalMonitoring:
+              "server_connection_required",
+
+            accountingPlatform:
+              "configuration_pending"
+          };
+        }
+    };
+  }
+
+
+  /* =========================================================
+     ÇA FINIT ICI — BLOC 1
+     ========================================================= */
+
+
+    /* =========================================================
+     BLOC 2
+     SPORT — IDENTITÉS — NUMÉROS CLIENTS — LOGO — PROFIL
+     ========================================================= */
+
+  function sportFinanceClub(){
+
+    if(
+      window.BociteSportModule &&
+      typeof window.BociteSportModule.getClub ===
+        "function"
+    ){
+
+      return (
+        window.BociteSportModule
+          .getClub() ||
+        {}
+      );
+    }
+
+    return {};
+  }
+
+
+  function sportFinanceSession(){
+
+    let source =
+      {};
+
+    if(
+      window.BociteSportModule &&
+      typeof window.BociteSportModule.getSession ===
+        "function"
+    ){
+
+      source =
+        window.BociteSportModule
+          .getSession() ||
+        {};
+
+    }else{
+
+      source =
+        window.bociteartSportSession ||
+        {};
+    }
+
+    return {
+
+      accountId:
+        sportFinanceText(
+          source.accountId ||
+          source.id
+        ),
+
+      name:
+        sportFinanceText(
+          source.name
+        ),
+
+      role:
+        sportFinanceText(
+          source.role
+        ),
+
+      team:
+        sportFinanceText(
+          source.team
+        )
+    };
+  }
+
+
+  function sportFinanceYouthOrientation(){
+
+    if(
+      window.BociteSportModule &&
+      typeof window.BociteSportModule.getYouthOrientation ===
+        "function"
+    ){
+
+      return (
+        window.BociteSportModule
+          .getYouthOrientation() ||
+        {}
+      );
+    }
+
+    return {};
+  }
+
+
+  function sportFinanceSportAssociations(){
+
+    if(
+      window.BociteSportModule &&
+      typeof window.BociteSportModule.getAssociations ===
+        "function"
+    ){
+
+      const rows =
+        window.BociteSportModule
+          .getAssociations();
+
+      return Array.isArray(rows)
+        ? rows
+        : [];
+    }
+
+    return [];
+  }
+
+
+  function sportFinanceAssociations(){
+
+    const fromSport =
+      sportFinanceSportAssociations()
+        .filter(
+          function(item){
+
+            return !!(
+
+              item &&
+
+              item.active === true &&
+
+              item.verified === true &&
+
+              item.canIssueRequiredDocument === true &&
+
+              item.renewalEligible !== false &&
+
+              sportFinanceText(
+                item.id
+              )
+            );
+          }
+        )
+        .map(
+          function(item){
+
+            return {
+
+              id:
+                sportFinanceText(
+                  item.id
+                ),
+
+              name:
+                sportFinanceText(
+                  item.legalName ||
+                  item.label ||
+                  item.name
+                ),
+
+              legalName:
+                sportFinanceText(
+                  item.legalName
+                ),
+
+              sirenSiret:
+                sportFinanceText(
+                  item.sirenSiret ||
+                  item.siret ||
+                  item.siren
+                ),
+
+              rnaNumber:
+                sportFinanceText(
+                  item.rnaNumber
+                ),
+
+              address:
+                sportFinanceText(
+                  item.address
+                ),
+
+              accountingEmail:
+                sportFinanceText(
+                  item.accountingEmail
+                ),
+
+              taxReceiptEligible:
+                item.taxReceiptEligible === true,
+
+              clientNumber:
+                sportFinanceText(
+                  item.clientNumber
+                ),
+
+              validated:
+                true
+            };
+          }
+        );
+
+    if(
+      fromSport.length
+    ){
+      return fromSport;
+    }
+
+    const shared =
+      window
+        .BOCITEART_FINANCE_ASSOCIATIONS;
+
+    if(
+      !Array.isArray(
+        shared
+      )
+    ){
+      return [];
+    }
+
+    return shared
+      .filter(
+        function(item){
+
+          return !!(
+
+            item &&
+
+            item.validated === true &&
 
             sportFinanceText(
               item.id
@@ -2702,7 +2725,7 @@
 
     return {
 
-            clientNumber:
+      clientNumber:
         sportFinanceEnsureAssociationClientNumber(
           association
         ),
