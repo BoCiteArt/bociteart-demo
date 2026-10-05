@@ -2024,7 +2024,7 @@
      SPORT — IDENTITÉS — NUMÉROS CLIENTS — LOGO — PROFIL
      ========================================================= */
 
-  function sportFinanceClub(){
+  function sportFinanceClub(){ 
 
     if(
       window.BociteSportModule &&
