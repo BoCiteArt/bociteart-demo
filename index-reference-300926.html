@@ -1062,14 +1062,23 @@ html.bocite-entry-pending body > .page{
 
       try{
 
-        const journeyCompleted =
+        const journeyCompletedV8 =
+          localStorage.getItem(
+            "bociteart_entry_completed_v8"
+          );
+
+        const journeyCompletedV7 =
           localStorage.getItem(
             "bociteart_entry_completed_v7"
           );
 
-        if(journeyCompleted){
+        if(
+          journeyCompletedV8 ||
+          journeyCompletedV7
+        ){
 
           revealBociteartApplication();
+          return;
         }
 
       }catch(error){
@@ -1079,10 +1088,29 @@ html.bocite-entry-pending body > .page{
           error
         );
       }
+
+      window.setTimeout(
+        function(){
+
+          const entryOverlay =
+            document.querySelector(
+              "#bociteLegalOverlay," +
+              "#bociteIntroductionOverlay," +
+              "#bociteRegistrationOverlay," +
+              "#bociteSynoptiqueOverlay"
+            );
+
+          if(!entryOverlay){
+
+            revealBociteartApplication();
+          }
+
+        },
+        1500
+      );
     }
   );
 </script>
-
 </head>
 
 <body>
