@@ -33336,6 +33336,80 @@ window.openAdvertisingProfileAfterPayment =
 
 <script src="./entreprise/js/bociteart-research-associations.js?v=20260914-16"></script>
 
+   <script>
+(function(){
+
+  const box =
+    document.createElement("div");
+
+  box.style.cssText =
+    "position:fixed;" +
+    "top:0;" +
+    "left:0;" +
+    "right:0;" +
+    "z-index:2147483647;" +
+    "background:#ffffff;" +
+    "border:4px solid #a51e22;" +
+    "padding:12px;" +
+    "box-sizing:border-box;" +
+    "color:#111111;" +
+    "font:700 14px Arial,sans-serif;";
+
+  const result = [];
+
+  result.push(
+    "START : " +
+    (
+      window.BociteStart
+        ? "OK"
+        : "ABSENT"
+    )
+  );
+
+  result.push(
+    "LEGAL : " +
+    (
+      window.BociteLegal &&
+      typeof window.BociteLegal.open === "function"
+        ? "OK"
+        : "ABSENT"
+    )
+  );
+
+  try{
+
+    if(
+      window.BociteLegal &&
+      typeof window.BociteLegal.open === "function"
+    ){
+
+      window.BociteLegal.open();
+
+      result.push(
+        "OUVERTURE LEGAL : OK"
+      );
+    }
+
+  }catch(error){
+
+    result.push(
+      "ERREUR LEGAL : " +
+      error.name +
+      " — " +
+      error.message
+    );
+  }
+
+  box.textContent =
+    result.join(" | ");
+
+  document.body.appendChild(
+    box
+  );
+
+})();
+</script>  
+
  <!--
 <script src="./entreprise/finance/bociteart-finance-sport.js?v=0310262232"></script>
 -->    
