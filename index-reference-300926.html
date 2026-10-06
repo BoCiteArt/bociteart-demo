@@ -33315,11 +33315,11 @@ window.openAdvertisingProfileAfterPayment =
 <script src="./entreprise/bociteart-school-word-simple.js?v=20260914-16"></script>
 <script src="./entreprise/bociteart-young-intro.js?v=20260914-16"></script>
 
- 
+
 <!-- =====================================================
      BO'CITÉART — FINANCE
      ORDRE OBLIGATOIRE :
-    CORE → UI → TEST → REGISTRE RECHERCHE → FINANCE SPORT → SPORT
+     CORE → UI → TEST → REGISTRE RECHERCHE → FINANCE SPORT → SPORT
      ===================================================== -->
 
 <script src="./entreprise/finance/bociteart-finance-core.js?v=20260929-01"></script>
@@ -33332,16 +33332,10 @@ window.openAdvertisingProfileAfterPayment =
      REGISTRE CENTRAL
      ASSOCIATIONS DE RECHERCHE
      ========================= -->
- 
 
 <script src="./entreprise/js/bociteart-research-associations.js?v=20260914-16"></script>
 
-
- <!--
 <script src="./entreprise/finance/bociteart-finance-sport.js?v=0310262232"></script>
--->    
-
-
 
 
 <!-- =========================
@@ -33350,117 +33344,34 @@ window.openAdvertisingProfileAfterPayment =
 
 <script src="./entreprise/sport/bociteart-sport.js?v=20260914-16"></script>
 
-    <!-- =========================
+
+<!-- =========================
      MODULE MAIRIE
      ========================= -->
+
 <script src="./entreprise/health/bociteart-health-api.js?v=20260914-02"></script>
-<script src="./entreprise/mairie/bociteart-mairie.js?v=20260927-01"></script> 
+<script src="./entreprise/mairie/bociteart-mairie.js?v=20260927-01"></script>
 <script src="./entreprise/commerce/bociteart-commerce.js?v=20260930-01"></script>
 
-<!-- ===================================================== 
+
+<!-- =====================================================
      BO'CITÉART — QR ÉCOLE → MAIRIE
      ===================================================== -->
-<div style="
-position:fixed;
-top:0;
-left:0;
-right:0;
-z-index:2147483647;
-background:#a51e22;
-color:white;
-padding:18px;
-font-size:20px;
-font-weight:bold;
-text-align:center;
-">
-TEST AVANT QR — OK
-</div>
+
 <script src="https://unpkg.com/qrcodejs@1.0.0/qrcode.js"></script>
-     
-     <!-- =========================
+
+
+<!-- =========================
      DÉMARRAGE BO'CITÉART
      TOUJOURS EN DERNIER
      ========================= -->
 
 <script src="./entreprise/bociteart-start.js?v=0610260926"></script>
-        <script>
-(function(){
-
-  const box =
-    document.createElement("div");
-
-  box.style.cssText =
-    "position:fixed;" +
-    "top:0;" +
-    "left:0;" +
-    "right:0;" +
-    "z-index:2147483647;" +
-    "background:#ffffff;" +
-    "border:4px solid #a51e22;" +
-    "padding:12px;" +
-    "box-sizing:border-box;" +
-    "color:#111111;" +
-    "font:700 14px Arial,sans-serif;";
-
-  const result = [];
-
-  result.push(
-    "START : " +
-    (
-      window.BociteStart
-        ? "OK"
-        : "ABSENT"
-    )
-  );
-
-  result.push(
-    "LEGAL : " +
-    (
-      window.BociteLegal &&
-      typeof window.BociteLegal.open === "function"
-        ? "OK"
-        : "ABSENT"
-    )
-  );
-
-  try{
-
-    if(
-      window.BociteLegal &&
-      typeof window.BociteLegal.open === "function"
-    ){
-
-      window.BociteLegal.open();
-
-      result.push(
-        "OUVERTURE LEGAL : OK"
-      );
-    }
-
-  }catch(error){
-
-    result.push(
-      "ERREUR LEGAL : " +
-      error.name +
-      " — " +
-      error.message
-    );
-  }
-
-  box.textContent =
-    result.join(" | ");
-
-  document.body.appendChild(
-    box
-  );
-
-})();
-</script>  
-    
 
 
 <!-- =========================================================
      ÇA FINIT ICI — CHARGEMENT FINAL DES MODULES BO'CITÉART
      ========================================================= -->
+
 </body>
 </html>
