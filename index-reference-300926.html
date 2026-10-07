@@ -33527,14 +33527,106 @@ window.openAdvertisingProfileAfterPayment =
     );
   }
 
+<script src="./entreprise/bociteart-start.js?v=0610260926"></script>
 
-  /* =====================================================
-     BOUTONS PUBLICITÉ DU MODULE COMMERCE / ENTREPRISE
+<script>
+/* =========================================================
+   ÇA COMMENCE ICI
+   INDEX-TEST — OUVERTURE DÉMO PUBLICITÉS
+   ========================================================= */
 
-     INDEX-TEST UNIQUEMENT :
-     on intercepte AVANT le contrôle du dossier
-     d'organisation afin de permettre la démonstration.
-     ===================================================== */
+(function(){
+
+  "use strict";
+
+  function openAdvertisingDemo(event){
+
+    if(event){
+      event.preventDefault();
+      event.stopPropagation();
+
+      if(
+        typeof event.stopImmediatePropagation === "function"
+      ){
+        event.stopImmediatePropagation();
+      }
+    }
+
+    window.BOCITEART_MODAL_CONTEXT =
+      "advertising_visibility";
+
+    window.currentModule =
+      "advertising_visibility";
+
+    window.currentEntrepriseScreen =
+      null;
+
+    if(
+      Array.isArray(
+        window.modalHistory
+      )
+    ){
+      window.modalHistory.length = 0;
+    }
+
+    if(
+      typeof window.openTicker === "function"
+    ){
+      window.openTicker();
+      return;
+    }
+
+    alert(
+      "L'espace Publicités & visibilité est momentanément indisponible."
+    );
+  }
+
+
+  function connectDemoAdvertising(){
+
+    const ticker =
+      document.getElementById(
+        "ticker"
+      );
+
+    if(ticker){
+
+      ticker.onclick =
+        function(event){
+          openAdvertisingDemo(event);
+        };
+    }
+
+
+    const ids = [
+      "commerceLargeAdvertisingBtn",
+      "merchantLargeAdvertisingBtn",
+      "enterpriseLargeAdvertisingBtn",
+      "directionLargeAdvertisingBtn"
+    ];
+
+
+    ids.forEach(
+      function(id){
+
+        const button =
+          document.getElementById(id);
+
+        if(!button){
+          return;
+        }
+
+        button.onclick =
+          function(event){
+            openAdvertisingDemo(event);
+          };
+      }
+    );
+  }
+
+
+  connectDemoAdvertising();
+
 
   document.addEventListener(
     "click",
@@ -33542,9 +33634,9 @@ window.openAdvertisingProfileAfterPayment =
 
       const target =
         event.target &&
-        typeof event.target.closest ===
-          "function"
+        typeof event.target.closest === "function"
           ? event.target.closest(
+              "#ticker," +
               "#commerceLargeAdvertisingBtn," +
               "#merchantLargeAdvertisingBtn," +
               "#enterpriseLargeAdvertisingBtn," +
@@ -33552,66 +33644,30 @@ window.openAdvertisingProfileAfterPayment =
             )
           : null;
 
-
       if(!target){
         return;
       }
 
-
-      openAdvertisingDemo(
-        event
-      );
+      openAdvertisingDemo(event);
 
     },
     true
   );
 
 
-  document.addEventListener(
-    "keydown",
-    function(event){
-
-      if(
-        event.key !== "Enter" &&
-        event.key !== " "
-      ){
-        return;
-      }
-
-
-      const target =
-        event.target &&
-        typeof event.target.closest ===
-          "function"
-          ? event.target.closest(
-              "#commerceLargeAdvertisingBtn," +
-              "#merchantLargeAdvertisingBtn," +
-              "#enterpriseLargeAdvertisingBtn," +
-              "#directionLargeAdvertisingBtn"
-            )
-          : null;
-
-
-      if(!target){
-        return;
-      }
-
-
-      openAdvertisingDemo(
-        event
-      );
-
-    },
-    true
+  window.setInterval(
+    connectDemoAdvertising,
+    500
   );
 
 })();
 
 /* =========================================================
    ÇA FINIT ICI
-   INDEX-TEST — ACCÈS DIRECT DÉMO PUBLICITÉS
+   INDEX-TEST — OUVERTURE DÉMO PUBLICITÉS
    ========================================================= */
 </script>
+
 <!-- =========================================================
      ÇA FINIT ICI — CHARGEMENT FINAL DES MODULES BO'CITÉART
      ========================================================= -->
