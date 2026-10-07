@@ -7630,7 +7630,6 @@ window.openMaintenanceBociteart = function(){
   );
 };
 
-
 /* =========================================================
    MAINTENANCE GÉNÉRALE :
    BLOQUER LES ACCÈS PUBLICS,
@@ -7648,18 +7647,29 @@ document.addEventListener(
       return;
     }
 
-
     /*
       Le Pilotage Bo’CitéArt conserve la main.
     */
-    if(window.bociteartAdminSession){
-      return;
-    }
+if(window.bociteartAdminSession){
+  return;
+}
 
-/*
-  ANNUAIRE SANTÉ + AIDE
-  Accès indépendant.
-*/
+
+const target =
+  event.target instanceof Element
+    ? event.target
+    : null;
+
+if(!target){
+  return;
+}
+
+
+/* =========================================================
+   ANNUAIRE SANTÉ + AIDE
+   ACCÈS INDÉPENDANT
+   ========================================================= */
+
 if(
   target.closest("#openHealthHelp")
 ){
@@ -7683,25 +7693,20 @@ if(
       "function"
   ){
     window.openSanteVille();
+    return;
   }
-  else{
-    alert(
-      "L'annuaire santé + aide est momentanément indisponible."
-    );
-  }
+
+  alert(
+    "L'annuaire santé + aide est momentanément indisponible."
+  );
 
   return;
 }
-    
-    const target =
-      event.target instanceof Element
-        ? event.target
-        : null;
 
-    if(!target){
-      return;
-    }
 
+/* =========================================================
+   FIN — ANNUAIRE SANTÉ + AIDE
+   ========================================================= */
 
     /*
       Les services d'urgence et d'aide
