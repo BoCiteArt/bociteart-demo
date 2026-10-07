@@ -33427,6 +33427,100 @@ window.openAdvertisingProfileAfterPayment =
 
 <script src="./entreprise/bociteart-start.js?v=0610260926"></script>
 
+ <script src="./entreprise/bociteart-start.js?v=0610260926"></script>
+
+<script>
+/* =========================================================
+   ÇA COMMENCE ICI
+   INDEX-TEST — ACCÈS DÉMO AU GRAND BANDEAU PUBLICITAIRE
+   ========================================================= */
+
+(function(){
+
+  "use strict";
+
+  const ticker =
+    document.getElementById(
+      "ticker"
+    );
+
+  if(!ticker){
+    return;
+  }
+
+
+  function openAdvertisingDemo(event){
+
+    if(event){
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      if(
+        typeof event.stopImmediatePropagation ===
+          "function"
+      ){
+        event.stopImmediatePropagation();
+      }
+    }
+
+
+    if(
+      typeof window.openTicker ===
+        "function"
+    ){
+
+      window.openTicker();
+      return;
+    }
+
+
+    alert(
+      "L'espace Publicités & visibilité est momentanément indisponible."
+    );
+  }
+
+
+  ticker.addEventListener(
+    "click",
+    openAdvertisingDemo,
+    true
+  );
+
+
+  ticker.addEventListener(
+    "keydown",
+    function(event){
+
+      if(
+        event.key === "Enter" ||
+        event.key === " "
+      ){
+
+        openAdvertisingDemo(
+          event
+        );
+      }
+
+    },
+    true
+  );
+
+})();
+
+/* =========================================================
+   ÇA FINIT ICI
+   INDEX-TEST — ACCÈS DÉMO AU GRAND BANDEAU PUBLICITAIRE
+   ========================================================= */
+</script>
+
+
+<!-- =========================================================
+     ÇA FINIT ICI — CHARGEMENT FINAL DES MODULES BO'CITÉART
+     ========================================================= -->
+
+</body>
+</html>     
 
 <!-- =========================================================
      ÇA FINIT ICI — CHARGEMENT FINAL DES MODULES BO'CITÉART
