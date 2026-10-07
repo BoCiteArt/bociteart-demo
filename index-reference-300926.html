@@ -7674,7 +7674,6 @@ document.addEventListener(
     if(
       target.closest("#btn112") ||
       target.closest("#btnSos") ||
-      target.closest("#openHealthHelp") ||
       target.closest("#choice") ||
       target.closest(
         '[data-bocite-emergency="1"]'
@@ -15054,6 +15053,43 @@ function schoolGetTeacherIdentifier(account){
     if(!target){
       return null;
     }
+
+    /*
+  ANNUAIRE SANTÉ + AIDE
+  Accès indépendant des numéros d'urgence.
+*/
+if(
+  target.closest("#openHealthHelp")
+){
+
+  event.preventDefault();
+  event.stopImmediatePropagation();
+
+  window.BOCITEART_MODAL_CONTEXT =
+    "citizen_health_help";
+
+  if(
+    Array.isArray(
+      window.modalHistory
+    )
+  ){
+    window.modalHistory.length = 0;
+  }
+
+  if(
+    typeof window.openSanteVille ===
+      "function"
+  ){
+    window.openSanteVille();
+  }
+  else{
+    alert(
+      "L'annuaire santé + aide est momentanément indisponible."
+    );
+  }
+
+  return;
+}
 
     return schoolLoadClasses().find(function(row){
       return row && String(row.name || "").trim().toLowerCase() === target;
