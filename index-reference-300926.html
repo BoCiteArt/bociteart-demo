@@ -1455,34 +1455,56 @@ html.bocite-entry-pending body > .page{
     "
   >
     <div
-      id="openHealthHelp"
-      role="button"
-      tabindex="0"
-      aria-label="Annuaire santé et aide"
-      style="
-        min-height:72px;
-        height:100%;
-        border-radius:20px;
-        border:2px solid #2f5d46;
-        background:#ffffff;
-        padding:8px 4px;
-        box-sizing:border-box;
-        display:flex;
-        flex-direction:column;
-        justify-content:center;
-        align-items:center;
-        text-align:center;
-        cursor:pointer;
-        color:#2f5d46;
-        font-size:10px;
-        line-height:1.15;
-        font-weight:700;
-        overflow:hidden;
-      "
-    >
-      Annuaire santé<br>
-      + aide
-    </div>
+  id="openHealthHelp"
+  role="button"
+  tabindex="0"
+  aria-label="Annuaire santé et aide"
+
+  onclick="
+    window.BOCITEART_MODAL_CONTEXT='citizen_health_help';
+
+    if(Array.isArray(window.modalHistory)){
+      window.modalHistory.length=0;
+    }
+
+    if(typeof window.openSanteVille==='function'){
+      window.openSanteVille();
+    }else{
+      alert('L’annuaire santé + aide est momentanément indisponible.');
+    }
+  "
+
+  onkeydown="
+    if(event.key==='Enter' || event.key===' '){
+      event.preventDefault();
+      this.click();
+    }
+  "
+
+  style="
+    min-height:72px;
+    height:100%;
+    border-radius:20px;
+    border:2px solid #2f5d46;
+    background:#ffffff;
+    padding:8px 4px;
+    box-sizing:border-box;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    cursor:pointer;
+    color:#2f5d46;
+    font-size:10px;
+    line-height:1.15;
+    font-weight:700;
+    overflow:hidden;
+  "
+>
+  Annuaire santé<br>
+  + aide
+</div>
   </div>
 
 
