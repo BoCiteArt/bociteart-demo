@@ -23253,12 +23253,71 @@ if(pilotageTile){
 }
 
 const daeBtn = $("daeBtn");
-   if(daeBtn){
+
+if(daeBtn){
   daeBtn.onclick = function(){
     window.BOCITEART_MAP_FILTER = "Santé";
     window.openWellbeingMap();
   };
 }
+
+
+/* =========================================================
+   ANNUAIRE SANTÉ + AIDE
+   ========================================================= */
+
+const healthHelpBtn = $("openHealthHelp");
+
+if(healthHelpBtn){
+
+  healthHelpBtn.onclick = function(){
+
+    window.BOCITEART_MODAL_CONTEXT =
+      "citizen_health_help";
+
+    if(
+      Array.isArray(
+        window.modalHistory
+      )
+    ){
+      window.modalHistory.length = 0;
+    }
+
+    if(
+      typeof window.openSanteVille ===
+        "function"
+    ){
+
+      window.openSanteVille();
+      return;
+    }
+
+    alert(
+      "L'annuaire santé + aide est momentanément indisponible."
+    );
+  };
+
+
+  healthHelpBtn.onkeydown =
+    function(event){
+
+      if(
+        event.key === "Enter" ||
+        event.key === " "
+      ){
+
+        event.preventDefault();
+
+        healthHelpBtn.click();
+      }
+    };
+}
+
+
+/* =========================================================
+   FIN — ANNUAIRE SANTÉ + AIDE
+   ========================================================= */
+
 const clockBtn = $("clockBtn");
 // ===== SAINT DU JOUR =====
 function getSaintOfDay(d){
