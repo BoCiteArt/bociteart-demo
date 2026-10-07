@@ -33427,26 +33427,15 @@ window.openAdvertisingProfileAfterPayment =
 
 <script src="./entreprise/bociteart-start.js?v=0610260926"></script>
 
- <script src="./entreprise/bociteart-start.js?v=0610260926"></script>
-
 <script>
 /* =========================================================
    ÇA COMMENCE ICI
-   INDEX-TEST — ACCÈS DÉMO AU GRAND BANDEAU PUBLICITAIRE
+   INDEX-TEST — ACCÈS DIRECT DÉMO PUBLICITÉS
    ========================================================= */
 
 (function(){
 
   "use strict";
-
-  const ticker =
-    document.getElementById(
-      "ticker"
-    );
-
-  if(!ticker){
-    return;
-  }
 
 
   function openAdvertisingDemo(event){
@@ -33462,6 +33451,25 @@ window.openAdvertisingProfileAfterPayment =
       ){
         event.stopImmediatePropagation();
       }
+    }
+
+
+    window.BOCITEART_MODAL_CONTEXT =
+      "advertising_visibility";
+
+    window.currentModule =
+      "advertising_visibility";
+
+    window.currentEntrepriseScreen =
+      null;
+
+
+    if(
+      Array.isArray(
+        window.modalHistory
+      )
+    ){
+      window.modalHistory.length = 0;
     }
 
 
@@ -33481,26 +33489,117 @@ window.openAdvertisingProfileAfterPayment =
   }
 
 
-  ticker.addEventListener(
+  /* =====================================================
+     GRAND BANDEAU DE LA PAGE D'ACCUEIL
+     ===================================================== */
+
+  const ticker =
+    document.getElementById(
+      "ticker"
+    );
+
+
+  if(ticker){
+
+    ticker.addEventListener(
+      "click",
+      openAdvertisingDemo,
+      true
+    );
+
+
+    ticker.addEventListener(
+      "keydown",
+      function(event){
+
+        if(
+          event.key === "Enter" ||
+          event.key === " "
+        ){
+
+          openAdvertisingDemo(
+            event
+          );
+        }
+
+      },
+      true
+    );
+  }
+
+
+  /* =====================================================
+     BOUTONS PUBLICITÉ DU MODULE COMMERCE / ENTREPRISE
+
+     INDEX-TEST UNIQUEMENT :
+     on intercepte AVANT le contrôle du dossier
+     d'organisation afin de permettre la démonstration.
+     ===================================================== */
+
+  document.addEventListener(
     "click",
-    openAdvertisingDemo,
+    function(event){
+
+      const target =
+        event.target &&
+        typeof event.target.closest ===
+          "function"
+          ? event.target.closest(
+              "#commerceLargeAdvertisingBtn," +
+              "#merchantLargeAdvertisingBtn," +
+              "#enterpriseLargeAdvertisingBtn," +
+              "#directionLargeAdvertisingBtn"
+            )
+          : null;
+
+
+      if(!target){
+        return;
+      }
+
+
+      openAdvertisingDemo(
+        event
+      );
+
+    },
     true
   );
 
 
-  ticker.addEventListener(
+  document.addEventListener(
     "keydown",
     function(event){
 
       if(
-        event.key === "Enter" ||
-        event.key === " "
+        event.key !== "Enter" &&
+        event.key !== " "
       ){
-
-        openAdvertisingDemo(
-          event
-        );
+        return;
       }
+
+
+      const target =
+        event.target &&
+        typeof event.target.closest ===
+          "function"
+          ? event.target.closest(
+              "#commerceLargeAdvertisingBtn," +
+              "#merchantLargeAdvertisingBtn," +
+              "#enterpriseLargeAdvertisingBtn," +
+              "#directionLargeAdvertisingBtn"
+            )
+          : null;
+
+
+      if(!target){
+        return;
+      }
+
+
+      openAdvertisingDemo(
+        event
+      );
 
     },
     true
@@ -33510,18 +33609,9 @@ window.openAdvertisingProfileAfterPayment =
 
 /* =========================================================
    ÇA FINIT ICI
-   INDEX-TEST — ACCÈS DÉMO AU GRAND BANDEAU PUBLICITAIRE
+   INDEX-TEST — ACCÈS DIRECT DÉMO PUBLICITÉS
    ========================================================= */
 </script>
-
-
-<!-- =========================================================
-     ÇA FINIT ICI — CHARGEMENT FINAL DES MODULES BO'CITÉART
-     ========================================================= -->
-
-</body>
-</html>     
-
 <!-- =========================================================
      ÇA FINIT ICI — CHARGEMENT FINAL DES MODULES BO'CITÉART
      ========================================================= -->
