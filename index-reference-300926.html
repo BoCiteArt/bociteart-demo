@@ -1,4 +1,4 @@
-<!DOCTYPE html>                        
+<!DOCTYPE html>                       
 <html lang="fr">      
 <head>
   <meta charset="UTF-8" />
@@ -7656,7 +7656,43 @@ document.addEventListener(
       return;
     }
 
+/*
+  ANNUAIRE SANTÉ + AIDE
+  Accès indépendant.
+*/
+if(
+  target.closest("#openHealthHelp")
+){
 
+  event.preventDefault();
+  event.stopImmediatePropagation();
+
+  window.BOCITEART_MODAL_CONTEXT =
+    "citizen_health_help";
+
+  if(
+    Array.isArray(
+      window.modalHistory
+    )
+  ){
+    window.modalHistory.length = 0;
+  }
+
+  if(
+    typeof window.openSanteVille ===
+      "function"
+  ){
+    window.openSanteVille();
+  }
+  else{
+    alert(
+      "L'annuaire santé + aide est momentanément indisponible."
+    );
+  }
+
+  return;
+}
+    
     const target =
       event.target instanceof Element
         ? event.target
@@ -15055,42 +15091,6 @@ function schoolGetTeacherIdentifier(account){
     }
 
     /*
-  ANNUAIRE SANTÉ + AIDE
-  Accès indépendant des numéros d'urgence.
-*/
-if(
-  target.closest("#openHealthHelp")
-){
-
-  event.preventDefault();
-  event.stopImmediatePropagation();
-
-  window.BOCITEART_MODAL_CONTEXT =
-    "citizen_health_help";
-
-  if(
-    Array.isArray(
-      window.modalHistory
-    )
-  ){
-    window.modalHistory.length = 0;
-  }
-
-  if(
-    typeof window.openSanteVille ===
-      "function"
-  ){
-    window.openSanteVille();
-  }
-  else{
-    alert(
-      "L'annuaire santé + aide est momentanément indisponible."
-    );
-  }
-
-  return;
-}
-
     return schoolLoadClasses().find(function(row){
       return row && String(row.name || "").trim().toLowerCase() === target;
     }) || null;
