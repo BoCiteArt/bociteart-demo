@@ -983,7 +983,7 @@
 
   .bociteSolidarityTicker{
     overflow:hidden;
-    background:#b42318;
+    background:#c84b43;
     color:#ffffff;
     border-radius:0 0 9px 9px;
     min-height:25px;
@@ -1603,68 +1603,170 @@
       " participants — cliquez pour aider";
   }
 
+  /* =========================================================
+     ÇA COMMENCE ICI — BANDEAU SOLIDAIRE PLEINE LARGEUR
+     ========================================================= */
+
   function ensureHomeTicker(){
+
     injectStyles();
 
-    const tile = document.getElementById("associationDonBtn");
+    const tile =
+      document.getElementById(
+        "associationDonBtn"
+      );
 
     if(!tile){
       return false;
     }
 
-    tile.setAttribute("aria-label", "Urgence solidaire");
-    tile.innerHTML = "Urgence<br>solidaire";
-    tile.style.position = "relative";
 
-    tile.onclick = function(event){
-      if(event){
-        event.preventDefault();
-        event.stopPropagation();
-      }
+    tile.setAttribute(
+      "aria-label",
+      "Urgence solidaire"
+    );
 
-      openHome();
-    };
 
-    tile.onkeydown = function(event){
-      if(event.key === "Enter" || event.key === " "){
-        event.preventDefault();
-        tile.click();
-      }
-    };
+    if(
+      tile.innerHTML !==
+      "Urgence<br>solidaire"
+    ){
+      tile.innerHTML =
+        "Urgence<br>solidaire";
+    }
 
-    const wrapper = tile.parentElement || tile;
 
-    let ticker = document.getElementById("bociteSolidarityTickerV3");
+    tile.onclick =
+      function(event){
+
+        if(event){
+
+          event.preventDefault();
+          event.stopPropagation();
+        }
+
+        openHome();
+      };
+
+
+    tile.onkeydown =
+      function(event){
+
+        if(
+          event.key === "Enter" ||
+          event.key === " "
+        ){
+
+          event.preventDefault();
+          tile.click();
+        }
+      };
+
+
+    /*
+      Colonne Urgence solidaire
+    */
+    const tileColumn =
+      tile.parentElement;
+
+
+    /*
+      Ligne complète contenant :
+      Urgence solidaire
+      Défibrillateur
+      Annuaire santé + aide
+      Horloge
+    */
+    const buttonsRow =
+      tileColumn
+        ? tileColumn.parentElement
+        : null;
+
+
+    if(
+      !buttonsRow ||
+      !buttonsRow.parentElement
+    ){
+      return false;
+    }
+
+
+    let ticker =
+      document.getElementById(
+        "bociteSolidarityTickerV3"
+      );
+
 
     if(!ticker){
-      ticker = document.createElement("div");
-      ticker.id = "bociteSolidarityTickerV3";
-      ticker.className = "bociteSolidarityTicker";
+
+      ticker =
+        document.createElement(
+          "div"
+        );
+
+      ticker.id =
+        "bociteSolidarityTickerV3";
+
+      ticker.className =
+        "bociteSolidarityTicker";
+
       ticker.innerHTML =
         '<div class="bociteSolidarityTickerTrack" id="bociteSolidarityTickerTrackV3"></div>';
-
-      wrapper.appendChild(ticker);
     }
 
-    const track = document.getElementById("bociteSolidarityTickerTrackV3");
+
+    /*
+      Le bandeau est placé APRÈS
+      la ligne entière des 4 boutons.
+    */
+    buttonsRow.parentElement.insertBefore(
+      ticker,
+      buttonsRow.nextSibling
+    );
+
+
+    const track =
+      document.getElementById(
+        "bociteSolidarityTickerTrackV3"
+      );
+
 
     if(track){
-      track.textContent = tickerText();
+
+      track.textContent =
+        tickerText();
     }
 
-    ticker.onclick = function(){
-      const featured = featuredCampaignForCity(getCurrentCity(), getCurrentCityId());
 
-      if(featured){
-        openCampaign(featured.id);
-      }else{
-        openHome();
-      }
-    };
+    ticker.onclick =
+      function(){
+
+        const featured =
+          featuredCampaignForCity(
+            getCurrentCity(),
+            getCurrentCityId()
+          );
+
+
+        if(featured){
+
+          openCampaign(
+            featured.id
+          );
+
+        }else{
+
+          openHome();
+        }
+      };
+
 
     return true;
   }
 
+  /* =========================================================
+     ÇA FINIT ICI — BANDEAU SOLIDAIRE PLEINE LARGEUR
+     ========================================================= */
   /* =========================================================
      CARTES CAMPAGNES / ÉCRAN PRINCIPAL
      ========================================================= */
