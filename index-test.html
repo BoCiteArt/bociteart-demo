@@ -205,14 +205,25 @@
 
 #pilotageTile img{
   position:absolute;
-  inset:0;
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  object-position:center center;
+  left:50%;
+  top:50%;
+  right:auto;
+  bottom:auto;
+
+  width:90%;
+  height:auto;
+
+  max-width:none;
+  max-height:none;
+
+  object-fit:unset;
+  object-position:center;
+
   padding:0;
-  transform:scale(.68);
-  transform-origin:center center;
+
+  transform:translate(-50%,-50%);
+
+  background:#fefaf1;
 }
 
 /* =========================================================
