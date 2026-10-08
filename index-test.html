@@ -81,7 +81,7 @@
 .tile{
   position:relative;
   width:100%;
-  aspect-ratio:1 / 0.64;
+  aspect-ratio:1 / 0.58;
   border-radius:22px;
   overflow:hidden;
   background:var(--beige);
@@ -855,7 +855,7 @@
     @media (max-height:780px){
       .wrap{ padding:10px; gap:10px; }
       .ticker{ height:82px; }
-      .tile{ aspect-ratio:1 / 0.61; }
+      .tile{ aspect-ratio:1 / 0.55; }
       .grid{ gap:10px; }
       .tile .h{ font-size:16px; }
       .tile .p{ margin-top:6px; }
@@ -1525,8 +1525,9 @@ html.bocite-entry-pending body > .page{
       tabindex="0"
       aria-label="Horloge et calendrier"
       style="
-        min-height:72px;
-        border-radius:20px;
+  min-height:72px;
+  height:100%;
+  border-radius:20px;
         border:3px solid var(--red);
         background:#f7efe3;
         padding:8px 6px;
