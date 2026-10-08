@@ -738,54 +738,531 @@
     if(document.getElementById("bociteSolidarityStylesV3")){ return; }
     const style = document.createElement("style");
     style.id = "bociteSolidarityStylesV3";
-    style.textContent = `
-      .bociteSolidarityRoot{font-family:Arial,Helvetica,sans-serif;color:#222;line-height:1.48;font-size:14px}
-      .bociteSolidarityHead{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:12px}
-      .bociteSolidarityTitle{font-size:20px;color:#2f5d46;font-weight:800;margin:0}
-      .bociteSolidaritySub{font-size:13px;color:#666;margin-top:4px}
-      .bociteSolidarityCard{background:#fff;border:1px solid #ded9cd;border-radius:14px;padding:14px;margin:11px 0;box-shadow:0 1px 3px rgba(0,0,0,.04)}
-      .bociteSolidarityCard h3{color:#2f5d46;font-size:17px;margin:0 0 8px;font-weight:800}
-      .bociteSolidarityBtn{background:#fff;border:2px solid #2f5d46;color:#2f5d46;border-radius:11px;padding:10px 13px;font-size:14px;font-weight:800;cursor:pointer}
-      .bociteSolidarityBtn:hover{background:#f2f8f4}
-      .bociteSolidarityBtnPrimary{background:#2f5d46;color:#fff}
-      .bociteSolidarityBtnDanger{border-color:#b42318;color:#b42318}
-      .bociteSolidarityBtnSoft{border-color:#777;color:#555}
-      .bociteSolidarityActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-      .bociteSolidarityField{width:100%;box-sizing:border-box;border:1px solid #aaa;border-radius:9px;padding:10px;background:#fff;font-size:14px}
-      .bociteSolidarityLabel{display:block;font-size:13px;font-weight:800;margin:10px 0 5px}
-      .bociteSolidarityHelp{font-size:12px;color:#666;line-height:1.4;margin-top:5px}
-      .bociteSolidarityGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-      .bociteSolidarityAlert{background:#fff3f1;border-left:4px solid #b42318;border-radius:8px;padding:10px;margin:10px 0;font-size:13px}
-      .bociteSolidarityOk{background:#f1faf4;border-left:4px solid #2f5d46;border-radius:8px;padding:10px;margin:10px 0;font-size:13px}
-      .bociteSolidarityInfo{background:#f7f2e8;border-left:4px solid #b69049;border-radius:8px;padding:10px;margin:10px 0;font-size:13px}
-      .bociteSolidarityTicker{overflow:hidden;background:#b42318;color:#fff;border-radius:0 0 9px 9px;min-height:25px;display:flex;align-items:center;cursor:pointer;margin-top:3px}
-      .bociteSolidarityTickerTrack{white-space:nowrap;display:inline-block;padding-left:100%;animation:bociteSolidarityScroll 18s linear infinite;font-size:11px;font-weight:800}
-      @keyframes bociteSolidarityScroll{from{transform:translateX(0)}to{transform:translateX(-100%)}}
-      .bociteSolidarityProgress{height:9px;background:#eee;border-radius:999px;overflow:hidden;margin-top:8px}
-      .bociteSolidarityProgress span{display:block;height:100%;background:#2f5d46}
-      .bociteSolidarityMeta{font-size:12px;color:#666;margin-top:5px}
-      .bociteSolidarityBadge{display:inline-block;border-radius:999px;padding:4px 8px;background:#eef7f1;color:#2f5d46;font-size:11px;font-weight:800;margin:2px 4px 2px 0}
-      .bociteSolidarityBadgeRed{background:#fff0ed;color:#b42318}
-      .bociteSolidarityOverlay{position:fixed;inset:0;z-index:999999;background:rgba(0,0,0,.55);display:flex;align-items:flex-start;justify-content:center;overflow:auto;padding:18px 8px}
-      .bociteSolidarityPanel{width:min(760px,100%);background:#f3efe5;border-radius:16px;padding:15px;box-sizing:border-box;position:relative}
-      .bociteSolidarityClose{position:absolute;right:10px;top:8px;border:0;background:transparent;font-size:27px;cursor:pointer}
-      .bociteSolidarityFee{display:grid;grid-template-columns:1fr auto;gap:6px 10px;margin-top:10px;font-size:13px}
-      .bociteSolidarityFee strong{text-align:right}
-      .bociteSolidarityPhotoGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}
-      .bociteSolidarityPhoto{width:100%;height:180px;object-fit:cover;border-radius:10px;border:1px solid #ddd}
-      .bociteSolidarityTask{display:grid;grid-template-columns:auto 1fr;gap:9px;align-items:flex-start;padding:9px 0;border-bottom:1px solid #eee}
-      .bociteSolidarityTask:last-child{border-bottom:0}
-      .bociteSolidarityPhase{font-size:12px;color:#b42318;font-weight:800;margin-top:10px}
-      .bociteSolidarityThanks{text-align:center;font-size:34px;font-weight:900;color:#2f5d46;padding:16px 0}
-      .bociteSolidarityHearts{font-size:30px;animation:bociteHearts 1s ease-in-out 3;text-align:center}
-      @keyframes bociteHearts{0%,100%{transform:scale(1)}50%{transform:scale(1.18)}}
-      .bociteSolidarityPaymentBox{border:2px solid #2f5d46;background:#fff;border-radius:14px;padding:13px;margin-top:10px}
-      .bociteSolidarityCardNumber{letter-spacing:1px}
-      .bociteSolidarityScope{font-size:12px;color:#555;background:#faf8f2;border:1px solid #ded9cd;border-radius:9px;padding:9px;margin-top:8px}
-      .bociteSolidarityLine{height:1px;background:#e5e1d7;margin:12px 0}
-      @media(max-width:620px){.bociteSolidarityGrid{grid-template-columns:1fr}.bociteSolidarityPhotoGrid{grid-template-columns:1fr}.bociteSolidarityPhoto{height:210px}}
-    `;
-    document.head.appendChild(style);
+   style.textContent = `
+
+  .bociteSolidarityRoot{
+    font-family:Arial,Helvetica,sans-serif;
+    color:#111;
+    font-size:14px;
+    font-weight:400;
+    line-height:1.5;
+  }
+
+
+  /* =========================================================
+     EN-TÊTE DE CHAQUE PAGE
+     ========================================================= */
+
+  .bociteSolidarityHead{
+    display:block;
+    background:#ffffff;
+    border:0;
+    border-radius:18px;
+    padding:14px 16px;
+    margin:0 0 10px;
+    box-shadow:none;
+  }
+
+  .bociteSolidarityTitle{
+    color:#2f5d46;
+    font-size:17px;
+    line-height:1.3;
+    font-weight:800;
+    margin:0;
+  }
+
+  .bociteSolidaritySub{
+    color:#111;
+    font-size:14px;
+    font-weight:400;
+    line-height:1.5;
+    margin:7px 0 0;
+  }
+
+
+  /* =========================================================
+     BLOCS BLANCS
+     ========================================================= */
+
+  .bociteSolidarityCard,
+  .bociteSolidarityAlert,
+  .bociteSolidarityOk,
+  .bociteSolidarityInfo,
+  .bociteSolidarityScope,
+  .bociteSolidarityPaymentBox{
+    background:#ffffff;
+    border:0;
+    border-radius:18px;
+    box-shadow:none;
+    padding:14px 16px;
+    margin:10px 0;
+    color:#111;
+    font-size:14px;
+    font-weight:400;
+    line-height:1.5;
+  }
+
+
+  /* =========================================================
+     TITRES INTERNES
+     ========================================================= */
+
+  .bociteSolidarityCard h3{
+    color:#2f5d46;
+    font-size:17px;
+    line-height:1.3;
+    font-weight:800;
+    margin:0 0 10px;
+  }
+
+
+  /* =========================================================
+     TEXTE
+     ========================================================= */
+
+  .bociteSolidarityCard p,
+  .bociteSolidarityCard div,
+  .bociteSolidarityScope,
+  .bociteSolidarityAlert,
+  .bociteSolidarityOk,
+  .bociteSolidarityInfo{
+    color:#111;
+    font-size:14px;
+    font-weight:400;
+    line-height:1.5;
+  }
+
+  .bociteSolidarityCard ul,
+  .bociteSolidarityAlert ul,
+  .bociteSolidarityInfo ul,
+  .bociteSolidarityOk ul{
+    margin:8px 0 0 20px;
+    padding:0;
+    color:#111;
+    font-size:14px;
+    font-weight:400;
+  }
+
+  .bociteSolidarityCard li,
+  .bociteSolidarityAlert li,
+  .bociteSolidarityInfo li,
+  .bociteSolidarityOk li{
+    margin:4px 0;
+    color:#111;
+    font-size:14px;
+    font-weight:400;
+  }
+
+
+  /* =========================================================
+     INFORMATIONS PARTICULIÈRES
+     ========================================================= */
+
+  .bociteSolidarityAlert{
+    border-left:5px solid #b42318;
+  }
+
+  .bociteSolidarityOk{
+    border-left:5px solid #2f5d46;
+  }
+
+  .bociteSolidarityInfo{
+    border-left:5px solid #b69049;
+  }
+
+
+  /* =========================================================
+     BOUTONS — STYLE MAIRIE
+     ========================================================= */
+
+  .bociteSolidarityActions{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-top:12px;
+  }
+
+  .bociteSolidarityBtn,
+  .bociteSolidarityBtnPrimary,
+  .bociteSolidarityBtnSoft{
+    flex:1 1 155px;
+    min-height:48px;
+    background:#ffffff;
+    color:#2f5d46;
+    border:2px solid #2f5d46;
+    border-radius:16px;
+    padding:9px 12px;
+    box-sizing:border-box;
+    font-family:inherit;
+    font-size:14px;
+    line-height:1.25;
+    font-weight:800;
+    text-align:center;
+    cursor:pointer;
+    box-shadow:none;
+  }
+
+  .bociteSolidarityBtn:hover,
+  .bociteSolidarityBtnPrimary:hover,
+  .bociteSolidarityBtnSoft:hover{
+    background:#ffffff;
+  }
+
+  .bociteSolidarityBtnDanger{
+    background:#ffffff;
+    color:#b42318;
+    border:2px solid #b42318;
+  }
+
+
+  /* =========================================================
+     FORMULAIRES
+     ========================================================= */
+
+  .bociteSolidarityGrid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+
+  .bociteSolidarityLabel{
+    display:block;
+    color:#111;
+    font-size:14px;
+    line-height:1.4;
+    font-weight:400;
+    margin:11px 0 6px;
+  }
+
+  .bociteSolidarityField{
+    width:100%;
+    box-sizing:border-box;
+    background:#ffffff;
+    color:#111;
+    border:1px solid #cfcfcf;
+    border-radius:12px;
+    padding:10px 11px;
+    font-family:inherit;
+    font-size:14px;
+    font-weight:400;
+    line-height:1.35;
+    outline:none;
+  }
+
+  textarea.bociteSolidarityField{
+    resize:vertical;
+  }
+
+  .bociteSolidarityField:focus{
+    border-color:#2f5d46;
+    box-shadow:0 0 0 2px rgba(47,93,70,.10);
+  }
+
+  .bociteSolidarityRoot input[type="checkbox"]{
+    accent-color:#2f5d46;
+  }
+
+
+  /* =========================================================
+     PETITS TEXTES
+     ========================================================= */
+
+  .bociteSolidarityHelp,
+  .bociteSolidarityMeta{
+    color:#666;
+    font-size:12px;
+    line-height:1.4;
+    font-weight:400;
+    margin-top:5px;
+  }
+
+
+  /* =========================================================
+     BANDEAU ROUGE ACCUEIL
+     ========================================================= */
+
+  .bociteSolidarityTicker{
+    overflow:hidden;
+    background:#b42318;
+    color:#ffffff;
+    border-radius:0 0 9px 9px;
+    min-height:25px;
+    display:flex;
+    align-items:center;
+    cursor:pointer;
+    margin-top:3px;
+  }
+
+  .bociteSolidarityTickerTrack{
+    white-space:nowrap;
+    display:inline-block;
+    padding-left:100%;
+    animation:bociteSolidarityScroll 18s linear infinite;
+    font-size:11px;
+    font-weight:800;
+    color:#ffffff;
+  }
+
+  @keyframes bociteSolidarityScroll{
+    from{
+      transform:translateX(0);
+    }
+
+    to{
+      transform:translateX(-100%);
+    }
+  }
+
+
+  /* =========================================================
+     PROGRESSION COLLECTE
+     ========================================================= */
+
+  .bociteSolidarityProgress{
+    height:8px;
+    background:#e8e8e8;
+    border-radius:999px;
+    overflow:hidden;
+    margin-top:8px;
+  }
+
+  .bociteSolidarityProgress span{
+    display:block;
+    height:100%;
+    background:#2f5d46;
+  }
+
+
+  /* =========================================================
+     BADGES
+     ========================================================= */
+
+  .bociteSolidarityBadge{
+    display:inline-block;
+    border-radius:999px;
+    padding:4px 8px;
+    background:#eef7f1;
+    color:#2f5d46;
+    font-size:11px;
+    font-weight:800;
+    margin:2px 4px 2px 0;
+  }
+
+  .bociteSolidarityBadgeRed{
+    background:#fff0ed;
+    color:#b42318;
+  }
+
+
+  /* =========================================================
+     MODALE DE SECOURS
+     ========================================================= */
+
+  .bociteSolidarityOverlay{
+    position:fixed;
+    inset:0;
+    z-index:999999;
+    background:rgba(0,0,0,.55);
+    display:flex;
+    align-items:flex-start;
+    justify-content:center;
+    overflow:auto;
+    padding:18px 8px;
+  }
+
+  .bociteSolidarityPanel{
+    width:min(760px,100%);
+    background:#efe4d3;
+    border-radius:20px;
+    padding:15px;
+    box-sizing:border-box;
+    position:relative;
+  }
+
+  .bociteSolidarityClose{
+    position:absolute;
+    right:10px;
+    top:8px;
+    border:0;
+    background:#ffffff;
+    width:44px;
+    height:44px;
+    border-radius:14px;
+    font-size:25px;
+    cursor:pointer;
+  }
+
+
+  /* =========================================================
+     FRAIS / PAIEMENT
+     ========================================================= */
+
+  .bociteSolidarityFee{
+    display:grid;
+    grid-template-columns:1fr auto;
+    gap:6px 10px;
+    margin-top:10px;
+    color:#111;
+    font-size:14px;
+    font-weight:400;
+  }
+
+  .bociteSolidarityFee strong{
+    text-align:right;
+  }
+
+
+  /* =========================================================
+     PHOTOS
+     ========================================================= */
+
+  .bociteSolidarityPhotoGrid{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:8px;
+    margin-top:10px;
+  }
+
+  .bociteSolidarityPhoto{
+    width:100%;
+    height:180px;
+    object-fit:cover;
+    border-radius:14px;
+    border:0;
+  }
+
+
+  /* =========================================================
+     ACCOMPAGNEMENT
+     ========================================================= */
+
+  .bociteSolidarityTask{
+    display:grid;
+    grid-template-columns:auto 1fr;
+    gap:9px;
+    align-items:flex-start;
+    padding:10px 0;
+    border-bottom:1px solid #ececec;
+    color:#111;
+    font-size:14px;
+    font-weight:400;
+  }
+
+  .bociteSolidarityTask:last-child{
+    border-bottom:0;
+  }
+
+  .bociteSolidarityPhase{
+    color:#2f5d46;
+    font-size:17px;
+    line-height:1.3;
+    font-weight:800;
+    margin:14px 0 6px;
+  }
+
+
+  /* =========================================================
+     REMERCIEMENTS
+     ========================================================= */
+
+  .bociteSolidarityThanks{
+    text-align:center;
+    color:#2f5d46;
+    font-size:17px;
+    font-weight:800;
+    padding:10px 0;
+  }
+
+  .bociteSolidarityHearts{
+    font-size:26px;
+    animation:bociteHearts 1s ease-in-out 3;
+    text-align:center;
+  }
+
+  @keyframes bociteHearts{
+    0%,
+    100%{
+      transform:scale(1);
+    }
+
+    50%{
+      transform:scale(1.12);
+    }
+  }
+
+
+  /* =========================================================
+     SÉPARATEUR
+     ========================================================= */
+
+  .bociteSolidarityLine{
+    height:1px;
+    background:#ece8df;
+    margin:12px 0;
+  }
+
+
+  /* =========================================================
+     LOGO TEXTE BO'CITÉART
+     ========================================================= */
+
+  .bociteSolidarityBrandBo{
+    color:#2f5d46 !important;
+    font-weight:800 !important;
+  }
+
+  .bociteSolidarityBrandArt{
+    color:#b42318 !important;
+    font-weight:800 !important;
+  }
+
+
+  /* =========================================================
+     TÉLÉPHONE
+     ========================================================= */
+
+  @media(max-width:620px){
+
+    .bociteSolidarityGrid{
+      grid-template-columns:1fr;
+    }
+
+    .bociteSolidarityPhotoGrid{
+      grid-template-columns:1fr;
+    }
+
+    .bociteSolidarityPhoto{
+      height:190px;
+    }
+
+    .bociteSolidarityCard,
+    .bociteSolidarityAlert,
+    .bociteSolidarityOk,
+    .bociteSolidarityInfo,
+    .bociteSolidarityScope,
+    .bociteSolidarityPaymentBox{
+      padding:13px 14px;
+    }
+
+    .bociteSolidarityBtn,
+    .bociteSolidarityBtnPrimary,
+    .bociteSolidarityBtnSoft{
+      flex:1 1 calc(50% - 5px);
+    }
+  }
+
+
+  @media(max-width:370px){
+
+    .bociteSolidarityBtn,
+    .bociteSolidarityBtnPrimary,
+    .bociteSolidarityBtnSoft{
+      flex-basis:100%;
+    }
+  }
+
+`;    
+     document.head.appendChild(style);
   }
 
  /* =========================================================
@@ -917,12 +1394,190 @@
 /* =========================================================
    ÇA FINIT ICI — OUVERTURE MODALE URGENCE SOLIDAIRE
    ========================================================= */
+/* =========================================================
+   ÇA COMMENCE ICI — AFFICHAGE COMMUN + COULEURS BO'CITÉART
+   ========================================================= */
+
+  function decorateBociteArt(root){
+
+    if(
+      !root ||
+      typeof document.createTreeWalker !==
+        "function"
+    ){
+      return;
+    }
+
+
+    const walker =
+      document.createTreeWalker(
+        root,
+        NodeFilter.SHOW_TEXT
+      );
+
+
+    const nodes = [];
+
+
+    while(
+      walker.nextNode()
+    ){
+
+      const node =
+        walker.currentNode;
+
+      const parent =
+        node.parentElement;
+
+
+      if(!parent){
+        continue;
+      }
+
+
+      if(
+        parent.closest(
+          "script,style,textarea,select,option"
+        )
+      ){
+        continue;
+      }
+
+
+      if(
+        /Bo[’']CitéArt/i.test(
+          node.nodeValue || ""
+        )
+      ){
+        nodes.push(
+          node
+        );
+      }
+    }
+
+
+    nodes.forEach(
+      function(node){
+
+        const text =
+          node.nodeValue || "";
+
+        const regex =
+          /Bo[’']CitéArt/gi;
+
+        const fragment =
+          document.createDocumentFragment();
+
+        let lastIndex =
+          0;
+
+        let match;
+
+
+        while(
+          (
+            match =
+              regex.exec(
+                text
+              )
+          ) !==
+          null
+        ){
+
+          fragment.appendChild(
+            document.createTextNode(
+              text.slice(
+                lastIndex,
+                match.index
+              )
+            )
+          );
+
+
+          const bo =
+            document.createElement(
+              "span"
+            );
+
+          bo.className =
+            "bociteSolidarityBrandBo";
+
+          bo.textContent =
+            match[0].slice(
+              0,
+              match[0].length - 3
+            );
+
+
+          const art =
+            document.createElement(
+              "span"
+            );
+
+          art.className =
+            "bociteSolidarityBrandArt";
+
+          art.textContent =
+            "Art";
+
+
+          fragment.appendChild(
+            bo
+          );
+
+          fragment.appendChild(
+            art
+          );
+
+
+          lastIndex =
+            match.index +
+            match[0].length;
+        }
+
+
+        fragment.appendChild(
+          document.createTextNode(
+            text.slice(
+              lastIndex
+            )
+          )
+        );
+
+
+        node.replaceWith(
+          fragment
+        );
+
+      }
+    );
+  }
+
+
   function renderBase(html){
+
     injectStyles();
-    const host = getHost();
-    host.body.innerHTML = '<div class="bociteSolidarityRoot">' + html + '</div>';
+
+    const host =
+      getHost();
+
+    host.body.innerHTML =
+      '<div class="bociteSolidarityRoot">' +
+      html +
+      '</div>';
+
+
+    decorateBociteArt(
+      host.body
+    );
+
+
     return host.body;
   }
+
+/* =========================================================
+   ÇA FINIT ICI — AFFICHAGE COMMUN + COULEURS BO'CITÉART
+   ========================================================= */
 
   /* =========================================================
      BANDEAU / BOUTON EXISTANT
