@@ -788,40 +788,135 @@
     document.head.appendChild(style);
   }
 
-  function getHost(){
-    const modal = document.getElementById("modal");
-    const title = document.getElementById("modalTitle");
-    const body = document.getElementById("modalBody");
+ /* =========================================================
+   ÇA COMMENCE ICI — OUVERTURE MODALE URGENCE SOLIDAIRE
+   ========================================================= */
 
-    if(modal && body){
-      if(title){ title.textContent = "Urgence solidaire"; }
-      modal.style.display = "block";
-      return { body:body, close:function(){ modal.style.display = "none"; } };
+  function getHost(){
+
+    const modal =
+      document.getElementById("modal");
+
+    const title =
+      document.getElementById("modalTitle");
+
+    const body =
+      document.getElementById("modalBody");
+
+
+    if(
+      modal &&
+      body
+    ){
+
+      if(title){
+        title.textContent =
+          "Urgence solidaire";
+      }
+
+      modal.classList.add(
+        "open"
+      );
+
+      modal.setAttribute(
+        "aria-hidden",
+        "false"
+      );
+
+      document.body.classList.add(
+        "modalOpen"
+      );
+
+      return {
+
+        body:body,
+
+        close:function(){
+
+          modal.classList.remove(
+            "open"
+          );
+
+          modal.setAttribute(
+            "aria-hidden",
+            "true"
+          );
+
+          document.body.classList.remove(
+            "modalOpen"
+          );
+        }
+      };
     }
 
-    let overlay = document.getElementById("bociteSolidarityOverlayV3");
+
+    let overlay =
+      document.getElementById(
+        "bociteSolidarityOverlayV3"
+      );
+
 
     if(!overlay){
-      overlay = document.createElement("div");
-      overlay.id = "bociteSolidarityOverlayV3";
-      overlay.className = "bociteSolidarityOverlay";
-      overlay.innerHTML = '<div class="bociteSolidarityPanel"><button type="button" class="bociteSolidarityClose" aria-label="Fermer">×</button><div id="bociteSolidarityStandaloneBodyV3"></div></div>';
-      document.body.appendChild(overlay);
 
-      overlay.querySelector(".bociteSolidarityClose").addEventListener("click", function(){
-        overlay.remove();
-      });
+      overlay =
+        document.createElement(
+          "div"
+        );
+
+      overlay.id =
+        "bociteSolidarityOverlayV3";
+
+      overlay.className =
+        "bociteSolidarityOverlay";
+
+      overlay.innerHTML =
+        '<div class="bociteSolidarityPanel">' +
+        '<button type="button" class="bociteSolidarityClose" aria-label="Fermer">×</button>' +
+        '<div id="bociteSolidarityStandaloneBodyV3"></div>' +
+        '</div>';
+
+      document.body.appendChild(
+        overlay
+      );
+
+      overlay
+        .querySelector(
+          ".bociteSolidarityClose"
+        )
+        .addEventListener(
+          "click",
+          function(){
+
+            overlay.remove();
+          }
+        );
     }
 
+
     return {
-      body:document.getElementById("bociteSolidarityStandaloneBodyV3"),
+
+      body:
+        document.getElementById(
+          "bociteSolidarityStandaloneBodyV3"
+        ),
+
       close:function(){
-        const current = document.getElementById("bociteSolidarityOverlayV3");
-        if(current){ current.remove(); }
+
+        const current =
+          document.getElementById(
+            "bociteSolidarityOverlayV3"
+          );
+
+        if(current){
+          current.remove();
+        }
       }
     };
   }
 
+/* =========================================================
+   ÇA FINIT ICI — OUVERTURE MODALE URGENCE SOLIDAIRE
+   ========================================================= */
   function renderBase(html){
     injectStyles();
     const host = getHost();
