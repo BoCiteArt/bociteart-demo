@@ -1836,129 +1836,193 @@
     });
   }
 
-  function openHome(){
-    runAgentMaintenance();
+function openHome(){
+  runAgentMaintenance();
 
-    const city = getCurrentCity();
-    const cityId = getCurrentCityId();
+  const city = getCurrentCity();
+  const cityId = getCurrentCityId();
 
-    const cityItems = activeCampaignsForCity(city, cityId);
-    const allItems = allActiveCampaigns();
+  const cityItems = activeCampaignsForCity(city, cityId);
+  const allItems = allActiveCampaigns();
 
-    const featured = cityItems.length ? cityItems[0] : null;
+  const featured = cityItems.length ? cityItems[0] : null;
 
-    const html = `
-      <div class="bociteSolidarityHead">
-        <div>
-          <h2 class="bociteSolidarityTitle">
-            Urgence solidaire
-          </h2>
+  const html = `
+    <div class="bociteSolidarityHead">
+      <div>
 
-          <div class="bociteSolidaritySub">
-            Aider rapidement une personne, une famille ou une situation grave vérifiée.
-          </div>
+        <h2
+          class="bociteSolidarityTitle"
+          style="color:#c84b43;"
+        >
+          Urgence solidaire
+        </h2>
+
+        <div class="bociteSolidaritySub">
+          Aider rapidement une personne, une famille
+          ou une situation grave vérifiée.
         </div>
+
+      </div>
+    </div>
+
+
+    <div class="bociteSolidarityScope">
+
+      Vos demandes d’appel aux dons sont rattachées
+      aux villes partenaires Bo’CitéArt.
+
+      En revanche,
+      <strong>toute personne peut donner</strong>,
+      même sans compte ni application.
+
+      Chaque appel publié dispose de son
+      <strong>lien public et de son QR code</strong>,
+      visibles dans la fiche de l’appel
+      et partageables librement.
+
+    </div>
+
+
+    ${
+      featured
+        ? campaignCard(featured, false)
+        : ""
+    }
+
+
+    <div class="bociteSolidarityActions">
+
+      <button
+        type="button"
+        class="bociteSolidarityBtn bociteSolidarityBtnPrimary"
+        data-action="create"
+      >
+        Signaler une situation
+      </button>
+
+
+      <button
+        type="button"
+        class="bociteSolidarityBtn"
+        data-action="list"
+      >
+        Voir toutes les urgences
+      </button>
+
+
+      <button
+        type="button"
+        class="bociteSolidarityBtn"
+        data-action="my"
+      >
+        Mes demandes / accompagnement
+      </button>
+
+
+      <button
+        type="button"
+        class="bociteSolidarityBtn"
+        data-action="book"
+      >
+        Livre des solidarités
+      </button>
+
+
+      <button
+        type="button"
+        class="bociteSolidarityBtn"
+        data-action="votes"
+      >
+        Votes citoyens
+      </button>
+
+    </div>
+
+
+    <div class="bociteSolidarityCard">
+
+      <h3>
+        Le principe
+      </h3>
+
+      <div>
+
+        Bo’CitéArt vérifie les demandes,
+        publie les appels validés
+        et accompagne leur suivi.
+
+        <br><br>
+
+        Le PSP
+        <strong>
+          (prestataire de services de paiement sécurisé)
+        </strong>
+        gère le paiement et les fonds.
+
+        <br><br>
+
+        Les situations particulières
+        de succession, de tutelle,
+        de remboursement ou de versement protégé
+        restent traitées par les acteurs
+        légalement compétents.
+
       </div>
 
-      <div class="bociteSolidarityScope">
-        Les appels sont rattachés aux villes partenaires Bo’CitéArt.
-        En revanche,
-        <strong>toute personne peut donner</strong>,
-        même sans compte ni application,
-        grâce au lien public et au QR dynamique.
-      </div>
+    </div>
+  `;
 
-      ${
-        featured
-          ?
-            '<div class="bociteSolidarityAlert">' +
-            '<strong>Urgence mise en avant actuellement</strong> — ' +
-            'l’agent la choisit selon l’urgence humaine, ' +
-            'jamais selon le statut du demandeur ou le montant demandé.' +
-            '</div>' +
-            campaignCard(featured, false)
-          :
-            '<div class="bociteSolidarityOk">' +
-            'Aucune urgence active dans votre commune actuellement.' +
-            '</div>'
-      }
 
-      <div class="bociteSolidarityActions">
-        <button type="button" class="bociteSolidarityBtn bociteSolidarityBtnPrimary" data-action="create">
-          Signaler une situation
-        </button>
+  const body = renderBase(html);
 
-        <button type="button" class="bociteSolidarityBtn" data-action="list">
-          Voir toutes les urgences
-        </button>
 
-        <button type="button" class="bociteSolidarityBtn" data-action="my">
-          Mes demandes / accompagnement
-        </button>
+  bindCampaignButtons(body);
 
-        <button type="button" class="bociteSolidarityBtn" data-action="book">
-          Livre des solidarités
-        </button>
 
-        <button type="button" class="bociteSolidarityBtn" data-action="votes">
-          Votes citoyens
-        </button>
-
-        <button type="button" class="bociteSolidarityBtn" data-action="journal">
-          Transparence
-        </button>
-      </div>
-
-      <div class="bociteSolidarityCard">
-        <h3>Le principe</h3>
-
-        <div>
-          Bo’CitéArt vérifie, publie et accompagne.
-          Le PSP gère le paiement et les fonds.
-          Les situations de succession, de tutelle,
-          de remboursement ou de versement protégé
-          restent traitées par les acteurs légalement compétents.
-        </div>
-      </div>
-    `;
-
-    const body = renderBase(html);
-
-    bindCampaignButtons(body);
-
-    body.querySelector('[data-action="create"]').addEventListener(
+  body
+    .querySelector('[data-action="create"]')
+    .addEventListener(
       "click",
       openCreateForm
     );
 
-    body.querySelector('[data-action="list"]').addEventListener(
+
+  body
+    .querySelector('[data-action="list"]')
+    .addEventListener(
       "click",
       openAllCampaigns
     );
 
-    body.querySelector('[data-action="my"]').addEventListener(
+
+  body
+    .querySelector('[data-action="my"]')
+    .addEventListener(
       "click",
       openMyRequests
     );
 
-    body.querySelector('[data-action="book"]').addEventListener(
+
+  body
+    .querySelector('[data-action="book"]')
+    .addEventListener(
       "click",
       openSolidarityBook
     );
 
-    body.querySelector('[data-action="votes"]').addEventListener(
+
+  body
+    .querySelector('[data-action="votes"]')
+    .addEventListener(
       "click",
       openCommunityVotes
     );
 
-    body.querySelector('[data-action="journal"]').addEventListener(
-      "click",
-      openTransparencyJournal
-    );
 
-    return allItems.length;
-  }
-
+  return allItems.length;
+}
+   
   function openAllCampaigns(){
     const items = allActiveCampaigns();
 
