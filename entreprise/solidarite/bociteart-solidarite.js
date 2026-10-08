@@ -4770,20 +4770,75 @@
   window.openBociteSolidarity =
     openHome;
 
+/* =========================================================
+   ÇA COMMENCE ICI — RACCORDEMENT SÛR URGENCE SOLIDAIRE
+   ========================================================= */
+
+  function bindSolidarityDoor(){
+
+    injectStyles();
+
+    const ok =
+      ensureHomeTicker();
+
+    if(ok){
+
+      console.log(
+        "✅ Urgence solidaire — bouton raccordé"
+      );
+    }
+
+    return ok;
+  }
+
+
   function boot(){
 
     injectStyles();
 
-    ensureHomeTicker();
-
     runAgentMaintenance();
+
+
+    [
+      0,
+      250,
+      800,
+      1500,
+      3000
+    ].forEach(
+      function(delay){
+
+        window.setTimeout(
+          bindSolidarityDoor,
+          delay
+        );
+      }
+    );
+
+
+    document.addEventListener(
+      "bociteart:application-ready",
+      bindSolidarityDoor
+    );
+
+
+    document.addEventListener(
+      "bociteart:city-changed",
+      function(){
+
+        window.setTimeout(
+          bindSolidarityDoor,
+          0
+        );
+      }
+    );
+
 
     try{
 
       const params =
         new URLSearchParams(
-          window.location.search ||
-          ""
+          window.location.search || ""
         );
 
       const campaignId =
@@ -4801,13 +4856,14 @@
             );
 
           },
-          0
+          500
         );
       }
 
     }catch(error){}
 
   }
+
 
   if(
     document.readyState ===
@@ -4816,7 +4872,10 @@
 
     document.addEventListener(
       "DOMContentLoaded",
-      boot
+      boot,
+      {
+        once:true
+      }
     );
 
   }else{
@@ -4824,6 +4883,9 @@
     boot();
   }
 
+/* =========================================================
+   ÇA FINIT ICI — RACCORDEMENT SÛR URGENCE SOLIDAIRE
+   ========================================================= */
   console.log(
     "✅ Bo’CitéArt — Urgence solidaire V3 chargé"
   );
