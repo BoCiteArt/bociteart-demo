@@ -1583,14 +1583,28 @@
      BANDEAU / BOUTON EXISTANT
      ========================================================= */
 
+  /* =========================================================
+     ÇA COMMENCE ICI — BANDEAU ALERTE + VOTE CITOYEN
+     ========================================================= */
+
   function tickerText(){
-    const item = featuredCampaignForCity(getCurrentCity(), getCurrentCityId());
+
+    const item =
+      featuredCampaignForCity(
+        getCurrentCity(),
+        getCurrentCityId()
+      );
+
 
     if(!item){
+
       return "Aucune urgence solidaire vérifiée en cours dans cette commune.";
     }
 
-    const p = publicProgress(item);
+
+    const p =
+      publicProgress(item);
+
 
     return "URGENCE SOLIDAIRE — " +
       eventLabel(item.eventType) +
@@ -1600,9 +1614,397 @@
       money(p.collected) +
       " réunis — " +
       donationCount(item) +
-      " participants — cliquez pour aider";
+      " participants — cliquez pour voir l’appel";
   }
 
+
+  function getOpenCitizenVote(){
+
+    const votes =
+      loadVotes()
+        .filter(function(vote){
+
+          return vote.status === "open";
+
+        })
+        .sort(function(a,b){
+
+          return new Date(
+            a.startsAt || 0
+          ).getTime() -
+          new Date(
+            b.startsAt || 0
+          ).getTime();
+
+        });
+
+
+    return votes.length
+      ? votes[0]
+      : null;
+  }
+
+
+  function citizenVoteTickerText(vote){
+
+    if(!vote){
+      return "";
+    }
+
+
+    const campaign =
+      loadCampaigns()
+        .find(function(item){
+
+          return (
+            item.id ===
+            vote.campaignId
+          );
+
+        });
+
+
+    const title =
+      campaign
+        ? campaign.title
+        : vote.categoryProposal;
+
+
+    return "VOTE CITOYEN — OUVERT LE " +
+      formatDate(vote.startsAt) +
+      " — " +
+      title +
+      " — cette demande nécessite votre arbitrage — 72 h pour donner votre avis — cliquez ici pour voir et voter";
+  }
+
+
+  function ensureHomeTicker(){
+
+    injectStyles();
+
+
+    const tile =
+      document.getElementById(
+        "associationDonBtn"
+      );
+
+
+    if(!tile){
+      return false;
+    }
+
+
+    tile.setAttribute(
+      "aria-label",
+      "Urgence solidaire"
+    );
+
+
+    tile.innerHTML =
+      "Urgence<br>solidaire";
+
+
+    tile.onclick =
+      function(event){
+
+        if(event){
+
+          event.preventDefault();
+          event.stopPropagation();
+
+        }
+
+        openHome();
+      };
+
+
+    tile.onkeydown =
+      function(event){
+
+        if(
+          event.key === "Enter" ||
+          event.key === " "
+        ){
+
+          event.preventDefault();
+          tile.click();
+
+        }
+      };
+
+
+    const tileColumn =
+      tile.parentElement;
+
+
+    const buttonsRow =
+      tileColumn
+        ? tileColumn.parentElement
+        : null;
+
+
+    if(
+      !buttonsRow ||
+      !buttonsRow.parentElement
+    ){
+      return false;
+    }
+
+
+    let ticker =
+      document.getElementById(
+        "bociteSolidarityTickerV3"
+      );
+
+
+    if(!ticker){
+
+      ticker =
+        document.createElement(
+          "div"
+        );
+
+      ticker.id =
+        "bociteSolidarityTickerV3";
+    }
+
+
+    buttonsRow.parentElement.insertBefore(
+      ticker,
+      buttonsRow.nextSibling
+    );
+
+
+    /*
+      Conteneur commun.
+      Aucun fond ici :
+      chaque information possède sa propre couleur.
+    */
+    ticker.style.width =
+      "100%";
+
+    ticker.style.boxSizing =
+      "border-box";
+
+    ticker.style.display =
+      "flex";
+
+    ticker.style.gap =
+      "7px";
+
+    ticker.style.marginTop =
+      "8px";
+
+    ticker.style.background =
+      "transparent";
+
+    ticker.style.minHeight =
+      "28px";
+
+    ticker.style.overflow =
+      "visible";
+
+
+    const featured =
+      featuredCampaignForCity(
+        getCurrentCity(),
+        getCurrentCityId()
+      );
+
+
+    const vote =
+      getOpenCitizenVote();
+
+
+    const parts = [];
+
+
+    /*
+      APPEL URGENT EN COURS
+      Rouge = appel solidaire / collecte.
+    */
+    if(featured){
+
+      parts.push(
+        `
+          <div
+            id="bociteSolidarityAlertTickerV3"
+            style="
+              flex:1 1 0;
+              min-width:0;
+              min-height:30px;
+              border-radius:11px;
+              overflow:hidden;
+              background:#c84b43;
+              color:#ffffff;
+              display:flex;
+              align-items:center;
+              cursor:pointer;
+              box-sizing:border-box;
+            "
+          >
+
+            <div
+              class="bociteSolidarityTickerTrack"
+              style="
+                color:#ffffff;
+              "
+            >
+              ${safeText(
+                tickerText()
+              )}
+            </div>
+
+          </div>
+        `
+      );
+
+    }
+
+
+    /*
+      ARBITRAGE CITOYEN EN COURS
+      Ocre = vote.
+      Visuellement différent de l'alerte rouge.
+    */
+    if(vote){
+
+      parts.push(
+        `
+          <div
+            id="bociteSolidarityVoteTickerV3"
+            style="
+              flex:1 1 0;
+              min-width:0;
+              min-height:30px;
+              border-radius:11px;
+              overflow:hidden;
+              background:#b88735;
+              border:2px solid #9b702b;
+              color:#ffffff;
+              display:flex;
+              align-items:center;
+              cursor:pointer;
+              box-sizing:border-box;
+            "
+          >
+
+            <div
+              class="bociteSolidarityTickerTrack"
+              style="
+                color:#ffffff;
+              "
+            >
+              ${safeText(
+                citizenVoteTickerText(
+                  vote
+                )
+              )}
+            </div>
+
+          </div>
+        `
+      );
+
+    }
+
+
+    /*
+      Rien en cours :
+      on conserve simplement l'information actuelle.
+    */
+    if(
+      !featured &&
+      !vote
+    ){
+
+      parts.push(
+        `
+          <div
+            style="
+              flex:1 1 100%;
+              min-width:0;
+              min-height:30px;
+              border-radius:11px;
+              overflow:hidden;
+              background:#c84b43;
+              color:#ffffff;
+              display:flex;
+              align-items:center;
+              justify-content:center;
+              box-sizing:border-box;
+              padding:4px 10px;
+              font-size:12px;
+              font-weight:700;
+            "
+          >
+            Aucune urgence solidaire vérifiée en cours dans cette commune.
+          </div>
+        `
+      );
+
+    }
+
+
+    ticker.innerHTML =
+      parts.join("");
+
+
+    /*
+      CLIC SUR L'APPEL URGENT
+    */
+    const alertTicker =
+      document.getElementById(
+        "bociteSolidarityAlertTickerV3"
+      );
+
+
+    if(
+      alertTicker &&
+      featured
+    ){
+
+      alertTicker.onclick =
+        function(){
+
+          openCampaign(
+            featured.id
+          );
+
+        };
+    }
+
+
+    /*
+      CLIC SUR LE VOTE
+      → directement la page Votes citoyens.
+    */
+    const voteTicker =
+      document.getElementById(
+        "bociteSolidarityVoteTickerV3"
+      );
+
+
+    if(
+      voteTicker &&
+      vote
+    ){
+
+      voteTicker.onclick =
+        function(){
+
+          openCommunityVotes();
+
+        };
+    }
+
+
+    return true;
+  }
+
+  /* =========================================================
+     ÇA FINIT ICI — BANDEAU ALERTE + VOTE CITOYEN
+     ========================================================= */
   /* =========================================================
      ÇA COMMENCE ICI — BANDEAU SOLIDAIRE PLEINE LARGEUR
      ========================================================= */
@@ -4626,127 +5028,480 @@ function openHome(){
       );
   }
 
-  function openCommunityVotes(){
+function openCommunityVotes(){
 
-    runAgentMaintenance();
+  runAgentMaintenance();
 
-    const votes =
-      loadVotes().filter(function(vote){
-        return vote.status === "open";
+
+  const votes =
+    loadVotes()
+      .slice()
+      .sort(function(a,b){
+
+        if(
+          a.status === "open" &&
+          b.status !== "open"
+        ){
+          return -1;
+        }
+
+        if(
+          b.status === "open" &&
+          a.status !== "open"
+        ){
+          return 1;
+        }
+
+        return new Date(
+          b.startsAt || 0
+        ).getTime() -
+        new Date(
+          a.startsAt || 0
+        ).getTime();
       });
 
-    const body = renderBase(`
+
+  const votesHtml =
+    votes.length
+
+      ? votes.map(function(vote){
+
+          const campaign =
+            loadCampaigns().find(function(row){
+
+              return (
+                row.id ===
+                vote.campaignId
+              );
+            });
+
+
+          const total =
+            Number(vote.yes || 0) +
+            Number(vote.no || 0);
+
+
+          let resultText =
+            "VOTE EN COURS";
+
+          let resultColor =
+            "#111111";
+
+
+          if(
+            vote.status === "accepted"
+          ){
+
+            resultText =
+              "ACCORDÉ";
+
+            resultColor =
+              "#2f5d46";
+
+          }else if(
+            vote.status === "rejected"
+          ){
+
+            resultText =
+              "NON ACCORDÉ";
+
+            resultColor =
+              "#c84b43";
+          }
+
+
+          return `
+
+            <div
+              class="bociteSolidarityCard"
+              data-vote-card="${safeText(
+                vote.campaignId
+              )}"
+            >
+
+              <h3>
+                Demande soumise à arbitrage citoyen
+              </h3>
+
+
+              <div>
+
+                <strong>
+                  Projet présenté :
+                </strong>
+
+                <br>
+
+                ${
+                  safeText(
+                    campaign
+                      ? campaign.title
+                      : vote.categoryProposal
+                  )
+                }
+
+              </div>
+
+
+              ${
+                campaign &&
+                campaign.description
+
+                  ? `
+
+                    <div style="margin-top:10px;">
+
+                      <strong>
+                        Situation présentée :
+                      </strong>
+
+                      <br>
+
+                      ${safeText(
+                        campaign.description
+                      )}
+
+                    </div>
+
+                  `
+
+                  : ""
+              }
+
+
+              <div style="margin-top:10px;">
+
+                <strong>
+                  Pourquoi un arbitrage ?
+                </strong>
+
+                <br>
+
+                Cette demande a été considérée comme
+                sérieuse et recevable par Bo’CitéArt,
+                mais elle ne correspond pas clairement
+                à l’une des situations déjà prévues
+                par Urgence solidaire.
+
+                La décision est donc confiée
+                aux citoyens.
+
+              </div>
+
+
+              <div class="bociteSolidarityLine"></div>
+
+
+              <div>
+
+                <strong>
+                  Durée du vote :
+                </strong>
+                72 heures
+
+                <br>
+
+
+                <strong>
+                  Nombre de votants :
+                </strong>
+                ${total}
+
+                <br>
+
+
+                <strong>
+                  OUI :
+                </strong>
+                ${Number(vote.yes || 0)}
+
+                <br>
+
+
+                <strong>
+                  NON :
+                </strong>
+                ${Number(vote.no || 0)}
+
+                <br>
+
+
+                <strong>
+                  Résultat :
+                </strong>
+
+                <span
+                  style="
+                    color:${resultColor};
+                    font-weight:900;
+                  "
+                >
+                  ${resultText}
+                </span>
+
+
+                ${
+                  vote.status === "open"
+
+                    ? `
+
+                      <br>
+
+                      <strong>
+                        Fin du vote :
+                      </strong>
+
+                      ${safeText(
+                        formatDate(
+                          vote.endsAt
+                        )
+                      )}
+
+                    `
+
+                    : ""
+                }
+
+              </div>
+
+
+              ${
+                vote.status === "open"
+
+                  ? `
+
+                    <div class="bociteSolidarityActions">
+
+                      <button
+                        class="bociteSolidarityBtn"
+                        type="button"
+                        data-vote="yes"
+                        data-reason="Arbitrage citoyen favorable"
+                        data-id="${safeText(
+                          vote.campaignId
+                        )}"
+                      >
+                        OUI
+                      </button>
+
+
+                      <button
+                        class="bociteSolidarityBtn bociteSolidarityBtnDanger"
+                        type="button"
+                        data-vote="no"
+                        data-reason="Arbitrage citoyen défavorable"
+                        data-id="${safeText(
+                          vote.campaignId
+                        )}"
+                      >
+                        NON
+                      </button>
+
+                    </div>
+
+                  `
+
+                  : ""
+              }
+
+            </div>
+
+          `;
+
+        }).join("")
+
+      : `
+
+          <div class="bociteSolidarityOk">
+
+            Aucune demande ne nécessite
+            actuellement d’arbitrage citoyen.
+
+          </div>
+
+        `;
+
+
+  const body =
+    renderBase(`
+
       <div class="bociteSolidarityHead">
 
         <div>
 
-          <h2 class="bociteSolidarityTitle">
+          <h2
+            class="bociteSolidarityTitle"
+            style="color:#c84b43;"
+          >
             Votes citoyens
           </h2>
 
+
           <div class="bociteSolidaritySub">
-            Une nouvelle catégorie juridiquement recevable
-            peut être intégrée au règlement
-            après 72 h de vote de toute la communauté Bo’CitéArt.
+
+            <strong>
+              Une urgence légitime,
+              vérifiée et conforme au cadre
+              Urgence solidaire
+              n’est pas soumise au vote.
+            </strong>
+
+            <br><br>
+
+            Elle peut être publiée
+            après les contrôles de Bo’CitéArt.
+
+            <br><br>
+
+            Le vote citoyen intervient uniquement
+            lorsqu’une demande est sérieuse
+            et recevable,
+            mais qu’elle nécessite
+            <strong>un arbitrage</strong>
+            parce qu’elle ne correspond pas clairement
+            aux situations déjà prévues.
+
           </div>
 
         </div>
 
       </div>
 
-      ${
-        votes.length
 
-          ? votes.map(function(vote){
+      <div class="bociteSolidarityCard">
 
-              const campaign =
-                loadCampaigns().find(function(row){
-                  return row.id === vote.campaignId;
-                });
+        <h3>
+          Pourquoi demander votre avis ?
+        </h3>
 
-              return `
-                <div
-                  class="bociteSolidarityCard"
-                  data-vote-card="${safeText(vote.campaignId)}"
-                >
+        <div>
 
-                  <h3>
-                    ${safeText(
-                      campaign
-                        ? campaign.title
-                        : vote.categoryProposal
-                    )}
-                  </h3>
+          Bo’CitéArt ne demande pas aux citoyens
+          de décider si une victime
+          « mérite » d’être aidée.
 
-                  <div>
-                    ${
-                      campaign
-                        ? safeText(campaign.description)
-                        : ''
-                    }
-                  </div>
+          <br><br>
 
-                  <div class="bociteSolidarityMeta">
-                    Fin du vote :
-                    ${safeText(formatDate(vote.endsAt))}
-                    —
-                    ${vote.yes} oui /
-                    ${vote.no} non
-                  </div>
+          Les situations clairement reconnues
+          comme urgentes et légitimes
+          suivent directement
+          le parcours de vérification
+          puis de publication.
 
-                  <div class="bociteSolidarityActions">
+          <br><br>
 
-                    <button
-                      class="bociteSolidarityBtn"
-                      type="button"
-                      data-vote="yes"
-                      data-reason="Besoin humain grave et comparable"
-                      data-id="${safeText(vote.campaignId)}"
-                    >
-                      Oui — besoin grave
-                    </button>
+          Votre vote est demandé uniquement
+          lorsqu’une situation particulière
+          se trouve à la limite du cadre existant
+          et qu’une décision collective
+          est nécessaire.
 
-                    <button
-                      class="bociteSolidarityBtn"
-                      type="button"
-                      data-vote="yes"
-                      data-reason="Dépense indispensable et justifiée"
-                      data-id="${safeText(vote.campaignId)}"
-                    >
-                      Oui — dépense indispensable
-                    </button>
+        </div>
 
-                    <button
-                      class="bociteSolidarityBtn bociteSolidarityBtnDanger"
-                      type="button"
-                      data-vote="no"
-                      data-reason="Hors du périmètre Urgence solidaire"
-                      data-id="${safeText(vote.campaignId)}"
-                    >
-                      Non — hors périmètre
-                    </button>
+      </div>
 
-                    <button
-                      class="bociteSolidarityBtn bociteSolidarityBtnDanger"
-                      type="button"
-                      data-vote="no"
-                      data-reason="Un autre dispositif paraît plus adapté"
-                      data-id="${safeText(vote.campaignId)}"
-                    >
-                      Non — autre dispositif
-                    </button>
 
-                  </div>
+      <div class="bociteSolidarityCard">
 
-                </div>
-              `;
+        <h3>
+          Avant qu’une demande arrive ici
+        </h3>
 
-            }).join("")
+        <div>
 
-          : '<div class="bociteSolidarityOk">' +
-            'Aucun vote ouvert actuellement.' +
-            '</div>'
-      }
+          Bo’CitéArt a déjà contrôlé
+          la cohérence de la demande,
+          l’identité,
+          les éléments disponibles
+          et la recevabilité de la situation.
+
+          <br><br>
+
+          Les demandes manifestement étrangères
+          à Urgence solidaire sont bloquées
+          avant tout vote.
+
+          <br><br>
+
+          Par exemple :
+          plaisanteries ou faux appels,
+          insultes ou attaques personnelles,
+          dénonciations ou accusations,
+          financement politique,
+          jeux et paris,
+          dettes et amendes,
+          investissements,
+          cryptomonnaies,
+          armes,
+          stupéfiants
+          ou demandes sans rapport
+          avec une situation humaine grave.
+
+        </div>
+
+      </div>
+
+
+      <div class="bociteSolidarityCard">
+
+        <h3>
+          Comment se déroule l’arbitrage ?
+        </h3>
+
+        <div>
+
+          La demande est présentée
+          aux citoyens pendant
+          <strong>72 heures</strong>.
+
+          <br><br>
+
+          Vous voyez clairement :
+
+          <br>
+
+          • la situation présentée ;
+
+          <br>
+
+          • pourquoi un arbitrage est demandé ;
+
+          <br>
+
+          • le nombre total de votants ;
+
+          <br>
+
+          • le nombre de OUI ;
+
+          <br>
+
+          • le nombre de NON ;
+
+          <br>
+
+          • puis le résultat final :
+          <strong>ACCORDÉ</strong>
+          ou
+          <strong>NON ACCORDÉ</strong>.
+
+          <br><br>
+
+          À la clôture,
+          plus de OUI que de NON
+          signifie que la proposition est accordée.
+
+          En cas d’égalité
+          ou si les NON sont majoritaires,
+          elle n’est pas accordée.
+
+        </div>
+
+      </div>
+
+
+      ${votesHtml}
+
 
       <div class="bociteSolidarityActions">
 
@@ -4759,54 +5514,73 @@ function openHome(){
         </button>
 
       </div>
+
     `);
 
-    body
-      .querySelectorAll("[data-vote]")
-      .forEach(function(btn){
 
-        btn.addEventListener(
-          "click",
-          function(){
+  body
+    .querySelectorAll(
+      "[data-vote]"
+    )
+    .forEach(function(btn){
 
-            try{
-
-              const vote =
-                castVote(
-                  btn.getAttribute("data-id"),
-                  btn.getAttribute("data-vote"),
-                  btn.getAttribute("data-reason")
-                );
-
-              alert(
-                "Votre vote est enregistré : " +
-                vote.yes +
-                " oui / " +
-                vote.no +
-                " non."
-              );
-
-              openCommunityVotes();
-
-            }catch(error){
-
-              alert(
-                error.message ||
-                "Vote impossible."
-              );
-            }
-          }
-        );
-      });
-
-    body
-      .querySelector('[data-action="back"]')
-      .addEventListener(
+      btn.addEventListener(
         "click",
-        openHome
-      );
-  }
+        function(){
 
+          try{
+
+            const vote =
+              castVote(
+                btn.getAttribute(
+                  "data-id"
+                ),
+                btn.getAttribute(
+                  "data-vote"
+                ),
+                btn.getAttribute(
+                  "data-reason"
+                )
+              );
+
+
+            alert(
+              "Votre vote est enregistré.\n\n" +
+              "Nombre de votants : " +
+              (
+                Number(vote.yes || 0) +
+                Number(vote.no || 0)
+              ) +
+              "\nOUI : " +
+              vote.yes +
+              "\nNON : " +
+              vote.no
+            );
+
+
+            openCommunityVotes();
+
+          }catch(error){
+
+            alert(
+              error.message ||
+              "Vote impossible."
+            );
+          }
+        }
+      );
+    });
+
+
+  body
+    .querySelector(
+      '[data-action="back"]'
+    )
+    .addEventListener(
+      "click",
+      openHome
+    );
+}
   /* =========================================================
      LIVRE DES SOLIDARITÉS / TRANSPARENCE
      ========================================================= */
