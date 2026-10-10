@@ -2660,59 +2660,117 @@ function openHome(){
         </div>
 
         <label class="bociteSolidarityLabel">
-          Ce qui rend la situation urgente
-        </label>
+  Ce qui rend la situation urgente
+</label>
 
-        <div class="bociteSolidarityCard" style="margin-top:5px">
+<div class="bociteSolidarityCard" style="margin-top:5px">
 
-          <label>
-            <input type="checkbox" id="urgShelter">
-            Besoin immédiat de logement / mise à l'abri
-          </label>
-          <br>
+  <div class="bociteSolidarityHelp" style="margin-bottom:12px">
+    Cochez uniquement ce qui correspond réellement
+    à la situation aujourd’hui.
+  </div>
 
-          <label>
-            <input type="checkbox" id="urgMedical">
-            Besoin vital / médical à échéance courte
-          </label>
-          <br>
 
-          <label>
-            <input type="checkbox" id="urgVulnerable">
-            Enfant, personne âgée, handicapée ou particulièrement vulnérable
-          </label>
-          <br>
+  <label>
+    <input type="checkbox" id="urgShelter">
+    Besoin immédiat de logement ou de mise à l’abri
+  </label>
 
-          <label>
-            <input type="checkbox" id="urgNoSolution">
-            Aucune solution immédiate disponible
-          </label>
-          <br>
+  <br>
 
-          <label>
-            <input type="checkbox" id="urgEssential">
-            Service essentiel interrompu
-          </label>
-          <br>
 
-          <label>
-            <input type="checkbox" id="urgCollective">
-            Plusieurs foyers/personnes touchés
-          </label>
-          <br>
+  <label>
+    <input type="checkbox" id="urgMedical">
+    Besoin vital, médical ou matériel indispensable rapidement
+  </label>
 
-          <label>
-            <input type="checkbox" id="urg72">
-            Échéance dans moins de 72 h
-          </label>
-          <br>
+  <br>
 
-          <label>
-            <input type="checkbox" id="urg7d">
-            Échéance dans moins de 7 jours
-          </label>
 
-        </div>
+  <label>
+    <input type="checkbox" id="urgVulnerable">
+    Enfant, personne âgée, personne handicapée
+    ou particulièrement vulnérable concernée
+  </label>
+
+  <br>
+
+
+  <label>
+    <input type="checkbox" id="urgNoSolution">
+    Aucune aide ou solution temporaire disponible aujourd’hui
+  </label>
+
+  <br>
+
+
+  <label>
+    <input type="checkbox" id="urgEssential">
+    Un service essentiel est interrompu
+  </label>
+
+  <br>
+
+
+  <label>
+    <input type="checkbox" id="urgCollective">
+    Plusieurs personnes ou plusieurs foyers sont touchés
+  </label>
+
+
+  <div style="margin-top:18px">
+
+    <strong>
+      Dans quel délai une réponse est-elle nécessaire ?
+    </strong>
+
+  </div>
+
+
+  <label style="display:block;margin-top:10px">
+
+    <input
+      type="radio"
+      name="urgDeadline"
+      id="urg72"
+    >
+
+    Immédiatement ou dans les 3 prochains jours
+
+  </label>
+
+
+  <label style="display:block;margin-top:8px">
+
+    <input
+      type="radio"
+      name="urgDeadline"
+      id="urg7d"
+    >
+
+    Dans la semaine
+
+  </label>
+
+
+  <label style="display:block;margin-top:8px">
+
+    <input
+      type="radio"
+      name="urgDeadline"
+      id="urgNoDeadline"
+      checked
+    >
+
+    Je ne sais pas encore
+    ou il n’y a pas d’échéance précise
+
+  </label>
+
+</div>
+
+
+<label class="bociteSolidarityLabel" for="solPublicPhotos">
 
         <label class="bociteSolidarityLabel" for="solPublicPhotos">
           Photos pouvant être montrées au public — 5 maximum
@@ -2754,63 +2812,81 @@ function openHome(){
           placeholder="Ex. constat d'incendie, devis, courrier, attestation, témoin institutionnel..."
         ></textarea>
 
-        <div class="bociteSolidarityCard">
+       <div class="bociteSolidarityCard">
 
-          <h3>
-            Vérification du demandeur
-          </h3>
+  <h3>
+    Vérification du demandeur
+  </h3>
 
-          <div>
-            En production, cette étape sera assurée
-            par le prestataire sécurisé.
-            Aucune pièce d'identité brute
-            ne sera stockée dans le navigateur.
-          </div>
+  <div>
 
-          <label style="display:block;margin-top:8px">
-            <input type="checkbox" id="solIdentityDemo">
-            Démonstration : considérer le demandeur vérifié
-          </label>
+    Avant toute publication,
+    l’identité du demandeur est vérifiée
+    par le parcours sécurisé prévu à cet effet.
 
-        </div>
+    <br><br>
 
-        <label style="display:block;margin:12px 0">
+    Les documents d’identité
+    ne sont jamais affichés au public
+    et ne sont pas conservés
+    dans cette application.
 
-          <input
-            type="checkbox"
-            id="solDeclaration"
-            required
-          >
+  </div>
 
-          Je certifie sincères les informations
-          que je connais aujourd'hui
-          et je m'engage à signaler
-          toute évolution importante
-          dont j'aurai connaissance.
 
-        </label>
+  <!--
+    TEST INTERNE UNIQUEMENT.
+    Ce contrôle reste invisible pour le citoyen.
+  -->
+  <input
+    type="checkbox"
+    id="solIdentityDemo"
+    checked
+    hidden
+  >
 
-        <div class="bociteSolidarityActions">
+</div>
 
-          <button
-            class="bociteSolidarityBtn bociteSolidarityBtnPrimary"
-            type="submit"
-          >
-            Envoyer la demande
-          </button>
 
-          <button
-            class="bociteSolidarityBtn"
-            type="button"
-            data-action="back"
-          >
-            Retour
-          </button>
+<label style="display:block;margin:12px 0">
 
-        </div>
+  <input
+    type="checkbox"
+    id="solDeclaration"
+    required
+  >
 
-      </form>
-    `);
+  Je certifie sincères les informations
+  que je connais aujourd’hui
+  et je m’engage à signaler
+  toute évolution importante
+  dont j’aurai connaissance.
+
+</label>
+
+
+<div class="bociteSolidarityActions">
+
+  <button
+    class="bociteSolidarityBtn bociteSolidarityBtnPrimary"
+    type="submit"
+  >
+    Envoyer la demande
+  </button>
+
+
+  <button
+    class="bociteSolidarityBtn"
+    type="button"
+    data-action="back"
+  >
+    Retour
+  </button>
+
+</div>
+
+</form>
+`);
 
     body.querySelector('[data-action="back"]').addEventListener(
       "click",
@@ -5398,15 +5474,52 @@ function openCommunityVotes(){
 
       : `
 
-          <div class="bociteSolidarityOk">
+        : `
 
-            Aucun arbitrage citoyen
-            n’est actuellement en cours.
+    <div class="bociteSolidarityCard">
 
-          </div>
+      <h3>
+        Aucun vote citoyen en cours
+      </h3>
 
-        `;
+      <div>
 
+        Aucun arbitrage n’est actuellement
+        demandé à la communauté.
+
+        <br><br>
+
+        <strong>
+          Les boutons OUI et NON apparaissent
+          automatiquement ici uniquement
+          lorsqu’une demande nécessite
+          réellement un vote citoyen.
+        </strong>
+
+        <br><br>
+
+        La situation concernée,
+        la raison de l’arbitrage,
+        la date d’ouverture,
+        la durée de 72 heures,
+        le nombre de votants,
+        les OUI et les NON
+        seront alors affichés avec les deux boutons de vote.
+
+        <br><br>
+
+        Une urgence claire,
+        légitime et vérifiée
+        ne passe pas par cet arbitrage :
+        elle suit directement
+        le parcours normal de validation
+        de Bo’CitéArt.
+
+      </div>
+
+    </div>
+
+  `;
 
   const body =
     renderBase(`
