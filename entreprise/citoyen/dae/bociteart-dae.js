@@ -3,6 +3,7 @@
    ÇA COMMENCE ICI — bociteart-dae.js — VERSION TEST 10/10/2026 — 0845
    BO'CITÉART — CITOYEN — DAE
    ========================================================= */
+
 (function initBociteartDae(){
   "use strict";
   if (window.BociteArtDae && window.BociteArtDae.loaded) return;
