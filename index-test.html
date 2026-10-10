@@ -23958,6 +23958,10 @@ refreshMiniWeather();
 
 // ===== DAE =====
 on(daeBtn, "click", ()=>{
+  // Ancien DAE conservé en sécurité.
+  // Le nouveau DAE prend la priorité lorsqu'il est chargé.
+  if(window.BociteArtDae && window.BociteArtDae.loaded) return;
+
   if(!isFn(window.openModal)) return;
 
   openModal("Défibrillateur (DAE)", `
