@@ -981,6 +981,10 @@
      BANDEAU ROUGE ACCUEIL
      ========================================================= */
 
+/* =========================================================
+   ÇA COMMENCE ICI — URGENCE SOLIDAIRE + BANDEAU
+   ========================================================= */
+
 .bociteSolidarityTicker{
   overflow:hidden;
   background:#c84b43;
@@ -993,32 +997,26 @@
   margin-top:3px;
 }
 
+
+/* SEUL URGENCE SOLIDAIRE DESCEND VERS LE BANDEAU */
 #associationDonBtn{
+  height:82px !important;
+  min-height:82px !important;
+  max-height:82px !important;
+
+  margin-bottom:-10px !important;
+
+  border-radius:20px 20px 0 0 !important;
+
   position:relative !important;
   z-index:3;
-  border-radius:20px 20px 0 0 !important;
-  overflow:visible !important;
+
+  overflow:hidden !important;
 }
 
-#associationDonBtn::after{
-  content:"";
-  position:absolute;
-
-  left:-2px;
-  right:-2px;
-  top:calc(100% - 2px);
-
-  height:31px;
-
-  background:#ffffff;
-
-  border-left:2px solid #2f5d46;
-  border-right:2px solid #2f5d46;
-
-  box-sizing:border-box;
-  pointer-events:none;
-}
-
+/* =========================================================
+   ÇA FINIT ICI — URGENCE SOLIDAIRE + BANDEAU
+   ========================================================= */
   .bociteSolidarityTickerTrack{
     white-space:nowrap;
     display:inline-block;
