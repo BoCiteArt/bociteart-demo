@@ -5474,8 +5474,6 @@ function openCommunityVotes(){
 
       : `
 
-        : `
-
     <div class="bociteSolidarityCard">
 
       <h3>
