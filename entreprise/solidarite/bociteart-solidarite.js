@@ -981,17 +981,17 @@
      BANDEAU ROUGE ACCUEIL
      ========================================================= */
 
-  .bociteSolidarityTicker{
-    overflow:hidden;
-    background:#c84b43;
-    color:#ffffff;
-    border-radius:0 0 9px 9px;
-    min-height:25px;
-    display:flex;
-    align-items:center;
-    cursor:pointer;
-    margin-top:3px;
-  }
+ .bociteSolidarityTicker{
+  overflow:hidden;
+  background:#c84b43;
+  color:#fff;
+  border-radius:0 0 18px 18px;
+  min-height:25px;
+  display:flex;
+  align-items:center;
+  cursor:pointer;
+  margin-top:-2px;
+}
 
   .bociteSolidarityTickerTrack{
     white-space:nowrap;
