@@ -99,7 +99,7 @@
     ["bereavement", "Décès / urgence familiale grave", true],
     ["collective", "Sinistre collectif majeur dans la commune", true],
     ["institution", "École, établissement, édifice ou service essentiel sinistré", true],
-    ["other", "Autre situation grave à examiner", false]
+    ["other", "Autre situation grave — demander un arbitrage citoyen", false]
   ];
 
   const FORBIDDEN_PATTERNS = [
