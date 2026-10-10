@@ -212,8 +212,59 @@
     return `<svg viewBox="0 0 260 100" role="img" aria-label="Schéma de coffret à code : lire les consignes et contacter les secours" style="max-width:100%;height:100px"><rect x="55" y="10" width="110" height="78" rx="7" ${common}/><rect x="70" y="23" width="55" height="45" fill="#e3f0e9"/><rect x="134" y="25" width="23" height="40" rx="4" fill="#fff" stroke="#2f5d46"/><text x="137" y="50" font-size="14" fill="#c84b43">#</text><text x="174" y="46" font-size="12">CODE</text></svg>`;
   }
 
-  function modalHtml(){return `<div id="daeRoot" style="font:400 14px/1.5 system-ui,Arial;color:#181818">
-    <h2 style="color:${GREEN};font-size:18px;margin:0 0 10px">Défibrillateur <span style="color:${RED}">DAE</span></h2>
+      function modalHtml(){return `<div id="daeRoot" style="font:400 14px/1.5 system-ui,Arial;color:#111">
+
+    <style>
+      #daeRoot :is(p, div, span, section, button, a, b, strong) {
+        font-size:14px !important;
+        color:#111 !important;
+        font-weight:400 !important;
+        line-height:1.5 !important;
+      }
+
+      #daeRoot :is(h2, h3) {
+        font-size:17px !important;
+        color:#2f5d46 !important;
+        font-weight:700 !important;
+        line-height:1.4 !important;
+      }
+
+      #daeRoot .daeBrandGreen,
+      #daeRoot span[style*="color:#2f5d46"] {
+        color:#2f5d46 !important;
+        font-size:17px !important;
+        font-weight:700 !important;
+      }
+
+      #daeRoot .daeBrandRed,
+      #daeRoot span[style*="color:#c84b43"] {
+        color:#c84b43 !important;
+        font-size:17px !important;
+        font-weight:700 !important;
+      }
+
+      #daeRoot .daeQuick strong {
+        color:#2f5d46 !important;
+        font-size:19px !important;
+        font-weight:700 !important;
+      }
+
+      #daeRoot [aria-label^="DAE numéro"] {
+        background:#2f5d46 !important;
+        color:#fff !important;
+        font-size:22px !important;
+        font-weight:700 !important;
+      }
+
+      #daeRoot svg text {
+        font-size:14px !important;
+      }
+    </style>
+
+    <h2>
+      <span class="daeBrandGreen">Bo’Cité</span><span class="daeBrandRed">Art</span>
+      — Défibrillateur DAE
+    </h2>
     <div class="box" style="font-weight:400;border:2px solid ${RED};background:white"><b style="color:${RED}">Urgence vitale : appelez d'abord les secours.</b><p>112 partout dans l'Union européenne ; en France, également 15 ou 18. Si la victime ne répond pas et ne respire pas normalement, commencez les compressions. Si possible, envoyez une autre personne chercher le DAE.</p>
     <div style="display:flex;gap:10px"><a href="tel:112" style="padding:9px;border:2px solid ${RED};border-radius:10px">Appeler 112</a><a href="tel:15" style="padding:9px;border:2px solid ${RED};border-radius:10px">Appeler 15</a></div></div>
     <section class="box" style="background:#fff;font-weight:400"><h3 style="color:${GREEN};font-size:15px;margin:0 0 7px">Point de départ — lieu de la victime</h3>
@@ -232,8 +283,47 @@
     <div style="font-size:11px;color:#666;margin-top:4px">Distances indiquées à vol d'oiseau depuis la position au moment de la recherche (pas des temps de trajet réels).</div>
     <div id="daeQuickChoices" style="display:flex;flex-wrap:wrap;gap:8px;margin:9px 0" aria-label="Choix rapides DAE 1 2 3"></div>
     <div id="daeSelectedInfo" style="font-size:13px;margin-top:6px;color:${GREEN}">Choisissez un DAE pour ouvrir l'itinéraire.</div>
-    <p style="font-size:12px">Appuyez sur « À pied » (Google Maps) ou « Voiture » (Waze) en face du numéro 1, 2 ou 3, ou directement sur l’un des grands numéros pour ouvrir Google Maps à pied. Une fois l'itinéraire ouvert, suivez le guidage et le repère de votre position affichés par l'application de navigation, si le téléphone est connecté et localisé. Si le premier DAE est inaccessible, revenez ici et ouvrez directement le 2, puis le 3. La base Géo'DAE recense les appareils sur le territoire français. Le GPS et la connexion internet sont nécessaires à la navigation.</p></section>
-    <div id="bociteDaeResults"></div>
+    <p style="font-size:14px;color:#111;font-weight:400;line-height:1.5;">
+Cliquez d'abord sur le numéro 1 : c'est le DAE le plus proche à vol d'oiseau.
+Google Maps vous guidera à pied.
+Si ce DAE est inaccessible, revenez ici et cliquez sur le numéro 2, puis le 3.
+Pour vous déplacer en voiture, utilisez le bouton « Voiture ».
+Pour revenir auprès de la victime, cliquez sur « Itinéraire retour vers la victime ».
+Le téléphone doit être connecté et sa localisation activée.
+</p></section>
+    <div class="box" style="
+  background:#fff;
+  color:#111;
+  font-size:14px;
+  font-weight:400;
+  line-height:1.5;
+">
+
+  <div style="
+    color:${GREEN};
+    font-size:17px;
+    font-weight:700;
+  ">
+    Données officielles Géo’DAE
+  </div>
+
+  <p>
+    À chaque recherche, Bo’CitéArt consulte les données
+    disponibles dans la base nationale Géo’DAE et recherche
+    les appareils déclarés en fonctionnement.
+  </p>
+
+  <p>
+    Les informations proviennent des responsables des
+    défibrillateurs. Leur emplacement, leur accès et leur
+    fonctionnement sur place ne peuvent pas être garantis.
+    Si un DAE est inaccessible, essayez le 2, puis le 3,
+    sans retarder les gestes de secours.
+  </p>
+
+</div>
+
+<div id="bociteDaeResults"></div>
     <section class="box" style="background:#fff;font-weight:400"><h3 style="color:${GREEN};font-size:15px;margin:0 0 6px">Se former avant l'urgence</h3>
     <p><b style="color:${GREEN}">Aujourd'hui, prenez quelques minutes au calme.</b> Regardez cette vidéo autant de fois que nécessaire et mémorisez les premiers gestes. <b style="color:${RED}">Demain, c'est peut-être grâce à vous qu'une vie sera sauvée.</b></p>
     <p style="font-size:12px">En urgence, ne perdez pas de temps à regarder la vidéo : appelez les secours et suivez leurs consignes.</p>
@@ -243,14 +333,206 @@
     ${[[1,"Porte à tirer","Repérez la poignée, tirez la porte. Une alarme peut retentir."],[2,"Capot à tourner","Tournez dans le sens indiqué sur le coffret, puis retirez le capot."],[3,"Coffret sécurisé","Lisez les consignes. En cas de code inconnu, contactez les secours ; ne perdez pas de temps."]].map(x=>`<div style="margin:8px 0;padding:8px;border:1px solid #ddd;border-radius:10px"><b style="color:${GREEN}">${x[0]}. ${x[1]}</b><div>${drawing(x[0])}</div><div style="font-size:12px">${x[2]}</div></div>`).join("")}</section>
     <section class="box" style="font-weight:400;background:#fff"><h3 style="color:${GREEN};font-size:15px;margin:0 0 8px">Premiers gestes — adulte</h3>
     <p><b>1. Réaction :</b> vérifier que la personne ne répond pas ; demander de l'aide.</p><p><b>2. Alerter :</b> appeler le 112 (ou le 15 en France). Mettre le téléphone en haut-parleur, suivre le régulateur.</p>
-    <p><b>3. Respiration :</b> chez l'adulte, basculer doucement la tête en arrière, soulever le menton et vérifier la respiration normale pendant 10 secondes maximum. Les halètements isolés ne sont pas une respiration normale.</p>
-    <p><b>4. Compressions :</b> si la personne ne répond pas et ne respire pas normalement, s'agenouiller près du thorax, mains au centre de la poitrine, bras tendus. Appuyer de 5 à 6 cm à raison de 100 à 120 compressions/minute en laissant la poitrine remonter. Ne retardez jamais les compressions pour retirer votre veste ou utiliser le métronome.</p>
-    <p><b>5. DAE :</b> allumer, mettre les électrodes sur la poitrine nue ; déplacer le soutien-gorge seulement s'il gêne. Ne toucher la victime ni pendant l'analyse ni pendant le choc. Reprendre les compressions selon les instructions vocales.</p>
-    <p><b>6. Si respiration normale :</b> ne pas masser ; suivre les consignes des secours et surveiller la respiration.</p>
+   <h3>3. Vérifiez la respiration</h3>
+
+<p>
+  Chez l'adulte, placez une main sur le front
+  et deux doigts sous le menton.
+
+  Basculez doucement la tête en arrière
+  et relevez le menton.
+
+  (Ce geste permet d'ouvrir les voies aériennes
+  pour faciliter le passage de l'air.)
+
+  Vérifiez pendant 10 secondes maximum
+  si la personne respire normalement.
+
+  Attention : des halètements isolés
+  ne sont pas une respiration normale.
+
+  Si la personne ne répond pas
+  et ne respire pas normalement,
+  commencez immédiatement les compressions
+  thoraciques en suivant les secours.
+</p>
+    <h3>4. Commencez le massage cardiaque</h3>
+
+<p>
+  Si la personne ne réagit pas et ne respire
+  pas normalement, commencez immédiatement.
+
+  Agenouillez-vous à côté de sa poitrine,
+  sur une surface stable.
+
+  Placez le talon d'une main au centre
+  de la poitrine, puis l'autre main par-dessus.
+
+  Gardez les bras tendus et placez vos épaules
+  au-dessus de vos mains.
+
+  Appuyez fermement, verticalement,
+  de 5 à 6 cm chez l'adulte.
+
+  Laissez la poitrine remonter complètement
+  entre chaque compression.
+
+  Maintenez un rythme de 100 à 120
+  compressions par minute.
+
+  Vous pouvez activer le métronome Bo’CitéArt
+  pour vous aider à garder le rythme,
+  sans retarder le massage.
+
+  Si vous commencez à fatiguer,
+  demandez immédiatement à une autre personne
+  de vous remplacer. Le relais doit être rapide,
+  avec le moins d'interruption possible.
+</p>
+    <h3>5. Préparez le défibrillateur</h3>
+
+<p>
+  Continuez le massage cardiaque pendant
+  qu'une autre personne apporte et prépare le DAE.
+
+  Allumez le DAE dès son arrivée.
+
+  Si vous êtes plusieurs, continuez les compressions
+  pendant qu'une autre personne pose les électrodes
+  sur la poitrine nue, comme indiqué sur leurs dessins.
+
+  Si vous êtes seul, interrompez les compressions
+  uniquement le temps nécessaire pour poser
+  les électrodes, puis suivez le DAE.
+
+  Déplacez ou retirez les vêtements et le soutien-gorge
+  seulement s'ils gênent la pose des électrodes.
+</p>
+
+<h3>6. Écoutez le défibrillateur</h3>
+
+<p>
+  Dès que le DAE parle, suivez ses instructions.
+
+  Lorsqu'il analyse le rythme cardiaque,
+  arrêtez les compressions.
+
+  ATTENTION : personne ne doit toucher
+  la victime pendant l'analyse ou le choc.
+
+  Lorsque le DAE demande de reprendre
+  le massage, recommencez immédiatement.
+
+  Laissez le DAE allumé et ses électrodes en place.
+</p>
+
+<h3>7. Faites-vous remplacer si vous fatiguez</h3>
+
+<p>
+  Le massage cardiaque est fatigant.
+
+  Si vous êtes plusieurs, organisez un relais
+  environ toutes les deux minutes,
+  avec une interruption aussi courte que possible.
+
+  Si vous commencez à fatiguer,
+  prévenez immédiatement les personnes présentes.
+
+  Une autre personne peut vous remplacer
+  pendant que vous récupérez.
+</p>
+
+<h3>8. Continuez jusqu'à la prise de relais</h3>
+
+<p>
+  Même lorsque les pompiers ou les secours arrivent,
+  continuez les compressions pendant
+  qu'ils préparent leur matériel.
+
+  Ne vous arrêtez pas simplement parce qu'ils
+  sont à vos côtés.
+
+  Continuez jusqu'à ce qu'un pompier,
+  un secouriste ou un professionnel de santé
+  prenne effectivement le relais.
+
+  Respectez toujours les pauses demandées
+  par le défibrillateur et les instructions
+  des secours.
+</p>
+
+<h3>9. Si la personne respire normalement</h3>
+
+<p>
+  Si la personne recommence à respirer normalement,
+  cessez les compressions.
+
+  Surveillez sa respiration, laissez les électrodes
+  en place et suivez les instructions des secours.
+</p>
     <div style="padding:9px;border:2px solid ${RED};border-radius:9px"><b style="color:${RED}">Bébé et enfant : gestes adaptés.</b> Ne reproduisez pas la technique adulte. Appelez les secours et suivez les instructions pédiatriques. Si vous avez été formé, appliquez le protocole pédiatrique.</div>
     <p><b style="color:${RED}">Chaque seconde compte :</b> dès l'arrêt cardiaque, le cerveau manque de sang et d'oxygène. Des lésions graves peuvent apparaître en quelques minutes ; ne retardez jamais la réanimation.</p>
     <div style="padding:9px;border:2px solid ${GREEN};border-radius:10px;text-align:center"><b style="color:${GREEN}">Métronome — compressions ADULTE (110/min)</b><div><button type="button" id="daeMetroButton" aria-pressed="false" style="margin:9px 0;padding:11px;background:#fff;border:2px solid ${GREEN};border-radius:10px">▶ Activer le rythme — adulte</button></div><div id="daeMetroStatus" role="status" style="font-size:12px">Son désactivé. La voix des secours est prioritaire ; un appel téléphonique peut empêcher la lecture sonore.</div></div>
-    <p style="font-size:11px;color:#666">Information pédagogique vérifiée le 10/10/2026. Références suivies : Croix-Rouge française, recommandations internationales de secourisme, base Géo’DAE. Les données sur l'état et l'accessibilité sont déclaratives et peuvent être inexactes ou périmées.</p>
+    <p style="font-size:14px;color:#111;font-weight:400;">
+  Informations de sensibilisation aux premiers secours.
+  Une formation pratique reste recommandée.
+</p>
+
+<div style="
+  margin-top:16px;
+  padding:14px;
+  background:#fff;
+  border:1px solid #d2ddd5;
+  border-radius:12px;
+  font-size:14px;
+  color:#111;
+  font-weight:400;
+  line-height:1.5;
+">
+
+  <div style="
+    color:${GREEN};
+    font-size:17px;
+    font-weight:700;
+  ">
+    Information importante —
+    <span style="color:${GREEN};">Bo’Cité</span><span style="color:${RED};">Art</span>
+  </div>
+
+  <p>
+    Bo’CitéArt propose des informations et une aide
+    à l’orientation. Ce service ne remplace ni les secours,
+    ni une formation aux premiers secours, ni les instructions
+    d’un professionnel de santé ou d’un défibrillateur.
+  </p>
+
+  <p>
+    Les emplacements et caractéristiques des DAE proviennent
+    de déclarations de tiers. Leur exactitude et leur
+    actualisation ne peuvent pas être garanties.
+    Le GPS, Internet, les services de navigation et
+    l’application peuvent être indisponibles ou présenter
+    des erreurs.
+  </p>
+
+  <p>
+    Dans les limites autorisées par la loi, Bo’CitéArt
+    décline toute responsabilité concernant les conséquences
+    d’informations inexactes ou non actualisées fournies
+    par des tiers, l’indisponibilité d’un DAE, les erreurs
+    de localisation et les interruptions de services extérieurs.
+    Cette information ne limite pas les responsabilités
+    qui ne peuvent être légalement exclues.
+  </p>
+
+  <p>
+    En urgence, appelez immédiatement le 112 ou le 15
+    et suivez les instructions des secours et du DAE.
+    N’attendez jamais l’application pour commencer
+    les gestes adaptés.
+  </p>
+
+</div>
     </section></div>`;}
 
   function show(){
