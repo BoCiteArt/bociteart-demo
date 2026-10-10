@@ -1394,43 +1394,68 @@ html.bocite-entry-pending body > .page{
        ASSOCIATION / DON
        ===================================================== -->
 
+<div
+  style="
+    flex:1 1 0;
+    min-width:0;
+    position:relative;
+  "
+>
+
   <div
+    id="associationDonBtn"
+    role="button"
+    tabindex="0"
+    aria-label="Association et don"
+
     style="
-      flex:1 1 0;
-      min-width:0;
+      position:absolute !important;
+
+      left:0 !important;
+      right:0 !important;
+      top:0 !important;
+      bottom:-17px !important;
+
+      width:100% !important;
+
+      height:auto !important;
+      min-height:72px !important;
+      max-height:none !important;
+
+      margin:0 !important;
+
+      border-radius:20px 20px 0 0 !important;
+      border:2px solid #2f5d46;
+
+      background:#ffffff;
+
+      padding:8px 4px;
+      box-sizing:border-box;
+
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+
+      text-align:center;
+      cursor:pointer;
+
+      color:#2f5d46;
+
+      font-size:10px;
+      line-height:1.15;
+      font-weight:700;
+
+      overflow:hidden !important;
+
+      z-index:4;
     "
   >
-    <div
-      id="associationDonBtn"
-      role="button"
-      tabindex="0"
-      aria-label="Association et don"
-      style="
-        min-height:72px;
-        height:100%;
-        border-radius:20px;
-        border:2px solid #2f5d46;
-        background:#ffffff;
-        padding:8px 4px;
-        box-sizing:border-box;
-        display:flex;
-        flex-direction:column;
-        justify-content:center;
-        align-items:center;
-        text-align:center;
-        cursor:pointer;
-        color:#2f5d46;
-        font-size:10px;
-        line-height:1.15;
-        font-weight:700;
-        overflow:hidden;
-      "
-    >
-      Association<br>
-      / don
-    </div>
+    Association<br>
+    / don
   </div>
 
+</div>
 
   <!-- =====================================================
        DÉFIBRILLATEUR
