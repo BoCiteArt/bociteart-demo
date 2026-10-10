@@ -981,7 +981,7 @@
      BANDEAU ROUGE ACCUEIL
      ========================================================= */
 
- .bociteSolidarityTicker{
+.bociteSolidarityTicker{
   overflow:hidden;
   background:#c84b43;
   color:#fff;
@@ -990,7 +990,33 @@
   display:flex;
   align-items:center;
   cursor:pointer;
-  margin-top:-2px;
+  margin-top:3px;
+}
+
+#associationDonBtn{
+  position:relative !important;
+  z-index:3;
+  border-radius:20px 20px 0 0 !important;
+  overflow:visible !important;
+}
+
+#associationDonBtn::after{
+  content:"";
+  position:absolute;
+
+  left:-2px;
+  right:-2px;
+  top:calc(100% - 2px);
+
+  height:31px;
+
+  background:#ffffff;
+
+  border-left:2px solid #2f5d46;
+  border-right:2px solid #2f5d46;
+
+  box-sizing:border-box;
+  pointer-events:none;
 }
 
   .bociteSolidarityTickerTrack{
