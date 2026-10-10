@@ -123,7 +123,32 @@
   }
 
   function selected(){return candidates.find(d=>d.id===selectedId)||null;}
-  function selectedInfo(){const d=selected(),p=$("daeSelectedInfo");if(p)p.textContent=d?`Choix : DAE ${candidates.indexOf(d)+1} — ${d.name}. Ouvrez « À pied » ou « Voiture » pour suivre le guidage de votre application.`:"Choisissez un DAE parmi les résultats, puis ouvrez son itinéraire.";}
+    function selectedInfo(){
+
+    const d = selected();
+    const p = $("daeSelectedInfo");
+
+    if(!p) return;
+
+    if(!d){
+
+      p.textContent =
+        "Cliquez sur « Me localiser et rechercher les DAE ». " +
+        "Quand les résultats apparaissent, cliquez sur le numéro 1. " +
+        "Si ce DAE est inaccessible, essayez le 2, puis le 3.";
+
+      return;
+    }
+
+    const numero = candidates.indexOf(d) + 1;
+
+    p.textContent =
+      "DAE numéro " + numero + " : " + d.name + ". " +
+      "Cliquez sur le numéro " + numero +
+      " pour ouvrir Google Maps et être guidé à pied. " +
+      "Pour un trajet en voiture, cliquez sur « Voiture ».";
+
+  }
   function routeUrl(point,mode){const ll=point.lat+","+point.lng;return mode==="car"?"https://www.waze.com/ul?ll="+encodeURIComponent(ll)+"&navigate=yes&zoom=17":"https://www.google.com/maps/dir/?api=1&destination="+encodeURIComponent(ll)+"&travelmode=walking";}
   function route(point,mode){if(!point)return;const url=routeUrl(point,mode);window.open(url,"_blank","noopener,noreferrer");}
 
@@ -256,8 +281,34 @@
         font-weight:700 !important;
       }
 
-      #daeRoot svg text {
+           #daeRoot svg text {
         font-size:14px !important;
+      }
+
+      /* Titres des blocs : vert, 17 px, gras */
+
+      #daeRoot .box div[style*="font-size:17px"],
+      #daeRoot .box b[style*="color:#2f5d46"] {
+        font-size:17px !important;
+        color:#2f5d46 !important;
+        font-weight:700 !important;
+      }
+
+      /* Nom du DAE dans les résultats */
+
+      #daeRoot #bociteDaeResults div[style*="font-size:15px"] {
+        font-size:17px !important;
+        color:#2f5d46 !important;
+        font-weight:700 !important;
+      }
+
+      /* Alertes importantes : rouge, 17 px, gras */
+
+      #daeRoot .box > b[style*="color:#c84b43"],
+      #daeRoot .box p b[style*="color:#c84b43"] {
+        font-size:17px !important;
+        color:#c84b43 !important;
+        font-weight:700 !important;
       }
     </style>
 
@@ -330,7 +381,7 @@ Le téléphone doit être connecté et sa localisation activée.
     <div style="overflow:hidden;border-radius:12px"><iframe title="Gestes DAE — vidéo actuelle conservée" src="${VIDEO}" width="100%" height="210" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>
     <p style="font-size:11px">Vidéo conservée sans remplacement automatique. Une formation pratique aux premiers secours reste recommandée.</p></section>
     <section class="box" style="font-weight:400;background:#fff"><h3 style="color:${GREEN};font-size:15px;margin:0 0 8px">Plans de principe : ouvrir un coffret DAE</h3><p style="font-size:12px">À étudier à tête reposée : l'ouverture réelle dépend du fabricant. Suivez toujours les pictogrammes et consignes présents sur le coffret.</p>
-    ${[[1,"Porte à tirer","Repérez la poignée, tirez la porte. Une alarme peut retentir."],[2,"Capot à tourner","Tournez dans le sens indiqué sur le coffret, puis retirez le capot."],[3,"Coffret sécurisé","Lisez les consignes. En cas de code inconnu, contactez les secours ; ne perdez pas de temps."]].map(x=>`<div style="margin:8px 0;padding:8px;border:1px solid #ddd;border-radius:10px"><b style="color:${GREEN}">${x[0]}. ${x[1]}</b><div>${drawing(x[0])}</div><div style="font-size:12px">${x[2]}</div></div>`).join("")}</section>
+    ${[[1,"Porte à tirer","Repérez la poignée, tirez la porte. Une alarme peut retentir."],[2,"Capot à tourner","ATTENTION : sur les coffrets Rotaid, tournez le capot vers la GAUCHE, dans le sens inverse des aiguilles d'une montre. Un court mouvement suffit. L'alarme peut retentir. Pour les autres modèles, suivez le sens d'ouverture indiqué sur le coffret. Ne forcez pas."],[3,"Coffret sécurisé","Lisez les consignes. En cas de code inconnu, contactez les secours ; ne perdez pas de temps."]].map(x=>`<div style="margin:8px 0;padding:8px;border:1px solid #ddd;border-radius:10px"><b style="color:${GREEN}">${x[0]}. ${x[1]}</b><div>${drawing(x[0])}</div><div style="font-size:12px">${x[2]}</div></div>`).join("")}</section>
     <section class="box" style="font-weight:400;background:#fff"><h3 style="color:${GREEN};font-size:15px;margin:0 0 8px">Premiers gestes — adulte</h3>
     <p><b>1. Réaction :</b> vérifier que la personne ne répond pas ; demander de l'aide.</p><p><b>2. Alerter :</b> appeler le 112 (ou le 15 en France). Mettre le téléphone en haut-parleur, suivre le régulateur.</p>
    <h3>3. Vérifiez la respiration</h3>
